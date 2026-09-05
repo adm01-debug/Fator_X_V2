@@ -1,6 +1,6 @@
 /**
  * Nexus Agents Studio — Time-Travel Debugging Panel
- * 
+ *
  * Allows users to:
  * - View execution timeline with all checkpoints
  * - Inspect state at any checkpoint
@@ -52,7 +52,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { downloadMarkdown, openPrintablePdf } from '@/lib/workflows/exportTimeTravelReport';
 import { toast } from 'sonner';
-import { handleKeyboardClick } from "@/lib/a11y";
+import { handleKeyboardClick } from '@/lib/a11y';
 
 // ──────── Types ────────
 
@@ -99,17 +99,44 @@ function formatTokens(tokens: number): string {
 type StatusFilter = 'success' | 'warning' | 'error';
 type KindFilter = 'llm' | 'tool' | 'guardrail' | 'other';
 
-const STATUS_FILTER_META: Record<StatusFilter, { label: string; icon: string; color: string; matches: (s: string) => boolean }> = {
-  success: { label: 'Sucesso', icon: '✓', color: 'hsl(var(--nexus-emerald))', matches: (s) => s === 'completed' || s === 'success' || s === 'ok' },
-  warning: { label: 'Atenção', icon: '⚠', color: 'hsl(var(--nexus-yellow))', matches: (s) => s === 'pending' || s === 'running' || s === 'skipped' || s === 'warning' },
-  error:   { label: 'Falha',   icon: '✗', color: 'hsl(var(--destructive))',  matches: (s) => s === 'failed' || s === 'error' },
+const STATUS_FILTER_META: Record<
+  StatusFilter,
+  { label: string; icon: string; color: string; matches: (s: string) => boolean }
+> = {
+  success: {
+    label: 'Sucesso',
+    icon: '✓',
+    color: 'hsl(var(--nexus-emerald))',
+    matches: (s) => s === 'completed' || s === 'success' || s === 'ok',
+  },
+  warning: {
+    label: 'Atenção',
+    icon: '⚠',
+    color: 'hsl(var(--nexus-yellow))',
+    matches: (s) => s === 'pending' || s === 'running' || s === 'skipped' || s === 'warning',
+  },
+  error: {
+    label: 'Falha',
+    icon: '✗',
+    color: 'hsl(var(--destructive))',
+    matches: (s) => s === 'failed' || s === 'error',
+  },
 };
 
-const KIND_FILTER_META: Record<KindFilter, { label: string; matches: (nodeType: string) => boolean }> = {
-  llm:       { label: 'LLM',       matches: (t) => /llm|model|gpt|gemini|claude|chat|completion|prompt/i.test(t) },
-  tool:      { label: 'Tool',      matches: (t) => /tool|function|action|api|webhook|http|skill/i.test(t) },
-  guardrail: { label: 'Guardrail', matches: (t) => /guard|policy|filter|moderation|safety|validate/i.test(t) },
-  other:     { label: 'Outros',    matches: () => true }, // fallback handled separately
+const KIND_FILTER_META: Record<
+  KindFilter,
+  { label: string; matches: (nodeType: string) => boolean }
+> = {
+  llm: {
+    label: 'LLM',
+    matches: (t) => /llm|model|gpt|gemini|claude|chat|completion|prompt/i.test(t),
+  },
+  tool: { label: 'Tool', matches: (t) => /tool|function|action|api|webhook|http|skill/i.test(t) },
+  guardrail: {
+    label: 'Guardrail',
+    matches: (t) => /guard|policy|filter|moderation|safety|validate/i.test(t),
+  },
+  other: { label: 'Outros', matches: () => true }, // fallback handled separately
 };
 
 function classifyKind(nodeType: string): KindFilter {
@@ -198,7 +225,8 @@ export function WorkflowTimeTravelPanel({
         setCompareA(a);
         setCompareB(b);
       } catch (err) {
-        if (!cancelled) setError(err instanceof Error ? err.message : 'Erro ao carregar comparação');
+        if (!cancelled)
+          setError(err instanceof Error ? err.message : 'Erro ao carregar comparação');
       } finally {
         if (!cancelled) setComparing(false);
       }
@@ -256,14 +284,16 @@ export function WorkflowTimeTravelPanel({
   const toggleStatus = (s: StatusFilter) => {
     setStatusFilters((prev) => {
       const next = new Set(prev);
-      if (next.has(s)) next.delete(s); else next.add(s);
+      if (next.has(s)) next.delete(s);
+      else next.add(s);
       return next;
     });
   };
   const toggleKind = (k: KindFilter) => {
     setKindFilters((prev) => {
       const next = new Set(prev);
-      if (next.has(k)) next.delete(k); else next.add(k);
+      if (next.has(k)) next.delete(k);
+      else next.add(k);
       return next;
     });
   };
@@ -275,7 +305,9 @@ export function WorkflowTimeTravelPanel({
   // Apply filters (empty Set = no filter on that dimension).
   const filteredTimeline = timeline.filter((entry) => {
     if (statusFilters.size > 0) {
-      const matched = Array.from(statusFilters).some((s) => STATUS_FILTER_META[s].matches(entry.status));
+      const matched = Array.from(statusFilters).some((s) =>
+        STATUS_FILTER_META[s].matches(entry.status),
+      );
       if (!matched) return false;
     }
     if (kindFilters.size > 0) {
@@ -334,9 +366,7 @@ export function WorkflowTimeTravelPanel({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel className="text-meta">
-                    Compartilhar execução
-                  </DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-meta">Compartilhar execução</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="text-meta cursor-pointer"
@@ -344,8 +374,7 @@ export function WorkflowTimeTravelPanel({
                       openPrintablePdf({
                         executionId,
                         timeline,
-                        activeCheckpoint:
-                          timeline.find((t) => t.id === selectedCheckpoint) ?? null,
+                        activeCheckpoint: timeline.find((t) => t.id === selectedCheckpoint) ?? null,
                         activeState: inspectedState,
                         totals: {
                           cost_usd: totalCost,
@@ -365,8 +394,7 @@ export function WorkflowTimeTravelPanel({
                       downloadMarkdown({
                         executionId,
                         timeline,
-                        activeCheckpoint:
-                          timeline.find((t) => t.id === selectedCheckpoint) ?? null,
+                        activeCheckpoint: timeline.find((t) => t.id === selectedCheckpoint) ?? null,
                         activeState: inspectedState,
                         totals: {
                           cost_usd: totalCost,
@@ -409,10 +437,10 @@ export function WorkflowTimeTravelPanel({
               {!compareAId
                 ? 'Clique em um step para escolher A.'
                 : !compareBId
-                ? 'Agora clique em outro step para escolher B.'
-                : comparing
-                ? 'Carregando comparação…'
-                : 'Comparando A × B abaixo. Clique em outro step para substituir A.'}
+                  ? 'Agora clique em outro step para escolher B.'
+                  : comparing
+                    ? 'Carregando comparação…'
+                    : 'Comparando A × B abaixo. Clique em outro step para substituir A.'}
             </p>
           )}
         </CardHeader>
@@ -429,14 +457,18 @@ export function WorkflowTimeTravelPanel({
               <Zap className="w-4 h-4 text-nexus-amber" />
               <div>
                 <p className="text-meta text-muted-foreground">Tokens</p>
-                <p className="text-body-sm font-medium text-foreground">{formatTokens(totalTokens)}</p>
+                <p className="text-body-sm font-medium text-foreground">
+                  {formatTokens(totalTokens)}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-nexus-purple" />
               <div>
                 <p className="text-meta text-muted-foreground">Duração</p>
-                <p className="text-body-sm font-medium text-foreground">{formatDuration(totalDuration)}</p>
+                <p className="text-body-sm font-medium text-foreground">
+                  {formatDuration(totalDuration)}
+                </p>
               </div>
             </div>
           </div>
@@ -535,7 +567,6 @@ export function WorkflowTimeTravelPanel({
                 const isPickedB = compareMode && compareBId === entry.id;
                 return (
                   <div key={entry.id} className="relative flex gap-3">
-
                     {/* Timeline Line */}
                     <div className="flex flex-col items-center">
                       <div
@@ -544,9 +575,12 @@ export function WorkflowTimeTravelPanel({
                           borderColor: isPickedA
                             ? 'hsl(var(--destructive))'
                             : isPickedB
-                            ? 'hsl(var(--nexus-emerald))'
-                            : statusCfg.color,
-                          backgroundColor: isSelected || isPickedA || isPickedB ? `${statusCfg.color}20` : 'transparent',
+                              ? 'hsl(var(--nexus-emerald))'
+                              : statusCfg.color,
+                          backgroundColor:
+                            isSelected || isPickedA || isPickedB
+                              ? `${statusCfg.color}20`
+                              : 'transparent',
                         }}
                       >
                         <StatusIcon className="w-4 h-4" style={{ color: statusCfg.color }} />
@@ -572,22 +606,17 @@ export function WorkflowTimeTravelPanel({
                     <div
                       role="button"
                       tabIndex={0}
+                      onKeyDown={handleKeyboardClick}
                       className={`flex-1 pb-4 rounded-lg transition-colors cursor-pointer ${
                         isPickedA
                           ? 'bg-destructive/5 ring-1 ring-destructive/30 p-3'
                           : isPickedB
-                          ? 'bg-nexus-emerald/5 ring-1 ring-nexus-emerald/30 p-3'
-                          : isSelected
-                          ? 'bg-muted p-3'
-                          : 'hover:bg-background p-3'
+                            ? 'bg-nexus-emerald/5 ring-1 ring-nexus-emerald/30 p-3'
+                            : isSelected
+                              ? 'bg-muted p-3'
+                              : 'hover:bg-background p-3'
                       }`}
                       onClick={() => handleInspect(entry.id)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          handleInspect(entry.id);
-                        }
-                      }}
                     >
                       <div className="flex items-start justify-between">
                         <div>
@@ -620,9 +649,7 @@ export function WorkflowTimeTravelPanel({
 
                       {/* Error message */}
                       {entry.error && (
-                        <p className="text-meta text-destructive mt-1 truncate">
-                          ⚠ {entry.error}
-                        </p>
+                        <p className="text-meta text-destructive mt-1 truncate">⚠ {entry.error}</p>
                       )}
 
                       {/* Actions (show when selected) */}

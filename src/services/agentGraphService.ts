@@ -62,13 +62,13 @@ export const agentGraphService = {
     if (!u.user) throw new Error('Não autenticado');
     const { data, error } = await supabase
       .from('agent_graphs')
-      .insert({ 
-        workspace_id: workspaceId, 
-        created_by: u.user.id, 
-        name, 
-        description, 
-        nodes: [], 
-        edges: [] 
+      .insert({
+        workspace_id: workspaceId,
+        created_by: u.user.id,
+        name,
+        description,
+        nodes: [],
+        edges: [],
       })
       .select()
       .single();
@@ -76,8 +76,14 @@ export const agentGraphService = {
     return data as unknown as AgentGraph;
   },
 
-  async updateGraph(id: string, patch: Partial<Pick<AgentGraph, 'name' | 'description' | 'nodes' | 'edges' | 'entry_node_id'>>): Promise<void> {
-    const { error } = await supabase.from('agent_graphs').update(patch as Record<string, unknown>).eq('id', id);
+  async updateGraph(
+    id: string,
+    patch: Partial<Pick<AgentGraph, 'name' | 'description' | 'nodes' | 'edges' | 'entry_node_id'>>,
+  ): Promise<void> {
+    const { error } = await supabase
+      .from('agent_graphs')
+      .update(patch as never)
+      .eq('id', id);
     if (error) throw error;
   },
 
@@ -86,8 +92,18 @@ export const agentGraphService = {
     if (error) throw error;
   },
 
-  async executeGraph(graphId: string, input: string): Promise<{ execution_id: string; final_output: string; steps: number; total_cost_cents: number }> {
-    const { data, error } = await supabase.functions.invoke('graph-execute', { body: { graph_id: graphId, input } });
+  async executeGraph(
+    graphId: string,
+    input: string,
+  ): Promise<{
+    execution_id: string;
+    final_output: string;
+    steps: number;
+    total_cost_cents: number;
+  }> {
+    const { data, error } = await supabase.functions.invoke('graph-execute', {
+      body: { graph_id: graphId, input },
+    });
     if (error) throw error;
     return data;
   },
@@ -104,7 +120,11 @@ export const agentGraphService = {
   },
 
   async getExecution(id: string): Promise<GraphExecution> {
-    const { data, error } = await supabase.from('graph_executions').select('*').eq('id', id).single();
+    const { data, error } = await supabase
+      .from('graph_executions')
+      .select('*')
+      .eq('id', id)
+      .single();
     if (error) throw error;
     return data as unknown as GraphExecution;
   },

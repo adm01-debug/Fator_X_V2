@@ -5,7 +5,7 @@ CREATE TYPE public.asset_classification AS ENUM ('public','internal','confidenti
 CREATE TYPE public.asset_status AS ENUM ('active','maintenance','decommissioned','lost');
 
 -- Assets table
-CREATE TABLE public.assets (
+CREATE TABLE IF NOT EXISTS public.assets (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -43,7 +43,7 @@ CREATE INDEX idx_assets_classification ON public.assets(classification);
 CREATE INDEX idx_assets_warranty ON public.assets(warranty_until) WHERE warranty_until IS NOT NULL;
 
 -- Asset audits
-CREATE TABLE public.asset_audits (
+CREATE TABLE IF NOT EXISTS public.asset_audits (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   asset_id UUID NOT NULL REFERENCES public.assets(id) ON DELETE CASCADE,
   audited_by UUID NOT NULL,

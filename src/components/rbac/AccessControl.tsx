@@ -15,8 +15,8 @@
  *   </AccessControl>
  */
 
-import { toast } from "sonner";
-import type { ReactNode } from 'react';
+import { forwardRef, type ReactNode } from 'react';
+import { toast } from 'sonner';
 
 import { useRBAC } from '@/hooks/useRBAC';
 import type { PermissionKey } from '@/services/rbacService';
@@ -34,20 +34,15 @@ interface AccessControlProps {
   showLoading?: boolean;
 }
 
-export function AccessControl({
-  permission,
-  mode = 'any',
-  children,
-  fallback = null,
-  showLoading = false,
-}: AccessControlProps) {
+export const AccessControl = forwardRef<HTMLDivElement, AccessControlProps>(function AccessControl(
+  { permission, mode = 'any', children, fallback = null, showLoading = false },
+  ref,
+) {
   const { can, loading } = useRBAC();
 
   if (loading) {
     if (showLoading) {
-      return (
-        <div className="animate-pulse bg-card rounded-lg h-8 w-24" />
-      );
+      return <div ref={ref} className="animate-pulse bg-card rounded-lg h-8 w-24" />;
     }
     return null;
   }
@@ -57,7 +52,7 @@ export function AccessControl({
   }
 
   return <>{fallback}</>;
-}
+});
 
 /**
  * Hook version for programmatic checks in event handlers.
@@ -68,26 +63,28 @@ export function AccessControl({
  *     await deleteAgent(id);
  *   });
  */
-// eslint-disable-next-line react-refresh/only-export-components -- imported via rbac/index
+
 export function useAccessGuard() {
   const { can } = useRBAC();
 
-
-  return { 
-    guardAction: (permission: PermissionKey | PermissionKey[], action: () => void | Promise<void>, onDenied?: () => void) => {
+  return {
+    guardAction: (
+      permission: PermissionKey | PermissionKey[],
+      action: () => void | Promise<void>,
+      onDenied?: () => void,
+    ) => {
       return async () => {
         if (can(permission)) {
           await action();
         } else {
-          toast.error("Acesso Negado", { 
-            description: "Você não tem permissão para realizar esta ação.",
-            icon: "🔒"
+          toast.error('Acesso Negado', {
+            description: 'Você não tem permissão para realizar esta ação.',
+            icon: '🔒',
           });
           onDenied?.();
         }
       };
-    }, 
-    can 
+    },
+    can,
   };
 }
-

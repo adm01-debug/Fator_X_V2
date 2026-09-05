@@ -13,8 +13,24 @@
 import { supabase } from '@/integrations/supabase/client';
 import { fromTable } from '@/lib/supabaseExtended';
 
-export type { ExecutionType, ExecutionStatus, ExecutionRecord, ExecutionStepRecord, ExecutionFilter, ExecutionComparison, ExecutionTimeline } from './types/executionHistoryTypes';
-import type { ExecutionType, ExecutionStatus, ExecutionRecord, ExecutionStepRecord, ExecutionFilter, ExecutionComparison, ExecutionTimeline } from './types/executionHistoryTypes';
+export type {
+  ExecutionType,
+  ExecutionStatus,
+  ExecutionRecord,
+  ExecutionStepRecord,
+  ExecutionFilter,
+  ExecutionComparison,
+  ExecutionTimeline,
+} from './types/executionHistoryTypes';
+import type {
+  ExecutionType,
+  ExecutionStatus,
+  ExecutionRecord,
+  ExecutionStepRecord,
+  ExecutionFilter,
+  ExecutionComparison,
+  ExecutionTimeline,
+} from './types/executionHistoryTypes';
 
 /* ------------------------------------------------------------------ */
 /*  Recording                                                          */
@@ -38,7 +54,7 @@ export async function startExecution(
       source_name: sourceName,
       status: 'running',
       trigger,
-      input_data: inputData as unknown,
+      input_data: inputData,
       steps: [],
       tokens_used: 0,
       cost_brl: 0,
@@ -108,10 +124,7 @@ export async function failExecution(
   if (error) throw error;
 }
 
-export async function recordStep(
-  executionId: string,
-  step: ExecutionStepRecord,
-): Promise<void> {
+export async function recordStep(executionId: string, step: ExecutionStepRecord): Promise<void> {
   const { data: existing, error: fetchError } = await fromTable('execution_history')
     .select('steps')
     .eq('id', executionId)
@@ -120,9 +133,7 @@ export async function recordStep(
 
   const steps = [...((existing?.steps as unknown as ExecutionStepRecord[]) ?? []), step];
 
-  const { error } = await fromTable('execution_history')
-    .update({ steps: steps as unknown })
-    .eq('id', executionId);
+  const { error } = await fromTable('execution_history').update({ steps }).eq('id', executionId);
   if (error) throw error;
 }
 
@@ -196,10 +207,7 @@ export async function replayExecution(
 /*  Comparison                                                         */
 /* ------------------------------------------------------------------ */
 
-export function compareExecutions(
-  a: ExecutionRecord,
-  b: ExecutionRecord,
-): ExecutionComparison {
+export function compareExecutions(a: ExecutionRecord, b: ExecutionRecord): ExecutionComparison {
   const aDuration = a.duration_ms ?? 0;
   const bDuration = b.duration_ms ?? 0;
   const durationDiff = bDuration - aDuration;
@@ -233,9 +241,7 @@ export function compareExecutions(
 /*  Timeline & Analytics                                               */
 /* ------------------------------------------------------------------ */
 
-export async function getExecutionTimeline(
-  hours: number = 24,
-): Promise<ExecutionTimeline[]> {
+export async function getExecutionTimeline(hours: number = 24): Promise<ExecutionTimeline[]> {
   const since = new Date();
   since.setHours(since.getHours() - hours);
 
@@ -244,7 +250,10 @@ export async function getExecutionTimeline(
     .gte('started_at', since.toISOString());
   if (error) throw error;
 
-  const buckets = new Map<string, { total: number; success: number; failed: number; durations: number[] }>();
+  const buckets = new Map<
+    string,
+    { total: number; success: number; failed: number; durations: number[] }
+  >();
 
   for (const item of data ?? []) {
     const hour = new Date(item.started_at).toISOString().substring(0, 13) + ':00';
@@ -266,15 +275,11 @@ export async function getExecutionTimeline(
       success: b.success,
       failed: b.failed,
       avg_duration_ms:
-        b.durations.length > 0
-          ? b.durations.reduce((a, v) => a + v, 0) / b.durations.length
-          : 0,
+        b.durations.length > 0 ? b.durations.reduce((a, v) => a + v, 0) / b.durations.length : 0,
     }));
 }
 
-export async function getExecutionStats(
-  timeframeHours: number = 24,
-): Promise<{
+export async function getExecutionStats(timeframeHours: number = 24): Promise<{
   total: number;
   success: number;
   failed: number;
@@ -293,14 +298,14 @@ export async function getExecutionStats(
     .gte('started_at', since.toISOString());
   if (error) throw error;
 
-  type StatsRow = {
-    status: ExecutionStatus;
-    execution_type: ExecutionType;
+  type StatRow = {
+    status: string;
+    execution_type: string;
     duration_ms: number | null;
     tokens_used: number | null;
     cost_brl: number | null;
   };
-  const items = (data ?? []) as StatsRow[];
+  const items = (data ?? []) as StatRow[];
   const success = items.filter((i) => i.status === 'success');
   const failed = items.filter((i) => i.status === 'failed');
   const running = items.filter((i) => i.status === 'running');
@@ -312,16 +317,16 @@ export async function getExecutionStats(
     byType[t] = (byType[t] ?? 0) + 1;
   }
 
-
   return {
     total: items.length,
     success: success.length,
     failed: failed.length,
     running: running.length,
     success_rate: items.length > 0 ? (success.length / items.length) * 100 : 0,
-    avg_duration_ms: durations.length > 0 ? durations.reduce((a, b) => a + b, 0) / durations.length : 0,
-    total_tokens: items.reduce((s: number, i) => s + (i.tokens_used ?? 0), 0),
-    total_cost_brl: items.reduce((s: number, i) => s + (i.cost_brl ?? 0), 0),
+    avg_duration_ms:
+      durations.length > 0 ? durations.reduce((a, b) => a + b, 0) / durations.length : 0,
+    total_tokens: items.reduce((s, i) => s + (i.tokens_used ?? 0), 0),
+    total_cost_brl: items.reduce((s, i) => s + (i.cost_brl ?? 0), 0),
     by_type: byType,
   };
 }
@@ -330,9 +335,7 @@ export async function getExecutionStats(
 /*  Cleanup                                                            */
 /* ------------------------------------------------------------------ */
 
-export async function purgeOldExecutions(
-  olderThanDays: number = 30,
-): Promise<number> {
+export async function purgeOldExecutions(olderThanDays: number = 30): Promise<number> {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - olderThanDays);
 

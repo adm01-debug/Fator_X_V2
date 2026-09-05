@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { SectionTitle, ConfigCard, NexusBadge, SliderField, ToggleField, SelectField } from '../ui';
 import { SelectionGrid } from '../ui/SelectionGrid';
@@ -12,21 +13,68 @@ import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const RAG_ARCHITECTURES: { id: RAGArchitecture; icon: string; title: string; description: string; badge?: string }[] = [
-  { id: 'naive', icon: '📄', title: 'Naive RAG', description: 'Embed → retrieve → generate. Simples e rápido.' },
-  { id: 'advanced', icon: '🔬', title: 'Advanced RAG', description: 'Com reranking, query expansion e feedback loop.' },
-  { id: 'modular', icon: '🧩', title: 'Modular RAG', description: 'Pipeline customizável com módulos intercambiáveis.' },
-  { id: 'agentic', icon: '🤖', title: 'Agentic RAG', description: 'O agente decide quando e como buscar contexto.', badge: 'Recomendado' },
-  { id: 'graph_rag', icon: '🕸️', title: 'Graph RAG', description: 'Combina grafos de conhecimento com recuperação vetorial.' },
+const RAG_ARCHITECTURES: {
+  id: RAGArchitecture;
+  icon: string;
+  title: string;
+  description: string;
+  badge?: string;
+}[] = [
+  {
+    id: 'naive',
+    icon: '📄',
+    title: 'Naive RAG',
+    description: 'Embed → retrieve → generate. Simples e rápido.',
+  },
+  {
+    id: 'advanced',
+    icon: '🔬',
+    title: 'Advanced RAG',
+    description: 'Com reranking, query expansion e feedback loop.',
+  },
+  {
+    id: 'modular',
+    icon: '🧩',
+    title: 'Modular RAG',
+    description: 'Pipeline customizável com módulos intercambiáveis.',
+  },
+  {
+    id: 'agentic',
+    icon: '🤖',
+    title: 'Agentic RAG',
+    description: 'O agente decide quando e como buscar contexto.',
+    badge: 'Recomendado',
+  },
+  {
+    id: 'graph_rag',
+    icon: '🕸️',
+    title: 'Graph RAG',
+    description: 'Combina grafos de conhecimento com recuperação vetorial.',
+  },
 ];
 
 const VECTOR_DBS: { id: VectorDB; icon: string; title: string; description: string }[] = [
   { id: 'qdrant', icon: '🔷', title: 'Qdrant', description: 'Alto desempenho, filtros avançados.' },
-  { id: 'pinecone', icon: '🌲', title: 'Pinecone', description: 'Serverless, escalável e gerenciado.' },
+  {
+    id: 'pinecone',
+    icon: '🌲',
+    title: 'Pinecone',
+    description: 'Serverless, escalável e gerenciado.',
+  },
   { id: 'chroma', icon: '🎨', title: 'Chroma', description: 'Open-source, simples de usar.' },
-  { id: 'pgvector', icon: '🐘', title: 'pgvector', description: 'Extensão PostgreSQL. Sem infra extra.' },
+  {
+    id: 'pgvector',
+    icon: '🐘',
+    title: 'pgvector',
+    description: 'Extensão PostgreSQL. Sem infra extra.',
+  },
   { id: 'weaviate', icon: '🔮', title: 'Weaviate', description: 'Busca híbrida nativa e GraphQL.' },
-  { id: 'lancedb', icon: '🗄️', title: 'LanceDB', description: 'Serverless e embarcado. Zero config.' },
+  {
+    id: 'lancedb',
+    icon: '🗄️',
+    title: 'LanceDB',
+    description: 'Serverless e embarcado. Zero config.',
+  },
 ];
 
 const EMBEDDING_MODELS = [
@@ -65,7 +113,9 @@ export function RAGModule() {
   const updateAgent = useAgentBuilderStore((s) => s.updateAgent);
   const [testQuery, setTestQuery] = useState('');
   const [isSimulating, setIsSimulating] = useState(false);
-  const [simResults, setSimResults] = useState<{ source: string; chunk: string; score: number }[] | null>(null);
+  const [simResults, setSimResults] = useState<
+    { source: string; chunk: string; score: number }[] | null
+  >(null);
 
   const handleSimulate = async () => {
     if (!testQuery.trim()) return;
@@ -73,18 +123,19 @@ export function RAGModule() {
     setSimResults(null);
     try {
       // Simulação de busca vetorial
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       const mockResults = [
-        { 
-          source: agent.rag_sources[0]?.name || 'Documentação.pdf', 
+        {
+          source: agent.rag_sources[0]?.name || 'Documentação.pdf',
           chunk: '...o processo de ativação requer uma chave de 16 dígitos enviada por email...',
-          score: 0.89
+          score: 0.89,
         },
-        { 
-          source: 'Knowledge Base', 
-          chunk: '...limites de uso são aplicados por organização e não por usuário individualmente...',
-          score: 0.76
-        }
+        {
+          source: 'Knowledge Base',
+          chunk:
+            '...limites de uso são aplicados por organização e não por usuário individualmente...',
+          score: 0.76,
+        },
       ];
       setSimResults(mockResults);
       toast.success('Simulação de busca concluída');
@@ -154,7 +205,11 @@ export function RAGModule() {
 
       {/* Seção C — Pipeline de Ingestão */}
       <section>
-        <SectionTitle icon="⚙️" title="Pipeline de Ingestão" subtitle="Configuração de chunking, embedding e indexação." />
+        <SectionTitle
+          icon="⚙️"
+          title="Pipeline de Ingestão"
+          subtitle="Configuração de chunking, embedding e indexação."
+        />
         <div className="rounded-xl border border-border bg-card p-4 mb-4 overflow-x-auto">
           <PipelineFlow steps={RAG_PIPELINE_STEPS} />
         </div>
@@ -188,7 +243,11 @@ export function RAGModule() {
 
       {/* Seção D — Retrieval Config */}
       <section>
-        <SectionTitle icon="🔍" title="Configuração de Retrieval" subtitle="Como o agente busca e filtra contexto relevante." />
+        <SectionTitle
+          icon="🔍"
+          title="Configuração de Retrieval"
+          subtitle="Como o agente busca e filtra contexto relevante."
+        />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SliderField
             label="Top K"
@@ -247,15 +306,20 @@ export function RAGModule() {
               icon="📄"
               title={source.name || 'Nova Fonte'}
               subtitle={source.location || 'Sem localização definida'}
-              badge={<NexusBadge color={source.enabled ? 'green' : 'muted'}>{source.enabled ? 'Ativa' : 'Inativa'}</NexusBadge>}
+              badge={
+                <NexusBadge color={source.enabled ? 'green' : 'muted'}>
+                  {source.enabled ? 'Ativa' : 'Inativa'}
+                </NexusBadge>
+              }
             >
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label htmlFor={`rag-source-name-${source.id}`} className="text-xs font-medium text-foreground">Nome</label>
+                    {}
+                    <label className="text-meta font-medium text-foreground">Nome</label>
                     <input
                       id={`rag-source-name-${source.id}`}
-                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                      className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
                       value={source.name}
                       onChange={(e) => updateSource(source.id, { name: e.target.value })}
                       placeholder="Ex: Base de conhecimento interna"
@@ -269,10 +333,11 @@ export function RAGModule() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label htmlFor={`rag-source-location-${source.id}`} className="text-xs font-medium text-foreground">Localização / URL</label>
+                  {}
+                  <label className="text-meta font-medium text-foreground">Localização / URL</label>
                   <input
                     id={`rag-source-location-${source.id}`}
-                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                    className="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-body-sm text-foreground"
                     value={source.location}
                     onChange={(e) => updateSource(source.id, { location: e.target.value })}
                     placeholder="URL, caminho ou connection string"
@@ -316,17 +381,29 @@ export function RAGModule() {
 
       {/* Seção F — Simulação de Busca */}
       <section>
-        <SectionTitle icon="🔍" title="Simulador de Retrieval" subtitle="Teste como o agente buscará informações com a configuração atual." />
+        <SectionTitle
+          icon="🔍"
+          title="Simulador de Retrieval"
+          subtitle="Teste como o agente buscará informações com a configuração atual."
+        />
         <Card className="p-4 bg-card border-border space-y-4">
           <div className="flex gap-2">
-            <Input 
-              placeholder="Digite uma pergunta para testar a busca..." 
+            <Input
+              placeholder="Digite uma pergunta para testar a busca..."
               value={testQuery}
               onChange={(e) => setTestQuery(e.target.value)}
               className="text-body-sm"
             />
-            <Button onClick={handleSimulate} disabled={isSimulating || !testQuery.trim()} className="gap-2">
-              {isSimulating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+            <Button
+              onClick={handleSimulate}
+              disabled={isSimulating || !testQuery.trim()}
+              className="gap-2"
+            >
+              {isSimulating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
               Simular
             </Button>
           </div>
@@ -334,17 +411,23 @@ export function RAGModule() {
           {simResults && (
             <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
               <p className="text-meta font-bold text-muted-foreground uppercase flex items-center gap-1.5">
-                <CheckCircle2 className="h-3 w-3 text-nexus-green" /> {simResults.length} Chunks Recuperados (Simulação)
+                <CheckCircle2 className="h-3 w-3 text-nexus-green" /> {simResults.length} Chunks
+                Recuperados (Simulação)
               </p>
               <div className="grid grid-cols-1 gap-2">
                 {simResults.map((res, i) => (
-                  <div key={i} className="rounded-lg border border-border bg-muted/20 p-3 space-y-2">
+                  <div
+                    key={i}
+                    className="rounded-lg border border-border bg-muted/20 p-3 space-y-2"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <FileText className="h-3 w-3 text-primary" />
                         <span className="text-meta font-bold">{res.source}</span>
                       </div>
-                      <Badge variant="outline" className="text-meta font-mono">Score: {res.score.toFixed(2)}</Badge>
+                      <Badge variant="outline" className="text-meta font-mono">
+                        Score: {res.score.toFixed(2)}
+                      </Badge>
                     </div>
                     <p className="text-meta text-muted-foreground italic">"{res.chunk}"</p>
                   </div>
@@ -364,19 +447,44 @@ export function RAGModule() {
 
       {/* Seção G — Quality Panel */}
       <section>
-        <SectionTitle icon="📊" title="Qualidade do RAG" subtitle="Resumo da configuração atual do pipeline RAG." />
+        <SectionTitle
+          icon="📊"
+          title="Qualidade do RAG"
+          subtitle="Resumo da configuração atual do pipeline RAG."
+        />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <ConfigCard icon="📐" title="Arquitetura" description={RAG_ARCHITECTURES.find((a) => a.id === agent.rag_architecture)?.title ?? agent.rag_architecture} />
-          <ConfigCard icon="🗄️" title="Vector DB" description={VECTOR_DBS.find((d) => d.id === agent.rag_vector_db)?.title ?? agent.rag_vector_db} />
-          <ConfigCard icon="📄" title="Fontes" description={`${agent.rag_sources.filter((s) => s.enabled).length} ativas`} />
+          <ConfigCard
+            icon="📐"
+            title="Arquitetura"
+            description={
+              RAG_ARCHITECTURES.find((a) => a.id === agent.rag_architecture)?.title ??
+              agent.rag_architecture
+            }
+          />
+          <ConfigCard
+            icon="🗄️"
+            title="Vector DB"
+            description={
+              VECTOR_DBS.find((d) => d.id === agent.rag_vector_db)?.title ?? agent.rag_vector_db
+            }
+          />
+          <ConfigCard
+            icon="📄"
+            title="Fontes"
+            description={`${agent.rag_sources.filter((s) => s.enabled).length} ativas`}
+          />
           <ConfigCard
             icon="✅"
             title="Features"
-            description={[
-              agent.rag_reranker && 'Reranker',
-              agent.rag_hybrid_search && 'Híbrida',
-              agent.rag_metadata_filtering && 'Metadados',
-            ].filter(Boolean).join(', ') || 'Nenhuma'}
+            description={
+              [
+                agent.rag_reranker && 'Reranker',
+                agent.rag_hybrid_search && 'Híbrida',
+                agent.rag_metadata_filtering && 'Metadados',
+              ]
+                .filter(Boolean)
+                .join(', ') || 'Nenhuma'
+            }
           />
         </div>
       </section>

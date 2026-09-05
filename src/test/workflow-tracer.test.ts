@@ -10,32 +10,31 @@
  * Mocks supabase.functions.invoke so the engine path can be controlled.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
+/**
+ * O mock anterior era raso (`insert` devolvia `this`, sem `upsert`/`in`), então
+ * o tracer podia gravar spans errados — ou nenhum — sem que o teste notasse.
+ * Agora usamos o mock compartilhado com `setInvokeImpl`, que permite controlar
+ * a resposta da engine chamada por chamada (sucesso, erro, sequência).
+ */
+const supabaseMock = getSharedSupabaseMock('workflow-tracer');
 const mockInvoke = vi.fn();
+supabaseMock.setInvokeImpl((name, opts) => mockInvoke(name, opts));
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    functions: { invoke: (...args: DbRow[]) => mockInvoke(...args) },
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  },
-}));
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('workflow-tracer').client };
+});
 
-vi.mock('@/lib/supabaseExtended', () => ({
-  fromTable: vi.fn(() => ({
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    order: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data: null, error: null }),
-  })),
-}));
+vi.mock('@/lib/supabaseExtended', async () => {
+  const m = await import('./utils/supabaseMock');
+  const mock = m.getSharedSupabaseMock('workflow-tracer');
+  return {
+    fromTable: (t: string) => (mock.client.from as (x: string) => unknown)(t),
+    rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
+  };
+});
 
 vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
@@ -52,11 +51,8 @@ vi.mock('@/lib/tracing', async () => {
     // Wrap withTrace to also push the resulting trace into capturedTraces
     withTrace: async <T>(
       name: string,
-      fn: (
-        addSpan: (s: DbRow) => void,
-        ctx: import('@/lib/tracing').TraceContext
-      ) => Promise<T>,
-      options: import('@/lib/tracing').TraceOptions = {}
+      fn: (addSpan: (s: DbRow) => void, ctx: import('@/lib/tracing').TraceContext) => Promise<T>,
+      options: import('@/lib/tracing').TraceOptions = {},
     ) => {
       const ctx = actual.startTrace({ ...options, rootName: name });
       try {
@@ -105,9 +101,8 @@ describe('executeWorkflow — tracer instrumentation', () => {
   });
 
   it('engine path returns the steps_executed and cost from the engine', async () => {
-    // workflow-engine-v2 returns camelCase `stepsExecuted` and `cost`.
     mockInvoke.mockResolvedValue({
-      data: { status: 'completed', stepsExecuted: 7, cost: 0.42 },
+      data: { status: 'completed', steps_executed: 7, total_cost_usd: 0.42 },
       error: null,
     });
     const result = await executeWorkflow('wf-3', 'EngineReturn', ['a', 'b']);
@@ -125,12 +120,21 @@ describe('executeWorkflow — tracer instrumentation', () => {
       }
       // each fallback llm-gateway call succeeds
       return {
-        data: { content: `step output ${calls}`, cost_usd: 0.01, input_tokens: 100, output_tokens: 50 },
+        data: {
+          content: `step output ${calls}`,
+          cost_usd: 0.01,
+          input_tokens: 100,
+          output_tokens: 50,
+        },
         error: null,
       };
     });
 
-    const result = await executeWorkflow('wf-4', 'FallbackFlow', ['parser', 'enricher', 'reporter']);
+    const result = await executeWorkflow('wf-4', 'FallbackFlow', [
+      'parser',
+      'enricher',
+      'reporter',
+    ]);
 
     const trace = capturedTraces[0] as { spans: Array<{ name: string; kind: string }> };
     const stepSpans = trace.spans.filter((s) => s.name.startsWith('workflow.step.'));
@@ -140,7 +144,7 @@ describe('executeWorkflow — tracer instrumentation', () => {
       'workflow.step.enricher',
       'workflow.step.reporter',
     ]);
-    expect(stepSpans.every((s) => s.kind === 'llm')).toBe(true);
+    expect(stepSpans.every((s) => s.kind === 'agent')).toBe(true);
 
     expect(result.stepsExecuted).toBe(3);
     expect(result.cost).toBeCloseTo(0.03, 5); // 3 × 0.01

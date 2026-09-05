@@ -1,9 +1,15 @@
 // Sprint 33: Incident Orchestrator — executes playbook actions sequentially
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
-import { z } from "https://esm.sh/zod@3.23.8";
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
+import { z } from 'https://esm.sh/zod@3.23.8';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+} from '../_shared/mod.ts';
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
 type Action = {
   type: 'notify' | 'disable_chaos' | 'pause_agent' | 'switch_provider' | 'page_oncall';
   config?: Record<string, unknown>;
@@ -21,15 +27,18 @@ Deno.serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+  if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
+  try {
     const raw = await req.json().catch(() => null);
     const parsed = InputSchema.safeParse(raw);
     if (!parsed.success) {
-      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten() }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({ error: 'Payload inválido', details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
     }
     const { playbook_id, trigger_event, triggered_by } = parsed.data;
-
 
     const supabase = createClient(
       requireEnv('SUPABASE_URL'),
@@ -50,7 +59,11 @@ Deno.serve(async (req) => {
     }
 
     // Load playbook
-    const { data: pb } = await supabase.from('incident_playbooks').select('*').eq('id', playbook_id).single();
+    const { data: pb } = await supabase
+      .from('incident_playbooks')
+      .select('*')
+      .eq('id', playbook_id)
+      .single();
     if (!pb) throw new Error('playbook not found');
 
     const actions: Action[] = pb.actions || [];
@@ -78,17 +91,28 @@ Deno.serve(async (req) => {
           }
           case 'pause_agent': {
             const agentId = action.config?.agent_id as string | undefined;
-            const query = supabase.from('agents').update({ status: 'paused' }).eq('workspace_id', pb.workspace_id);
-            const { data, error } = agentId ? await query.eq('id', agentId).select('id') : await query.eq('status', 'active').select('id');
+            const query = supabase
+              .from('agents')
+              .update({ status: 'paused' })
+              .eq('workspace_id', pb.workspace_id);
+            const { data, error } = agentId
+              ? await query.eq('id', agentId).select('id')
+              : await query.eq('status', 'active').select('id');
             if (error) throw error;
             outcome = { ok: true, paused_count: data?.length ?? 0 };
             break;
           }
           case 'switch_provider':
-            outcome = { ok: true, switched_to: action.config?.provider ?? 'fallback', note: 'logged for manual config' };
+            outcome = {
+              ok: true,
+              switched_to: action.config?.provider ?? 'fallback',
+              note: 'logged for manual config',
+            };
             break;
           case 'page_oncall': {
-            const { data } = await supabase.rpc('get_current_oncall', { p_workspace_id: pb.workspace_id });
+            const { data } = await supabase.rpc('get_current_oncall', {
+              p_workspace_id: pb.workspace_id,
+            });
             outcome = { ok: true, paged: data ?? [] };
             break;
           }
@@ -96,10 +120,23 @@ Deno.serve(async (req) => {
             outcome = { ok: false, error: `unknown action type: ${action.type}` };
             overallStatus = 'partial';
         }
-        results.push({ idx, type: action.type, started_at: startedAt, ended_at: new Date().toISOString(), ...outcome });
+        results.push({
+          idx,
+          type: action.type,
+          started_at: startedAt,
+          ended_at: new Date().toISOString(),
+          ...outcome,
+        });
       } catch (e) {
         overallStatus = 'partial';
-        results.push({ idx, type: action.type, started_at: startedAt, ended_at: new Date().toISOString(), ok: false, error: String(e) });
+        results.push({
+          idx,
+          type: action.type,
+          started_at: startedAt,
+          ended_at: new Date().toISOString(),
+          ok: false,
+          error: String(e),
+        });
       }
     }
 

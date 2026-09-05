@@ -84,6 +84,7 @@ CREATE POLICY "workflow_steps_all" ON public.workflow_steps FOR ALL TO authentic
 -- === workflow_runs (nested via workflows) ===
 DROP POLICY IF EXISTS "Members can manage workflow runs" ON public.workflow_runs;
 DROP POLICY IF EXISTS "Members can view workflow runs" ON public.workflow_runs;
+DROP POLICY IF EXISTS "workflow_runs_all" ON public.workflow_runs;
 CREATE POLICY "workflow_runs_all" ON public.workflow_runs FOR ALL TO authenticated
   USING (workflow_id IN (SELECT w.id FROM workflows w WHERE w.workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))))
   WITH CHECK (workflow_id IN (SELECT w.id FROM workflows w WHERE w.workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))));
@@ -121,6 +122,7 @@ CREATE POLICY "test_cases_all" ON public.test_cases FOR ALL TO authenticated
 -- === deploy_connections ===
 DROP POLICY IF EXISTS "Members can manage deploy connections" ON public.deploy_connections;
 DROP POLICY IF EXISTS "Members can view deploy connections" ON public.deploy_connections;
+DROP POLICY IF EXISTS "deploy_connections_all" ON public.deploy_connections;
 CREATE POLICY "deploy_connections_all" ON public.deploy_connections FOR ALL TO authenticated
   USING (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())))
   WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())));

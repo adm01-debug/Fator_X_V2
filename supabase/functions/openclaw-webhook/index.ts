@@ -13,18 +13,53 @@
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { handleCorsPreflight, getCorsHeaders } from '../_shared/cors.ts';
-import { verifyHmacSignature, constantTimeEqual } from '../_shared/security.ts';
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier } from '../_shared/rate-limiter.ts';
+import { verifyHmacSignature } from '../_shared/security.ts';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+} from '../_shared/rate-limiter.ts';
+import { OpenclawWebhookContracts } from '../_shared/contracts.ts';
+
+/** Format Zod validation issues into the unified 422 body. */
+function formatZodError(issues: { path: (string | number)[]; message: string; code: string }[]): {
+  error: string;
+  code: string;
+  message: string;
+  fields: { field: string; message: string; code: string }[];
+} {
+  return {
+    error: 'Validation failed',
+    code: 'VALIDATION_ERROR',
+    message: 'The request payload is invalid.',
+    fields: issues.map((i) => ({
+      field: i.path.join('.') || '(root)',
+      message: i.message,
+      code: i.code,
+    })),
+  };
+}
 
 const WEBHOOK_LIMIT = { windowMs: 60_000, maxRequests: 300, name: 'openclaw-webhook' };
 
-async function emitEvent(supabase: ReturnType<typeof createClient>, kind: string, level: 'info'|'warn'|'error', payload: Record<string, unknown>, workspaceId?: string | null) {
+async function emitEvent(
+  supabase: ReturnType<typeof createClient>,
+  kind: string,
+  level: 'info' | 'warn' | 'error',
+  payload: Record<string, unknown>,
+  workspaceId?: string | null,
+) {
   try {
     await supabase.from('openclaw_events').insert({
       workspace_id: workspaceId ?? null,
-      kind, level, source: 'webhook', payload,
+      kind,
+      level,
+      source: 'webhook',
+      payload,
     });
-  } catch { /* best-effort */ }
+  } catch {
+    /* best-effort */
+  }
 }
 
 const MAX_BODY = 1024 * 1024; // 1MB
@@ -53,14 +88,16 @@ Deno.serve(async (req) => {
   const signature = req.headers.get('x-openclaw-signature') ?? '';
   if (!signature) return json(401, { error: 'missing_signature' });
 
-  // Replay protection: header x-openclaw-timestamp (unix ms), janela ±5min
-  const tsHeader = req.headers.get('x-openclaw-timestamp') ?? '';
+  // Replay protection: x-openclaw-timestamp (unix ms) is MANDATORY, window ±5min.
+  // Omitting the timestamp header is rejected to prevent replay attacks.
+  const tsHeader = req.headers.get('x-openclaw-timestamp');
+  if (!tsHeader) {
+    return json(401, { error: 'missing_timestamp' });
+  }
   const REPLAY_WINDOW_MS = 5 * 60 * 1000;
-  if (tsHeader) {
-    const ts = Number(tsHeader);
-    if (!Number.isFinite(ts) || Math.abs(Date.now() - ts) > REPLAY_WINDOW_MS) {
-      return json(401, { error: 'stale_or_invalid_timestamp' });
-    }
+  const ts = Number(tsHeader);
+  if (!Number.isFinite(ts) || Math.abs(Date.now() - ts) > REPLAY_WINDOW_MS) {
+    return json(401, { error: 'stale_or_invalid_timestamp' });
   }
 
   const supabaseAudit = createClient(
@@ -70,35 +107,25 @@ Deno.serve(async (req) => {
   );
 
   // Assinatura cobre timestamp+body para prevenir replay com body reutilizado
-  const signedPayload = tsHeader ? `${tsHeader}.${rawBody}` : rawBody;
+  const signedPayload = `${tsHeader}.${rawBody}`;
   const valid = await verifyHmacSignature(signedPayload, signature, secret);
   if (!valid) {
     await emitEvent(supabaseAudit, 'hmac_invalid', 'warn', { ip: getRateLimitIdentifier(req) });
     return json(401, { error: 'invalid_signature' });
   }
 
-  let payload: {
-    event_id?: string;
-    type?: string;
-    workspace_id?: string;
-    instance_name?: string;
-    data?: Record<string, unknown>;
-  };
+  let rawPayload: unknown;
   try {
-    payload = JSON.parse(rawBody);
+    rawPayload = JSON.parse(rawBody);
   } catch {
     return json(400, { error: 'invalid_json' });
   }
 
-  const { event_id, type, workspace_id, instance_name, data } = payload;
-  if (!event_id || !type || !workspace_id) {
-    return json(400, { error: 'missing_required_fields' });
+  const validation = OpenclawWebhookContracts.v2.safeParse(rawPayload);
+  if (!validation.success) {
+    return json(422, formatZodError(validation.error.issues));
   }
-
-  // Guard extra contra falsificação de tipos primitivos
-  if (typeof event_id !== 'string' || !constantTimeEqual(event_id.slice(0, 3), event_id.slice(0, 3))) {
-    return json(400, { error: 'invalid_event_id' });
-  }
+  const { event_id, type, workspace_id, instance_name, data } = validation.data;
 
   const supabase = supabaseAudit;
 
@@ -111,7 +138,7 @@ Deno.serve(async (req) => {
       external_event_id: event_id,
       method: 'POST',
       headers: {},
-      body: payload as unknown as Record<string, unknown>,
+      body: rawPayload as unknown as Record<string, unknown>,
       status: 'received',
       response_code: 200,
     })
@@ -122,10 +149,22 @@ Deno.serve(async (req) => {
     // Código 23505 = unique_violation → duplicata legítima
     const code = (insertErr as { code?: string }).code;
     if (code === '23505') {
-      await emitEvent(supabase, 'webhook_deduped', 'info', { event_id, source: 'openclaw' }, workspace_id);
+      await emitEvent(
+        supabase,
+        'webhook_deduped',
+        'info',
+        { event_id, source: 'openclaw' },
+        workspace_id,
+      );
       return json(200, { ok: true, deduped: true });
     }
-    await emitEvent(supabase, 'webhook_persist_error', 'error', { event_id, message: insertErr.message }, workspace_id);
+    await emitEvent(
+      supabase,
+      'webhook_persist_error',
+      'error',
+      { event_id, message: insertErr.message },
+      workspace_id,
+    );
     return json(500, { error: 'persist_failed' });
   }
   if (!inserted) {

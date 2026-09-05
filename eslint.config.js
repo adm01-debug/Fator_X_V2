@@ -57,7 +57,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["supabase/functions/**/*.ts", "src/lib/logger.ts", "src/test/**/*.test.tsx"],
+    files: ["supabase/functions/**/*.ts", "src/lib/logger.ts", "src/test/**/*.test.tsx", "scripts/**/*.ts"],
     rules: {
       "no-console": "off",
     },

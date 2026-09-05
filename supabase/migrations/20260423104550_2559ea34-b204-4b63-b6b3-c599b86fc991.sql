@@ -1,4 +1,4 @@
-CREATE TABLE public.user_filter_preferences (
+CREATE TABLE IF NOT EXISTS public.user_filter_preferences (
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   scope TEXT NOT NULL,
   filters JSONB NOT NULL DEFAULT '{}'::jsonb,

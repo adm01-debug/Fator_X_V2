@@ -1,10 +1,15 @@
-import { useMemo, useState } from "react";
-import { LightAreaChart, LightBarChart, ComparisonToggle, generateComparisonData } from "@/components/charts";
-import { format, subDays, eachDayOfInterval } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
-import { TooltipExtraSection } from "@/components/charts/types";
+import { useMemo, useState } from 'react';
+import {
+  LightAreaChart,
+  LightBarChart,
+  ComparisonToggle,
+  generateComparisonData,
+} from '@/components/charts';
+import { format, subDays, eachDayOfInterval } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
+import { TooltipExtraSection } from '@/components/charts/types';
 import type { DbRow } from '@/types/dbRow';
 
 interface UsageRow {
@@ -22,19 +27,30 @@ interface UsageChartsProps {
 }
 
 function buildDailyMap(data: UsageRow[]) {
-  const map = new Map<string, {
-    requests: number;
-    tokensIn: number;
-    tokensOut: number;
-    cost: number;
-    latency: number;
-    latencyCount: number;
-    errors: number;
-  }>();
+  const map = new Map<
+    string,
+    {
+      requests: number;
+      tokensIn: number;
+      tokensOut: number;
+      cost: number;
+      latency: number;
+      latencyCount: number;
+      errors: number;
+    }
+  >();
 
   for (const row of data) {
     const key = row.date;
-    const existing = map.get(key) ?? { requests: 0, tokensIn: 0, tokensOut: 0, cost: 0, latency: 0, latencyCount: 0, errors: 0 };
+    const existing = map.get(key) ?? {
+      requests: 0,
+      tokensIn: 0,
+      tokensOut: 0,
+      cost: 0,
+      latency: 0,
+      latencyCount: 0,
+      errors: 0,
+    };
     existing.requests += row.requests ?? 0;
     existing.tokensIn += row.tokens_input ?? 0;
     existing.tokensOut += row.tokens_output ?? 0;
@@ -50,17 +66,6 @@ function buildDailyMap(data: UsageRow[]) {
   return map;
 }
 
-interface ChartPoint {
-  date: string;
-  label: string;
-  requests: number;
-  tokensIn: number;
-  tokensOut: number;
-  cost: number;
-  latency: number;
-  errors: number;
-}
-
 export function UsageCharts({ data }: UsageChartsProps) {
   const navigate = useNavigate();
   const [compareRequests, setCompareRequests] = useState(false);
@@ -73,11 +78,11 @@ export function UsageCharts({ data }: UsageChartsProps) {
     const map = buildDailyMap(data);
 
     return days.map((d) => {
-      const key = format(d, "yyyy-MM-dd");
+      const key = format(d, 'yyyy-MM-dd');
       const entry = map.get(key);
       return {
         date: key,
-        label: format(d, "dd MMM", { locale: ptBR }),
+        label: format(d, 'dd MMM', { locale: ptBR }),
         requests: entry?.requests ?? 0,
         tokensIn: entry?.tokensIn ?? 0,
         tokensOut: entry?.tokensOut ?? 0,
@@ -90,49 +95,60 @@ export function UsageCharts({ data }: UsageChartsProps) {
 
   // Comparison data: shift 15 days back
   const requestsData = useMemo(
-    () => compareRequests ? generateComparisonData(chartData, ['requests'], 15) : chartData,
-    [chartData, compareRequests]
+    () => (compareRequests ? generateComparisonData(chartData, ['requests'], 15) : chartData),
+    [chartData, compareRequests],
   );
 
   const costData = useMemo(
-    () => compareCost ? generateComparisonData(chartData, ['cost'], 15) : chartData,
-    [chartData, compareCost]
+    () => (compareCost ? generateComparisonData(chartData, ['cost'], 15) : chartData),
+    [chartData, compareCost],
   );
 
   // Auto-detect peak day for annotation
   const peakRequestIdx = useMemo(() => {
-    let maxIdx = 0, maxVal = 0;
+    let maxIdx = 0,
+      maxVal = 0;
     chartData.forEach((d, i) => {
-      if (d.requests > maxVal) { maxVal = d.requests; maxIdx = i; }
+      if (d.requests > maxVal) {
+        maxVal = d.requests;
+        maxIdx = i;
+      }
     });
     return maxVal > 0 ? maxIdx : -1;
   }, [chartData]);
 
   const peakCostIdx = useMemo(() => {
-    let maxIdx = 0, maxVal = 0;
+    let maxIdx = 0,
+      maxVal = 0;
     chartData.forEach((d, i) => {
-      if (d.cost > maxVal) { maxVal = d.cost; maxIdx = i; }
+      if (d.cost > maxVal) {
+        maxVal = d.cost;
+        maxIdx = i;
+      }
     });
     return maxVal > 0 ? maxIdx : -1;
   }, [chartData]);
 
-  const hasData = data.length > 0 && chartData.some(d => d.requests > 0 || d.cost > 0);
+  const hasData = data.length > 0 && chartData.some((d) => d.requests > 0 || d.cost > 0);
 
   if (!hasData) {
     return (
       <div className="grid gap-4 lg:grid-cols-2">
-        {['Requests & Erros', 'Custo USD', 'Latência média', 'Tokens'].map(title => (
+        {['Requests & Erros', 'Custo USD', 'Latência média', 'Tokens'].map((title) => (
           <div key={title} className="nexus-card">
             <h3 className="text-title-sm text-foreground mb-4">
               {title} <span className="text-muted-foreground font-normal">(30 dias)</span>
             </h3>
             <div className="flex flex-col items-center justify-center h-[220px] text-center">
               <div className="h-12 w-12 rounded-xl bg-muted/20 flex items-center justify-center mb-3">
-                <span className="text-2xl opacity-40" aria-hidden="true">📊</span>
+                <span className="text-2xl opacity-40" aria-hidden="true">
+                  📊
+                </span>
               </div>
               <p className="text-body-sm text-muted-foreground">Sem dados neste período</p>
-              <p className="text-meta text-muted-foreground/60 mt-1">Os dados aparecerão quando seus agentes processarem requisições</p>
-
+              <p className="text-meta text-muted-foreground/60 mt-1">
+                Os dados aparecerão quando seus agentes processarem requisições
+              </p>
             </div>
           </div>
         ))}
@@ -140,22 +156,24 @@ export function UsageCharts({ data }: UsageChartsProps) {
     );
   }
 
-  const handleDrilldown = (d: ChartPoint) => {
-    const from = new Date(d.date);
+  const handleDrilldown = (raw: DbRow) => {
+    const d = (raw ?? {}) as { date?: string };
+    const from = new Date(d.date ?? '');
     from.setHours(0, 0, 0, 0);
     const to = new Date(d.date ?? '');
     to.setHours(23, 59, 59, 999);
     navigate(`/traces?from=${from.toISOString()}&to=${to.toISOString()}`);
   };
 
-  const drilldownExtras = (d: ChartPoint) => {
+  const drilldownExtras = (raw: DbRow) => {
+    const d = (raw ?? {}) as { requests?: number; errors?: number; cost?: number };
     const sections: TooltipExtraSection[] = [];
     if ((d.requests ?? 0) > 0 || (d.errors ?? 0) > 0 || (d.cost ?? 0) > 0) {
       sections.push({
-        title: "Ações Rápidas",
+        title: 'Ações Rápidas',
         rows: [
-          { label: "Ver Traces", value: "Clique para inspecionar", color: "hsl(var(--primary))" }
-        ]
+          { label: 'Ver Traces', value: 'Clique para inspecionar', color: 'hsl(var(--primary))' },
+        ],
       });
     }
     return sections;
@@ -170,9 +188,15 @@ export function UsageCharts({ data }: UsageChartsProps) {
             <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
               Requests &amp; Erros
             </h3>
-            <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Neural Load Tracking</p>
+            <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">
+              Neural Load Tracking
+            </p>
           </div>
-          <ComparisonToggle enabled={compareRequests} onToggle={setCompareRequests} label="vs anterior" />
+          <ComparisonToggle
+            enabled={compareRequests}
+            onToggle={setCompareRequests}
+            label="vs anterior"
+          />
         </div>
         <LightAreaChart
           data={requestsData}
@@ -183,9 +207,31 @@ export function UsageCharts({ data }: UsageChartsProps) {
           onPointClick={handleDrilldown}
           tooltipExtras={drilldownExtras}
           series={[
-            { dataKey: "requests", name: "Requests", stroke: "hsl(var(--primary))", gradientFrom: "hsl(var(--primary))", strokeWidth: 3 },
-            { dataKey: "errors", name: "Erros", stroke: "#f43f5e", gradientFrom: "#f43f5e", strokeWidth: 2 },
-            ...(compareRequests ? [{ dataKey: "prev_requests", name: "Anterior", stroke: "hsl(var(--muted-foreground))", gradientFrom: "hsl(var(--muted-foreground))", strokeWidth: 1.5 }] : []),
+            {
+              dataKey: 'requests',
+              name: 'Requests',
+              stroke: 'hsl(var(--primary))',
+              gradientFrom: 'hsl(var(--primary))',
+              strokeWidth: 3,
+            },
+            {
+              dataKey: 'errors',
+              name: 'Erros',
+              stroke: '#f43f5e',
+              gradientFrom: '#f43f5e',
+              strokeWidth: 2,
+            },
+            ...(compareRequests
+              ? [
+                  {
+                    dataKey: 'prev_requests',
+                    name: 'Anterior',
+                    stroke: 'hsl(var(--muted-foreground))',
+                    gradientFrom: 'hsl(var(--muted-foreground))',
+                    strokeWidth: 1.5,
+                  },
+                ]
+              : []),
           ]}
         />
         {peakRequestIdx >= 0 && (
@@ -194,7 +240,12 @@ export function UsageCharts({ data }: UsageChartsProps) {
               <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
               Pico: {chartData[peakRequestIdx]?.label}
             </p>
-            <Badge variant="outline" className="text-meta font-black border-primary/20 text-primary">{chartData[peakRequestIdx]?.requests} Req</Badge>
+            <Badge
+              variant="outline"
+              className="text-meta font-black border-primary/20 text-primary"
+            >
+              {chartData[peakRequestIdx]?.requests} Req
+            </Badge>
           </div>
         )}
       </div>
@@ -206,7 +257,9 @@ export function UsageCharts({ data }: UsageChartsProps) {
             <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
               Cloud Cost USD
             </h3>
-            <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Budget Utilization</p>
+            <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">
+              Budget Utilization
+            </p>
           </div>
           <ComparisonToggle enabled={compareCost} onToggle={setCompareCost} label="vs anterior" />
         </div>
@@ -220,8 +273,17 @@ export function UsageCharts({ data }: UsageChartsProps) {
           showLegend={compareCost}
           onBarClick={handleDrilldown}
           series={[
-            { dataKey: "cost", name: "Custo", color: "hsl(var(--primary))", radius: 6 },
-            ...(compareCost ? [{ dataKey: "prev_cost", name: "Anterior", color: "hsl(var(--muted-foreground))", radius: 6 }] : []),
+            { dataKey: 'cost', name: 'Custo', color: 'hsl(var(--primary))', radius: 6 },
+            ...(compareCost
+              ? [
+                  {
+                    dataKey: 'prev_cost',
+                    name: 'Anterior',
+                    color: 'hsl(var(--muted-foreground))',
+                    radius: 6,
+                  },
+                ]
+              : []),
           ]}
         />
         {peakCostIdx >= 0 && (
@@ -230,7 +292,12 @@ export function UsageCharts({ data }: UsageChartsProps) {
               <span className="h-2 w-2 rounded-full bg-nexus-amber shadow-[0_0_8px_rgba(var(--nexus-amber),0.5)]" />
               Pico: {chartData[peakCostIdx]?.label}
             </p>
-            <Badge variant="outline" className="text-meta font-black border-nexus-amber/20 text-nexus-amber">${chartData[peakCostIdx]?.cost}</Badge>
+            <Badge
+              variant="outline"
+              className="text-meta font-black border-nexus-amber/20 text-nexus-amber"
+            >
+              ${chartData[peakCostIdx]?.cost}
+            </Badge>
           </div>
         )}
       </div>
@@ -241,7 +308,9 @@ export function UsageCharts({ data }: UsageChartsProps) {
           <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
             Latência Média
           </h3>
-          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Cognitive Delay ms</p>
+          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">
+            Cognitive Delay ms
+          </p>
         </div>
         <LightAreaChart
           data={chartData}
@@ -253,7 +322,13 @@ export function UsageCharts({ data }: UsageChartsProps) {
           onPointClick={handleDrilldown}
           tooltipExtras={drilldownExtras}
           series={[
-            { dataKey: "latency", name: "Latência", stroke: "#f59e0b", gradientFrom: "#f59e0b", strokeWidth: 3 },
+            {
+              dataKey: 'latency',
+              name: 'Latência',
+              stroke: '#f59e0b',
+              gradientFrom: '#f59e0b',
+              strokeWidth: 3,
+            },
           ]}
         />
       </div>
@@ -264,19 +339,33 @@ export function UsageCharts({ data }: UsageChartsProps) {
           <h3 className="text-title-sm font-black text-foreground uppercase tracking-tight">
             Vazão de Tokens
           </h3>
-          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">Neural Processing Units</p>
+          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest">
+            Neural Processing Units
+          </p>
         </div>
         <LightBarChart
           data={chartData}
           xKey="label"
           height={240}
           margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
-          yFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)}
+          yFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v))}
           showLegend
           onBarClick={handleDrilldown}
           series={[
-            { dataKey: "tokensIn", name: "Input", color: "hsl(var(--primary))", radius: 6, stackId: "tokens" },
-            { dataKey: "tokensOut", name: "Output", color: "#8b5cf6", radius: 6, stackId: "tokens" },
+            {
+              dataKey: 'tokensIn',
+              name: 'Input',
+              color: 'hsl(var(--primary))',
+              radius: 6,
+              stackId: 'tokens',
+            },
+            {
+              dataKey: 'tokensOut',
+              name: 'Output',
+              color: '#8b5cf6',
+              radius: 6,
+              stackId: 'tokens',
+            },
           ]}
         />
       </div>

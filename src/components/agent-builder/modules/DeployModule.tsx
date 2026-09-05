@@ -1,8 +1,26 @@
 import { useState } from 'react';
 import { fromTable } from '@/lib/supabaseExtended';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
+import type { AgentConfig } from '@/types/agentTypes';
 import { SectionTitle, NexusBadge, ToggleField } from '../ui';
-import { Globe, MessageSquare, Mail, Hash, Send, Radio, Sparkles, Activity, Map as MapIcon, BarChart3, Rocket, CheckCircle, ShieldCheck, AlertTriangle, Zap, Cloud } from 'lucide-react';
+import {
+  Globe,
+  MessageSquare,
+  Mail,
+  Hash,
+  Send,
+  Radio,
+  Sparkles,
+  Activity,
+  Map as MapIcon,
+  BarChart3,
+  Rocket,
+  CheckCircle,
+  ShieldCheck,
+  AlertTriangle,
+  Zap,
+  Cloud,
+} from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +28,11 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { getWorkspaceId } from '@/lib/agentService';
-import type { DeployChannelConfig, MonitoringKPI, DeployChannel, AgentLifecycleStage } from '@/types/agentTypes';
+import { compileAgentForOpenclaw } from '@/lib/openclawCompiler';
+import { publishAgentToOpenclaw } from '@/services/openclawDeployService';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
+import type { DeployChannelConfig, MonitoringKPI, DeployChannel } from '@/types/agentTypes';
 
 const ENVIRONMENT_OPTIONS = [
   {
@@ -176,7 +198,10 @@ export function DeployModule() {
         await fromTable('openclaw_deployments')
           .update({ status: 'failed', error: msg })
           .eq('id', deploymentId)
-          .then(() => undefined, () => undefined);
+          .then(
+            () => undefined,
+            () => undefined,
+          );
       }
       toast.error(msg);
     } finally {
@@ -241,10 +266,22 @@ export function DeployModule() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={channelTraffic} layout="vertical" margin={{ left: -20 }}>
                   <XAxis type="number" hide />
-                  <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} width={70} />
-                  <Tooltip 
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                    width={70}
+                  />
+                  <Tooltip
                     cursor={{ fill: 'transparent' }}
-                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '10px' }}
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      borderColor: 'hsl(var(--border))',
+                      borderRadius: '8px',
+                      fontSize: '10px',
+                    }}
                   />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={12}>
                     {channelTraffic.map((entry, index) => (
@@ -275,13 +312,18 @@ export function DeployModule() {
               <div className="pt-2">
                 <div className="flex items-center gap-2 mb-1">
                   <MapIcon className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-meta text-muted-foreground font-bold uppercase">Multi-Region Edge</span>
+                  <span className="text-meta text-muted-foreground font-bold uppercase">
+                    Multi-Region Edge
+                  </span>
                 </div>
                 <div className="flex gap-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald" title="US-East" />
                   <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald" title="EU-West" />
                   <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald" title="SA-East" />
-                  <div className="h-1.5 w-1.5 rounded-full bg-muted animate-pulse" title="AP-South" />
+                  <div
+                    className="h-1.5 w-1.5 rounded-full bg-muted animate-pulse"
+                    title="AP-South"
+                  />
                 </div>
               </div>
             </div>
@@ -460,7 +502,10 @@ export function DeployModule() {
             />
           </div>
           <div>
-            <label htmlFor="deploy-alert-pct" className="text-meta text-muted-foreground mb-1 block">
+            <label
+              htmlFor="deploy-alert-pct"
+              className="text-meta text-muted-foreground mb-1 block"
+            >
               Alerta em (%)
             </label>
             <input
@@ -494,33 +539,56 @@ export function DeployModule() {
             </div>
             <div>
               <h3 className="text-title-sm font-black text-foreground">Deploy Industrial Nexus</h3>
-              <p className="text-meta text-muted-foreground">Promova este agente através dos estágios de governança.</p>
+              <p className="text-meta text-muted-foreground">
+                Promova este agente através dos estágios de governança.
+              </p>
             </div>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
             <div className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {([
-                  { id: 'staging', label: 'Staging', desc: 'Ambiente de pré-produção controlado.', icon: <Activity className="h-4 w-4" /> },
-                  { id: 'production', label: 'Produção', desc: 'Deploy global em alta escala.', icon: <Globe className="h-4 w-4" /> },
-                ] as { id: AgentLifecycleStage; label: string; desc: string; icon: React.ReactNode }[]).map((env) => (
+                {[
+                  {
+                    id: 'staging',
+                    label: 'Staging',
+                    desc: 'Ambiente de pré-produção controlado.',
+                    icon: <Activity className="h-4 w-4" />,
+                  },
+                  {
+                    id: 'production',
+                    label: 'Produção',
+                    desc: 'Deploy global em alta escala.',
+                    icon: <Globe className="h-4 w-4" />,
+                  },
+                ].map((env) => (
                   <button
                     key={env.id}
-                    onClick={() => updateAgent({ status: env.id })}
+                    onClick={() => updateAgent({ status: env.id as AgentConfig['status'] })}
                     className={cn(
-                      "flex flex-col p-4 rounded-2xl border text-left transition-all duration-300",
-                      agent.status === env.id 
-                        ? "bg-background border-primary shadow-nexus-xl shadow-primary/10 scale-[1.02]" 
-                        : "bg-background/40 border-border/40 hover:border-primary/40"
+                      'flex flex-col p-4 rounded-2xl border text-left transition-all duration-300',
+                      agent.status === env.id
+                        ? 'bg-background border-primary shadow-nexus-xl shadow-primary/10 scale-[1.02]'
+                        : 'bg-background/40 border-border/40 hover:border-primary/40',
                     )}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <div className={cn("h-7 w-7 rounded-lg flex items-center justify-center", agent.status === env.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
+                      <div
+                        className={cn(
+                          'h-7 w-7 rounded-lg flex items-center justify-center',
+                          agent.status === env.id
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground',
+                        )}
+                      >
                         {env.icon}
                       </div>
                       <span className="text-body-sm font-bold">{env.label}</span>
-                      {agent.status === env.id && <Badge className="ml-auto bg-nexus-emerald text-white border-none text-[9px] font-black">ACTIVE</Badge>}
+                      {agent.status === env.id && (
+                        <Badge className="ml-auto bg-nexus-emerald text-white border-none text-[9px] font-black">
+                          ACTIVE
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-meta text-muted-foreground leading-relaxed">{env.desc}</p>
                   </button>
@@ -534,13 +602,26 @@ export function DeployModule() {
                 <div className="space-y-2">
                   {[
                     { label: 'Integridade de Configuração', ok: true },
-                    { label: 'Validação de Guardrails', ok: agent.guardrails.filter(g => g.enabled).length >= 3 },
+                    {
+                      label: 'Validação de Guardrails',
+                      ok: agent.guardrails.filter((g) => g.enabled).length >= 3,
+                    },
                     { label: 'Cobertura de Testes (CLEAR)', ok: agent.test_cases.length >= 3 },
-                    { label: 'Canais de Comunicação', ok: agent.deploy_channels.some(c => c.enabled) },
+                    {
+                      label: 'Canais de Comunicação',
+                      ok: agent.deploy_channels.some((c) => c.enabled),
+                    },
                   ].map((check, i) => (
-                    <div key={i} className="flex items-center justify-between p-2 rounded-xl bg-card/30 border border-border/20">
+                    <div
+                      key={i}
+                      className="flex items-center justify-between p-2 rounded-xl bg-card/30 border border-border/20"
+                    >
                       <span className="text-meta font-medium text-foreground">{check.label}</span>
-                      {check.ok ? <CheckCircle className="h-3.5 w-3.5 text-nexus-emerald" /> : <AlertTriangle className="h-3.5 w-3.5 text-nexus-amber" />}
+                      {check.ok ? (
+                        <CheckCircle className="h-3.5 w-3.5 text-nexus-emerald" />
+                      ) : (
+                        <AlertTriangle className="h-3.5 w-3.5 text-nexus-amber" />
+                      )}
                     </div>
                   ))}
                 </div>
@@ -553,20 +634,19 @@ export function DeployModule() {
               </div>
               <div>
                 <h4 className="text-title-sm font-black text-foreground">Snapshot & Deploy</h4>
-                <p className="text-meta text-muted-foreground max-w-[240px] mt-1">Gere um rastro imutável e promova as alterações para o cluster industrial.</p>
+                <p className="text-meta text-muted-foreground max-w-[240px] mt-1">
+                  Gere um rastro imutável e promova as alterações para o cluster industrial.
+                </p>
               </div>
-              <Button 
+              <Button
                 className="w-full h-12 rounded-2xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                 onClick={() => {
                   const target = agent.status === 'production' ? 'Produção' : 'Staging';
-                  toast.promise(
-                    new Promise((resolve) => setTimeout(resolve, 2000)),
-                    {
-                      loading: `Promovendo para ${target}...`,
-                      success: `Deploy em ${target} concluído com sucesso!`,
-                      error: 'Falha no deploy automático.',
-                    }
-                  );
+                  toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
+                    loading: `Promovendo para ${target}...`,
+                    success: `Deploy em ${target} concluído com sucesso!`,
+                    error: 'Falha no deploy automático.',
+                  });
                 }}
               >
                 Promover para {agent.status === 'production' ? 'Produção' : 'Staging'}

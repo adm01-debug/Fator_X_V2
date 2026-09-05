@@ -57,7 +57,6 @@ interface AgentBuilderStore {
   getEstimatedMonthlyCost: () => number;
 }
 
-
 let autoSaveTimer: number | undefined;
 
 export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
@@ -74,10 +73,11 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
 
   setPlaygroundSeed: (seed) => set({ playgroundSeed: seed }),
   clearPlaygroundSeed: () => set({ playgroundSeed: null }),
-  replayTrace: (trace) => set((s) => ({
-    playgroundSeed: { input: trace.user_input, traceId: trace.id },
-    playgroundOpenSignal: s.playgroundOpenSignal + 1,
-  })),
+  replayTrace: (trace) =>
+    set((s) => ({
+      playgroundSeed: { input: trace.user_input, traceId: trace.id },
+      playgroundOpenSignal: s.playgroundOpenSignal + 1,
+    })),
 
   setActiveTab: (tab) => set({ activeTab: tab }),
 
@@ -127,18 +127,22 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
 
   saveAgent: async (customSummary?: string, isDraft?: boolean) => {
     if (isDraft) {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         const { saveDraftVersion } = await import('@/services/agentDraftVersionsService');
-        saveDraftVersion({ 
-          agent: get().agent, 
+        saveDraftVersion({
+          agent: get().agent,
           label: `Rascunho Automático - ${new Date().toLocaleTimeString('pt-BR')}`,
-          note: 'Snapshot gerado via criação mágica ou blueprint.'
+          note: 'Snapshot gerado via criação mágica ou blueprint.',
         });
       }
     }
     set({ isSaving: true });
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       set({ isSaving: false });
       return;
@@ -161,11 +165,11 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
         if (current.version !== agent.version) {
           set({ isSaving: false });
           const overwrite = window.confirm(
-            `⚠️ Conflito de versão detectado!\n\nVocê está na versão ${agent.version}, mas o banco tem a versão ${current.version}.\nAlguém pode ter salvo mudanças depois de você.\n\nDeseja sobrescrever mesmo assim?`
+            `⚠️ Conflito de versão detectado!\n\nVocê está na versão ${agent.version}, mas o banco tem a versão ${current.version}.\nAlguém pode ter salvo mudanças depois de você.\n\nDeseja sobrescrever mesmo assim?`,
           );
           if (!overwrite) return;
         }
-        
+
         // Gera sumário automático se não houver customizado
         if (!customSummary) {
           const oldAgent = dbRowToAgent(current);
@@ -180,18 +184,21 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
         .from('agents')
         .update(row)
         .eq('id', agent.id as string);
-      
+
       // FIX P1-01: Audit update
       if (!e) {
-        supabaseExternal.from('audit_events').insert({
-          workspace_id: row.workspace_id,
-          user_id: user.id,
-          event_type: 'agent_updated',
-          resource_type: 'agent',
-          resource_id: agent.id,
-          action: 'update',
-          metadata: { version: row.version, summary: customSummary || autoSummary }
-        }).then(() => {});
+        supabaseExternal
+          .from('audit_events')
+          .insert({
+            workspace_id: row.workspace_id,
+            user_id: user.id,
+            event_type: 'agent_updated',
+            resource_type: 'agent',
+            resource_id: agent.id,
+            action: 'update',
+            metadata: { version: row.version, summary: customSummary || autoSummary },
+          })
+          .then(() => {});
       }
       error = e;
       if (!e) {
@@ -207,17 +214,20 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
       autoSummary = 'Criação inicial do agente';
       if (!e && data) {
         set((s) => ({ agent: { ...s.agent, id: data.id, workspace_id: data.workspace_id } }));
-        
+
         // FIX P1-01: Audit creation
-        supabaseExternal.from('audit_events').insert({
-          workspace_id: data.workspace_id,
-          user_id: user.id,
-          event_type: 'agent_created',
-          resource_type: 'agent',
-          resource_id: data.id,
-          action: 'create',
-          metadata: { name: agent.name }
-        }).then(() => {});
+        supabaseExternal
+          .from('audit_events')
+          .insert({
+            workspace_id: data.workspace_id,
+            user_id: user.id,
+            event_type: 'agent_created',
+            resource_type: 'agent',
+            resource_id: data.id,
+            action: 'create',
+            metadata: { name: agent.name },
+          })
+          .then(() => {});
       }
     }
 
@@ -235,28 +245,52 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
       // Sync tool_policies to DB (non-blocking)
       if (agentId && savedAgent.tools?.length > 0) {
         for (const tool of savedAgent.tools) {
-          supabaseExternal.from('tool_policies').upsert({
-            agent_id: agentId,
-            tool_integration_id: null,
-            is_allowed: tool.enabled,
-            max_calls_per_run: tool.max_calls_per_session,
-            requires_approval: tool.requires_approval,
-            config: { name: tool.name, category: tool.category, permission_level: tool.permission_level },
-          }, { onConflict: 'agent_id,tool_integration_id' }).then(() => {}, () => {});
+          supabaseExternal
+            .from('tool_policies')
+            .upsert(
+              {
+                agent_id: agentId,
+                tool_integration_id: null,
+                is_allowed: tool.enabled,
+                max_calls_per_run: tool.max_calls_per_session,
+                requires_approval: tool.requires_approval,
+                config: {
+                  name: tool.name,
+                  category: tool.category,
+                  permission_level: tool.permission_level,
+                },
+              },
+              { onConflict: 'agent_id,tool_integration_id' },
+            )
+            .then(
+              () => {},
+              () => {},
+            );
         }
       }
       // ═══ Auto-versioning: snapshot agent config on every save ═══
       if (agentId) {
-        supabaseExternal.from('agent_versions').insert({
-          agent_id: agentId,
-          version: savedAgent.version || 1,
-          config: row.config || {},
-          system_prompt: (row.config as Record<string, unknown>)?.system_prompt as string || '',
-          model: savedAgent.model,
-          created_by: user.id,
-          change_summary: customSummary || autoSummary || `Save at ${now}`,
-          environment: savedAgent.status === 'production' ? 'production' : savedAgent.status === 'staging' ? 'staging' : 'development',
-        }).then(() => {}, () => {}); // Ignore duplicate version errors
+        supabaseExternal
+          .from('agent_versions')
+          .insert({
+            agent_id: agentId,
+            version: savedAgent.version || 1,
+            config: row.config || {},
+            system_prompt: ((row.config as Record<string, unknown>)?.system_prompt as string) || '',
+            model: savedAgent.model,
+            created_by: user.id,
+            change_summary: customSummary || autoSummary || `Save at ${now}`,
+            environment:
+              savedAgent.status === 'production'
+                ? 'production'
+                : savedAgent.status === 'staging'
+                  ? 'staging'
+                  : 'development',
+          } as never)
+          .then(
+            () => {},
+            () => {},
+          ); // Ignore duplicate version errors
       }
     }
   },
@@ -272,27 +306,39 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
   },
 
   deleteAgent: async (id: string) => {
-    const agent = get().savedAgents.find(a => a.id === id);
+    const agent = get().savedAgents.find((a) => a.id === id);
     // Soft delete — preserva dados para auditoria
-    await supabaseExternal.from('agents').update({ status: 'archived' as const }).eq('id', id);
-    set((s) => ({ savedAgents: s.savedAgents.filter(a => a.id !== id) }));
+    await supabaseExternal
+      .from('agents')
+      .update({ status: 'archived' as const })
+      .eq('id', id);
+    set((s) => ({ savedAgents: s.savedAgents.filter((a) => a.id !== id) }));
     audit.agentDeleted(id, agent?.name ?? 'unknown');
   },
 
   duplicateAgent: () => {
     const { agent } = get();
     set({
-      agent: { ...agent, id: undefined, name: `${agent.name} (cópia)`, status: 'draft', version: 1 },
+      agent: {
+        ...agent,
+        id: undefined,
+        name: `${agent.name} (cópia)`,
+        status: 'draft',
+        version: 1,
+      },
       isDirty: true,
     });
   },
 
   savePromptVersion: async (summary: string) => {
     const { agent, promptVersions } = get();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user || !agent.id) return;
 
-    const newVersion = (promptVersions.length > 0 ? Math.max(...promptVersions.map(v => v.version)) : 0) + 1;
+    const newVersion =
+      (promptVersions.length > 0 ? Math.max(...promptVersions.map((v) => v.version)) : 0) + 1;
 
     // Deactivate old versions
     if (promptVersions.length > 0) {
@@ -326,7 +372,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
         created_at: data.created_at,
       };
       set({
-        promptVersions: [...promptVersions.map(v => ({ ...v, is_active: false })), pv],
+        promptVersions: [...promptVersions.map((v) => ({ ...v, is_active: false })), pv],
         agent: { ...agent, system_prompt_version: newVersion },
       });
     }
@@ -342,7 +388,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
       .order('version', { ascending: false });
     if (data) {
       set({
-        promptVersions: data.map(d => ({
+        promptVersions: data.map((d) => ({
           id: d.id,
           version: d.version,
           content: d.content,
@@ -357,20 +403,17 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
 
   activatePromptVersion: async (versionId: string) => {
     const { promptVersions, agent } = get();
-    const target = promptVersions.find(v => v.id === versionId);
+    const target = promptVersions.find((v) => v.id === versionId);
     if (!target || !agent.id) return;
 
     await supabaseExternal
       .from('prompt_versions')
       .update({ is_active: false })
       .eq('agent_id', agent.id);
-    await supabaseExternal
-      .from('prompt_versions')
-      .update({ is_active: true })
-      .eq('id', versionId);
+    await supabaseExternal.from('prompt_versions').update({ is_active: true }).eq('id', versionId);
 
     set({
-      promptVersions: promptVersions.map(v => ({ ...v, is_active: v.id === versionId })),
+      promptVersions: promptVersions.map((v) => ({ ...v, is_active: v.id === versionId })),
       agent: { ...agent, system_prompt: target.content, system_prompt_version: target.version },
       isDirty: true,
     });
@@ -378,15 +421,18 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
 
   rollbackToVersion: async (versionId: string) => {
     const { promptVersions, agent } = get();
-    const target = promptVersions.find(v => v.id === versionId);
+    const target = promptVersions.find((v) => v.id === versionId);
     if (!target || !agent.id) return;
 
     // A rollback in prompt versioning creates a NEW version with the old content
     // to maintain a clean linear audit trail.
-    const newVersion = (promptVersions.length > 0 ? Math.max(...promptVersions.map(v => v.version)) : 0) + 1;
+    const newVersion =
+      (promptVersions.length > 0 ? Math.max(...promptVersions.map((v) => v.version)) : 0) + 1;
     const summary = `Rollback para v${target.version} (${target.change_summary.slice(0, 30)}...)`;
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
 
     // Deactivate current
@@ -420,7 +466,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
         created_at: data.created_at,
       };
       set({
-        promptVersions: [...promptVersions.map(v => ({ ...v, is_active: false })), pv],
+        promptVersions: [...promptVersions.map((v) => ({ ...v, is_active: false })), pv],
         agent: { ...agent, system_prompt: target.content, system_prompt_version: newVersion },
         isDirty: false,
       });
@@ -440,8 +486,8 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
       a.memory_profile && 'Perfil',
       a.memory_shared && 'Organizacional',
     ].filter(Boolean);
-    const activeTools = a.tools.filter(t => t.enabled);
-    const activeGuardrails = a.guardrails.filter(g => g.enabled);
+    const activeTools = a.tools.filter((t) => t.enabled);
+    const activeGuardrails = a.guardrails.filter((g) => g.enabled);
 
     return [
       `# ${a.avatar_emoji} ${a.name}`,
@@ -454,7 +500,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
       `**Versão:** ${a.version}`,
       '',
       '## Memória',
-      memoryTypes.length > 0 ? memoryTypes.map(t => `- ${t}`).join('\n') : '- Nenhuma ativa',
+      memoryTypes.length > 0 ? memoryTypes.map((t) => `- ${t}`).join('\n') : '- Nenhuma ativa',
       '',
       '## RAG',
       `- Arquitetura: ${a.rag_architecture}`,
@@ -462,10 +508,12 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
       `- Fontes: ${a.rag_sources.length}`,
       '',
       '## Ferramentas',
-      activeTools.length > 0 ? activeTools.map(t => `- ${t.name}`).join('\n') : '- Nenhuma ativa',
+      activeTools.length > 0 ? activeTools.map((t) => `- ${t.name}`).join('\n') : '- Nenhuma ativa',
       '',
       '## Guardrails',
-      activeGuardrails.length > 0 ? activeGuardrails.map(g => `- ${g.name} (${g.severity})`).join('\n') : '- Nenhum ativo',
+      activeGuardrails.length > 0
+        ? activeGuardrails.map((g) => `- ${g.name} (${g.severity})`).join('\n')
+        : '- Nenhum ativo',
       '',
       '## System Prompt',
       '```',
@@ -474,7 +522,7 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
       '',
       '## Deploy',
       `- Ambiente: ${a.deploy_environment}`,
-      `- Canais: ${a.deploy_channels.filter(c => c.enabled).length}`,
+      `- Canais: ${a.deploy_channels.filter((c) => c.enabled).length}`,
       '',
     ].join('\n');
   },
@@ -488,10 +536,10 @@ export const useAgentBuilderStore = create<AgentBuilderStore>((set, get) => ({
       'gpt-4o': 60,
       'gemini-2.5-pro': 40,
       'llama-4': 20,
-      'custom': 50,
+      custom: 50,
     };
     const base = modelCosts[a.model] || 50;
-    const toolMultiplier = 1 + (a.tools.filter(t => t.enabled).length * 0.05);
+    const toolMultiplier = 1 + a.tools.filter((t) => t.enabled).length * 0.05;
     const ragMultiplier = a.rag_sources.length > 0 ? 1.2 : 1;
     return Math.round(base * toolMultiplier * ragMultiplier);
   },

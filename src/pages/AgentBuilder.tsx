@@ -7,24 +7,99 @@ import { Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Lazy-load modules for better code splitting
-const IdentityModule = lazy(() => import('@/components/agent-builder/modules/IdentityModule').then(m => ({ default: m.IdentityModule })));
-const BrainModule = lazy(() => import('@/components/agent-builder/modules/BrainModule').then(m => ({ default: m.BrainModule })));
-const MemoryModule = lazy(() => import('@/components/agent-builder/modules/MemoryModule').then(m => ({ default: m.MemoryModule })));
-const RAGModule = lazy(() => import('@/components/agent-builder/modules/RAGModule').then(m => ({ default: m.RAGModule })));
-const ToolsModule = lazy(() => import('@/components/agent-builder/modules/ToolsModule').then(m => ({ default: m.ToolsModule })));
-const PromptModule = lazy(() => import('@/components/agent-builder/modules/PromptModule').then(m => ({ default: m.PromptModule })));
-const OrchestrationModule = lazy(() => import('@/components/agent-builder/modules/OrchestrationModule').then(m => ({ default: m.OrchestrationModule })));
-const OrchestratorModule = lazy(() => import('@/components/agent-builder/modules/OrchestratorModule').then(m => ({ default: m.OrchestratorModule })));
-const GuardrailsModule = lazy(() => import('@/components/agent-builder/modules/GuardrailsModule').then(m => ({ default: m.GuardrailsModule })));
-const TestingModule = lazy(() => import('@/components/agent-builder/modules/TestingModule').then(m => ({ default: m.TestingModule })));
-const EvalsModule = lazy(() => import('@/components/agent-builder/modules/EvalsModule').then(m => ({ default: m.EvalsModule })));
-const ExperimentsModule = lazy(() => import('@/components/agent-builder/modules/ExperimentsModule').then(m => ({ default: m.ExperimentsModule })));
-const ObservabilityModule = lazy(() => import('@/components/agent-builder/modules/ObservabilityModule').then(m => ({ default: m.ObservabilityModule })));
-const DeployModule = lazy(() => import('@/components/agent-builder/modules/DeployModule').then(m => ({ default: m.DeployModule })));
-const BillingModule = lazy(() => import('@/components/agent-builder/modules/BillingModule').then(m => ({ default: m.BillingModule })));
-const ReadinessModule = lazy(() => import('@/components/agent-builder/modules/ReadinessModule').then(m => ({ default: m.ReadinessModule })));
-const BlueprintModule = lazy(() => import('@/components/agent-builder/modules/BlueprintModule').then(m => ({ default: m.BlueprintModule })));
-const SettingsModule = lazy(() => import('@/components/agent-builder/modules/SettingsModule').then(m => ({ default: m.SettingsModule })));
+const IdentityModule = lazy(() =>
+  import('@/components/agent-builder/modules/IdentityModule').then((m) => ({
+    default: m.IdentityModule,
+  })),
+);
+const BrainModule = lazy(() =>
+  import('@/components/agent-builder/modules/BrainModule').then((m) => ({
+    default: m.BrainModule,
+  })),
+);
+const MemoryModule = lazy(() =>
+  import('@/components/agent-builder/modules/MemoryModule').then((m) => ({
+    default: m.MemoryModule,
+  })),
+);
+const RAGModule = lazy(() =>
+  import('@/components/agent-builder/modules/RAGModule').then((m) => ({ default: m.RAGModule })),
+);
+const ToolsModule = lazy(() =>
+  import('@/components/agent-builder/modules/ToolsModule').then((m) => ({
+    default: m.ToolsModule,
+  })),
+);
+const SkillsModule = lazy(() =>
+  import('@/components/agent-builder/modules/SkillsModule').then((m) => ({
+    default: m.SkillsModule,
+  })),
+);
+const PromptModule = lazy(() =>
+  import('@/components/agent-builder/modules/PromptModule').then((m) => ({
+    default: m.PromptModule,
+  })),
+);
+const OrchestrationModule = lazy(() =>
+  import('@/components/agent-builder/modules/OrchestrationModule').then((m) => ({
+    default: m.OrchestrationModule,
+  })),
+);
+const OrchestratorModule = lazy(() =>
+  import('@/components/agent-builder/modules/OrchestratorModule').then((m) => ({
+    default: m.OrchestratorModule,
+  })),
+);
+const GuardrailsModule = lazy(() =>
+  import('@/components/agent-builder/modules/GuardrailsModule').then((m) => ({
+    default: m.GuardrailsModule,
+  })),
+);
+const TestingModule = lazy(() =>
+  import('@/components/agent-builder/modules/TestingModule').then((m) => ({
+    default: m.TestingModule,
+  })),
+);
+const EvalsModule = lazy(() =>
+  import('@/components/agent-builder/modules/EvalsModule').then((m) => ({
+    default: m.EvalsModule,
+  })),
+);
+const ExperimentsModule = lazy(() =>
+  import('@/components/agent-builder/modules/ExperimentsModule').then((m) => ({
+    default: m.ExperimentsModule,
+  })),
+);
+const ObservabilityModule = lazy(() =>
+  import('@/components/agent-builder/modules/ObservabilityModule').then((m) => ({
+    default: m.ObservabilityModule,
+  })),
+);
+const DeployModule = lazy(() =>
+  import('@/components/agent-builder/modules/DeployModule').then((m) => ({
+    default: m.DeployModule,
+  })),
+);
+const BillingModule = lazy(() =>
+  import('@/components/agent-builder/modules/BillingModule').then((m) => ({
+    default: m.BillingModule,
+  })),
+);
+const ReadinessModule = lazy(() =>
+  import('@/components/agent-builder/modules/ReadinessModule').then((m) => ({
+    default: m.ReadinessModule,
+  })),
+);
+const BlueprintModule = lazy(() =>
+  import('@/components/agent-builder/modules/BlueprintModule').then((m) => ({
+    default: m.BlueprintModule,
+  })),
+);
+const SettingsModule = lazy(() =>
+  import('@/components/agent-builder/modules/SettingsModule').then((m) => ({
+    default: m.SettingsModule,
+  })),
+);
 
 function ModuleSkeleton() {
   return (
@@ -46,6 +121,7 @@ const MODULE_MAP: Record<string, React.LazyExoticComponent<React.ComponentType>>
   memory: MemoryModule,
   rag: RAGModule,
   tools: ToolsModule,
+  skills: SkillsModule,
   prompt: PromptModule,
   orchestration: OrchestrationModule,
   orchestrator: OrchestratorModule,
@@ -68,7 +144,9 @@ function ActiveModule({ tabId }: { tabId: string }) {
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="text-5xl mb-4">🚧</div>
       <h2 className="text-title-sm font-semibold text-foreground mb-1">Módulo: {tabId}</h2>
-      <p className="text-body-sm text-muted-foreground">Este módulo será implementado nas próximas etapas.</p>
+      <p className="text-body-sm text-muted-foreground">
+        Este módulo será implementado nas próximas etapas.
+      </p>
     </div>
   );
 }
@@ -88,7 +166,8 @@ export default function AgentBuilder() {
     } else {
       resetAgent();
     }
-  }, [id, loadAgentFromDB, resetAgent]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+  }, [id]);
 
   // Suporte a deep-link via ?tab=prompt|tools|brain etc. — usado por atalhos
   // como "Editar prompt" / "Gerenciar tools" / "Ajustar modelo" no preview do

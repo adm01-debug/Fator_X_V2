@@ -3,7 +3,7 @@
 -- ============================================================
 
 -- 1. incident_playbooks
-CREATE TABLE public.incident_playbooks (
+CREATE TABLE IF NOT EXISTS public.incident_playbooks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -46,7 +46,7 @@ CREATE TRIGGER update_incident_playbooks_updated_at
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- 2. incident_runs
-CREATE TABLE public.incident_runs (
+CREATE TABLE IF NOT EXISTS public.incident_runs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   playbook_id UUID NOT NULL REFERENCES public.incident_playbooks(id) ON DELETE CASCADE,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
@@ -72,7 +72,7 @@ CREATE POLICY "Members view runs"
 -- INSERT/UPDATE only via security definer functions (no policies needed for service role / definer)
 
 -- 3. oncall_schedule
-CREATE TABLE public.oncall_schedule (
+CREATE TABLE IF NOT EXISTS public.oncall_schedule (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   user_id UUID NOT NULL,

@@ -1,3 +1,4 @@
+import { onActivateKey } from '@/lib/a11y';
 import { useNavigate } from 'react-router-dom';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { TABS } from '@/data/agentBuilderData';
@@ -6,17 +7,32 @@ import { TabNavigation } from './TabNavigation';
 import { ReadinessBadge } from './ReadinessBadge';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, Save, Plus, Loader2, History, Sparkles, FileClock, Bot } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Save,
+  Plus,
+  Loader2,
+  History,
+  Sparkles,
+  FileClock,
+  Bot,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { VersionDiffDialog } from '@/components/agents/VersionDiffDialog';
+import {
+  VersionDiffDialog,
+  type Version as VersionType,
+} from '@/components/agents/VersionDiffDialog';
 import { useAgentVersions } from '@/hooks/useAgentVersions';
 import { ConversationalBuilder } from './ConversationalBuilder';
 import { DraftVersionsDialog } from './DraftVersionsDialog';
 import { listDraftVersions } from '@/services/agentDraftVersionsService';
 import { cn } from '@/lib/utils';
-import { handleKeyboardClick } from "@/lib/a11y";
 
-const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+const STATUS_LABELS: Record<
+  string,
+  { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }
+> = {
   draft: { label: 'Rascunho', variant: 'secondary' },
   configured: { label: 'Configurado', variant: 'outline' },
   testing: { label: 'Testando', variant: 'outline' },
@@ -34,8 +50,17 @@ interface AgentBuilderLayoutProps {
 
 export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
   const navigate = useNavigate();
-  const { agent, activeTab, isDirty, isSaving, lastSaved, saveAgent, resetAgent, nextTab, prevTab } =
-    useAgentBuilderStore();
+  const {
+    agent,
+    activeTab,
+    isDirty,
+    isSaving,
+    lastSaved,
+    saveAgent,
+    resetAgent,
+    nextTab,
+    prevTab,
+  } = useAgentBuilderStore();
   const [historyOpen, setHistoryOpen] = useState(false);
   const [convOpen, setConvOpen] = useState(false);
   const [draftsOpen, setDraftsOpen] = useState(false);
@@ -67,14 +92,9 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
             role="button"
             tabIndex={0}
             onClick={() => navigate('/agents')}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                navigate('/agents');
-              }
-            }}
+            onKeyDown={onActivateKey(() => navigate('/agents'))}
           >
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/10">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-nexus-lg shadow-primary/10">
               <Bot className="h-6 w-6 text-primary" />
             </div>
             <div className="flex flex-col">
@@ -86,7 +106,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
               </span>
             </div>
           </div>
-          
+
           <div className="hidden lg:flex items-center gap-4 pl-4 border-l border-border/40">
             {agent.name && (
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-secondary/30 border border-border/20 max-w-[200px]">
@@ -94,7 +114,10 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
                 <span className="text-meta font-bold text-foreground truncate">{agent.name}</span>
               </div>
             )}
-            <Badge variant={statusInfo.variant} className="text-meta font-black uppercase tracking-widest px-2.5 py-0.5 border-none shadow-nexus-sm">
+            <Badge
+              variant={statusInfo.variant}
+              className="text-meta font-black uppercase tracking-widest px-2.5 py-0.5 border-none shadow-nexus-sm"
+            >
               {statusInfo.label}
             </Badge>
             <ReadinessBadge />
@@ -107,12 +130,16 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
             {isSaving ? (
               <div className="flex items-center gap-2 animate-in fade-in zoom-in duration-300">
                 <Loader2 className="h-3 w-3 animate-spin text-primary" />
-                <span className="text-meta font-bold text-primary uppercase tracking-tighter">Sincronizando...</span>
+                <span className="text-meta font-bold text-primary uppercase tracking-tighter">
+                  Sincronizando...
+                </span>
               </div>
             ) : lastSaved ? (
               <div className="flex items-center gap-2 animate-in fade-in zoom-in duration-300">
                 <div className="h-1.5 w-1.5 rounded-full bg-nexus-emerald shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                <span className="text-meta font-bold text-muted-foreground uppercase tracking-tighter">Salvo {lastSaved}</span>
+                <span className="text-meta font-bold text-muted-foreground uppercase tracking-tighter">
+                  Salvo {lastSaved}
+                </span>
               </div>
             ) : null}
           </div>
@@ -124,8 +151,10 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
               onClick={() => saveAgent()}
               disabled={!isDirty || isSaving}
               className={cn(
-                "h-9 px-4 rounded-xl font-bold text-meta gap-2 transition-all duration-300",
-                isDirty ? "bg-primary text-primary-foreground shadow-nexus-lg shadow-primary/20 hover:scale-105" : "text-muted-foreground"
+                'h-9 px-4 rounded-xl font-bold text-meta gap-2 transition-all duration-300',
+                isDirty
+                  ? 'bg-primary text-primary-foreground shadow-nexus-lg shadow-primary/20 hover:scale-105'
+                  : 'text-muted-foreground',
               )}
             >
               <Save className="h-4 w-4" />
@@ -153,7 +182,9 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
               <FileClock className="h-4 w-4" />
               <span className="hidden xl:inline">Drafts</span>
               {draftsCount > 0 && (
-                <Badge className="h-4 min-w-[16px] px-1 bg-primary/20 text-primary border-none text-[9px] font-black">{draftsCount}</Badge>
+                <Badge className="h-4 min-w-[16px] px-1 bg-primary/20 text-primary border-none text-[9px] font-black">
+                  {draftsCount}
+                </Badge>
               )}
             </Button>
 
@@ -166,7 +197,9 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
               >
                 <History className="h-4 w-4" />
                 <span className="hidden xl:inline">Versões</span>
-                <Badge className="h-4 min-w-[16px] px-1 bg-muted text-muted-foreground border-none text-[9px] font-black">{versions.length}</Badge>
+                <Badge className="h-4 min-w-[16px] px-1 bg-muted text-muted-foreground border-none text-[9px] font-black">
+                  {versions.length}
+                </Badge>
               </Button>
             )}
 
@@ -192,7 +225,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
       <main className="flex-1 overflow-y-auto bg-gradient-to-b from-secondary/5 to-background">
         <div className="max-w-[1200px] mx-auto px-6 py-8 sm:px-8 sm:py-10">
           <div className="bg-card/30 border border-border/40 p-8 rounded-[2.5rem] shadow-nexus-sm relative overflow-hidden group/content">
-             {/* Background glow for the content area */}
+            {/* Background glow for the content area */}
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
             {children}
           </div>
@@ -200,9 +233,7 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
       </main>
 
       {/* ═══ FOOTER DE ORQUESTRAÇÃO ═══ */}
-      <footer
-        className="shrink-0 px-8 py-4 flex items-center justify-between border-t border-border/40 bg-card/80 backdrop-blur-lg relative z-30"
-      >
+      <footer className="shrink-0 px-8 py-4 flex items-center justify-between border-t border-border/40 bg-card/80 backdrop-blur-lg relative z-30">
         <div className="flex items-center gap-4">
           <Button
             variant="outline"
@@ -214,24 +245,32 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
             <ChevronLeft className="h-5 w-5 mr-2" />
             Anterior
           </Button>
-          
+
           <div className="hidden sm:flex items-center gap-1">
             {TABS.map((_, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={cn(
-                  "h-1.5 rounded-full transition-all duration-300",
-                  i === currentIndex ? "w-8 bg-primary" : i < currentIndex ? "w-2 bg-primary/40" : "w-2 bg-border"
-                )} 
+                  'h-1.5 rounded-full transition-all duration-300',
+                  i === currentIndex
+                    ? 'w-8 bg-primary'
+                    : i < currentIndex
+                      ? 'w-2 bg-primary/40'
+                      : 'w-2 bg-border',
+                )}
               />
             ))}
           </div>
         </div>
 
         <div className="flex flex-col items-center">
-          <span className="text-meta font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-0.5">Módulo</span>
+          <span className="text-meta font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-0.5">
+            Módulo
+          </span>
           <span className="text-body-sm font-bold text-foreground font-mono">
-            {String(currentIndex + 1).padStart(2, '0')} <span className="text-muted-foreground mx-1">/</span> {String(TABS.length).padStart(2, '0')}
+            {String(currentIndex + 1).padStart(2, '0')}{' '}
+            <span className="text-muted-foreground mx-1">/</span>{' '}
+            {String(TABS.length).padStart(2, '0')}
           </span>
         </div>
 
@@ -245,13 +284,13 @@ export function AgentBuilderLayout({ children }: AgentBuilderLayoutProps) {
           <ChevronRight className="h-5 w-5 ml-2" />
         </Button>
       </footer>
-      
+
       {/* ═══ OVERLAYS ═══ */}
       <AgentPlayground />
       <VersionDiffDialog
         open={historyOpen}
         onOpenChange={setHistoryOpen}
-        versions={versions as unknown as React.ComponentProps<typeof VersionDiffDialog>['versions']}
+        versions={versions as unknown as VersionType[]}
         agentId={agent.id as string | undefined}
       />
       <ConversationalBuilder open={convOpen} onOpenChange={setConvOpen} />

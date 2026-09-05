@@ -4,11 +4,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 
-export type { OracleMode, OraclePreset, ModelResponse, ConsensusPoint, Citation, OracleResult } from './types/oracleTypes';
+export type {
+  OracleMode,
+  OraclePreset,
+  ModelResponse,
+  ConsensusPoint,
+  Citation,
+  OracleResult,
+} from './types/oracleTypes';
 import type { OracleMode, OracleResult } from './types/oracleTypes';
 export { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
 import { ORACLE_MODES, ORACLE_PRESETS } from './presets/oraclePresets';
-import type { DbRow } from '@/types/dbRow';
 
 interface OracleStore {
   query: string;
@@ -92,39 +98,49 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
   },
 
   replayEntry: async (entry: OracleResult) => {
-    set({ isRunning: true, isReplaying: true, currentStage: 1, stageLabel: 'Iniciando Replay...', results: null, error: null });
-    
+    set({
+      isRunning: true,
+      isReplaying: true,
+      currentStage: 1,
+      stageLabel: 'Iniciando Replay...',
+      results: null,
+      error: null,
+    });
+
     // Simulate Stage 1
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
     set({ currentStage: 1, stageLabel: 'Replay: Coletando opiniões...' });
-    
-    const results: Partial<OracleResult> & { stage1_results: OracleResult['stage1_results'] } = { stage1_results: [], metrics: entry.metrics };
+
+    const results: Record<string, unknown> & { stage1_results: unknown[]; metrics: unknown } = {
+      stage1_results: [],
+      metrics: entry.metrics,
+    };
     for (const res of entry.stage1_results) {
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, 800));
       (results.stage1_results as unknown[]).push(res);
       set({ results: { ...results } as unknown as OracleResult });
     }
 
     // Simulate Stage 2
     if (entry.stage2_results?.length) {
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 1000));
       set({ currentStage: 2, stageLabel: 'Replay: Realizando Peer-Review...' });
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 1000));
       results.stage2_results = entry.stage2_results;
       set({ results: { ...results } as unknown as OracleResult });
     }
 
     // Simulate Stage 3
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
     set({ currentStage: 3, stageLabel: 'Replay: Síntese do Presidente...' });
-    await new Promise(r => setTimeout(r, 1500));
-    
-    set({ 
-      results: entry, 
-      currentStage: 3, 
-      stageLabel: 'Replay concluído', 
-      isRunning: false, 
-      isReplaying: false 
+    await new Promise((r) => setTimeout(r, 1500));
+
+    set({
+      results: entry,
+      currentStage: 3,
+      stageLabel: 'Replay concluído',
+      isRunning: false,
+      isReplaying: false,
     });
   },
 
@@ -149,16 +165,18 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       const response = await fetch(`${supabaseUrl}/functions/v1/oracle-council`, {
         method: 'POST',
         signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`,
-          'apikey': supabaseAnonKey,
-          'Accept': 'text/event-stream'
+          Authorization: `Bearer ${session?.access_token}`,
+          apikey: supabaseAnonKey,
+          Accept: 'text/event-stream',
         },
         body: JSON.stringify({
           query,
@@ -169,7 +187,7 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
           enable_thinking: enableThinking,
           preset_id: preset.id,
           custom_guardrails: customGuardrails,
-        })
+        }),
       });
 
       if (!response.ok) {
@@ -179,15 +197,10 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
-      
-      const tempResults: {
-        stage1_results: OracleResult['stage1_results'];
-        stage2_results?: OracleResult['stage2_results'];
-        consensus_points?: OracleResult['consensus_points'];
-        metrics: Partial<OracleResult['metrics']>;
-      } = {
+
+      const tempResults: Record<string, unknown> & { stage1_results: unknown[] } = {
         stage1_results: [],
-        metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 }
+        metrics: { total_latency_ms: 0, total_cost_usd: 0, total_tokens: 0, models_used: 0 },
       };
 
       while (true) {
@@ -200,16 +213,16 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const { type, data } = JSON.parse(line.slice(6));
-            
+
             if (type === 'stage') {
               set({ currentStage: data.stage, stageLabel: data.label });
             } else if (type === 'member_response') {
               tempResults.stage1_results.push(data);
-              set({ results: { ...tempResults } as OracleResult });
+              set({ results: { ...tempResults } as unknown as OracleResult });
             } else if (type === 'review_complete') {
               tempResults.stage2_results = [data];
               tempResults.consensus_points = data.consensus_points || [];
-              set({ results: { ...tempResults } as OracleResult });
+              set({ results: { ...tempResults } as unknown as OracleResult });
             } else if (type === 'final') {
               const finalResults = { ...tempResults, ...data };
               set({
@@ -220,13 +233,29 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
                 abortController: null,
                 history: [
                   ...get().history,
-                  { query, results: finalResults, timestamp: new Date().toISOString(), preset: preset.id, mode },
+                  {
+                    query,
+                    results: finalResults,
+                    timestamp: new Date().toISOString(),
+                    preset: preset.id,
+                    mode,
+                  },
                 ],
               });
-              
-              saveOracleHistory(query, mode, preset.id, preset.name, chairmanModel, enableThinking, finalResults).catch((err) => {
-                logger.error("Erro ao salvar histórico do Oráculo:", err);
-                toast.error("Não foi possível salvar no histórico, mas o resultado está disponível abaixo.");
+
+              saveOracleHistory(
+                query,
+                mode,
+                preset.id,
+                preset.name,
+                chairmanModel,
+                enableThinking,
+                finalResults,
+              ).catch((err) => {
+                logger.error('Erro ao salvar histórico do Oráculo:', err);
+                toast.error(
+                  'Não foi possível salvar no histórico, mas o resultado está disponível abaixo.',
+                );
               });
             } else if (type === 'error') {
               throw new Error(data);
@@ -234,11 +263,11 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
           }
         }
       }
-    } catch (e) {
-      const err = e as { name?: string; message?: string };
-      if (err.name === 'AbortError') return;
+    } catch (e: unknown) {
+      if (e instanceof Error && e.name === 'AbortError') return;
+      const msg = e instanceof Error ? e.message : 'Erro ao consultar o Oráculo';
       set({
-        error: err.message || 'Erro ao consultar o Oráculo',
+        error: msg,
         isRunning: false,
         currentStage: 0,
         stageLabel: '',
@@ -246,7 +275,12 @@ export const useOracleStore = create<OracleStore>((set, get) => ({
       });
 
       // Auto-retry once for network errors or transient 500s
-      if (err.message?.includes('fetch') || err.message?.includes('network') || err.message?.includes('502') || err.message?.includes('503')) {
+      if (
+        msg.includes('fetch') ||
+        msg.includes('network') ||
+        msg.includes('502') ||
+        msg.includes('503')
+      ) {
         toast.info('Erro de conexão ou timeout. Tentando novamente em 3 segundos...');
         setTimeout(() => get().submitQuery(), 3000);
       }

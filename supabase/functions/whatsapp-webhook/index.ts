@@ -10,8 +10,8 @@
  *
  * verify_jwt: false (providers cannot send JWT)
  */
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import {
   handleCorsPreflight,
   getCorsHeaders,
@@ -24,16 +24,21 @@ import {
   getRateLimitIdentifier,
   RATE_LIMITS,
   requireEnv,
-} from "../_shared/mod.ts";
-import { WhatsAppWebhookContracts } from "../_shared/contracts.ts";
-import { verifyHmac } from "../_shared/webhookSignature.ts";
+  constantTimeEqual,
+} from '../_shared/mod.ts';
+import { WhatsAppWebhookContracts } from '../_shared/contracts.ts';
+import { verifyHmac } from '../_shared/webhookSignature.ts';
 
 // Replay protection window: reject signed events with a provider timestamp
 // older than 5 minutes (mitigates captured-body replay attacks).
 const REPLAY_WINDOW_MS = 5 * 60 * 1000;
 
 /** Extracts a unix-ms timestamp from provider-specific hints, if available. */
-function extractProviderTimestampMs(provider: Provider, headers: Headers, parsed: Record<string, unknown>): number | null {
+function extractProviderTimestampMs(
+  provider: Provider,
+  headers: Headers,
+  parsed: Record<string, unknown>,
+): number | null {
   // Generic override header (used by internal replays / tests)
   const generic = headers.get('x-webhook-timestamp');
   if (generic) {
@@ -58,7 +63,11 @@ function extractProviderTimestampMs(provider: Provider, headers: Headers, parsed
 }
 
 /** Check whether we already persisted this (provider, message_id) pair. */
-async function isReplay(client: SupabaseClient, provider: Provider, messageId: string | null): Promise<boolean> {
+async function isReplay(
+  client: SupabaseClient,
+  provider: Provider,
+  messageId: string | null,
+): Promise<boolean> {
   if (!messageId) return false;
   const { data } = await client
     .from('whatsapp_webhook_events')
@@ -85,7 +94,9 @@ async function isNonceReplay(
   const seed = `${provider}|${fromPhone ?? ''}|${providerTsMs ?? ''}|${rawBody.slice(0, 256)}`;
   const buf = new TextEncoder().encode(seed);
   const digest = await crypto.subtle.digest('SHA-256', buf);
-  const hash = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const hash = Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
   const fiveMinAgo = new Date(Date.now() - 5 * 60_000).toISOString();
   const { data } = await client
     .from('openclaw_events')
@@ -98,20 +109,28 @@ async function isNonceReplay(
   return { replay: !!data, hash };
 }
 
-async function recordNonce(client: SupabaseClient, hash: string, provider: Provider): Promise<void> {
-  await client.from('openclaw_events').insert({
-    kind: 'wh.nonce',
-    level: 'info',
-    source: 'webhook',
-    payload: { hash, provider },
-  }).then(() => undefined, () => undefined);
+async function recordNonce(
+  client: SupabaseClient,
+  hash: string,
+  provider: Provider,
+): Promise<void> {
+  await client
+    .from('openclaw_events')
+    .insert({
+      kind: 'wh.nonce',
+      level: 'info',
+      source: 'webhook',
+      payload: { hash, provider },
+    })
+    .then(
+      () => undefined,
+      () => undefined,
+    );
 }
-
-
 
 // ─── Trace ID generator ───
 function generateTraceId(): string {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
   }
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
@@ -195,9 +214,11 @@ function normalizeEvent(provider: Provider, parsed: Record<string, unknown>): No
         event_type: `message.${msgType}`,
         message_id: typeof message.id === 'string' ? message.id : null,
         from_phone: typeof message.from === 'string' ? message.from : null,
-        to_phone: typeof (value?.metadata as Record<string, unknown> | undefined)?.display_phone_number === 'string'
-          ? String((value?.metadata as Record<string, unknown>)?.display_phone_number)
-          : null,
+        to_phone:
+          typeof (value?.metadata as Record<string, unknown> | undefined)?.display_phone_number ===
+          'string'
+            ? String((value?.metadata as Record<string, unknown>)?.display_phone_number)
+            : null,
         body_preview: typeof text === 'string' ? text.slice(0, 200) : null,
       };
     }
@@ -214,7 +235,9 @@ function normalizeEvent(provider: Provider, parsed: Record<string, unknown>): No
     case 'evolution': {
       const data = parsed.data as Record<string, unknown> | undefined;
       const message = data?.message as Record<string, unknown> | undefined;
-      const text = (message?.conversation as string | undefined) ?? (message?.extendedTextMessage as Record<string, unknown> | undefined)?.text;
+      const text =
+        (message?.conversation as string | undefined) ??
+        (message?.extendedTextMessage as Record<string, unknown> | undefined)?.text;
       const key = data?.key as Record<string, unknown> | undefined;
       return {
         event_type: 'message.text',
@@ -240,35 +263,60 @@ async function validateSignature(
   provider: Provider,
   rawBody: string,
   headers: Headers,
+  requestUrl: string,
 ): Promise<boolean> {
   switch (provider) {
     case 'twilio': {
-      const token = requireEnv('WHATSAPP_TWILIO_AUTH_TOKEN');
-      if (!token) return false; // Enforce secret presence for 10/10 security
-      
+      // Real Twilio HMAC-SHA1: sign (URL + sorted form params) with auth token
+      const authToken = Deno.env.get('WHATSAPP_TWILIO_AUTH_TOKEN') ?? '';
+      if (!authToken) return false;
+
       const provided = headers.get('x-twilio-signature');
       if (!provided) return false;
-      
-      // Twilio verification requires URL + params + token
-      // This is a simplified check; for 10/10 a full validation against TWILIO_URL is needed
-      return provided.length > 0;
+
+      // Build canonical string: URL + form-params sorted alphabetically (key+value)
+      const params: Record<string, string> = {};
+      try {
+        const urlEncoded = new URLSearchParams(rawBody);
+        for (const [k, v] of urlEncoded.entries()) params[k] = v;
+      } catch {
+        /* body is not form-encoded — sign URL only */
+      }
+
+      let canonical = requestUrl;
+      for (const k of Object.keys(params).sort()) {
+        canonical += k + params[k];
+      }
+
+      const enc = new TextEncoder();
+      const key = await crypto.subtle.importKey(
+        'raw',
+        enc.encode(authToken),
+        { name: 'HMAC', hash: 'SHA-1' },
+        false,
+        ['sign'],
+      );
+      const sigBytes = await crypto.subtle.sign('HMAC', key, enc.encode(canonical));
+      const computed = btoa(String.fromCharCode(...new Uint8Array(sigBytes)));
+
+      return constantTimeEqual(computed, provided);
     }
     case 'meta': {
-      const secret = requireEnv('WHATSAPP_META_APP_SECRET');
-      if (!secret) return false; // Enforce secret presence
+      const secret = Deno.env.get('WHATSAPP_META_APP_SECRET') ?? '';
+      if (!secret) return false;
       const provided = headers.get('x-hub-signature-256');
       if (!provided) return false;
       return await verifyHmac(secret, rawBody, provided, 'sha256=');
     }
     case 'zapi':
     case 'evolution': {
-      const tokens = [
-        requireEnv('WHATSAPP_ZAPI_TOKEN'),
-        requireEnv('WHATSAPP_EVOLUTION_TOKEN'),
-      ];
-      if (tokens.length === 0) return false; // Enforce secret
+      const zapiToken = Deno.env.get('WHATSAPP_ZAPI_TOKEN') ?? '';
+      const evoToken = Deno.env.get('WHATSAPP_EVOLUTION_TOKEN') ?? '';
       const auth = headers.get('authorization') ?? '';
-      return tokens.some((t) => auth.includes(t));
+      const bearer = auth.startsWith('Bearer ') ? auth.slice(7) : auth;
+      if (zapiToken && constantTimeEqual(bearer, zapiToken)) return true;
+      if (evoToken && constantTimeEqual(bearer, evoToken)) return true;
+      return false;
     }
     default:
       return false;
@@ -325,10 +373,7 @@ interface AuditRow {
   processed_at: string;
 }
 
-async function writeAudit(
-  client: SupabaseClient,
-  row: AuditRow,
-): Promise<void> {
+async function writeAudit(client: SupabaseClient, row: AuditRow): Promise<void> {
   const { error } = await client.from('whatsapp_webhook_events').insert(row);
   if (error) {
     // 23505 = unique violation (duplicate by provider+message_id)
@@ -348,7 +393,7 @@ serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.light);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+  if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
   // Meta verification GET handshake
   if (req.method === 'GET') {
@@ -358,11 +403,13 @@ serve(async (req) => {
     const challenge = url.searchParams.get('hub.challenge');
     const expected = requireEnv('WHATSAPP_META_VERIFY_TOKEN');
     if (mode === 'subscribe' && expected && token === expected && challenge) {
-      return new Response(challenge, { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'text/plain' } });
+      return new Response(challenge, {
+        status: 200,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'text/plain' },
+      });
     }
     return errorResponse(req, 'Forbidden', 403);
   }
-
 
   if (req.method !== 'POST') {
     return errorResponse(req, 'Method not allowed', 405);
@@ -379,9 +426,13 @@ serve(async (req) => {
   }
 
   // Parse body with contract validation
-  const { data: parsed, error: validationError, rawBody } = await parseBody(req, WhatsAppWebhookContracts, { 
+  const {
+    data: parsed,
+    error: validationError,
+    rawBody,
+  } = await parseBody(req, WhatsAppWebhookContracts, {
     returnRawBody: true,
-    defaultVersion: 'v1' 
+    defaultVersion: 'v1',
   });
 
   if (validationError) {
@@ -392,10 +443,9 @@ serve(async (req) => {
     return errorResponse(req, 'Invalid request body', 400);
   }
 
-
   const provider = detectProvider(req.headers, parsed);
   const event = normalizeEvent(provider, parsed);
-  const signatureValid = await validateSignature(provider, rawBody, req.headers);
+  const signatureValid = await validateSignature(provider, rawBody, req.headers, req.url);
   const workspaceId = await resolveWorkspace(client, event.to_phone);
 
   const audit: AuditRow = {
@@ -439,7 +489,13 @@ serve(async (req) => {
   // Fallback nonce-hash: quando o provedor não entrega message_id.
   let nonceHash: string | null = null;
   if (!event.message_id) {
-    const { replay, hash } = await isNonceReplay(client, provider, event.from_phone, providerTsMs, rawBody);
+    const { replay, hash } = await isNonceReplay(
+      client,
+      provider,
+      event.from_phone,
+      providerTsMs,
+      rawBody,
+    );
     if (replay) {
       return jsonResponse(req, { ok: true, deduped: true, via: 'nonce', trace_id: traceId }, 200);
     }
@@ -449,17 +505,16 @@ serve(async (req) => {
   }
   void nonceHash;
 
-
-
-
-
   if (!workspaceId) {
     audit.routing_status = 'no_route';
     audit.routing_error = `Phone "${event.to_phone ?? 'unknown'}" not registered in workspace_secrets`;
     await writeAudit(client, audit);
-    return new Response(JSON.stringify({ ok: true, message: 'Logged but no workspace matched', trace_id: traceId }), {
-      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ ok: true, message: 'Logged but no workspace matched', trace_id: traceId }),
+      {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      },
+    );
   }
 
   let agentId: string | null = null;
@@ -479,9 +534,12 @@ serve(async (req) => {
     audit.routing_status = 'no_route';
     audit.routing_error = `No agent_routing_config for event ${event.event_type}`;
     await writeAudit(client, audit);
-    return new Response(JSON.stringify({ ok: true, message: `No agent for ${event.event_type}`, trace_id: traceId }), {
-      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ ok: true, message: `No agent for ${event.event_type}`, trace_id: traceId }),
+      {
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      },
+    );
   }
 
   audit.routed_agent_id = agentId;
@@ -502,32 +560,37 @@ serve(async (req) => {
         from_phone: event.from_phone,
         duration_ms: Date.now() - startTime,
         status: 'ok',
-        spans: [{
-          span_id: generateTraceId(),
-          parent_span_id: null,
-          trace_id: traceId,
-          name: `whatsapp.${event.event_type}`,
-          kind: 'http',
-          start_time: startTime,
-          end_time: Date.now(),
-          duration_ms: Date.now() - startTime,
-          status: 'ok',
-          attributes: {
-            'http.method': 'POST',
-            'whatsapp.provider': provider,
-            'whatsapp.event': event.event_type,
-            'whatsapp.message_id': event.message_id,
-            'whatsapp.from': event.from_phone,
+        spans: [
+          {
+            span_id: generateTraceId(),
+            parent_span_id: null,
+            trace_id: traceId,
+            name: `whatsapp.${event.event_type}`,
+            kind: 'http',
+            start_time: startTime,
+            end_time: Date.now(),
+            duration_ms: Date.now() - startTime,
+            status: 'ok',
+            attributes: {
+              'http.method': 'POST',
+              'whatsapp.provider': provider,
+              'whatsapp.event': event.event_type,
+              'whatsapp.message_id': event.message_id,
+              'whatsapp.from': event.from_phone,
+            },
+            events: [],
           },
-          events: [],
-        }],
+        ],
       },
     });
   } catch (err) {
     console.error('trace_events insert failed', err);
   }
 
-  return new Response(JSON.stringify({ ok: true, routed_to: agentId, provider, trace_id: traceId }), {
-    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-  });
+  return new Response(
+    JSON.stringify({ ok: true, routed_to: agentId, provider, trace_id: traceId }),
+    {
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+    },
+  );
 });

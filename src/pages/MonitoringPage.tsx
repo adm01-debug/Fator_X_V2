@@ -1,103 +1,155 @@
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { SystemHealthBanner } from "@/components/shared/SystemHealthBanner";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Clock, DollarSign, Wrench, Activity, Loader2, Bell, CheckCircle, Layers, Zap, Shield, Filter, BarChart3, Radio } from "lucide-react";
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LightBarChart, LightPieChart } from "@/components/charts";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
-import { getAgentTraces, getSessions, getSessionTraces, getTraceEvents, getAlerts, resolveAlert, getAgentsForFilter } from "@/services/monitoringService";
-import { TracingPanel } from "@/components/monitoring/TracingPanel";
-import { AdvancedTraceFilters, applyTraceFilters, EMPTY_FILTERS, type TraceFilters } from "@/components/monitoring/AdvancedTraceFilters";
-import { AlertRulesPanel } from "@/components/monitoring/AlertRulesPanel";
-import { WebVitalsPanel } from "@/components/monitoring/WebVitalsPanel";
-import { MiddlewarePipelinePanel } from "@/components/monitoring/MiddlewarePipelinePanel";
-import { RetryEnginePanel } from "@/components/monitoring/RetryEnginePanel";
-import { handleKeyboardClick } from "@/lib/a11y";
+import { onActivateKey } from '@/lib/a11y';
+import { StatusBadge } from '@/components/shared/StatusBadge';
+import { SystemHealthBanner } from '@/components/shared/SystemHealthBanner';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Clock,
+  DollarSign,
+  Wrench,
+  Activity,
+  Loader2,
+  Bell,
+  CheckCircle,
+  Layers,
+  Zap,
+  Shield,
+  Filter,
+  BarChart3,
+  Radio,
+} from 'lucide-react';
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { LightBarChart, LightPieChart } from '@/components/charts';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { toast } from 'sonner';
+import {
+  getAgentTraces,
+  getSessions,
+  getSessionTraces,
+  getTraceEvents,
+  getAlerts,
+  resolveAlert,
+  getAgentsForFilter,
+} from '@/services/monitoringService';
+import { TracingPanel } from '@/components/monitoring/TracingPanel';
+import {
+  AdvancedTraceFilters,
+  applyTraceFilters,
+  EMPTY_FILTERS,
+  type TraceFilters,
+} from '@/components/monitoring/AdvancedTraceFilters';
+import { AlertRulesPanel } from '@/components/monitoring/AlertRulesPanel';
+import { WebVitalsPanel } from '@/components/monitoring/WebVitalsPanel';
+import { MiddlewarePipelinePanel } from '@/components/monitoring/MiddlewarePipelinePanel';
+import { RetryEnginePanel } from '@/components/monitoring/RetryEnginePanel';
 
-const PIE_COLORS = ['hsl(var(--primary))', 'hsl(var(--nexus-emerald, 142 71% 45%))', 'hsl(var(--nexus-amber, 38 92% 50%))', 'hsl(var(--nexus-cyan, 190 90% 50%))', 'hsl(var(--destructive))'];
-
-interface TraceRow {
-  id: string;
-  event?: string;
-  level?: string;
-  session_id?: string | null;
-  latency_ms?: number | null;
-  cost_usd?: number | null;
-  tokens_used?: number | null;
-  created_at?: string;
-  input?: unknown;
-  output?: unknown;
-  metadata?: unknown;
-}
-
-interface AlertRow {
-  id: string;
-  title?: string;
-  message?: string | null;
-  severity?: string;
-  is_resolved?: boolean;
-}
-
-interface AgentRef {
-  id: string;
-  name: string;
-}
+const PIE_COLORS = [
+  'hsl(var(--primary))',
+  'hsl(var(--nexus-emerald, 142 71% 45%))',
+  'hsl(var(--nexus-amber, 38 92% 50%))',
+  'hsl(var(--nexus-cyan, 190 90% 50%))',
+  'hsl(var(--destructive))',
+];
 
 export default function MonitoringPage() {
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [agentFilter, setAgentFilter] = useState<string>('all');
   const [traceFilters, setTraceFilters] = useState<TraceFilters>(EMPTY_FILTERS);
-  const { data: agentsList = [] } = useQuery({ queryKey: ['agents_list_monitoring'], queryFn: getAgentsForFilter });
-  const { data: traces = [], isLoading } = useQuery({ queryKey: ['agent_traces', agentFilter], queryFn: () => getAgentTraces({ agentId: agentFilter !== 'all' ? agentFilter : undefined }) });
+  const { data: agentsList = [] } = useQuery({
+    queryKey: ['agents_list_monitoring'],
+    queryFn: getAgentsForFilter,
+  });
+  const { data: traces = [], isLoading } = useQuery({
+    queryKey: ['agent_traces', agentFilter],
+    queryFn: () => getAgentTraces({ agentId: agentFilter !== 'all' ? agentFilter : undefined }),
+  });
   const filteredTraces = applyTraceFilters(traces, traceFilters);
-  const { data: sessions = [], isLoading: loadingSessions } = useQuery({ queryKey: ['sessions_real', agentFilter], queryFn: () => getSessions({ agentId: agentFilter !== 'all' ? agentFilter : undefined }) });
+  const { data: sessions = [], isLoading: loadingSessions } = useQuery({
+    queryKey: ['sessions_real', agentFilter],
+    queryFn: () => getSessions({ agentId: agentFilter !== 'all' ? agentFilter : undefined }),
+  });
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
-  const { data: sessionTraces = [] } = useQuery({ queryKey: ['session_traces', expandedSessionId], enabled: !!expandedSessionId, queryFn: () => expandedSessionId ? getSessionTraces(expandedSessionId) : Promise.resolve([]) });
+  const { data: sessionTraces = [] } = useQuery({
+    queryKey: ['session_traces', expandedSessionId],
+    enabled: !!expandedSessionId,
+    queryFn: () => (expandedSessionId ? getSessionTraces(expandedSessionId) : Promise.resolve([])),
+  });
   const [expandedTraceId, setExpandedTraceId] = useState<string | null>(null);
-  const { data: traceEvents = [] } = useQuery({ queryKey: ['trace_events', expandedTraceId], enabled: !!expandedTraceId, queryFn: () => expandedTraceId ? getTraceEvents(expandedTraceId) : Promise.resolve([]) });
-  const { data: alerts = [], isLoading: loadingAlerts } = useQuery({ queryKey: ['alerts'], queryFn: () => getAlerts({}) });
+  const { data: traceEvents = [] } = useQuery({
+    queryKey: ['trace_events', expandedTraceId],
+    enabled: !!expandedTraceId,
+    queryFn: () => (expandedTraceId ? getTraceEvents(expandedTraceId) : Promise.resolve([])),
+  });
+  const { data: alerts = [], isLoading: loadingAlerts } = useQuery({
+    queryKey: ['alerts'],
+    queryFn: () => getAlerts({}),
+  });
 
-  const selected = filteredTraces.find((t: TraceRow) => t.id === selectedId) || filteredTraces[0];
-  const stats = { total: filteredTraces.length, errors: filteredTraces.filter((t: TraceRow) => t.level === 'error' || t.level === 'critical').length, avgLatency: filteredTraces.length ? Math.round(filteredTraces.reduce((s: number, t: TraceRow) => s + (t.latency_ms || 0), 0) / filteredTraces.length) : 0, totalCost: filteredTraces.reduce((s: number, t: TraceRow) => s + Number(t.cost_usd || 0), 0) };
-  const levelCounts = filteredTraces.reduce((acc: Record<string, number>, t: TraceRow) => { const level = t.level || 'info'; acc[level] = (acc[level] || 0) + 1; return acc; }, {} as Record<string, number>);
-  const pieData = Object.entries(levelCounts).map(([name, value]) => ({ name, value: value as number }));
-  const latencyData = filteredTraces.slice(0, 20).reverse().map((t: TraceRow) => ({ time: new Date(t.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), latency: t.latency_ms || 0 }));
-  const unresolvedCount = alerts.filter((a: AlertRow) => !a.is_resolved).length;
-  const agentName = (id: string | null) => { if (!id) return '—'; const a = (agentsList as AgentRef[]).find((ag: AgentRef) => ag.id === id); return a ? a.name : id.substring(0, 8); };
-
-  interface AlertRow { id: string; is_resolved: boolean; [key: string]: unknown; }
-  interface AgentListItem { id: string; name: string; }
-  const typedTraces = filteredTraces as TraceRow[];
-  const typedAlerts = alerts as AlertRow[];
-  const typedAgents = agentsList as AgentListItem[];
-
-  const selected = typedTraces.find((t) => t.id === selectedId) || typedTraces[0];
+  const selected = filteredTraces.find((t) => t.id === selectedId) || filteredTraces[0];
   const stats = {
-    total: typedTraces.length,
-    errors: typedTraces.filter((t) => t.level === 'error' || t.level === 'critical').length,
-    avgLatency: typedTraces.length ? Math.round(typedTraces.reduce((s, t) => s + (t.latency_ms || 0), 0) / typedTraces.length) : 0,
-    totalCost: typedTraces.reduce((s, t) => s + Number(t.cost_usd || 0), 0),
+    total: filteredTraces.length,
+    errors: filteredTraces.filter((t) => t.level === 'error' || t.level === 'critical').length,
+    avgLatency: filteredTraces.length
+      ? Math.round(
+          filteredTraces.reduce((s, t) => s + (t.latency_ms || 0), 0) / filteredTraces.length,
+        )
+      : 0,
+    totalCost: filteredTraces.reduce((s, t) => s + Number(t.cost_usd || 0), 0),
   };
-  const levelCounts = typedTraces.reduce<Record<string, number>>((acc, t) => { const level = t.level || 'info'; acc[level] = (acc[level] || 0) + 1; return acc; }, {});
-  const pieData = Object.entries(levelCounts).map(([name, value]) => ({ name, value: value as number }));
-  const latencyData = typedTraces.slice(0, 20).reverse().map((t) => ({ time: new Date(t.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), latency: t.latency_ms || 0 }));
-  const unresolvedCount = typedAlerts.filter((a) => !a.is_resolved).length;
-  const agentName = (id: string | null) => { if (!id) return '—'; const a = typedAgents.find((ag) => ag.id === id); return a ? a.name : id.substring(0, 8); };
+  const levelCounts = filteredTraces.reduce(
+    (acc: Record<string, number>, t) => {
+      const level = t.level || 'info';
+      acc[level] = (acc[level] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+  const pieData = Object.entries(levelCounts).map(([name, value]) => ({
+    name,
+    value: value as number,
+  }));
+  const latencyData = filteredTraces
+    .slice(0, 20)
+    .reverse()
+    .map((t) => ({
+      time: new Date(t.created_at).toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      latency: t.latency_ms || 0,
+    }));
+  const unresolvedCount = alerts.filter((a) => !a.is_resolved).length;
+  const agentName = (id: string | null) => {
+    if (!id) return '—';
+    const a = agentsList.find((ag) => ag.id === id);
+    return a ? a.name : id.substring(0, 8);
+  };
 
-
-  const handleResolveAlert = async (id: string) => { try { await resolveAlert(id); toast.success('Alerta resolvido'); queryClient.invalidateQueries({ queryKey: ['alerts'] }); } catch (e) { toast.error(e instanceof Error ? e.message : 'Erro inesperado'); } };
+  const handleResolveAlert = async (id: string) => {
+    try {
+      await resolveAlert(id);
+      toast.success('Alerta resolvido');
+      queryClient.invalidateQueries({ queryKey: ['alerts'] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Erro inesperado');
+    }
+  };
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
       <div className="bg-gradient-to-br from-card to-card/50 border border-border/40 p-10 rounded-[2.5rem] shadow-nexus-xl shadow-primary/5 mb-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-        
+
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative">
           <div className="flex items-center gap-7">
             <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-nexus-2xl shadow-primary/10 group-hover:scale-105 transition-transform duration-500">
@@ -105,13 +157,16 @@ export default function MonitoringPage() {
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-3">
-                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">Observabilidade</h1>
+                <h1 className="text-4xl font-heading font-black text-foreground tracking-tight sm:text-5xl">
+                  Observabilidade
+                </h1>
                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-nexus-emerald/10 text-nexus-emerald text-meta font-bold uppercase tracking-widest border border-nexus-emerald/20">
                   <Radio className="h-3 w-3 animate-pulse" /> Live
                 </div>
               </div>
               <p className="text-title-sm text-muted-foreground max-w-xl font-medium leading-relaxed">
-                Central de telemetria em tempo real. Monitore saúde, latência e custos de toda a infraestrutura neural.
+                Central de telemetria em tempo real. Monitore saúde, latência e custos de toda a
+                infraestrutura neural.
               </p>
             </div>
           </div>
@@ -123,10 +178,18 @@ export default function MonitoringPage() {
               </SelectTrigger>
               <SelectContent className="rounded-2xl border-border/40">
                 <SelectItem value="all">Todos os Agentes</SelectItem>
-                {agentsList.map((a) => <SelectItem key={a.id} value={String(a.id)}>{String(a.name)}</SelectItem>)}
+                {agentsList.map((a) => (
+                  <SelectItem key={a.id} value={String(a.id)}>
+                    {String(a.name)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
-            <Button variant="outline" size="lg" className="h-12 px-6 rounded-2xl border-border/40 font-bold gap-2">
+            <Button
+              variant="outline"
+              size="lg"
+              className="h-12 px-6 rounded-2xl border-border/40 font-bold gap-2"
+            >
               <BarChart3 className="h-5 w-5" /> Exportar Dados
             </Button>
           </div>
@@ -134,63 +197,193 @@ export default function MonitoringPage() {
       </div>
 
       <SystemHealthBanner />
-      
+
       <div className="bg-card/30 p-4 rounded-3xl border border-border/40">
         <AdvancedTraceFilters filters={traceFilters} onChange={setTraceFilters} />
       </div>
 
       <Tabs defaultValue="traces" className="space-y-8">
         <TabsList className="bg-muted/50 p-1.5 rounded-2xl border border-border/40 h-auto flex-wrap gap-1">
-          <TabsTrigger value="traces" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold">Traces</TabsTrigger>
-          <TabsTrigger value="sessions" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold">
-            <Layers className="h-4 w-4" /> Sessões {sessions.length > 0 && <Badge className="bg-primary/10 text-primary border-none font-bold text-meta ml-1">{sessions.length}</Badge>}
+          <TabsTrigger
+            value="traces"
+            className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"
+          >
+            Traces
           </TabsTrigger>
-          <TabsTrigger value="alerts" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold">
-            Alertas {unresolvedCount > 0 && <Badge variant="destructive" className="font-bold text-meta ml-1">{unresolvedCount}</Badge>}
+          <TabsTrigger
+            value="sessions"
+            className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"
+          >
+            <Layers className="h-4 w-4" /> Sessões{' '}
+            {sessions.length > 0 && (
+              <Badge className="bg-primary/10 text-primary border-none font-bold text-meta ml-1">
+                {sessions.length}
+              </Badge>
+            )}
           </TabsTrigger>
-          <TabsTrigger value="tracing" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"><Zap className="h-4 w-4" /> Tracing</TabsTrigger>
-          <TabsTrigger value="vitals" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold">⚡ Vitals</TabsTrigger>
-          <TabsTrigger value="middleware" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"><Layers className="h-4 w-4" /> Middleware</TabsTrigger>
-          <TabsTrigger value="resilience" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"><Shield className="h-4 w-4" /> Resiliência</TabsTrigger>
+          <TabsTrigger
+            value="alerts"
+            className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"
+          >
+            Alertas{' '}
+            {unresolvedCount > 0 && (
+              <Badge variant="destructive" className="font-bold text-meta ml-1">
+                {unresolvedCount}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger
+            value="tracing"
+            className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"
+          >
+            <Zap className="h-4 w-4" /> Tracing
+          </TabsTrigger>
+          <TabsTrigger
+            value="vitals"
+            className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"
+          >
+            ⚡ Vitals
+          </TabsTrigger>
+          <TabsTrigger
+            value="middleware"
+            className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"
+          >
+            <Layers className="h-4 w-4" /> Middleware
+          </TabsTrigger>
+          <TabsTrigger
+            value="resilience"
+            className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"
+          >
+            <Shield className="h-4 w-4" /> Resiliência
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="traces">
-          {isLoading ? <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-          : filteredTraces.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Activity className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhum trace registrado</h2><p className="text-body-sm text-muted-foreground">Traces aparecerão aqui quando agentes estiverem em produção.</p></div>
-          : <>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : filteredTraces.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <Activity className="h-12 w-12 text-muted-foreground mb-4" />
+              <h2 className="text-title-sm font-semibold text-foreground mb-1">
+                Nenhum trace registrado
+              </h2>
+              <p className="text-body-sm text-muted-foreground">
+                Traces aparecerão aqui quando agentes estiverem em produção.
+              </p>
+            </div>
+          ) : (
+            <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                 <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-primary/20 transition-all">
-                  <p className="text-3xl font-heading font-black text-foreground group-hover:scale-110 transition-transform duration-300">{stats.total}</p>
-                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Total Traces</p>
+                  <p className="text-3xl font-heading font-black text-foreground group-hover:scale-110 transition-transform duration-300">
+                    {stats.total}
+                  </p>
+                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">
+                    Total Traces
+                  </p>
                 </div>
                 <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-destructive/20 transition-all">
-                  <p className="text-3xl font-heading font-black text-destructive group-hover:scale-110 transition-transform duration-300">{stats.errors}</p>
-                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Eventos Críticos</p>
+                  <p className="text-3xl font-heading font-black text-destructive group-hover:scale-110 transition-transform duration-300">
+                    {stats.errors}
+                  </p>
+                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">
+                    Eventos Críticos
+                  </p>
                 </div>
                 <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-nexus-cyan/20 transition-all">
-                  <p className="text-3xl font-heading font-black text-foreground group-hover:scale-110 transition-transform duration-300">{stats.avgLatency}ms</p>
-                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Latência Média</p>
+                  <p className="text-3xl font-heading font-black text-foreground group-hover:scale-110 transition-transform duration-300">
+                    {stats.avgLatency}ms
+                  </p>
+                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">
+                    Latência Média
+                  </p>
                 </div>
                 <div className="bg-card border border-border/40 p-6 rounded-3xl flex flex-col items-center justify-center gap-1 group hover:border-nexus-emerald/20 transition-all">
-                  <p className="text-3xl font-heading font-black text-nexus-emerald group-hover:scale-110 transition-transform duration-300">${stats.totalCost.toFixed(3)}</p>
-                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">Custo Alocado</p>
+                  <p className="text-3xl font-heading font-black text-nexus-emerald group-hover:scale-110 transition-transform duration-300">
+                    ${stats.totalCost.toFixed(3)}
+                  </p>
+                  <p className="text-meta font-bold uppercase tracking-widest text-muted-foreground">
+                    Custo Alocado
+                  </p>
                 </div>
               </div>
               <div className="grid lg:grid-cols-2 gap-4">
-                <div className="nexus-card"><h3 className="text-sm font-heading font-semibold text-foreground mb-3">Latência por evento</h3><LightBarChart data={latencyData} xKey="time" height={180} yFormatter={(v) => `${v}ms`} tooltipFormatter={(v) => `${v}ms`} series={[{ dataKey: 'latency', name: 'Latência', color: 'hsl(var(--primary))', radius: 3 }]} /></div>
-                <div className="nexus-card"><h3 className="text-sm font-heading font-semibold text-foreground mb-3">Distribuição por nível</h3><LightPieChart data={pieData.map((p: { name: string; value: number }, i: number) => ({ ...p, color: PIE_COLORS[i % PIE_COLORS.length] }))} height={180} innerRadius={40} outerRadius={70} /></div>
+                <div className="nexus-card">
+                  <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">
+                    Latência por evento
+                  </h3>
+                  <LightBarChart
+                    data={latencyData}
+                    xKey="time"
+                    height={180}
+                    yFormatter={(v) => `${v}ms`}
+                    tooltipFormatter={(v) => `${v}ms`}
+                    series={[
+                      {
+                        dataKey: 'latency',
+                        name: 'Latência',
+                        color: 'hsl(var(--primary))',
+                        radius: 3,
+                      },
+                    ]}
+                  />
+                </div>
+                <div className="nexus-card">
+                  <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">
+                    Distribuição por nível
+                  </h3>
+                  <LightPieChart
+                    data={pieData.map((p, i: number) => ({
+                      ...p,
+                      color: PIE_COLORS[i % PIE_COLORS.length],
+                    }))}
+                    height={180}
+                    innerRadius={40}
+                    outerRadius={70}
+                  />
+                </div>
               </div>
               <div className="grid lg:grid-cols-3 gap-4">
                 <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                  <h3 className="text-xs font-heading font-semibold text-muted-foreground uppercase tracking-wider mb-2">Eventos recentes</h3>
-                  {filteredTraces.map((trace: TraceRow) => (
-                    <div key={trace.id} role="button" tabIndex={0} className={`nexus-card cursor-pointer p-3 ${selected?.id === trace.id ? 'border-primary/40 nexus-glow-sm' : ''}`} onClick={() => setSelectedId(trace.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedId(trace.id); } }}>
-                      <div className="flex items-center justify-between mb-1.5"><p className="text-xs font-medium text-foreground truncate">{trace.event}</p><StatusBadge status={trace.level || 'info'} /></div>
-                      <p className="text-[11px] text-muted-foreground">{trace.session_id || trace.id.slice(0, 8)}</p>
-                      <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground">
-                        {trace.latency_ms && <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {(trace.latency_ms / 1000).toFixed(1)}s</span>}
-                        {trace.cost_usd != null && <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" /> ${Number(trace.cost_usd).toFixed(3)}</span>}
-                        {trace.tokens_used && <span className="flex items-center gap-1"><Wrench className="h-3 w-3" /> {String(trace.tokens_used)}</span>}
+                  <h3 className="text-meta font-heading font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                    Eventos recentes
+                  </h3>
+                  {filteredTraces.map((trace) => (
+                    <div
+                      key={trace.id}
+                      className={`nexus-card cursor-pointer p-3 ${selected?.id === trace.id ? 'border-primary/40 nexus-glow-sm' : ''}`}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSelectedId(trace.id)}
+                      onKeyDown={onActivateKey(() => setSelectedId(trace.id))}
+                    >
+                      <div className="flex items-center justify-between mb-1.5">
+                        <p className="text-meta font-medium text-foreground truncate">
+                          {trace.event}
+                        </p>
+                        <StatusBadge status={trace.level || 'info'} />
+                      </div>
+                      <p className="text-meta text-muted-foreground">
+                        {trace.session_id || trace.id.slice(0, 8)}
+                      </p>
+                      <div className="flex items-center gap-3 mt-2 text-meta text-muted-foreground">
+                        {trace.latency_ms && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {(trace.latency_ms / 1000).toFixed(1)}s
+                          </span>
+                        )}
+                        {trace.cost_usd != null && (
+                          <span className="flex items-center gap-1">
+                            <DollarSign className="h-3 w-3" /> ${Number(trace.cost_usd).toFixed(3)}
+                          </span>
+                        )}
+                        {trace.tokens_used && (
+                          <span className="flex items-center gap-1">
+                            <Wrench className="h-3 w-3" /> {String(trace.tokens_used)}
+                          </span>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -198,100 +391,292 @@ export default function MonitoringPage() {
                 {selected && (
                   <div className="lg:col-span-2 nexus-card">
                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/50">
-                      <div><h3 className="text-body-sm font-heading font-semibold text-foreground">{selected.event}</h3><p className="text-meta text-muted-foreground mt-0.5">{selected.session_id} • {new Date(selected.created_at).toLocaleString('pt-BR')}</p></div>
+                      <div>
+                        <h3 className="text-body-sm font-heading font-semibold text-foreground">
+                          {selected.event}
+                        </h3>
+                        <p className="text-meta text-muted-foreground mt-0.5">
+                          {selected.session_id} •{' '}
+                          {new Date(selected.created_at).toLocaleString('pt-BR')}
+                        </p>
+                      </div>
                       <StatusBadge status={selected.level || 'info'} />
                     </div>
                     <div className="space-y-3">
-                      {selected.input != null && <div><p className="text-meta font-semibold text-foreground mb-1">Input</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.input, null, 2)}</pre></div>}
-                      {selected.output != null && <div><p className="text-meta font-semibold text-foreground mb-1">Output</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.output, null, 2)}</pre></div>}
-                      {selected.metadata && Object.keys(selected.metadata as object).length > 0 && <div><p className="text-meta font-semibold text-foreground mb-1">Metadata</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">{JSON.stringify(selected.metadata, null, 2)}</pre></div>}
+                      {selected.input != null && (
+                        <div>
+                          <p className="text-meta font-semibold text-foreground mb-1">Input</p>
+                          <pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">
+                            {JSON.stringify(selected.input, null, 2)}
+                          </pre>
+                        </div>
+                      )}
+                      {selected.output != null && (
+                        <div>
+                          <p className="text-meta font-semibold text-foreground mb-1">Output</p>
+                          <pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">
+                            {JSON.stringify(selected.output, null, 2)}
+                          </pre>
+                        </div>
+                      )}
+                      {selected.metadata && Object.keys(selected.metadata as object).length > 0 && (
+                        <div>
+                          <p className="text-meta font-semibold text-foreground mb-1">Metadata</p>
+                          <pre className="text-meta text-muted-foreground bg-secondary/30 p-3 rounded-lg overflow-x-auto max-h-[200px]">
+                            {JSON.stringify(selected.metadata, null, 2)}
+                          </pre>
+                        </div>
+                      )}
                     </div>
                     <div className="mt-4 pt-4 border-t border-border/50 grid grid-cols-3 gap-4 text-center">
-                      <div><p className="text-title-sm font-heading font-bold text-foreground">{selected.latency_ms ? (selected.latency_ms / 1000).toFixed(1) + 's' : '—'}</p><p className="text-meta text-muted-foreground">Latência</p></div>
-                      <div><p className="text-title-sm font-heading font-bold text-foreground">{selected.tokens_used?.toLocaleString() || '—'}</p><p className="text-meta text-muted-foreground">Tokens</p></div>
-                      <div><p className="text-title-sm font-heading font-bold text-foreground">{selected.cost_usd != null ? `$${Number(selected.cost_usd).toFixed(3)}` : '—'}</p><p className="text-meta text-muted-foreground">Custo</p></div>
+                      <div>
+                        <p className="text-title-sm font-heading font-bold text-foreground">
+                          {selected.latency_ms
+                            ? (selected.latency_ms / 1000).toFixed(1) + 's'
+                            : '—'}
+                        </p>
+                        <p className="text-meta text-muted-foreground">Latência</p>
+                      </div>
+                      <div>
+                        <p className="text-title-sm font-heading font-bold text-foreground">
+                          {selected.tokens_used?.toLocaleString() || '—'}
+                        </p>
+                        <p className="text-meta text-muted-foreground">Tokens</p>
+                      </div>
+                      <div>
+                        <p className="text-title-sm font-heading font-bold text-foreground">
+                          {selected.cost_usd != null
+                            ? `$${Number(selected.cost_usd).toFixed(3)}`
+                            : '—'}
+                        </p>
+                        <p className="text-meta text-muted-foreground">Custo</p>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
-            </>}
+            </>
+          )}
         </TabsContent>
 
         <TabsContent value="sessions">
-          {loadingSessions ? <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-          : sessions.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Layers className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhuma sessão registrada</h2></div>
-          : <div className="space-y-3">
+          {loadingSessions ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : sessions.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <Layers className="h-12 w-12 text-muted-foreground mb-4" />
+              <h2 className="text-title-sm font-semibold text-foreground mb-1">
+                Nenhuma sessão registrada
+              </h2>
+            </div>
+          ) : (
+            <div className="space-y-3">
               {sessions.map((session) => (
                 <div key={session.id} className="nexus-card">
-                  <div role="button" tabIndex={0} className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedSessionId(expandedSessionId === session.id ? null : session.id); } }}>
+                  <div
+                    className="flex items-center justify-between cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() =>
+                      setExpandedSessionId(expandedSessionId === session.id ? null : session.id)
+                    }
+                    onKeyDown={onActivateKey(() =>
+                      setExpandedSessionId(expandedSessionId === session.id ? null : session.id),
+                    )}
+                  >
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="text-body-sm font-semibold text-foreground font-mono">{session.id.substring(0, 12)}...</p>
-                        <Badge variant={session.status === 'active' ? 'default' : 'secondary'} className="text-meta">{session.status}</Badge>
+                        <p className="text-body-sm font-semibold text-foreground font-mono">
+                          {session.id.substring(0, 12)}...
+                        </p>
+                        <Badge
+                          variant={session.status === 'active' ? 'default' : 'secondary'}
+                          className="text-meta"
+                        >
+                          {session.status}
+                        </Badge>
                       </div>
-                      <p className="text-meta text-muted-foreground mt-0.5">Agente: {agentName(session.agent_id)} • Início: {session.started_at ? new Date(session.started_at).toLocaleString('pt-BR') : '—'}</p>
+                      <p className="text-meta text-muted-foreground mt-0.5">
+                        Agente: {agentName(session.agent_id)} • Início:{' '}
+                        {session.started_at
+                          ? new Date(session.started_at).toLocaleString('pt-BR')
+                          : '—'}
+                      </p>
                     </div>
                   </div>
                   {expandedSessionId === session.id && (
                     <div className="mt-3 pt-3 border-t border-border/30 space-y-2">
-                      {sessionTraces.length === 0 ? <p className="text-meta text-muted-foreground text-center py-4">Nenhum trace nesta sessão</p>
-                      : sessionTraces.map((st) => (
-                        <div key={st.id} className="rounded-lg bg-secondary/20 p-2.5">
-                          <div role="button" tabIndex={0} className="flex items-center gap-3 text-xs cursor-pointer" onClick={() => setExpandedTraceId(expandedTraceId === st.id ? null : st.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedTraceId(expandedTraceId === st.id ? null : st.id); } }}>
-                            <Badge variant="outline" className="text-[11px] shrink-0">{st.trace_type}</Badge>
-                            <span className="text-foreground truncate flex-1">{st.latency_ms ? `${st.latency_ms}ms` : ''} {st.tokens_used ? `• ${st.tokens_used}t` : ''}</span>
-                            <span className="text-muted-foreground shrink-0 font-mono">{new Date(st.created_at || '').toLocaleTimeString('pt-BR')}</span>
+                      {sessionTraces.length === 0 ? (
+                        <p className="text-meta text-muted-foreground text-center py-4">
+                          Nenhum trace nesta sessão
+                        </p>
+                      ) : (
+                        sessionTraces.map((st) => (
+                          <div key={st.id} className="rounded-lg bg-secondary/20 p-2.5">
+                            <div
+                              className="flex items-center gap-3 text-meta cursor-pointer"
+                              role="button"
+                              tabIndex={0}
+                              onClick={() =>
+                                setExpandedTraceId(expandedTraceId === st.id ? null : st.id)
+                              }
+                              onKeyDown={onActivateKey(() =>
+                                setExpandedTraceId(expandedTraceId === st.id ? null : st.id),
+                              )}
+                            >
+                              <Badge variant="outline" className="text-meta shrink-0">
+                                {st.trace_type}
+                              </Badge>
+                              <span className="text-foreground truncate flex-1">
+                                {st.latency_ms ? `${st.latency_ms}ms` : ''}{' '}
+                                {st.tokens_used ? `• ${st.tokens_used}t` : ''}
+                              </span>
+                              <span className="text-muted-foreground shrink-0 font-mono">
+                                {new Date(st.created_at || '').toLocaleTimeString('pt-BR')}
+                              </span>
+                            </div>
+                            {expandedTraceId === st.id && traceEvents.length > 0 && (
+                              <div className="mt-2 pt-2 border-t border-border/20 space-y-1 pl-4">
+                                {traceEvents.map((ev) => (
+                                  <div key={ev.id} className="flex items-center gap-2 text-meta">
+                                    <span className="text-muted-foreground font-mono w-[55px] shrink-0">
+                                      {new Date(ev.created_at || '').toLocaleTimeString('pt-BR')}
+                                    </span>
+                                    <Badge variant="outline" className="text-[8px] shrink-0">
+                                      {ev.event_type}
+                                    </Badge>
+                                    {ev.data && (
+                                      <span className="text-muted-foreground truncate">
+                                        {JSON.stringify(ev.data).substring(0, 80)}
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            {expandedTraceId === st.id && (
+                              <div className="mt-2 space-y-2">
+                                {st.input ? (
+                                  <div>
+                                    <p className="text-meta font-semibold text-foreground">Input</p>
+                                    <pre className="text-meta text-muted-foreground bg-secondary/30 p-2 rounded max-h-[120px] overflow-auto">
+                                      {String(
+                                        typeof st.input === 'string'
+                                          ? st.input
+                                          : JSON.stringify(
+                                              st.input as Record<string, unknown>,
+                                              null,
+                                              2,
+                                            ),
+                                      )}
+                                    </pre>
+                                  </div>
+                                ) : null}
+                                {st.output ? (
+                                  <div>
+                                    <p className="text-meta font-semibold text-foreground">
+                                      Output
+                                    </p>
+                                    <pre className="text-meta text-muted-foreground bg-secondary/30 p-2 rounded max-h-[120px] overflow-auto">
+                                      {String(
+                                        typeof st.output === 'string'
+                                          ? st.output
+                                          : JSON.stringify(
+                                              st.output as Record<string, unknown>,
+                                              null,
+                                              2,
+                                            ),
+                                      )}
+                                    </pre>
+                                  </div>
+                                ) : null}
+                              </div>
+                            )}
                           </div>
-                          {expandedTraceId === st.id && traceEvents.length > 0 && (
-                            <div className="mt-2 pt-2 border-t border-border/20 space-y-1 pl-4">
-                              {traceEvents.map((ev) => (
-                                <div key={ev.id} className="flex items-center gap-2 text-meta">
-                                  <span className="text-muted-foreground font-mono w-[55px] shrink-0">{new Date(ev.created_at || '').toLocaleTimeString('pt-BR')}</span>
-                                  <Badge variant="outline" className="text-[8px] shrink-0">{ev.event_type}</Badge>
-                                  {ev.data && <span className="text-muted-foreground truncate">{JSON.stringify(ev.data).substring(0, 80)}</span>}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {expandedTraceId === st.id && (
-                            <div className="mt-2 space-y-2">
-                              {st.input ? <div><p className="text-meta font-semibold text-foreground">Input</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-2 rounded max-h-[120px] overflow-auto">{String(typeof st.input === 'string' ? st.input : JSON.stringify(st.input as Record<string, unknown>, null, 2))}</pre></div> : null}
-                              {st.output ? <div><p className="text-meta font-semibold text-foreground">Output</p><pre className="text-meta text-muted-foreground bg-secondary/30 p-2 rounded max-h-[120px] overflow-auto">{String(typeof st.output === 'string' ? st.output : JSON.stringify(st.output as Record<string, unknown>, null, 2))}</pre></div> : null}
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </div>
                   )}
                 </div>
               ))}
-            </div>}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="alerts">
-          {loadingAlerts ? <div className="flex justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
-          : alerts.length === 0 ? <div className="flex flex-col items-center justify-center py-20 text-center"><Bell className="h-12 w-12 text-muted-foreground mb-4" /><h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhum alerta</h2></div>
-          : <div className="space-y-3">
-              {alerts.map((alert: AlertRow) => (
-                <div key={alert.id} className={`nexus-card flex items-start gap-3 ${alert.is_resolved ? 'opacity-60' : ''}`}>
-                  <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${alert.severity === 'critical' ? 'bg-destructive/10' : alert.severity === 'warning' ? 'bg-nexus-amber/10' : 'bg-primary/10'}`}>
-                    <Bell className={`h-4 w-4 ${alert.severity === 'critical' ? 'text-destructive' : alert.severity === 'warning' ? 'text-nexus-amber' : 'text-primary'}`} />
+          {loadingAlerts ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : alerts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <Bell className="h-12 w-12 text-muted-foreground mb-4" />
+              <h2 className="text-title-sm font-semibold text-foreground mb-1">Nenhum alerta</h2>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {alerts.map((alert) => (
+                <div
+                  key={alert.id}
+                  className={`nexus-card flex items-start gap-3 ${alert.is_resolved ? 'opacity-60' : ''}`}
+                >
+                  <div
+                    className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${alert.severity === 'critical' ? 'bg-destructive/10' : alert.severity === 'warning' ? 'bg-nexus-amber/10' : 'bg-primary/10'}`}
+                  >
+                    <Bell
+                      className={`h-4 w-4 ${alert.severity === 'critical' ? 'text-destructive' : alert.severity === 'warning' ? 'text-nexus-amber' : 'text-primary'}`}
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1"><p className="text-body-sm font-medium text-foreground">{alert.title}</p><Badge variant={alert.severity === 'critical' ? 'destructive' : 'outline'} className="text-meta">{alert.severity}</Badge>{alert.is_resolved && <Badge variant="secondary" className="text-meta gap-1"><CheckCircle className="h-2.5 w-2.5" /> Resolvido</Badge>}</div>
-                    {alert.message && <p className="text-meta text-muted-foreground">{alert.message}</p>}
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="text-body-sm font-medium text-foreground">{alert.title}</p>
+                      <Badge
+                        variant={alert.severity === 'critical' ? 'destructive' : 'outline'}
+                        className="text-meta"
+                      >
+                        {alert.severity}
+                      </Badge>
+                      {alert.is_resolved && (
+                        <Badge variant="secondary" className="text-meta gap-1">
+                          <CheckCircle className="h-2.5 w-2.5" /> Resolvido
+                        </Badge>
+                      )}
+                    </div>
+                    {alert.message && (
+                      <p className="text-meta text-muted-foreground">{alert.message}</p>
+                    )}
                   </div>
-                  {!alert.is_resolved && <Button variant="outline" size="sm" className="text-meta shrink-0" onClick={() => handleResolveAlert(alert.id)}>Resolver</Button>}
+                  {!alert.is_resolved && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-meta shrink-0"
+                      onClick={() => handleResolveAlert(alert.id)}
+                    >
+                      Resolver
+                    </Button>
+                  )}
                 </div>
               ))}
-            </div>}
+            </div>
+          )}
           <AlertRulesPanel />
         </TabsContent>
 
-        <TabsContent value="tracing"><TracingPanel /></TabsContent>
-        <TabsContent value="vitals"><WebVitalsPanel /></TabsContent>
-        <TabsContent value="middleware"><MiddlewarePipelinePanel /></TabsContent>
-        <TabsContent value="resilience"><RetryEnginePanel /></TabsContent>
+        <TabsContent value="tracing">
+          <TracingPanel />
+        </TabsContent>
+        <TabsContent value="vitals">
+          <WebVitalsPanel />
+        </TabsContent>
+        <TabsContent value="middleware">
+          <MiddlewarePipelinePanel />
+        </TabsContent>
+        <TabsContent value="resilience">
+          <RetryEnginePanel />
+        </TabsContent>
       </Tabs>
     </div>
   );

@@ -54,20 +54,22 @@ export async function createApiKey(name: string, scopes: string[] = ['read', 'ex
 }
 
 export async function revokeApiKey(id: string) {
-  const { error } = await supabaseExternal.from('api_keys').update({ is_active: false }).eq('id', id);
+  const { error } = await supabaseExternal
+    .from('api_keys')
+    .update({ is_active: false })
+    .eq('id', id);
   if (error) throw error;
 }
 
 export async function getSecurityEvents(options?: { severity?: string; limit?: number }) {
   try {
-    const { data, error } = await supabaseExternal
-      .from('audit_log_safe')
+    const { data, error } = await fromTable('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(options?.limit || 50);
 
     if (error) throw error;
-    return (data ?? []).map((entry: Record<string, unknown>) => ({
+    return (data ?? []).map((entry: { action: string; [key: string]: unknown }) => ({
       ...entry,
       severity: 'info',
       event_type: entry.action,
@@ -109,8 +111,7 @@ export async function resolveSecurityAlert(id: string) {
 
 export async function getAuditLog(options?: { userId?: string; limit?: number }) {
   try {
-    let query = (supabaseExternal as unknown as typeof fromTable extends never ? never : ReturnType<typeof supabaseExternal.from>)
-      .from('audit_log_safe')
+    let query = fromTable('audit_log_safe')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(options?.limit || 100);
@@ -122,7 +123,7 @@ export async function getAuditLog(options?: { userId?: string; limit?: number })
       logger.warn('Audit log query failed in securityService', { error: error.message });
       return [];
     }
-    return (data ?? []) as Record<string, unknown>[];
+    return (data ?? []) as Array<Record<string, unknown>>;
   } catch {
     return [];
   }
@@ -200,15 +201,28 @@ export async function deleteGuardrailPolicy(id: string) {
 }
 
 export async function installGuardrailPreset(
-  preset: { id: string; name: string; type: string; config: Record<string, unknown>; severity?: string; tags?: string[] },
+  preset: {
+    id: string;
+    name: string;
+    type: string;
+    config: Record<string, unknown>;
+    severity?: string;
+    tags?: string[];
+  },
   workspaceId: string | null,
 ) {
   const { error } = await supabaseExternal.from('guardrail_policies').insert({
     name: preset.name,
-    type: preset.type as 'content_filter' | 'pii_detection' | 'prompt_injection' | 'toxicity' | 'custom',
+    type: preset.type as
+      'content_filter' | 'pii_detection' | 'prompt_injection' | 'toxicity' | 'custom',
     workspace_id: workspaceId,
     is_enabled: true,
-    config: { ...preset.config, preset_id: preset.id, severity: preset.severity, tags: preset.tags },
+    config: {
+      ...preset.config,
+      preset_id: preset.id,
+      severity: preset.severity,
+      tags: preset.tags,
+    },
   });
   if (error) {
     logger.error('installGuardrailPreset failed', { error: error.message, preset: preset.id });
@@ -325,9 +339,7 @@ export async function getSecurityPosture() {
   // Anti-Jailbreak — verify guardrail policy exists for injection
   try {
     const guardrails = await listGuardrailPolicies();
-    const injectionPolicy = guardrails.find(
-      (g) => g.type === 'prompt_injection' && g.is_enabled,
-    );
+    const injectionPolicy = guardrails.find((g) => g.type === 'prompt_injection' && g.is_enabled);
     checks.push({
       id: 'jailbreak',
       title: 'Anti-Jailbreak',

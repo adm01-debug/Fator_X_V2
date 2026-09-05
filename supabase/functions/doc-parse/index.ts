@@ -16,16 +16,23 @@
  *     force_ocr?: boolean,
  *   }
  */
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 import {
-  handleCorsPreflight, jsonResponse, errorResponse, getCorsHeaders,
+  handleCorsPreflight,
+  jsonResponse,
+  errorResponse,
+  getCorsHeaders,
   authenticateRequest,
-  checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
-  parseBody, z,
-} from "../_shared/mod.ts";
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  parseBody,
+  z,
+} from '../_shared/mod.ts';
 
-import { chunkText, normalizeChunkOptions } from "../_shared/chunker.ts";
+import { chunkText, normalizeChunkOptions } from '../_shared/chunker.ts';
 
 const MAX_BYTES = 20 * 1024 * 1024;
 const OCR_MIN_TEXT_PER_PAGE = 40;
@@ -40,41 +47,55 @@ const Input = z.object({
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   ]),
   storage_path: z.string().min(3).max(500),
-  ocr_pages: z.array(z.object({
-    page: z.number().int().min(1),
-    png_base64: z.string().min(50),
-  })).optional(),
+  ocr_pages: z
+    .array(
+      z.object({
+        page: z.number().int().min(1),
+        png_base64: z.string().min(50),
+      }),
+    )
+    .optional(),
   force_ocr: z.boolean().optional(),
   chunk_size: z.number().int().min(200).max(4000).optional(),
   chunk_overlap: z.number().int().min(0).max(3999).optional(),
   chunk_strategy: z.enum(['fixed', 'paragraph', 'sentence']).optional(),
-  content_hash: z.string().regex(/^[a-f0-9]{64}$/i, 'must be sha-256 hex').optional(),
+  content_hash: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/i, 'must be sha-256 hex')
+    .optional(),
 });
 
-
-
 type IngestionStatus =
-  | 'pending' | 'uploading' | 'parsing' | 'ocr'
-  | 'chunking' | 'embedding' | 'ready' | 'error' | 'cancelled';
-
+  | 'pending'
+  | 'uploading'
+  | 'parsing'
+  | 'ocr'
+  | 'chunking'
+  | 'embedding'
+  | 'ready'
+  | 'error'
+  | 'cancelled';
 
 async function extractDocxText(bytes: Uint8Array): Promise<string> {
-  const { unzip } = await import("https://esm.sh/unzipit@1.4.3");
+  const { unzip } = await import('https://esm.sh/unzipit@1.4.3');
   const { entries } = await unzip(bytes);
   const entry = entries['word/document.xml'];
   if (!entry) throw new Error('DOCX inválido: word/document.xml ausente');
   const xml = await entry.text();
   // Extract <w:t>...</w:t> and preserve paragraph breaks between <w:p>
-  const paragraphs = xml.split(/<w:p[\s>]/i).map(p =>
-    (p.match(/<w:t[^>]*>([\s\S]*?)<\/w:t>/g) ?? [])
-      .map(t => t.replace(/<[^>]+>/g, ''))
-      .join('')
-  ).filter(Boolean);
+  const paragraphs = xml
+    .split(/<w:p[\s>]/i)
+    .map((p) =>
+      (p.match(/<w:t[^>]*>([\s\S]*?)<\/w:t>/g) ?? [])
+        .map((t) => t.replace(/<[^>]+>/g, ''))
+        .join(''),
+    )
+    .filter(Boolean);
   return paragraphs.join('\n').trim();
 }
 
 async function extractPdfPages(bytes: Uint8Array): Promise<string[]> {
-  const { extractText, getDocumentProxy } = await import("https://esm.sh/unpdf@0.12.1");
+  const { extractText, getDocumentProxy } = await import('https://esm.sh/unpdf@0.12.1');
   const pdf = await getDocumentProxy(bytes);
   const { text } = await extractText(pdf, { mergePages: false });
   return Array.isArray(text) ? text : [String(text ?? '')];
@@ -90,10 +111,7 @@ export type OcrPageEvent = {
   error?: string;
 };
 
-async function ocrPagePng(
-  hfToken: string,
-  pngBase64: string,
-): Promise<string> {
+async function ocrPagePng(hfToken: string, pngBase64: string): Promise<string> {
   const resp = await fetch(
     'https://router.huggingface.co/hf-inference/models/ibm-granite/granite-vision-3.3-2b',
     {
@@ -178,7 +196,6 @@ async function runOcrPages(
   return out;
 }
 
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
   const cors = getCorsHeaders(req);
@@ -234,7 +251,7 @@ serve(async (req) => {
           .update({
             status: 'cancelled',
             error_message: 'Cancelado pelo usuário',
-            progress_pct: (data?.status === 'cancelled') ? undefined : 0,
+            progress_pct: data?.status === 'cancelled' ? undefined : 0,
           })
           .eq('id', body.ingestion_id);
         return true;
@@ -242,9 +259,9 @@ serve(async (req) => {
       return false;
     };
 
-
     // Resolve content_hash: prefer body, fallback to Idempotency-Key header
-    const idempotencyHeader = req.headers.get('Idempotency-Key') ?? req.headers.get('idempotency-key');
+    const idempotencyHeader =
+      req.headers.get('Idempotency-Key') ?? req.headers.get('idempotency-key');
     const providedHash = (body.content_hash ?? idempotencyHeader ?? '').toLowerCase();
     const isValidHash = /^[a-f0-9]{64}$/.test(providedHash);
 
@@ -281,21 +298,32 @@ serve(async (req) => {
             })
             .eq('id', body.ingestion_id);
 
-          await supabase.from('audit_events').insert({
-            user_id: user.id,
-            event_type: 'document.dedup_hit',
-            resource_type: 'document',
-            resource_id: existing.id,
-            action: 'reuse',
-            metadata: {
-              collection_id: body.collection_id,
-              filename: body.filename,
-              content_hash: providedHash,
-              reused_chunks: activeChunks ?? 0,
-              chunk_version: existing.chunk_version,
-              source: idempotencyHeader ? 'header' : 'body',
-            },
-          }).then(() => {}, () => {});
+          await supabase
+            .from('audit_events')
+            .insert({
+              user_id: user.id,
+              event_type: 'document.dedup_hit',
+              resource_type: 'document',
+              resource_id: existing.id,
+              action: 'reuse',
+              metadata: {
+                collection_id: body.collection_id,
+                filename: body.filename,
+                content_hash: providedHash,
+                reused_chunks: activeChunks ?? 0,
+                chunk_version: existing.chunk_version,
+                source: idempotencyHeader ? 'header' : 'body',
+              },
+              // Best-effort, porém audível: perder o registro de reuso em
+              // silêncio deixa a trilha de auditoria incompleta sem aviso.
+            })
+            .then(
+              () => {},
+              (e) =>
+                console.warn(
+                  `[audit] falha ao registrar document.reuse (header): ${e?.message ?? e}`,
+                ),
+            );
 
           return jsonResponse({
             status: 'ok',
@@ -310,7 +338,6 @@ serve(async (req) => {
 
     if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
     await updateStatus('parsing', 10);
-
 
     // Download from storage
     const dl = await supabase.storage.from('knowledge-uploads').download(body.storage_path);
@@ -366,20 +393,30 @@ serve(async (req) => {
               error_message: null,
             })
             .eq('id', body.ingestion_id);
-          await supabase.from('audit_events').insert({
-            user_id: user.id,
-            event_type: 'document.dedup_hit',
-            resource_type: 'document',
-            resource_id: existing.id,
-            action: 'reuse',
-            metadata: {
-              collection_id: body.collection_id,
-              filename: body.filename,
-              content_hash: effectiveHash,
-              reused_chunks: activeChunks ?? 0,
-              source: 'server_computed',
-            },
-          }).then(() => {}, () => {});
+          await supabase
+            .from('audit_events')
+            .insert({
+              user_id: user.id,
+              event_type: 'document.dedup_hit',
+              resource_type: 'document',
+              resource_id: existing.id,
+              action: 'reuse',
+              metadata: {
+                collection_id: body.collection_id,
+                filename: body.filename,
+                content_hash: effectiveHash,
+                reused_chunks: activeChunks ?? 0,
+                source: 'server_computed',
+              },
+              // Best-effort, porém audível (ver nota no bloco de reuso acima).
+            })
+            .then(
+              () => {},
+              (e) =>
+                console.warn(
+                  `[audit] falha ao registrar document.reuse (hash servidor): ${e?.message ?? e}`,
+                ),
+            );
           return jsonResponse({
             status: 'ok',
             deduped: true,
@@ -390,8 +427,6 @@ serve(async (req) => {
         }
       }
     }
-
-
 
     let fullText = '';
     let extractionMethod: 'text' | 'ocr' | 'hybrid' | 'docx' = 'text';
@@ -408,7 +443,7 @@ serve(async (req) => {
       pageCount = pages.length;
       const scannedPages = pages
         .map((t, i) => ({ page: i + 1, len: (t ?? '').trim().length }))
-        .filter(p => p.len < OCR_MIN_TEXT_PER_PAGE);
+        .filter((p) => p.len < OCR_MIN_TEXT_PER_PAGE);
 
       if (body.force_ocr || scannedPages.length === pages.length) {
         // 100% scanned OR forced → require client-provided PNGs
@@ -419,14 +454,18 @@ serve(async (req) => {
         }
         if (!body.ocr_pages?.length) {
           await updateStatus('error', 0, {
-            error_message: 'PDF escaneado detectado. Cliente precisa rasterizar páginas antes do reenvio.',
+            error_message:
+              'PDF escaneado detectado. Cliente precisa rasterizar páginas antes do reenvio.',
           });
-          return jsonResponse({
-            error: 'ocr_pages_required',
-            message: 'PDF escaneado. Envie ocr_pages: [{page,png_base64}]',
-            scanned_page_count: scannedPages.length,
-            total_pages: pages.length,
-          }, 422);
+          return jsonResponse(
+            {
+              error: 'ocr_pages_required',
+              message: 'PDF escaneado. Envie ocr_pages: [{page,png_base64}]',
+              scanned_page_count: scannedPages.length,
+              total_pages: pages.length,
+            },
+            422,
+          );
         }
         if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
         await updateStatus('ocr', 30);
@@ -447,7 +486,6 @@ serve(async (req) => {
           throw e;
         }
 
-
         const combined = pages.map((t, i) => {
           const p = i + 1;
           const ocr = ocrMap.get(p);
@@ -458,9 +496,8 @@ serve(async (req) => {
       } else {
         // Pure text extraction — emit one event per page for parity with OCR path
         const textStart = performance.now();
-        const perPage = pages.length > 0
-          ? Math.round((performance.now() - textStart) / pages.length)
-          : 0;
+        const perPage =
+          pages.length > 0 ? Math.round((performance.now() - textStart) / pages.length) : 0;
         pages.forEach((t, i) => {
           pageEvents.push({
             page: i + 1,
@@ -506,7 +543,6 @@ serve(async (req) => {
         console.error('[doc-parse] audit_events insert failed:', auditErr.message);
       }
     }
-
 
     fullText = fullText.trim();
     if (!fullText || fullText.length < 20) {
@@ -555,7 +591,10 @@ serve(async (req) => {
       return errorResponse(req, 'Falha ao criar documento', 500);
     }
 
-    await supabase.from('document_ingestions').update({ document_id: doc.id }).eq('id', body.ingestion_id);
+    await supabase
+      .from('document_ingestions')
+      .update({ document_id: doc.id })
+      .eq('id', body.ingestion_id);
 
     if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
     await updateStatus('embedding', 85);
@@ -565,9 +604,15 @@ serve(async (req) => {
     // Fetch notebook name for chunk metadata (best-effort)
     let notebookName: string | null = null;
     try {
-      const { data: col } = await supabase.from('collections').select('name').eq('id', body.collection_id).maybeSingle();
+      const { data: col } = await supabase
+        .from('collections')
+        .select('name')
+        .eq('id', body.collection_id)
+        .maybeSingle();
       notebookName = (col?.name as string | undefined) ?? null;
-    } catch { /* skip */ }
+    } catch {
+      /* skip */
+    }
 
     const chunkRows = chunks.map((content, i) => ({
       document_id: doc.id,
@@ -593,14 +638,15 @@ serve(async (req) => {
       return errorResponse(req, 'Falha ao gravar chunks', 500);
     }
 
-
     await supabase.from('documents').update({ status: 'indexed' }).eq('id', doc.id);
     await updateStatus('ready', 100);
 
     // Dispara embeddings em background via rag-embed-backfill (best-effort)
-    supabase.functions.invoke('rag-embed-backfill', {
-      body: { document_id: doc.id },
-    }).catch(() => {});
+    supabase.functions
+      .invoke('rag-embed-backfill', {
+        body: { document_id: doc.id },
+      })
+      .catch(() => {});
 
     return jsonResponse({
       status: 'ok',

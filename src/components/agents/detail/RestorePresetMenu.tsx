@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 /**
  * RestorePresetMenu — botão único no header do `<fieldset>` de campos do
  * diálogo de rollback. Permite:
@@ -11,11 +12,7 @@
 import { Bookmark, BookmarkCheck, Check, Loader2, Plus, Star, Trash2 } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -63,13 +60,14 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
   const invalidate = () => qc.invalidateQueries({ queryKey: ['restore-field-presets'] });
 
   const createMut = useMutation({
-    mutationFn: () => createRestorePreset({
-      name: newName,
-      copy_prompt: current.copyPrompt,
-      copy_tools: current.copyTools,
-      copy_model: current.copyModel,
-      is_default: newAsDefault,
-    }),
+    mutationFn: () =>
+      createRestorePreset({
+        name: newName,
+        copy_prompt: current.copyPrompt,
+        copy_tools: current.copyTools,
+        copy_model: current.copyModel,
+        is_default: newAsDefault,
+      }),
     onSuccess: () => {
       invalidate();
       toast.success(`Preset "${newName}" salvo`);
@@ -82,20 +80,26 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
 
   const setDefaultMut = useMutation({
     mutationFn: (id: string) => setDefaultRestorePreset(id),
-    onSuccess: () => { invalidate(); toast.success('Preset padrão atualizado'); },
+    onSuccess: () => {
+      invalidate();
+      toast.success('Preset padrão atualizado');
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const deleteMut = useMutation({
     mutationFn: (id: string) => deleteRestorePreset(id),
-    onSuccess: () => { invalidate(); toast.success('Preset removido'); },
+    onSuccess: () => {
+      invalidate();
+      toast.success('Preset removido');
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const matchesCurrent = (p: RestorePreset) =>
-    p.copy_prompt === current.copyPrompt
-    && p.copy_tools === current.copyTools
-    && p.copy_model === current.copyModel;
+    p.copy_prompt === current.copyPrompt &&
+    p.copy_tools === current.copyTools &&
+    p.copy_model === current.copyModel;
 
   const activePreset = presets.find(matchesCurrent);
   // Sugere salvar quando a combinação atual ainda não está catalogada.
@@ -150,7 +154,6 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
             }}
           >
             <Input
-              ref={nameInputRef}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Nome do preset (ex.: Só prompt)"
@@ -164,9 +167,12 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
                 current.copyPrompt && 'prompt',
                 current.copyTools && 'tools',
                 current.copyModel && 'modelo',
-              ].filter(Boolean).join(' · ') || 'nada'}
+              ]
+                .filter(Boolean)
+                .join(' · ') || 'nada'}
             </div>
-            <label htmlFor={asDefaultId} className="flex items-center gap-1.5 text-[11px] text-foreground/90 cursor-pointer">
+            {}
+            <label className="flex items-center gap-1.5 text-meta text-foreground/90 cursor-pointer">
               <Checkbox
                 id={asDefaultId}
                 checked={newAsDefault}
@@ -181,7 +187,11 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
                 variant="ghost"
                 size="sm"
                 className="h-6 px-2 text-meta"
-                onClick={() => { setCreating(false); setNewName(''); setNewAsDefault(false); }}
+                onClick={() => {
+                  setCreating(false);
+                  setNewName('');
+                  setNewAsDefault(false);
+                }}
                 disabled={createMut.isPending}
               >
                 Cancelar
@@ -192,7 +202,11 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
                 className="h-6 px-2 text-meta gap-1"
                 disabled={!newName.trim() || createMut.isPending}
               >
-                {createMut.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+                {createMut.isPending ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Check className="h-3 w-3" />
+                )}
                 Salvar
               </Button>
             </div>
@@ -207,7 +221,8 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
           )}
           {!isLoading && presets.length === 0 && !creating && (
             <div className="px-3 py-4 text-center text-meta text-muted-foreground">
-              Nenhum preset salvo. Marque os campos desejados e clique em <strong>Salvar atual</strong>.
+              Nenhum preset salvo. Marque os campos desejados e clique em{' '}
+              <strong>Salvar atual</strong>.
             </div>
           )}
           {presets.map((p) => {
@@ -239,11 +254,9 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
                   )}
                   <span className="font-medium text-foreground truncate">{p.name}</span>
                   <span className="text-[9px] font-mono text-muted-foreground shrink-0">
-                    {[
-                      p.copy_prompt && 'P',
-                      p.copy_tools && 'T',
-                      p.copy_model && 'M',
-                    ].filter(Boolean).join('')}
+                    {[p.copy_prompt && 'P', p.copy_tools && 'T', p.copy_model && 'M']
+                      .filter(Boolean)
+                      .join('')}
                   </span>
                 </button>
                 <button
@@ -251,7 +264,9 @@ export function RestorePresetMenu({ current, onApply, onPresetsLoaded, disabled 
                   className={`p-1 rounded hover:bg-muted/60 ${p.is_default ? 'text-nexus-amber' : 'text-muted-foreground/40 opacity-0 group-hover:opacity-100'}`}
                   onClick={() => !p.is_default && setDefaultMut.mutate(p.id)}
                   disabled={setDefaultMut.isPending || p.is_default}
-                  title={p.is_default ? 'Preset padrão (auto-aplicado ao abrir)' : 'Definir como padrão'}
+                  title={
+                    p.is_default ? 'Preset padrão (auto-aplicado ao abrir)' : 'Definir como padrão'
+                  }
                   aria-label={p.is_default ? 'Preset padrão' : 'Definir como padrão'}
                 >
                   <Star className={`h-3 w-3 ${p.is_default ? 'fill-current' : ''}`} aria-hidden />

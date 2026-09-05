@@ -9,7 +9,6 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { fromTable } from '@/lib/supabaseExtended';
 import { withTrace } from '@/lib/tracing';
 import type { Json } from '@/integrations/supabase/types';
-import type { DbRow } from '@/types/dbRow';
 
 export interface WorkflowNode {
   id: string;
@@ -173,32 +172,39 @@ export async function listWorkflowRuns(limit = 30): Promise<WorkflowRunRow[]> {
   return (data as unknown as WorkflowRunRow[]) ?? [];
 }
 
-/* ── Execute workflow stream ── */
+/** Server-sent event emitted by the workflow engine during streaming execution. */
 export interface WorkflowStreamEvent {
   event?: string;
   label?: string;
   message?: string;
+  output?: unknown;
   [key: string]: unknown;
 }
 
+/* ── Execute workflow stream ── */
 export async function executeWorkflowStream(
   workflowId: string,
   input: string = '',
-  onEvent: (event: WorkflowStreamEvent) => void
+  onEvent: (event: WorkflowStreamEvent) => void,
 ): Promise<void> {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   if (!session?.access_token) throw new Error('Not authenticated');
 
-  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/workflow-engine-v2`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${session.access_token}`,
-      'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-      'Accept': 'text/event-stream'
+  const response = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/workflow-engine-v2`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        Accept: 'text/event-stream',
+      },
+      body: JSON.stringify({ workflow_id: workflowId, input }),
     },
-    body: JSON.stringify({ workflow_id: workflowId, input })
-  });
+  );
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({ error: 'Streaming failed' }));
@@ -276,7 +282,7 @@ export async function executeWorkflow(
 
         for (let i = 0; i < steps.length; i++) {
           const step = steps[i];
-          await ctx.withSpan(`workflow.step.${step}`, 'llm', async (span) => {
+          await ctx.withSpan(`workflow.step.${step}`, 'agent', async (span) => {
             span.setAttribute('workflow.id', workflowId);
             span.setAttribute('workflow.step_index', i);
             span.setAttribute('workflow.step_name', step);

@@ -11,16 +11,17 @@ vi.mock('@/integrations/supabase/externalClient', () => ({
       select: vi.fn(() => ({
         order: vi.fn(() => ({
           eq: vi.fn(() => Promise.resolve({ data: [], error: null })),
-          then: (cb: (value: { data: unknown[]; error: unknown }) => unknown) => cb({ data: [], error: null })
-        }))
+          then: (cb: (r: { data: DbRow[]; error: null }) => unknown) =>
+            cb({ data: [], error: null }),
+        })),
       })),
     })),
     channel: vi.fn(() => ({
       on: vi.fn().mockReturnThis(),
-      subscribe: vi.fn().mockReturnThis()
+      subscribe: vi.fn().mockReturnThis(),
     })),
-    removeChannel: vi.fn()
-  }
+    removeChannel: vi.fn(),
+  },
 }));
 
 describe('SecurityMonitoringPanel', () => {

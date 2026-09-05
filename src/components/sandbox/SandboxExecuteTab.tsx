@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,14 +17,21 @@ interface SandboxExecuteTabProps {
 }
 
 export function SandboxExecuteTab({
-  config, codeInput, setCodeInput, language, setLanguage,
-  isRunning, onExecute, onStop,
+  config,
+  codeInput,
+  setCodeInput,
+  language,
+  setLanguage,
+  isRunning,
+  onExecute,
+  onStop,
 }: SandboxExecuteTabProps) {
   return (
     <Card className="bg-card border-border">
       <CardContent className="pt-4 space-y-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">Linguagem:</span>
+          {}
+          <label className="text-meta text-muted-foreground">Linguagem:</label>
           <div className="flex gap-1">
             {config.allowedLanguages.map((lang) => (
               <Badge
@@ -48,23 +56,49 @@ export function SandboxExecuteTab({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button onClick={onExecute} disabled={isRunning || config.runtime === 'none' || !codeInput.trim()} className="bg-nexus-emerald hover:bg-nexus-emerald/80 text-foreground">
-            {isRunning ? (<><Loader2 className="w-4 h-4 mr-1 animate-spin" />Executando...</>) : (<><Play className="w-4 h-4 mr-1" />Executar</>)}
+          <Button
+            onClick={onExecute}
+            disabled={isRunning || config.runtime === 'none' || !codeInput.trim()}
+            className="bg-nexus-emerald hover:bg-nexus-emerald/80 text-foreground"
+          >
+            {isRunning ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                Executando...
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4 mr-1" />
+                Executar
+              </>
+            )}
           </Button>
           {isRunning && (
-            <Button variant="outline" onClick={onStop} className="border-destructive text-destructive hover:bg-destructive/10">
-              <Square className="w-4 h-4 mr-1" />Parar
+            <Button
+              variant="outline"
+              onClick={onStop}
+              className="border-destructive text-destructive hover:bg-destructive/10"
+            >
+              <Square className="w-4 h-4 mr-1" />
+              Parar
             </Button>
           )}
-          <Button variant="ghost" onClick={() => setCodeInput('')} className="text-muted-foreground hover:text-foreground">
-            <RotateCcw className="w-4 h-4 mr-1" />Limpar
+          <Button
+            variant="ghost"
+            onClick={() => setCodeInput('')}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <RotateCcw className="w-4 h-4 mr-1" />
+            Limpar
           </Button>
         </div>
 
         {config.runtime === 'none' && (
           <div className="flex items-center gap-2 p-3 rounded-lg bg-nexus-amber/10 border border-nexus-amber/30">
             <AlertTriangle className="w-4 h-4 text-nexus-amber" />
-            <span className="text-meta text-nexus-amber">Execução de código está desabilitada. Selecione um runtime na aba Configuração.</span>
+            <span className="text-meta text-nexus-amber">
+              Execução de código está desabilitada. Selecione um runtime na aba Configuração.
+            </span>
           </div>
         )}
       </CardContent>

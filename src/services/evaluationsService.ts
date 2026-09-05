@@ -28,7 +28,9 @@ export async function listEvaluationRuns() {
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data ?? [];
-  } catch (e) { wrapErr('listEvaluationRuns', e); }
+  } catch (e) {
+    wrapErr('listEvaluationRuns', e);
+  }
 }
 
 export async function listEvaluationDatasets() {
@@ -39,7 +41,9 @@ export async function listEvaluationDatasets() {
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data ?? [];
-  } catch (e) { wrapErr('listEvaluationDatasets', e); }
+  } catch (e) {
+    wrapErr('listEvaluationDatasets', e);
+  }
 }
 
 export async function listTestCases(datasetId: string) {
@@ -51,7 +55,9 @@ export async function listTestCases(datasetId: string) {
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data ?? [];
-  } catch (e) { wrapErr('listTestCases', e, { datasetId }); }
+  } catch (e) {
+    wrapErr('listTestCases', e, { datasetId });
+  }
 }
 
 export async function createEvaluationRun(run: {
@@ -65,19 +71,26 @@ export async function createEvaluationRun(run: {
   try {
     const { data, error } = await supabaseExternal
       .from('evaluation_runs')
-      .insert({ ...run, status: run.status || 'running' })
+      .insert({ ...run, status: run.status || 'running' } as never)
       .select()
       .single();
     if (error) throw error;
     return data;
-  } catch (e) { wrapErr('createEvaluationRun', e, { name: run.name, agent_id: run.agent_id }); }
+  } catch (e) {
+    wrapErr('createEvaluationRun', e, { name: run.name, agent_id: run.agent_id });
+  }
 }
 
 export async function updateEvaluationRun(id: string, updates: Record<string, unknown>) {
   try {
-    const { error } = await supabaseExternal.from('evaluation_runs').update(updates).eq('id', id);
+    const { error } = await supabaseExternal
+      .from('evaluation_runs')
+      .update(updates as never)
+      .eq('id', id);
     if (error) throw error;
-  } catch (e) { wrapErr('updateEvaluationRun', e, { id }); }
+  } catch (e) {
+    wrapErr('updateEvaluationRun', e, { id });
+  }
 }
 
 export async function createEvaluationDataset(dataset: {
@@ -93,7 +106,9 @@ export async function createEvaluationDataset(dataset: {
       .single();
     if (error) throw error;
     return data;
-  } catch (e) { wrapErr('createEvaluationDataset', e, { name: dataset.name }); }
+  } catch (e) {
+    wrapErr('createEvaluationDataset', e, { name: dataset.name });
+  }
 }
 
 export async function createTestCase(tc: {
@@ -106,14 +121,18 @@ export async function createTestCase(tc: {
     const { data, error } = await supabaseExternal.from('test_cases').insert(tc).select().single();
     if (error) throw error;
     return data;
-  } catch (e) { wrapErr('createTestCase', e, { dataset_id: tc.dataset_id }); }
+  } catch (e) {
+    wrapErr('createTestCase', e, { dataset_id: tc.dataset_id });
+  }
 }
 
 export async function deleteTestCase(id: string) {
   try {
     const { error } = await supabaseExternal.from('test_cases').delete().eq('id', id);
     if (error) throw error;
-  } catch (e) { wrapErr('deleteTestCase', e, { id }); }
+  } catch (e) {
+    wrapErr('deleteTestCase', e, { id });
+  }
 }
 
 export async function updateDatasetCaseCount(datasetId: string) {
@@ -140,7 +159,9 @@ export async function invokeEvalJudge(body: Record<string, unknown>) {
     const { data, error } = await supabase.functions.invoke('eval-judge', { body });
     if (error) throw error;
     return data;
-  } catch (e) { wrapErr('invokeEvalJudge', e); }
+  } catch (e) {
+    wrapErr('invokeEvalJudge', e);
+  }
 }
 
 export async function listAgentsForSelect() {

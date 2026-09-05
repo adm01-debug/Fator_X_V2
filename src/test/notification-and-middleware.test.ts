@@ -1,41 +1,42 @@
 /**
  * notificationEngineService + middlewarePipelineService tests
- * (next-frontier sprint #4 — coverage expansion continued)
  *
- * Targets:
- *   notificationEngineService.ts (~536 lines, 0% → ~25% via renderTemplate)
- *   middlewarePipelineService.ts (~464 lines, 0% → ~70% via the class)
+ * O mock anterior não implementava `.in()` nem `.maybeSingle()` — exatamente
+ * os elos usados por `markAllRead`, `getInAppNotifications` e `getTemplate`.
+ * Qualquer teste dessas funções morreria com `TypeError`, então elas ficaram
+ * sem cobertura. Migrado para o mock compartilhado e coberto o que de fato
+ * dói em produção: `markAllRead` sem escopo de destinatário marcaria como
+ * lida a caixa de entrada de TODOS os usuários.
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
-vi.mock('@/lib/supabaseExtended', () => ({
-  fromTable: vi.fn(() => ({
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data: null, error: null }),
-  })),
-}));
+vi.mock('@/lib/supabaseExtended', async () => {
+  const m = await import('./utils/supabaseMock');
+  const mock = m.getSharedSupabaseMock('notification-engine');
+  return {
+    fromTable: (t: string) => (mock.client.from as (x: string) => unknown)(t),
+    rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
+  };
+});
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  },
-}));
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('notification-engine').client };
+});
 
 vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-import { renderTemplate } from '@/services/notificationEngineService';
+import {
+  renderTemplate,
+  markAllRead,
+  getInAppNotifications,
+  listNotifications,
+  markDelivered,
+  cancelNotification,
+} from '@/services/notificationEngineService';
 import {
   MiddlewarePipeline,
   createLoggingMiddleware,
@@ -46,6 +47,71 @@ import {
   type LLMRequest,
   type LLMResponse,
 } from '@/services/middlewarePipelineService';
+
+const db = getSharedSupabaseMock('notification-engine');
+
+describe('notificationEngineService — acesso a dados', () => {
+  beforeEach(() => {
+    db.reset();
+    db.setResult({ data: [], error: null });
+  });
+
+  it('markAllRead escopa por canal in_app, destinatário e status pendentes', async () => {
+    db.setTableResult('notifications', { data: [{ id: 'n1' }, { id: 'n2' }], error: null });
+    const count = await markAllRead('user-1');
+
+    expect(count).toBe(2);
+    expect(db.calls.eq).toHaveBeenCalledWith('channel', 'in_app');
+    // sem este escopo, marcaríamos como lida a caixa de todo mundo
+    expect(db.calls.eq).toHaveBeenCalledWith('recipient_id', 'user-1');
+    expect(db.calls.in).toHaveBeenCalledWith('status', ['sent', 'delivered']);
+    expect(db.calls.select).toHaveBeenCalledWith('id');
+  });
+
+  it('markAllRead devolve 0 quando não há nada pendente', async () => {
+    db.setTableResult('notifications', { data: null, error: null });
+    expect(await markAllRead('user-1')).toBe(0);
+  });
+
+  it('markAllRead propaga erro em vez de fingir que zerou o badge', async () => {
+    db.setTableResult('notifications', { data: null, error: { message: 'rls' } });
+    await expect(markAllRead('user-1')).rejects.toMatchObject({ message: 'rls' });
+  });
+
+  it('getInAppNotifications só aplica o filtro .in() quando unreadOnly=true', async () => {
+    await getInAppNotifications('user-1', false);
+    expect(db.calls.in).not.toHaveBeenCalled();
+
+    db.reset();
+    db.setResult({ data: [], error: null });
+    await getInAppNotifications('user-1', true);
+    expect(db.calls.in).toHaveBeenCalledWith('status', ['sent', 'delivered']);
+    expect(db.calls.limit).toHaveBeenCalledWith(100);
+  });
+
+  it('listNotifications aplica somente os filtros informados', async () => {
+    await listNotifications({ channel: 'email', status: 'failed' }, 10);
+
+    expect(db.calls.eq).toHaveBeenCalledWith('channel', 'email');
+    expect(db.calls.eq).toHaveBeenCalledWith('status', 'failed');
+    expect(db.calls.eq).not.toHaveBeenCalledWith('priority', expect.anything());
+    expect(db.calls.limit).toHaveBeenCalledWith(10);
+    expect(db.calls.order).toHaveBeenCalledWith('created_at', { ascending: false });
+  });
+
+  it('transições de status gravam carimbo de tempo e alvo correto', async () => {
+    await markDelivered('n-9');
+    expect(db.calls.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'delivered', delivered_at: expect.any(String) }),
+    );
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'n-9');
+
+    db.reset();
+    db.setResult({ data: [], error: null });
+    await cancelNotification('n-9');
+    expect(db.calls.update).toHaveBeenCalledWith({ status: 'cancelled' });
+  });
+});
 
 // ════════════════════════════════════════════════════════════════
 // notificationEngineService — renderTemplate
@@ -62,7 +128,7 @@ describe('notificationEngineService — renderTemplate', () => {
         greeting: 'Hi',
         name: 'Pink',
         id: 42,
-      })
+      }),
     ).toBe('Hi, Pink! Your order #42 is ready.');
   });
 
@@ -70,7 +136,7 @@ describe('notificationEngineService — renderTemplate', () => {
     expect(
       renderTemplate('Customer: {{customer.name}} ({{customer.email}})', {
         customer: { name: 'ACME Corp', email: 'contact@acme.com' },
-      })
+      }),
     ).toBe('Customer: ACME Corp (contact@acme.com)');
   });
 
@@ -79,9 +145,7 @@ describe('notificationEngineService — renderTemplate', () => {
   });
 
   it('handles deep nesting beyond one level', () => {
-    expect(
-      renderTemplate('{{a.b.c}}', { a: { b: { c: 'deep' } } })
-    ).toBe('deep');
+    expect(renderTemplate('{{a.b.c}}', { a: { b: { c: 'deep' } } })).toBe('deep');
   });
 
   it('returns empty string for null/undefined values', () => {
@@ -90,13 +154,15 @@ describe('notificationEngineService — renderTemplate', () => {
   });
 
   it('coerces non-string values to string', () => {
-    expect(renderTemplate('{{n}} items at ${{price}}', { n: 5, price: 19.99 }))
-      .toBe('5 items at $19.99');
+    expect(renderTemplate('{{n}} items at ${{price}}', { n: 5, price: 19.99 })).toBe(
+      '5 items at $19.99',
+    );
   });
 
   it('does not match malformed placeholders', () => {
-    expect(renderTemplate('{single} {{spaced }} {{ok}}', { ok: 'yes' }))
-      .toBe('{single} {{spaced }} yes');
+    expect(renderTemplate('{single} {{spaced }} {{ok}}', { ok: 'yes' })).toBe(
+      '{single} {{spaced }} yes',
+    );
   });
 
   it('handles a template with no placeholders unchanged', () => {
@@ -130,29 +196,65 @@ describe('middlewarePipelineService — MiddlewarePipeline registration', () => 
 
   it('sorts middlewares by priority on insertion', () => {
     const p = new MiddlewarePipeline();
-    p.use({ name: 'c', enabled: true, priority: 30, description: '', fn: async (_ctx, next) => next() });
-    p.use({ name: 'a', enabled: true, priority: 10, description: '', fn: async (_ctx, next) => next() });
-    p.use({ name: 'b', enabled: true, priority: 20, description: '', fn: async (_ctx, next) => next() });
+    p.use({
+      name: 'c',
+      enabled: true,
+      priority: 30,
+      description: '',
+      fn: async (_ctx, next) => next(),
+    });
+    p.use({
+      name: 'a',
+      enabled: true,
+      priority: 10,
+      description: '',
+      fn: async (_ctx, next) => next(),
+    });
+    p.use({
+      name: 'b',
+      enabled: true,
+      priority: 20,
+      description: '',
+      fn: async (_ctx, next) => next(),
+    });
     expect(p.list().map((m) => m.name)).toEqual(['a', 'b', 'c']);
   });
 
   it('remove() deletes by name', () => {
     const p = new MiddlewarePipeline();
-    p.use({ name: 'temp', enabled: true, priority: 1, description: '', fn: async (_ctx, next) => next() });
+    p.use({
+      name: 'temp',
+      enabled: true,
+      priority: 1,
+      description: '',
+      fn: async (_ctx, next) => next(),
+    });
     p.remove('temp');
     expect(p.list().length).toBe(0);
   });
 
   it('remove() is a no-op for unknown names', () => {
     const p = new MiddlewarePipeline();
-    p.use({ name: 'keep', enabled: true, priority: 1, description: '', fn: async (_ctx, next) => next() });
+    p.use({
+      name: 'keep',
+      enabled: true,
+      priority: 1,
+      description: '',
+      fn: async (_ctx, next) => next(),
+    });
     p.remove('unknown');
     expect(p.list().length).toBe(1);
   });
 
   it('toggle() flips enabled flag', () => {
     const p = new MiddlewarePipeline();
-    p.use({ name: 'mw', enabled: true, priority: 1, description: '', fn: async (_ctx, next) => next() });
+    p.use({
+      name: 'mw',
+      enabled: true,
+      priority: 1,
+      description: '',
+      fn: async (_ctx, next) => next(),
+    });
     p.toggle('mw', false);
     expect(p.list()[0].enabled).toBe(false);
     p.toggle('mw', true);
@@ -194,8 +296,30 @@ describe('middlewarePipelineService — execute (onion model)', () => {
   it('runs middlewares in priority order (onion entry)', async () => {
     const p = new MiddlewarePipeline();
     const order: string[] = [];
-    p.use({ name: 'b', enabled: true, priority: 20, description: '', fn: async (_ctx, next) => { order.push('b-in'); const r = await next(); order.push('b-out'); return r; } });
-    p.use({ name: 'a', enabled: true, priority: 10, description: '', fn: async (_ctx, next) => { order.push('a-in'); const r = await next(); order.push('a-out'); return r; } });
+    p.use({
+      name: 'b',
+      enabled: true,
+      priority: 20,
+      description: '',
+      fn: async (_ctx, next) => {
+        order.push('b-in');
+        const r = await next();
+        order.push('b-out');
+        return r;
+      },
+    });
+    p.use({
+      name: 'a',
+      enabled: true,
+      priority: 10,
+      description: '',
+      fn: async (_ctx, next) => {
+        order.push('a-in');
+        const r = await next();
+        order.push('a-out');
+        return r;
+      },
+    });
     await p.execute(fakeRequest, vi.fn().mockResolvedValue(fakeResponse));
     expect(order).toEqual(['a-in', 'b-in', 'b-out', 'a-out']);
   });
@@ -233,7 +357,12 @@ describe('middlewarePipelineService — execute (onion model)', () => {
       priority: 1,
       description: '',
       fn: async (_ctx, next) => {
-        _ctx.request._cachedResponse = { content: 'from cache', inputTokens: 0, outputTokens: 0, costUsd: 0 } as unknown as LLMResponse;
+        _ctx.request._cachedResponse = {
+          content: 'from cache',
+          inputTokens: 0,
+          outputTokens: 0,
+          costUsd: 0,
+        } as unknown as LLMResponse;
         return next();
       },
     });

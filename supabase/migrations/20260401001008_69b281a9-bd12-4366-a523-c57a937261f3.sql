@@ -10,7 +10,7 @@ USING (owner_id = auth.uid());
 DROP POLICY IF EXISTS "Admins can insert members" ON public.workspace_members;
 
 -- Fix 3: Add audit_log table for tracking sensitive actions
-CREATE TABLE public.audit_log (
+CREATE TABLE IF NOT EXISTS public.audit_log (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL,
   action TEXT NOT NULL,

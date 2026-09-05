@@ -1,4 +1,6 @@
 -- ═══ ETAPA 5: Hybrid Search (BM25 + Semantic) ═══
+-- pgvector is pre-installed by Supabase in the extensions schema.
+CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA extensions;
 
 -- Add tsvector column for BM25 full-text search
 ALTER TABLE public.chunks ADD COLUMN IF NOT EXISTS search_vector tsvector;
@@ -26,7 +28,7 @@ CREATE INDEX IF NOT EXISTS idx_chunks_search_vector ON public.chunks USING GIN (
 -- Hybrid Search function: combines BM25 (full-text) + semantic (pgvector) with RRF
 CREATE OR REPLACE FUNCTION public.hybrid_search(
   query_text TEXT,
-  query_embedding vector(1536),
+  query_embedding extensions.vector(1536),
   match_count INT DEFAULT 10,
   bm25_weight FLOAT DEFAULT 0.3,
   semantic_weight FLOAT DEFAULT 0.7,
@@ -151,13 +153,32 @@ CREATE TABLE IF NOT EXISTS public.audit_log (
 
 -- Make audit_log append-only via RLS
 ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Audit log read only for workspace" ON public.audit_log;
-CREATE POLICY "Audit log read only for workspace" ON public.audit_log FOR SELECT TO authenticated
-  USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()));
 DROP POLICY IF EXISTS "Audit log insert for authenticated" ON public.audit_log;
 CREATE POLICY "Audit log insert for authenticated" ON public.audit_log FOR INSERT TO authenticated
   WITH CHECK (true);
 -- No UPDATE or DELETE policies = append-only
+-- Audit log read policy: only create if BOTH audit_log.workspace_id AND
+-- workspace_members.workspace_id columns exist. audit_log may be created by an
+-- earlier migration without workspace_id (CREATE TABLE IF NOT EXISTS skips the
+-- column add), so we guard on both to prevent SQLSTATE 42703.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'audit_log'
+      AND column_name = 'workspace_id'
+  ) AND EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'workspace_members'
+      AND column_name = 'workspace_id'
+  ) THEN
+    DROP POLICY IF EXISTS "Audit log read only for workspace" ON public.audit_log;
+    CREATE POLICY "Audit log read only for workspace" ON public.audit_log FOR SELECT TO authenticated
+      USING (workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()));
+  END IF;
+END $$;
 
 -- Auto-audit trigger for sensitive tables
 CREATE OR REPLACE FUNCTION public.audit_trigger_fn()
@@ -167,17 +188,17 @@ DECLARE
 BEGIN
   -- Try to get workspace_id from the row
   IF TG_OP = 'DELETE' THEN
-    ws_id := COALESCE((OLD::jsonb)->>'workspace_id', NULL)::UUID;
+    ws_id := COALESCE((to_jsonb(OLD))->>'workspace_id', NULL)::UUID;
   ELSE
-    ws_id := COALESCE((NEW::jsonb)->>'workspace_id', NULL)::UUID;
+    ws_id := COALESCE((to_jsonb(NEW))->>'workspace_id', NULL)::UUID;
   END IF;
-  
+
   INSERT INTO public.audit_log (workspace_id, user_id, action, resource_type, resource_id, old_value, new_value)
   VALUES (
     ws_id, auth.uid(),
     TG_OP || '.' || TG_TABLE_NAME,
     TG_TABLE_NAME,
-    CASE TG_OP WHEN 'DELETE' THEN (OLD::jsonb)->>'id' ELSE (NEW::jsonb)->>'id' END,
+    CASE TG_OP WHEN 'DELETE' THEN (to_jsonb(OLD))->>'id' ELSE (to_jsonb(NEW))->>'id' END,
     CASE TG_OP WHEN 'INSERT' THEN NULL ELSE to_jsonb(OLD) END,
     CASE TG_OP WHEN 'DELETE' THEN NULL ELSE to_jsonb(NEW) END
   );

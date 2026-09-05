@@ -66,7 +66,7 @@ CREATE POLICY "dsr_workspace_admin" ON public.data_subject_requests
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE TRIGGER update_data_subject_requests_at
@@ -126,7 +126,7 @@ CREATE POLICY "dpr_workspace_write" ON public.data_processing_register
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE TRIGGER update_dpr_at
@@ -172,7 +172,7 @@ CREATE POLICY "pdi_workspace_read" ON public.personal_data_inventory
         workspace_id IN (
             SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "pdi_workspace_write" ON public.personal_data_inventory
@@ -182,7 +182,7 @@ CREATE POLICY "pdi_workspace_write" ON public.personal_data_inventory
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE TRIGGER update_pdi_at
@@ -234,7 +234,7 @@ CREATE POLICY "dbl_admin_read" ON public.data_breach_log
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "dbl_service_write" ON public.data_breach_log
@@ -291,7 +291,7 @@ CREATE POLICY "lgpd_settings_admin_write" ON public.lgpd_settings
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE TRIGGER update_lgpd_settings_at
@@ -322,7 +322,7 @@ CREATE POLICY "drp_workspace_read" ON public.data_retention_policies
         workspace_id IN (
             SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE POLICY "drp_workspace_write" ON public.data_retention_policies
@@ -332,7 +332,7 @@ CREATE POLICY "drp_workspace_write" ON public.data_retention_policies
             WHERE user_id = auth.uid()
               AND role IN ('owner', 'admin')
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 CREATE TRIGGER update_drp_at

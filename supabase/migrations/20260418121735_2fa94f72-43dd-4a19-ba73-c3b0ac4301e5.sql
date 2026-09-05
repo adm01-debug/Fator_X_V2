@@ -1,5 +1,5 @@
 -- DR Drills table
-CREATE TABLE public.dr_drills (
+CREATE TABLE IF NOT EXISTS public.dr_drills (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -26,7 +26,7 @@ CREATE INDEX idx_dr_drills_workspace ON public.dr_drills(workspace_id, scheduled
 CREATE INDEX idx_dr_drills_status ON public.dr_drills(status);
 
 -- DR Snapshots
-CREATE TABLE public.dr_snapshots (
+CREATE TABLE IF NOT EXISTS public.dr_snapshots (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   drill_id UUID NOT NULL REFERENCES public.dr_drills(id) ON DELETE CASCADE,
   table_name TEXT NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE public.dr_snapshots (
 CREATE INDEX idx_dr_snapshots_drill ON public.dr_snapshots(drill_id, table_name);
 
 -- DR Restore Logs
-CREATE TABLE public.dr_restore_logs (
+CREATE TABLE IF NOT EXISTS public.dr_restore_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   drill_id UUID NOT NULL REFERENCES public.dr_drills(id) ON DELETE CASCADE,
   step TEXT NOT NULL CHECK (step IN ('snapshot','isolate','restore','validate','cleanup')),

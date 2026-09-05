@@ -14,9 +14,9 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import { z } from 'https://esm.sh/zod@3.23.8';
 
 const JSONRPCRequestSchema = z.object({
   jsonrpc: z.literal('2.0'),
@@ -25,9 +25,13 @@ const JSONRPCRequestSchema = z.object({
   params: z.record(z.unknown()).optional(),
 });
 import {
-  handleCorsPreflight, getCorsHeaders,
-  checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
-} from "../_shared/mod.ts";
+  handleCorsPreflight,
+  getCorsHeaders,
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+} from '../_shared/mod.ts';
 
 // ═══ MCP Protocol Types ═══
 interface JSONRPCRequest {
@@ -47,7 +51,12 @@ interface JSONRPCResponse {
 // ═══ Entity Definitions ═══
 const ENTITIES = [
   { name: 'Clientes', table: 'companies', db: 'bancodadosclientes', filter: { is_customer: true } },
-  { name: 'Fornecedores', table: 'companies', db: 'bancodadosclientes', filter: { is_supplier: true } },
+  {
+    name: 'Fornecedores',
+    table: 'companies',
+    db: 'bancodadosclientes',
+    filter: { is_supplier: true },
+  },
   { name: 'Produtos', table: 'products', db: 'supabase-fuchsia-kite' },
   { name: 'Contatos', table: 'contacts', db: 'bancodadosclientes' },
   { name: 'Colaboradores', table: 'profiles', db: 'gestao_time_promo' },
@@ -58,11 +67,15 @@ const ENTITIES = [
 const MCP_TOOLS = [
   {
     name: 'search_entities',
-    description: 'Busca entidades no DataHub por nome, tipo ou filtro. Suporta: Clientes, Fornecedores, Produtos, Contatos, Colaboradores.',
+    description:
+      'Busca entidades no DataHub por nome, tipo ou filtro. Suporta: Clientes, Fornecedores, Produtos, Contatos, Colaboradores.',
     inputSchema: {
       type: 'object',
       properties: {
-        entity_type: { type: 'string', description: 'Tipo: Clientes, Fornecedores, Produtos, Contatos, Colaboradores' },
+        entity_type: {
+          type: 'string',
+          description: 'Tipo: Clientes, Fornecedores, Produtos, Contatos, Colaboradores',
+        },
         query: { type: 'string', description: 'Termo de busca (nome, email, SKU, etc.)' },
         limit: { type: 'number', description: 'Máximo de resultados (default: 10)' },
       },
@@ -71,7 +84,8 @@ const MCP_TOOLS = [
   },
   {
     name: 'get_entity_detail',
-    description: 'Retorna detalhes completos de uma entidade por ID, incluindo dados de múltiplos bancos.',
+    description:
+      'Retorna detalhes completos de uma entidade por ID, incluindo dados de múltiplos bancos.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -108,7 +122,8 @@ const MCP_TOOLS = [
   },
   {
     name: 'cross_reference',
-    description: 'Cruza dados entre bancos. Ex: encontrar colaboradores que são também contatos no CRM.',
+    description:
+      'Cruza dados entre bancos. Ex: encontrar colaboradores que são também contatos no CRM.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -122,7 +137,7 @@ const MCP_TOOLS = [
 ];
 
 // ═══ MCP Resources ═══
-const MCP_RESOURCES = ENTITIES.map(e => ({
+const MCP_RESOURCES = ENTITIES.map((e) => ({
   uri: `nexus://datahub/${e.name.toLowerCase()}`,
   name: e.name,
   description: `Dados de ${e.name} do DataHub Promo Brindes`,
@@ -144,13 +159,18 @@ async function executeTool(
       const query = String(args.query || '');
       const limit = Math.min(Number(args.limit) || 10, 100);
 
-      const entity = ENTITIES.find(e => e.name.toLowerCase() === entityType.toLowerCase());
-      if (!entity) return { error: `Unknown entity type: ${entityType}. Available: ${ENTITIES.map(e => e.name).join(', ')}` };
+      const entity = ENTITIES.find((e) => e.name.toLowerCase() === entityType.toLowerCase());
+      if (!entity)
+        return {
+          error: `Unknown entity type: ${entityType}. Available: ${ENTITIES.map((e) => e.name).join(', ')}`,
+        };
 
       let dbQuery = supabase.from(entity.table).select('*').limit(limit);
 
       if (query) {
-        dbQuery = dbQuery.or(`name.ilike.%${query}%,email.ilike.%${query}%,razao_social.ilike.%${query}%`);
+        dbQuery = dbQuery.or(
+          `name.ilike.%${query}%,email.ilike.%${query}%,razao_social.ilike.%${query}%`,
+        );
       }
 
       if (entity.filter) {
@@ -168,20 +188,26 @@ async function executeTool(
       const entityType = String(args.entity_type || '');
       const entityId = String(args.entity_id || '');
 
-      const entity = ENTITIES.find(e => e.name.toLowerCase() === entityType.toLowerCase());
+      const entity = ENTITIES.find((e) => e.name.toLowerCase() === entityType.toLowerCase());
       if (!entity) return { error: `Unknown entity type` };
 
-      const { data, error } = await supabase.from(entity.table).select('*').eq('id', entityId).single();
+      const { data, error } = await supabase
+        .from(entity.table)
+        .select('*')
+        .eq('id', entityId)
+        .single();
       if (error) return { error: error.message };
       return data;
     }
 
     case 'get_stats': {
       const entityType = String(args.entity_type || '');
-      const entity = ENTITIES.find(e => e.name.toLowerCase() === entityType.toLowerCase());
+      const entity = ENTITIES.find((e) => e.name.toLowerCase() === entityType.toLowerCase());
       if (!entity) return { error: `Unknown entity type` };
 
-      const { count } = await supabase.from(entity.table).select('*', { count: 'exact', head: true });
+      const { count } = await supabase
+        .from(entity.table)
+        .select('*', { count: 'exact', head: true });
       return { entity_type: entityType, total_records: count || 0 };
     }
 
@@ -204,7 +230,9 @@ async function executeTool(
     }
 
     case 'cross_reference': {
-      return { message: 'Cross-reference requires DataHub query engine. Use datahub-query Edge Function.' };
+      return {
+        message: 'Cross-reference requires DataHub query engine. Use datahub-query Edge Function.',
+      };
     }
 
     default:
@@ -257,16 +285,19 @@ function handleMCPRequest(
 
     case 'tools/call': {
       const toolName = (params as Record<string, unknown>)?.name as string;
-      const toolArgs = (params as Record<string, unknown>)?.arguments as Record<string, unknown> || {};
+      const toolArgs =
+        ((params as Record<string, unknown>)?.arguments as Record<string, unknown>) || {};
 
-      return executeTool(toolName, toolArgs, supabaseUrl, supabaseKey).then(result => ({
+      return executeTool(toolName, toolArgs, supabaseUrl, supabaseKey).then((result) => ({
         jsonrpc: '2.0',
         id,
         result: {
-          content: [{
-            type: 'text',
-            text: JSON.stringify(result, null, 2),
-          }],
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
         },
       }));
     }
@@ -286,16 +317,59 @@ serve(async (req) => {
 
   const cors = getCorsHeaders(req);
 
-  // Rate limiting (by IP since MCP clients may not have user auth)
+  // Require Authorization — MCP clients must present service_role key or user JWT
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return new Response(
+      JSON.stringify({ jsonrpc: '2.0', error: { code: -32001, message: 'Unauthorized' } }),
+      { status: 401, headers: { ...cors, 'Content-Type': 'application/json' } },
+    );
+  }
+  const token = authHeader.slice(7);
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  let authorized = false;
+  if (token === serviceKey) {
+    authorized = true;
+  } else {
+    const { createClient: mkClient } = await import('https://esm.sh/@supabase/supabase-js@2.49.4');
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const caller = mkClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const {
+      data: { user },
+    } = await caller.auth.getUser();
+    if (user) authorized = true;
+  }
+  if (!authorized) {
+    return new Response(
+      JSON.stringify({ jsonrpc: '2.0', error: { code: -32001, message: 'Unauthorized' } }),
+      { status: 401, headers: { ...cors, 'Content-Type': 'application/json' } },
+    );
+  }
+
+  // Rate limiting
   const identifier = getRateLimitIdentifier(req);
-  const rateCheck = checkRateLimit(identifier, RATE_LIMITS.datahub);
+  const rateCheck = checkRateLimit(identifier, RATE_LIMITS.datahub ?? RATE_LIMITS.standard);
   if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, cors);
 
   try {
     const rawBody = await req.json().catch(() => null);
     const parsedBody = JSONRPCRequestSchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return new Response(JSON.stringify({ jsonrpc: '2.0', error: { code: -32600, message: 'Payload inválido', data: parsedBody.error.flatten().fieldErrors } }), { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          error: {
+            code: -32600,
+            message: 'Payload inválido',
+            data: parsedBody.error.flatten().fieldErrors,
+          },
+        }),
+        { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } },
+      );
     }
     const body = parsedBody.data as JSONRPCRequest;
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -307,12 +381,15 @@ serve(async (req) => {
       headers: { ...cors, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({
-      jsonrpc: '2.0',
-      error: { code: -32700, message: error instanceof Error ? error.message : 'Parse error' },
-    }), {
-      status: 400,
-      headers: { ...cors, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        jsonrpc: '2.0',
+        error: { code: -32700, message: error instanceof Error ? error.message : 'Parse error' },
+      }),
+      {
+        status: 400,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      },
+    );
   }
 });

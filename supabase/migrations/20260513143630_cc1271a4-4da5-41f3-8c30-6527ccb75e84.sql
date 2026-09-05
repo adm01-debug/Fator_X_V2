@@ -21,7 +21,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 2. Particionamento da Tabela audit_log
 -- Criar nova estrutura particionada
-CREATE TABLE public.audit_log_v2 (
+CREATE TABLE IF NOT EXISTS public.audit_log_v2 (
     id UUID NOT NULL DEFAULT gen_random_uuid(),
     user_id UUID,
     action TEXT NOT NULL,
@@ -47,7 +47,7 @@ DROP TABLE public.audit_log CASCADE;
 ALTER TABLE public.audit_log_v2 RENAME TO audit_log;
 
 -- 3. Particionamento da Tabela agent_traces
-CREATE TABLE public.agent_traces_v2 (
+CREATE TABLE IF NOT EXISTS public.agent_traces_v2 (
     id UUID NOT NULL DEFAULT gen_random_uuid(),
     agent_id UUID,
     user_id UUID,
@@ -73,7 +73,9 @@ CREATE POLICY "Users can see their own traces" ON public.agent_traces_v2
     FOR SELECT USING (auth.uid() = user_id);
 
 -- Migrar dados existentes e substituir tabela antiga
-INSERT INTO public.agent_traces_v2 SELECT * FROM public.agent_traces;
+INSERT INTO public.agent_traces_v2 (id, agent_id, user_id, session_id, level, event, input, output, metadata, latency_ms, tokens_used, cost_usd, created_at)
+SELECT id, agent_id, user_id, session_id, level, event, input, output, metadata, latency_ms, tokens_used, cost_usd, created_at
+FROM public.agent_traces;
 DROP TABLE public.agent_traces CASCADE;
 ALTER TABLE public.agent_traces_v2 RENAME TO agent_traces;
 

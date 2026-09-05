@@ -1,5 +1,5 @@
 -- ============== Tables ==============
-CREATE TABLE public.workspace_budgets (
+CREATE TABLE IF NOT EXISTS public.workspace_budgets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL UNIQUE REFERENCES public.workspaces(id) ON DELETE CASCADE,
   monthly_limit_usd NUMERIC(12,2),
@@ -12,7 +12,7 @@ CREATE TABLE public.workspace_budgets (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.budget_events (
+CREATE TABLE IF NOT EXISTS public.budget_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   event_type TEXT NOT NULL CHECK (event_type IN ('soft_warning','hard_block','agent_paused','reset')),

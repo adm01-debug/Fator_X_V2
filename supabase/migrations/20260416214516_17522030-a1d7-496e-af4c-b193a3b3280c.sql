@@ -1,5 +1,5 @@
 -- Module #16 Automações: rules + execution logs
-CREATE TABLE public.automation_rules (
+CREATE TABLE IF NOT EXISTS public.automation_rules (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   created_by UUID NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE public.automation_rules (
 CREATE INDEX idx_automation_rules_workspace ON public.automation_rules(workspace_id);
 CREATE INDEX idx_automation_rules_active ON public.automation_rules(is_active) WHERE is_active = true;
 
-CREATE TABLE public.automation_logs (
+CREATE TABLE IF NOT EXISTS public.automation_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   rule_id UUID NOT NULL REFERENCES public.automation_rules(id) ON DELETE CASCADE,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,

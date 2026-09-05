@@ -29,7 +29,7 @@ END;
 $$;
 
 -- Index para performance de RLS
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_credential_vault_workspace ON public.credential_vault(workspace_id)
     WHERE workspace_id IS NOT NULL;
 
@@ -76,7 +76,7 @@ CREATE POLICY "cred_vault_member_read"
 CREATE POLICY "cred_vault_service_role"
     ON public.credential_vault
     FOR ALL
-    USING (auth.jwt_role() = 'service_role');
+    USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- ── PASSO 2: credential_audit_logs ──────────────────────────────
 -- credential_audit_logs precisa do workspace_id para filtrar corretamente
@@ -105,7 +105,7 @@ BEGIN
 END;
 $$;
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS
     idx_cred_audit_logs_workspace ON public.credential_audit_logs(workspace_id);
 
 -- Drop da policy insegura
@@ -140,7 +140,7 @@ CREATE POLICY "cred_audit_member_read"
 CREATE POLICY "cred_audit_service_role"
     ON public.credential_audit_logs
     FOR ALL
-    USING (auth.jwt_role() = 'service_role');
+    USING (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 COMMIT;
 

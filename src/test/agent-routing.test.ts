@@ -1,12 +1,28 @@
 /**
- * agentRoutingService tests (sprint #4 final)
- * Focuses on summarizeRoutes (pure function) + label helpers.
+ * agentRoutingService tests.
+ *
+ * A versão anterior cobria apenas `summarizeRoutes` e os labels — as funções
+ * que tocam o banco ficavam sem teste algum (`from: vi.fn()` devolvia
+ * `undefined`, então qualquer chamada real explodiria). Com o mock
+ * compartilhado passamos a cobrir também o caminho de dados, com destaque
+ * para `bulkToggleSource`, que é o botão de pânico de "desligar tudo de uma
+ * origem" e precisa devolver a contagem correta de linhas afetadas.
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getSharedSupabaseMock } from './utils/supabaseMock';
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: vi.fn() },
-}));
+vi.mock('@/lib/supabaseExtended', async () => {
+  const m = await import('./utils/supabaseMock');
+  const mock = m.getSharedSupabaseMock('agent-routing');
+  return {
+    fromTable: (t: string) => (mock.client.from as (x: string) => unknown)(t),
+    rpcCall: vi.fn().mockResolvedValue({ data: null, error: null }),
+  };
+});
+vi.mock('@/integrations/supabase/client', async () => {
+  const m = await import('./utils/supabaseMock');
+  return { supabase: m.getSharedSupabaseMock('agent-routing').client };
+});
 vi.mock('@/lib/agentService', () => ({
   getWorkspaceId: vi.fn().mockResolvedValue('ws-1'),
 }));
@@ -18,8 +34,15 @@ import {
   summarizeRoutes,
   getSourceLabel,
   SOURCE_LABELS,
+  listAllRoutes,
+  listRoutesBySource,
+  bulkToggleSource,
+  toggleRoute,
+  deleteRoute,
   type AgentRoutingRow,
 } from '@/services/agentRoutingService';
+
+const db = getSharedSupabaseMock('agent-routing');
 
 const buildRow = (overrides: Partial<AgentRoutingRow>): AgentRoutingRow => ({
   id: 'r-1',
@@ -145,5 +168,65 @@ describe('agentRoutingService exports', () => {
     expect(typeof mod.toggleRoute).toBe('function');
     expect(typeof mod.deleteRoute).toBe('function');
     expect(typeof mod.getSourceLabel).toBe('function');
+  });
+});
+
+describe('agentRoutingService — acesso a dados', () => {
+  beforeEach(() => {
+    db.reset();
+    db.setResult({ data: [], error: null });
+  });
+
+  it('listAllRoutes escopa por workspace e ordena por source depois event_type', async () => {
+    db.setTableResult('agent_routing_config', { data: [{ id: 'r1' }], error: null });
+    const rows = await listAllRoutes();
+
+    expect(rows).toHaveLength(1);
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-1');
+    expect(db.calls.order).toHaveBeenNthCalledWith(1, 'source', { ascending: true });
+    expect(db.calls.order).toHaveBeenNthCalledWith(2, 'event_type', { ascending: true });
+  });
+
+  it('listRoutesBySource acrescenta o filtro de origem ao escopo de workspace', async () => {
+    await listRoutesBySource('whatsapp');
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-1');
+    expect(db.calls.eq).toHaveBeenCalledWith('source', 'whatsapp');
+  });
+
+  it('bulkToggleSource devolve a contagem de linhas realmente afetadas', async () => {
+    db.setTableResult('agent_routing_config', {
+      data: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+      error: null,
+    });
+    const affected = await bulkToggleSource('bitrix24', false);
+
+    expect(affected).toBe(3);
+    expect(db.calls.update).toHaveBeenCalledWith({ is_enabled: false });
+    // o escopo de workspace é o que impede desligar rotas de outro tenant
+    expect(db.calls.eq).toHaveBeenCalledWith('workspace_id', 'ws-1');
+    expect(db.calls.eq).toHaveBeenCalledWith('source', 'bitrix24');
+    expect(db.calls.select).toHaveBeenCalledWith('id');
+  });
+
+  it('bulkToggleSource devolve 0 quando o banco retorna null (não quebra a UI)', async () => {
+    db.setTableResult('agent_routing_config', { data: null, error: null });
+    expect(await bulkToggleSource('gmail', true)).toBe(0);
+  });
+
+  it('bulkToggleSource propaga erro em vez de reportar sucesso silencioso', async () => {
+    db.setTableResult('agent_routing_config', { data: null, error: { message: 'rls' } });
+    await expect(bulkToggleSource('bitrix24', false)).rejects.toMatchObject({ message: 'rls' });
+  });
+
+  it('toggleRoute e deleteRoute agem exatamente sobre o id informado', async () => {
+    await toggleRoute('r-9', true);
+    expect(db.calls.update).toHaveBeenCalledWith({ is_enabled: true });
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'r-9');
+
+    db.reset();
+    db.setResult({ data: [], error: null });
+    await deleteRoute('r-9');
+    expect(db.calls.delete).toHaveBeenCalled();
+    expect(db.calls.eq).toHaveBeenCalledWith('id', 'r-9');
   });
 });

@@ -10,13 +10,28 @@ import { CardGridSkeleton } from '@/components/shared/PageSkeleton';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Search, Package, Download, Star, CheckCircle2, Shield, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { listSkills, type AgentSkillDefinition } from '@/services/skillsRegistryService';
 import { toast } from 'sonner';
 import { ProgressiveSkillLoaderPanel } from '@/components/skills/ProgressiveSkillLoaderPanel';
+import { SkillAttributionBadge } from '@/components/skills/SkillAttributionBadge';
+import {
+  filterSkillsByLicense,
+  normalizeLicenseFilter,
+  LICENSE_FILTERS,
+  type LicenseFilter,
+} from '@/lib/skills/attribution';
+import { useFilterPersistence } from '@/hooks/useFilterPersistence';
+
 import { SkillAutoRecommendationsPanel } from '@/components/skills/SkillAutoRecommendationsPanel';
 
 const CATEGORIES = [
@@ -36,20 +51,44 @@ const CATEGORY_COLORS: Record<string, string> = {
   integrations: 'bg-primary/10 text-primary border-primary/20',
 };
 
+/** Formato persistido no escopo `skills_marketplace`. */
+interface MarketplaceFilters extends Record<string, unknown> {
+  category: string;
+  license: LicenseFilter;
+}
+
+const FILTER_DEFAULTS: MarketplaceFilters = { category: 'all', license: 'all' };
+
 export default function SkillsMarketplacePage() {
+  // A busca textual é efêmera de propósito: persistir um termo digitado faria a
+  // tela abrir "vazia" na próxima sessão sem explicação. Categoria e licença,
+  // ao contrário, são política de curadoria e devem sobreviver ao reload.
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all');
+  const { filters, setFilters, syncStatus } = useFilterPersistence<MarketplaceFilters>({
+    scope: 'skills_marketplace',
+    defaults: FILTER_DEFAULTS,
+    storageKey: 'nexus.filters.skills_marketplace',
+  });
+
+  const category = typeof filters.category === 'string' ? filters.category : 'all';
+  // Normaliza na leitura: o payload vem de Cloud/localStorage/outra aba e pode
+  // estar corrompido ou vir de uma versão futura do app.
+  const license = normalizeLicenseFilter(filters.license);
 
   const { data, isLoading } = useQuery({
     queryKey: ['skills_marketplace', search, category],
-    queryFn: () => listSkills({
-      search: search || undefined,
-      category: category === 'all' ? undefined : category,
-      limit: 50,
-    }),
+    queryFn: () =>
+      listSkills({
+        search: search || undefined,
+        category: category === 'all' ? undefined : category,
+        limit: 50,
+      }),
   });
 
-  const skills = data?.skills ?? [];
+  // O filtro de licença é aplicado no cliente: a coluna `source_license` é
+  // texto livre no banco (aliases como "mit"/"Apache License 2.0" convivem com
+  // SPDX), então a normalização precisa acontecer antes da comparação.
+  const skills = filterSkillsByLicense(data?.skills ?? [], license);
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
@@ -66,14 +105,13 @@ export default function SkillsMarketplacePage() {
       </div>
 
       <InfoHint title="O que são Skills?">
-        Skills são pacotes de capacidades que podem ser instalados em agentes — ferramentas, prompts, bases de conhecimento, workflows e integrações prontos para uso.
+        Skills são pacotes de capacidades que podem ser instalados em agentes — ferramentas,
+        prompts, bases de conhecimento, workflows e integrações prontos para uso.
       </InfoHint>
 
       <SkillAutoRecommendationsPanel />
 
       <div className="flex flex-col sm:flex-row gap-3">
-
-
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -83,13 +121,35 @@ export default function SkillsMarketplacePage() {
             className="pl-9 bg-secondary/50"
           />
         </div>
-        <Select value={category} onValueChange={setCategory}>
+        <Select
+          value={category}
+          onValueChange={(value) => setFilters((prev) => ({ ...prev, category: value }))}
+        >
           <SelectTrigger className="w-[180px] bg-secondary/50">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {CATEGORIES.map(c => (
-              <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+            {CATEGORIES.map((c) => (
+              <SelectItem key={c.value} value={c.value}>
+                {c.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={license}
+          onValueChange={(value) =>
+            setFilters((prev) => ({ ...prev, license: normalizeLicenseFilter(value) }))
+          }
+        >
+          <SelectTrigger className="w-[210px] bg-secondary/50" aria-label="Filtrar por licença">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {LICENSE_FILTERS.map((f) => (
+              <SelectItem key={f.value} value={f.value} title={f.hint}>
+                {f.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -101,7 +161,11 @@ export default function SkillsMarketplacePage() {
         <EmptyState
           icon={Package}
           title="Nenhuma skill encontrada"
-          description="Tente outro termo de busca ou categoria."
+          description={
+            license === 'all'
+              ? 'Tente outro termo de busca ou categoria.'
+              : 'Nenhuma skill nesta faixa de licença. Tente "Todas as licenças".'
+          }
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -114,6 +178,10 @@ export default function SkillsMarketplacePage() {
       {data && data.total > 0 && (
         <p className="text-meta text-muted-foreground text-center">
           {skills.length} de {data.total} skills
+          {license !== 'all' && ' (filtro de licença ativo)'}
+          {/* 'local' = a preferência ficou só neste navegador (offline ou sem
+              sessão). Avisar evita a surpresa de perder o filtro noutra máquina. */}
+          {syncStatus === 'local' && ' · preferência salva apenas neste dispositivo'}
         </p>
       )}
 
@@ -131,9 +199,7 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <h3 className="text-body-sm font-semibold text-foreground truncate">{skill.name}</h3>
-            {skill.is_verified && (
-              <Shield className="h-3.5 w-3.5 text-nexus-emerald shrink-0" />
-            )}
+            {skill.is_verified && <Shield className="h-3.5 w-3.5 text-nexus-emerald shrink-0" />}
           </div>
           <p className="text-meta text-muted-foreground line-clamp-2">{skill.description}</p>
         </div>
@@ -146,6 +212,8 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
         <span className="text-meta text-muted-foreground">v{skill.version}</span>
         <span className="text-meta text-muted-foreground">por {skill.author}</span>
       </div>
+
+      <SkillAttributionBadge skill={skill} />
 
       <div className="flex items-center justify-between mt-auto pt-2 border-t border-border/50">
         <div className="flex items-center gap-3 text-meta text-muted-foreground">
@@ -168,8 +236,11 @@ function SkillCard({ skill }: { skill: AgentSkillDefinition }) {
 
       {skill.tags && skill.tags.length > 0 && (
         <div className="flex gap-1 flex-wrap">
-          {skill.tags.slice(0, 3).map(tag => (
-            <span key={tag} className="text-meta px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">
+          {skill.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="text-meta px-1.5 py-0.5 rounded bg-secondary text-muted-foreground"
+            >
               {tag}
             </span>
           ))}

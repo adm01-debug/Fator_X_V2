@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Loader2,
   Sparkles,
@@ -12,15 +12,20 @@ import {
   Zap,
   Cpu,
   Clock,
-} from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
-import { invokeTracedFunction } from "@/services/llmGatewayService";
-import { ORACLE_MODES, ORACLE_PRESETS, type OracleMode, type OracleResult } from "@/stores/oracleStore";
+} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'sonner';
+import { invokeTracedFunction } from '@/services/llmGatewayService';
+import {
+  ORACLE_MODES,
+  ORACLE_PRESETS,
+  type OracleMode,
+  type OracleResult,
+} from '@/stores/oracleStore';
 
 interface ComparisonRun {
   mode: OracleMode;
@@ -39,13 +44,17 @@ const COMPARISON_MODES: Array<{ mode: OracleMode; preset_id: string }> = [
 
 export function OracleComparisonPanel() {
   const [query, setQuery] = useState('');
-  const [selectedModes, setSelectedModes] = useState<OracleMode[]>(['council', 'researcher', 'advisor']);
+  const [selectedModes, setSelectedModes] = useState<OracleMode[]>([
+    'council',
+    'researcher',
+    'advisor',
+  ]);
   const [runs, setRuns] = useState<ComparisonRun[]>([]);
   const [isRunning, setIsRunning] = useState(false);
 
   const toggleMode = (mode: OracleMode) => {
     setSelectedModes((prev) =>
-      prev.includes(mode) ? prev.filter((m) => m !== mode) : [...prev, mode]
+      prev.includes(mode) ? prev.filter((m) => m !== mode) : [...prev, mode],
     );
   };
 
@@ -61,15 +70,15 @@ export function OracleComparisonPanel() {
 
     setIsRunning(true);
 
-    const initial: ComparisonRun[] = COMPARISON_MODES
-      .filter((c) => selectedModes.includes(c.mode))
-      .map((c) => ({
-        mode: c.mode,
-        preset_id: c.preset_id,
-        result: null,
-        duration_ms: 0,
-        status: 'pending' as const,
-      }));
+    const initial: ComparisonRun[] = COMPARISON_MODES.filter((c) =>
+      selectedModes.includes(c.mode),
+    ).map((c) => ({
+      mode: c.mode,
+      preset_id: c.preset_id,
+      result: null,
+      duration_ms: 0,
+      status: 'pending' as const,
+    }));
     setRuns(initial);
 
     // Run sequentially to avoid overloading the orchestrator
@@ -82,19 +91,23 @@ export function OracleComparisonPanel() {
 
       try {
         const preset = ORACLE_PRESETS.find((p) => p.id === cfg.preset_id) || ORACLE_PRESETS[0];
-        const data = await invokeTracedFunction<OracleResult>('oracle-council', {
-          query,
-          mode: cfg.mode,
-          members: preset.members,
-          chairman_model: preset.chairman,
-          enable_peer_review: preset.enablePeerReview,
-          enable_thinking: preset.enableThinking,
-          preset_id: preset.id,
-        }, {
-          spanKind: 'llm',
-          extractCostUsd: (d) => (d as OracleResult)?.metrics?.total_cost_usd,
-          extractModel: (b) => (b as { chairman_model?: string }).chairman_model,
-        });
+        const data = await invokeTracedFunction<OracleResult>(
+          'oracle-council',
+          {
+            query,
+            mode: cfg.mode,
+            members: preset.members,
+            chairman_model: preset.chairman,
+            enable_peer_review: preset.enablePeerReview,
+            enable_thinking: preset.enableThinking,
+            preset_id: preset.id,
+          },
+          {
+            spanKind: 'llm',
+            extractCostUsd: (d) => (d as OracleResult)?.metrics?.total_cost_usd,
+            extractModel: (b) => (b as { chairman_model?: string }).chairman_model,
+          },
+        );
 
         const idx = collected.findIndex((c) => c.mode === cfg.mode);
         if (idx >= 0) {
@@ -131,11 +144,12 @@ export function OracleComparisonPanel() {
 
   // "Winner" = highest confidence_score among successful runs (more meaningful than fastest)
   const successfulRuns = runs.filter((r) => r.status === 'success' && r.result);
-  const winnerMode = successfulRuns.length > 0
-    ? successfulRuns.reduce((best, r) =>
-        (r.result!.confidence_score ?? 0) > (best.result!.confidence_score ?? 0) ? r : best
-      ).mode
-    : null;
+  const winnerMode =
+    successfulRuns.length > 0
+      ? successfulRuns.reduce((best, r) =>
+          (r.result!.confidence_score ?? 0) > (best.result!.confidence_score ?? 0) ? r : best,
+        ).mode
+      : null;
 
   const aggregate = successfulRuns.reduce(
     (acc, r) => ({
@@ -143,7 +157,7 @@ export function OracleComparisonPanel() {
       tokens: acc.tokens + (r.result?.metrics?.total_tokens ?? 0),
       avgLatency: acc.avgLatency + r.duration_ms,
     }),
-    { cost: 0, tokens: 0, avgLatency: 0 }
+    { cost: 0, tokens: 0, avgLatency: 0 },
   );
   if (successfulRuns.length > 0) {
     aggregate.avgLatency = aggregate.avgLatency / successfulRuns.length;
@@ -182,7 +196,7 @@ export function OracleComparisonPanel() {
   return (
     <Card className="p-8 bg-card border-border rounded-3xl shadow-nexus-sm relative overflow-hidden group">
       <div className="absolute top-0 left-0 w-64 h-64 bg-primary/[0.02] rounded-full -translate-y-1/2 -translate-x-1/2" />
-      
+
       <div className="flex items-center justify-between mb-8 relative">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/15">
@@ -191,7 +205,8 @@ export function OracleComparisonPanel() {
           <div>
             <h3 className="text-xl font-bold text-foreground">Modo Benchmarking</h3>
             <p className="text-meta text-muted-foreground max-w-lg leading-relaxed">
-              Compare a eficácia e o custo de múltiplos algoritmos do conselho simultaneamente para o mesmo dilema.
+              Compare a eficácia e o custo de múltiplos algoritmos do conselho simultaneamente para
+              o mesmo dilema.
             </p>
           </div>
         </div>
@@ -210,18 +225,21 @@ export function OracleComparisonPanel() {
         </div>
 
         <div className="space-y-3">
-          <span className="text-meta font-extrabold text-muted-foreground uppercase tracking-widest ml-1">Estratégias para Confronto:</span>
+          <span className="text-meta font-extrabold text-muted-foreground uppercase tracking-widest ml-1">
+            Estratégias para Confronto:
+          </span>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {COMPARISON_MODES.map((cfg) => {
               const modeInfo = ORACLE_MODES[cfg.mode];
               const checked = selectedModes.includes(cfg.mode);
               return (
-                // eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative label
                 <label
                   key={cfg.mode}
                   htmlFor={`oracle-mode-${cfg.mode}`}
                   className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
-                    checked ? 'bg-primary/5 border-primary/40 shadow-nexus-sm' : 'bg-card text-muted-foreground hover:bg-secondary/50 border-border/60'
+                    checked
+                      ? 'bg-primary/5 border-primary/40 shadow-nexus-sm'
+                      : 'bg-card text-muted-foreground hover:bg-secondary/50 border-border/60'
                   }`}
                 >
                   <Checkbox
@@ -234,9 +252,13 @@ export function OracleComparisonPanel() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-title-sm">{modeInfo.icon}</span>
-                      <span className="text-meta font-bold uppercase tracking-tight">{modeInfo.label}</span>
+                      <span className="text-meta font-bold uppercase tracking-tight">
+                        {modeInfo.label}
+                      </span>
                     </div>
-                    <p className="text-meta leading-relaxed mt-1 line-clamp-2">{modeInfo.description}</p>
+                    <p className="text-meta leading-relaxed mt-1 line-clamp-2">
+                      {modeInfo.description}
+                    </p>
                   </div>
                 </label>
               );
@@ -250,7 +272,11 @@ export function OracleComparisonPanel() {
             disabled={isRunning || !query.trim() || selectedModes.length < 2}
             className="nexus-gradient-bg h-11 px-10 rounded-xl shadow-nexus-lg shadow-primary/20 hover:scale-[1.02] transition-all font-bold group"
           >
-            {isRunning ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />}
+            {isRunning ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
+            )}
             {isRunning ? 'EXECUTANDO ARENA...' : 'INICIAR BENCHMARK'}
           </Button>
         </div>
@@ -272,18 +298,40 @@ export function OracleComparisonPanel() {
               <Download className="h-3.5 w-3.5" /> Exportar Análise JSON
             </Button>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: <DollarSign className="h-4 w-4" />, label: 'Custo Total', value: `$${aggregate.cost.toFixed(4)}`, cls: 'text-nexus-emerald' },
-              { icon: <Hash className="h-4 w-4" />, label: 'Volume Tokens', value: aggregate.tokens.toLocaleString(), cls: 'text-foreground' },
-              { icon: <Zap className="h-4 w-4" />, label: 'Latência Média', value: `${(aggregate.avgLatency / 1000).toFixed(1)}s`, cls: 'text-nexus-amber' },
-              { icon: <Trophy className="h-4 w-4" />, label: 'Melhor Algoritmo', value: winnerMode ? ORACLE_MODES[winnerMode].label : '—', cls: 'text-primary font-bold' },
-            ].map(m => (
+              {
+                icon: <DollarSign className="h-4 w-4" />,
+                label: 'Custo Total',
+                value: `$${aggregate.cost.toFixed(4)}`,
+                cls: 'text-nexus-emerald',
+              },
+              {
+                icon: <Hash className="h-4 w-4" />,
+                label: 'Volume Tokens',
+                value: aggregate.tokens.toLocaleString(),
+                cls: 'text-foreground',
+              },
+              {
+                icon: <Zap className="h-4 w-4" />,
+                label: 'Latência Média',
+                value: `${(aggregate.avgLatency / 1000).toFixed(1)}s`,
+                cls: 'text-nexus-amber',
+              },
+              {
+                icon: <Trophy className="h-4 w-4" />,
+                label: 'Melhor Algoritmo',
+                value: winnerMode ? ORACLE_MODES[winnerMode].label : '—',
+                cls: 'text-primary font-bold',
+              },
+            ].map((m) => (
               <Card key={m.label} className="p-4 bg-secondary/20 border-border/40 text-center">
                 <div className="flex justify-center mb-1.5 opacity-60">{m.icon}</div>
                 <p className={`text-body-sm font-extrabold ${m.cls}`}>{m.value}</p>
-                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{m.label}</p>
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
+                  {m.label}
+                </p>
               </Card>
             ))}
           </div>
@@ -297,7 +345,9 @@ export function OracleComparisonPanel() {
                 <Card
                   key={run.mode}
                   className={`p-5 space-y-4 relative transition-all ${
-                    isWinner ? 'border-primary/50 shadow-nexus-md shadow-primary/5 ring-1 ring-primary/20' : 'border-border/60 bg-card/60'
+                    isWinner
+                      ? 'border-primary/50 shadow-nexus-md shadow-primary/5 ring-1 ring-primary/20'
+                      : 'border-border/60 bg-card/60'
                   }`}
                 >
                   {isWinner && (
@@ -305,25 +355,43 @@ export function OracleComparisonPanel() {
                       <Trophy className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
-                  
+
                   <div className="flex items-center justify-between gap-2 pb-3 border-b border-border/40">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xl">{modeInfo.icon}</span>
-                      <p className="text-meta font-bold uppercase tracking-tight truncate">{modeInfo.label}</p>
+                      <p className="text-meta font-bold uppercase tracking-tight truncate">
+                        {modeInfo.label}
+                      </p>
                     </div>
-                    {run.status === 'pending' && <Badge variant="outline" className="text-[9px] uppercase font-bold opacity-40">Turno 0</Badge>}
+                    {run.status === 'pending' && (
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] uppercase font-bold opacity-40"
+                      >
+                        Turno 0
+                      </Badge>
+                    )}
                     {run.status === 'running' && (
-                      <Badge variant="outline" className="text-[9px] gap-1.5 bg-primary/5 text-primary border-primary/20 animate-pulse font-bold uppercase">
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] gap-1.5 bg-primary/5 text-primary border-primary/20 animate-pulse font-bold uppercase"
+                      >
                         <Loader2 className="h-2.5 w-2.5 animate-spin" /> Em Sessão
                       </Badge>
                     )}
                     {run.status === 'success' && (
-                      <Badge variant="outline" className="text-[9px] border-nexus-emerald/30 bg-nexus-emerald/5 text-nexus-emerald font-bold uppercase">
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] border-nexus-emerald/30 bg-nexus-emerald/5 text-nexus-emerald font-bold uppercase"
+                      >
                         {(run.duration_ms / 1000).toFixed(1)}s OK
                       </Badge>
                     )}
                     {run.status === 'failed' && (
-                      <Badge variant="outline" className="text-[9px] border-destructive/30 bg-destructive/5 text-destructive font-bold uppercase">
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] border-destructive/30 bg-destructive/5 text-destructive font-bold uppercase"
+                      >
                         ERRO
                       </Badge>
                     )}
@@ -333,25 +401,38 @@ export function OracleComparisonPanel() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-3 gap-1">
                         <div className="text-center p-1.5 rounded-lg bg-secondary/40 border border-border/30">
-                          <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Conf.</p>
-                          <p className="text-meta font-mono font-extrabold text-foreground">{((run.result.confidence_score ?? 0) * 100).toFixed(0)}%</p>
+                          <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">
+                            Conf.
+                          </p>
+                          <p className="text-meta font-mono font-extrabold text-foreground">
+                            {((run.result.confidence_score ?? 0) * 100).toFixed(0)}%
+                          </p>
                         </div>
                         <div className="text-center p-1.5 rounded-lg bg-secondary/40 border border-border/30">
-                          <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Cons.</p>
-                          <p className="text-meta font-mono font-extrabold text-foreground">{((run.result.consensus_degree ?? 0) * 100).toFixed(0)}%</p>
+                          <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">
+                            Cons.
+                          </p>
+                          <p className="text-meta font-mono font-extrabold text-foreground">
+                            {((run.result.consensus_degree ?? 0) * 100).toFixed(0)}%
+                          </p>
                         </div>
                         <div className="text-center p-1.5 rounded-lg bg-secondary/40 border border-border/30">
-                          <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Custo</p>
-                          <p className="text-meta font-mono font-extrabold text-foreground">${(run.result.metrics?.total_cost_usd ?? 0).toFixed(4)}</p>
+                          <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">
+                            Custo
+                          </p>
+                          <p className="text-meta font-mono font-extrabold text-foreground">
+                            ${(run.result.metrics?.total_cost_usd ?? 0).toFixed(4)}
+                          </p>
                         </div>
                       </div>
 
                       <div className="text-meta text-foreground/80 leading-relaxed max-h-[200px] overflow-y-auto pr-1 bg-secondary/20 p-3 rounded-xl border border-border/40 scrollbar-hide italic">
                         "{run.result.final_response ?? 'Nenhuma resposta sintetizada.'}"
                       </div>
-                      
+
                       <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-widest ml-1">
-                        <Cpu className="h-3 w-3 opacity-60" /> {run.result.metrics?.models_used || 0} Especialistas Consultados
+                        <Cpu className="h-3 w-3 opacity-60" />{' '}
+                        {run.result.metrics?.models_used || 0} Especialistas Consultados
                       </div>
                     </div>
                   )}
@@ -359,22 +440,30 @@ export function OracleComparisonPanel() {
                   {run.status === 'failed' && (
                     <div className="py-10 text-center">
                       <XCircle className="h-8 w-8 text-destructive/30 mx-auto mb-2" />
-                      <p className="text-meta text-destructive font-bold uppercase tracking-tight">Falha Crítica</p>
-                      <p className="text-[9px] text-muted-foreground mt-1 line-clamp-3">{run.error ?? 'Orquestrador Offline'}</p>
+                      <p className="text-meta text-destructive font-bold uppercase tracking-tight">
+                        Falha Crítica
+                      </p>
+                      <p className="text-[9px] text-muted-foreground mt-1 line-clamp-3">
+                        {run.error ?? 'Orquestrador Offline'}
+                      </p>
                     </div>
                   )}
 
                   {run.status === 'pending' && (
                     <div className="py-10 text-center opacity-40">
                       <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-meta font-bold uppercase tracking-widest">Aguardando Fila</p>
+                      <p className="text-meta font-bold uppercase tracking-widest">
+                        Aguardando Fila
+                      </p>
                     </div>
                   )}
 
                   {run.status === 'running' && (
                     <div className="py-10 text-center">
                       <Loader2 className="h-8 w-8 text-primary/40 animate-spin mx-auto mb-2" />
-                      <p className="text-meta font-bold uppercase tracking-widest animate-pulse">Sintetizando...</p>
+                      <p className="text-meta font-bold uppercase tracking-widest animate-pulse">
+                        Sintetizando...
+                      </p>
                     </div>
                   )}
                 </Card>

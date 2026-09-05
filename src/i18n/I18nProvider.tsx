@@ -40,7 +40,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       const stored = localStorage.getItem(STORAGE_KEY) as Locale | null;
       if (stored && translations[stored]) return stored;
     } catch (err) {
-      logger.error('I18nProvider init failed', { error: err instanceof Error ? err.message : String(err) });
+      logger.error('I18nProvider init failed', {
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
     return DEFAULT_LOCALE;
   });
@@ -54,33 +56,28 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         document.documentElement.lang = newLocale;
       }
     } catch (err) {
-      logger.error('I18nProvider setLocale failed', { error: err instanceof Error ? err.message : String(err) });
+      logger.error('I18nProvider setLocale failed', {
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   }, []);
 
   const t = useCallback(
     (key: string, vars?: Record<string, string | number>): string => {
-      const template =
-        translations[locale]?.[key] ??
-        translations[DEFAULT_LOCALE]?.[key] ??
-        key;
+      const template = translations[locale]?.[key] ?? translations[DEFAULT_LOCALE]?.[key] ?? key;
       return interpolate(template, vars);
     },
-    [locale]
+    [locale],
   );
 
-  return (
-    <I18nContext.Provider value={{ locale, setLocale, t }}>
-      {children}
-    </I18nContext.Provider>
-  );
+  return <I18nContext.Provider value={{ locale, setLocale, t }}>{children}</I18nContext.Provider>;
 }
 
 /**
  * Hook to access the I18n context. Throws if used outside <I18nProvider>.
  * Falls back gracefully if context is missing (logs warning, uses defaults).
  */
-// eslint-disable-next-line react-refresh/only-export-components -- useI18nContext hook is imported by useI18n and tests
+
 export function useI18nContext(): I18nContextValue {
   const ctx = useContext(I18nContext);
   if (!ctx) {

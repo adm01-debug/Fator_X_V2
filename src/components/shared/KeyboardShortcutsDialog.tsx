@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { Keyboard, X } from "lucide-react";
-import { handleKeyboardClick } from "@/lib/a11y";
+import { useState, useEffect } from 'react';
+import { Keyboard, X } from 'lucide-react';
+import { handleKeyboardClick } from '@/lib/a11y';
 
 interface ShortcutEntry {
   keys: string[];
@@ -9,14 +9,14 @@ interface ShortcutEntry {
 }
 
 const SHORTCUTS: ShortcutEntry[] = [
-  { keys: ["⌘", "K"], description: "Busca rápida / Command Palette", category: "Geral" },
-  { keys: ["G"], description: "Ir para Dashboard", category: "Navegação" },
-  { keys: ["A"], description: "Ir para Agentes", category: "Navegação" },
-  { keys: ["⇧", "N"], description: "Criar novo agente", category: "Navegação" },
-  { keys: ["Alt", "←"], description: "Voltar página anterior", category: "Navegação" },
-  { keys: ["?"], description: "Abrir/fechar atalhos de teclado", category: "Geral" },
-  { keys: ["⇧", "/"], description: "Abrir/fechar atalhos (alternativo)", category: "Geral" },
-  { keys: ["Esc"], description: "Fechar este popover / modal", category: "Geral" },
+  { keys: ['⌘', 'K'], description: 'Busca rápida / Command Palette', category: 'Geral' },
+  { keys: ['G'], description: 'Ir para Dashboard', category: 'Navegação' },
+  { keys: ['A'], description: 'Ir para Agentes', category: 'Navegação' },
+  { keys: ['⇧', 'N'], description: 'Criar novo agente', category: 'Navegação' },
+  { keys: ['Alt', '←'], description: 'Voltar página anterior', category: 'Navegação' },
+  { keys: ['?'], description: 'Abrir/fechar atalhos de teclado', category: 'Geral' },
+  { keys: ['⇧', '/'], description: 'Abrir/fechar atalhos (alternativo)', category: 'Geral' },
+  { keys: ['Esc'], description: 'Fechar este popover / modal', category: 'Geral' },
 ];
 
 export function KeyboardShortcutsDialog() {
@@ -25,7 +25,7 @@ export function KeyboardShortcutsDialog() {
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       // Esc always closes when open, even if focus is inside an input within the dialog
-      if (e.key === "Escape" && open) {
+      if (e.key === 'Escape' && open) {
         e.preventDefault();
         e.stopPropagation();
         setOpen(false);
@@ -33,16 +33,17 @@ export function KeyboardShortcutsDialog() {
       }
 
       const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+        return;
 
       // Toggle with "?" (Shift+/ on most layouts) — works for both open and close
-      if (e.key === "?" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      if (e.key === '?' && !e.ctrlKey && !e.metaKey && !e.altKey) {
         e.preventDefault();
         setOpen((prev) => !prev);
       }
     };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
   }, [open]);
 
   const categories = [...new Set(SHORTCUTS.map((s) => s.category))];
@@ -54,15 +55,9 @@ export function KeyboardShortcutsDialog() {
       <div
         role="button"
         tabIndex={0}
-        aria-label="Fechar atalhos de teclado"
+        onKeyDown={handleKeyboardClick}
         className="fixed inset-0 z-50 bg-black/50 animate-fade-in"
         onClick={() => setOpen(false)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            setOpen(false);
-          }
-        }}
       />
       <div
         className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-xl border border-border bg-background shadow-nexus-2xl animate-fade-in-up"
@@ -72,7 +67,9 @@ export function KeyboardShortcutsDialog() {
         <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
           <div className="flex items-center gap-2">
             <Keyboard className="h-4 w-4 text-primary" />
-            <h2 className="text-body-sm font-heading font-semibold text-foreground">Atalhos de teclado</h2>
+            <h2 className="text-body-sm font-heading font-semibold text-foreground">
+              Atalhos de teclado
+            </h2>
           </div>
           <button
             onClick={() => setOpen(false)}
@@ -86,7 +83,9 @@ export function KeyboardShortcutsDialog() {
         <div className="p-5 space-y-5 max-h-[60vh] overflow-y-auto">
           {categories.map((cat) => (
             <div key={cat}>
-              <p className="text-meta uppercase tracking-wider text-muted-foreground/70 mb-2">{cat}</p>
+              <p className="text-meta uppercase tracking-wider text-muted-foreground/70 mb-2">
+                {cat}
+              </p>
               <div className="space-y-1.5">
                 {SHORTCUTS.filter((s) => s.category === cat).map((s) => (
                   <div key={s.description} className="flex items-center justify-between py-1.5">
@@ -110,7 +109,11 @@ export function KeyboardShortcutsDialog() {
 
         <div className="px-5 py-3 border-t border-border/50">
           <p className="text-meta text-muted-foreground text-center">
-            Pressione <kbd className="inline-flex h-5 items-center rounded border border-border bg-secondary/50 px-1 text-meta font-mono">?</kbd> para abrir/fechar
+            Pressione{' '}
+            <kbd className="inline-flex h-5 items-center rounded border border-border bg-secondary/50 px-1 text-meta font-mono">
+              ?
+            </kbd>{' '}
+            para abrir/fechar
           </p>
         </div>
       </div>

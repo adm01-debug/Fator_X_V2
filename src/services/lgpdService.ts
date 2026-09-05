@@ -5,20 +5,35 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 
-export async function listConsentRecords() {
+export interface ConsentRecord {
+  id: string;
+  purpose?: string;
+  consent_type: string;
+  granted: boolean;
+  created_at: string;
+}
+
+export interface DeletionRequest {
+  id: string;
+  reason: string | null;
+  status: string;
+  requested_at: string;
+}
+
+export async function listConsentRecords(): Promise<ConsentRecord[]> {
   const { data, error } = await supabase.functions.invoke('lgpd-manager', {
     body: { action: 'list_consents' },
   });
   if (error) throw new Error(`Failed to list consent records: ${error.message}`);
-  return (data as { consents?: unknown[] })?.consents ?? [];
+  return ((data as { consents?: ConsentRecord[] })?.consents ?? []) as ConsentRecord[];
 }
 
-export async function listDeletionRequests() {
+export async function listDeletionRequests(): Promise<DeletionRequest[]> {
   const { data, error } = await supabase.functions.invoke('lgpd-manager', {
     body: { action: 'list_deletion_requests' },
   });
   if (error) throw new Error(`Failed to list deletion requests: ${error.message}`);
-  return (data as { requests?: unknown[] })?.requests ?? [];
+  return ((data as { requests?: DeletionRequest[] })?.requests ?? []) as DeletionRequest[];
 }
 
 export async function exportMyData() {

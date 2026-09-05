@@ -6,7 +6,19 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Activity, AlertTriangle, Check, Columns2, Download, Info, Link2, RefreshCw, TrendingUp, Wrench, Zap } from 'lucide-react';
+import {
+  Activity,
+  AlertTriangle,
+  Check,
+  Columns2,
+  Download,
+  Info,
+  Link2,
+  RefreshCw,
+  TrendingUp,
+  Wrench,
+  Zap,
+} from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { LightAreaChart } from '@/components/charts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -55,7 +67,9 @@ function readStoredWindowHours(): number {
     if (raw === null) return DEFAULT_WINDOW_HOURS;
     const n = Number(raw);
     return (WINDOW_OPTIONS as readonly number[]).includes(n) ? n : DEFAULT_WINDOW_HOURS;
-  } catch { return DEFAULT_WINDOW_HOURS; }
+  } catch {
+    return DEFAULT_WINDOW_HOURS;
+  }
 }
 function readStoredCompareHours(): number {
   try {
@@ -64,7 +78,9 @@ function readStoredCompareHours(): number {
     const n = Number(raw);
     if (n === 0) return 0;
     return (WINDOW_OPTIONS as readonly number[]).includes(n) ? n : 0;
-  } catch { return 0; }
+  } catch {
+    return 0;
+  }
 }
 
 // URL query param keys — short on purpose so shared links stay clean.
@@ -97,8 +113,11 @@ function sanitizeWindowName(raw: string | null): string {
 }
 
 function readStoredWindowName(): string {
-  try { return sanitizeWindowName(localStorage.getItem(WINDOW_NAME_STORAGE_KEY)); }
-  catch { return ''; }
+  try {
+    return sanitizeWindowName(localStorage.getItem(WINDOW_NAME_STORAGE_KEY));
+  } catch {
+    return '';
+  }
 }
 
 /**
@@ -119,14 +138,17 @@ const ALL_FAILURE_MODES: readonly FailureMode[] = ['error', 'critical', 'latency
  *   - critical → nexus-rose        (severe latency outliers, P95 > P99 target)
  *   - latency  → nexus-amber       (warning band — slow but not catastrophic)
  */
-const FAILURE_MODE_META: Record<FailureMode, {
-  label: string;
-  description: string;
-  swatchClass: string;
-  /** Hex-equivalent token used inline (SVG/CSS gradients can't read Tailwind class). */
-  cssVar: string;
-}> = {
-  error:    {
+const FAILURE_MODE_META: Record<
+  FailureMode,
+  {
+    label: string;
+    description: string;
+    swatchClass: string;
+    /** Hex-equivalent token used inline (SVG/CSS gradients can't read Tailwind class). */
+    cssVar: string;
+  }
+> = {
+  error: {
     label: 'Erros',
     description: 'Buckets com pelo menos 1 trace com level=error',
     swatchClass: 'bg-destructive',
@@ -138,7 +160,7 @@ const FAILURE_MODE_META: Record<FailureMode, {
     swatchClass: 'bg-nexus-rose',
     cssVar: 'hsl(var(--nexus-rose))',
   },
-  latency:  {
+  latency: {
     label: 'Latência',
     description: 'P95 do bucket excede o alvo de P95',
     swatchClass: 'bg-nexus-amber',
@@ -207,7 +229,11 @@ interface MetricCardProps {
   compareLabel?: string;
 }
 
-function formatDelta(curr: number, prev: number, lowerIsBetter: boolean): {
+function formatDelta(
+  curr: number,
+  prev: number,
+  lowerIsBetter: boolean,
+): {
   pct: number;
   isImprovement: boolean;
   arrow: '↑' | '↓' | '→';
@@ -220,15 +246,25 @@ function formatDelta(curr: number, prev: number, lowerIsBetter: boolean): {
   const arrow = pct > 0.5 ? '↑' : pct < -0.5 ? '↓' : '→';
   const isImprovement = lowerIsBetter ? pct < 0 : pct > 0;
   const className =
-    Math.abs(pct) < 0.5 ? 'text-muted-foreground'
-      : isImprovement ? 'text-nexus-emerald'
-      : 'text-destructive';
+    Math.abs(pct) < 0.5
+      ? 'text-muted-foreground'
+      : isImprovement
+        ? 'text-nexus-emerald'
+        : 'text-destructive';
   return { pct, isImprovement, arrow, className };
 }
 
 function MetricCard({
-  title, value, target, status, icon: Icon,
-  current, previous, lowerIsBetter = true, formatPrev, compareLabel,
+  title,
+  value,
+  target,
+  status,
+  icon: Icon,
+  current,
+  previous,
+  lowerIsBetter = true,
+  formatPrev,
+  compareLabel,
 }: MetricCardProps) {
   const showDelta = current !== undefined && previous !== undefined;
   const delta = showDelta ? formatDelta(current, previous, lowerIsBetter) : null;
@@ -295,8 +331,8 @@ export default function SLODashboard() {
   // Persisted in the URL so a shared link reproduces the same drill-down.
   // We keep the state but don't yet refetch by agent (the SLO RPC is global);
   // selection drives the highlighted row + scope chip + deep-link target.
-  const [selectedAgentId, setSelectedAgentId] = useState<string>(
-    () => sanitizeAgentId(searchParams.get(QP_SELECTED)),
+  const [selectedAgentId, setSelectedAgentId] = useState<string>(() =>
+    sanitizeAgentId(searchParams.get(QP_SELECTED)),
   );
 
   // When the Clipboard API is denied/unavailable, we open this modal with the
@@ -320,9 +356,9 @@ export default function SLODashboard() {
   const [failureModes, setFailureModes] = useState<Set<FailureMode>>(() => {
     const raw = searchParams.get(QP_FAILURE_MODES);
     if (raw === null) return new Set(ALL_FAILURE_MODES);
-    const picked = raw.split(',').filter((m): m is FailureMode =>
-      (ALL_FAILURE_MODES as readonly string[]).includes(m),
-    );
+    const picked = raw
+      .split(',')
+      .filter((m): m is FailureMode => (ALL_FAILURE_MODES as readonly string[]).includes(m));
     return picked.length ? new Set(picked) : new Set(ALL_FAILURE_MODES);
   });
   const toggleFailureMode = useCallback((mode: FailureMode) => {
@@ -351,9 +387,7 @@ export default function SLODashboard() {
 
   // Audit log: tracks every meaningful filter/toggle change in this session
   // so reproductions of shared views can be inspected. Local-only (sessionStorage).
-  const failureModesKey = ALL_FAILURE_MODES
-    .filter((m) => failureModes.has(m))
-    .join(',');
+  const failureModesKey = ALL_FAILURE_MODES.filter((m) => failureModes.has(m)).join(',');
   const { entries: auditEntries, clear: clearAudit } = useDrilldownAuditLog({
     windowHours,
     compareHours,
@@ -386,11 +420,14 @@ export default function SLODashboard() {
       filtersLockTimerRef.current = null;
     }, 350);
   }, []);
-  useEffect(() => () => {
-    if (filtersLockTimerRef.current !== null) {
-      window.clearTimeout(filtersLockTimerRef.current);
-    }
-  }, []);
+  useEffect(
+    () => () => {
+      if (filtersLockTimerRef.current !== null) {
+        window.clearTimeout(filtersLockTimerRef.current);
+      }
+    },
+    [],
+  );
   // Re-renders the "X seg atrás" pill once a second without re-fetching data.
   const [, setNowTick] = useState(0);
   const isMountedRef = useRef(true);
@@ -448,7 +485,18 @@ export default function SLODashboard() {
     if (next.toString() !== searchParams.toString()) {
       setSearchParams(next, { replace: true });
     }
-  }, [windowHours, autoRefreshMs, compareHours, failureModes, windowName, selectedAgentId, includeToolFailures, compareToolModes, searchParams, setSearchParams]);
+  }, [
+    windowHours,
+    autoRefreshMs,
+    compareHours,
+    failureModes,
+    windowName,
+    selectedAgentId,
+    includeToolFailures,
+    compareToolModes,
+    searchParams,
+    setSearchParams,
+  ]);
 
   // React to back/forward navigation (or another link that mutates the URL)
   // by re-reading the params into local state.
@@ -456,24 +504,30 @@ export default function SLODashboard() {
     const wFromUrl = parseWindowParam(searchParams.get(QP_WINDOW), DEFAULT_WINDOW_HOURS);
     const aFromUrl = parseAutoParam(searchParams.get(QP_AUTO), autoRefreshMs);
     const cmpRaw = searchParams.get(QP_COMPARE);
-    const cmpFromUrl = cmpRaw === null
-      ? 0
-      : ((WINDOW_OPTIONS as readonly number[]).includes(Number(cmpRaw)) ? Number(cmpRaw) : 0);
+    const cmpFromUrl =
+      cmpRaw === null
+        ? 0
+        : (WINDOW_OPTIONS as readonly number[]).includes(Number(cmpRaw))
+          ? Number(cmpRaw)
+          : 0;
     if (wFromUrl !== windowHours) setWindowHours(wFromUrl);
     if (aFromUrl !== autoRefreshMs) setAutoRefreshMs(aFromUrl);
     if (cmpFromUrl !== compareHours) setCompareHours(cmpFromUrl);
 
     const fmRaw = searchParams.get(QP_FAILURE_MODES);
-    const fmFromUrl = fmRaw === null
-      ? new Set<FailureMode>(ALL_FAILURE_MODES)
-      : new Set<FailureMode>(
-          fmRaw.split(',').filter((m): m is FailureMode =>
-            (ALL_FAILURE_MODES as readonly string[]).includes(m),
-          ),
-        );
+    const fmFromUrl =
+      fmRaw === null
+        ? new Set<FailureMode>(ALL_FAILURE_MODES)
+        : new Set<FailureMode>(
+            fmRaw
+              .split(',')
+              .filter((m): m is FailureMode =>
+                (ALL_FAILURE_MODES as readonly string[]).includes(m),
+              ),
+          );
     if (fmFromUrl.size > 0) {
-      const sameMembers = fmFromUrl.size === failureModes.size
-        && [...fmFromUrl].every((m) => failureModes.has(m));
+      const sameMembers =
+        fmFromUrl.size === failureModes.size && [...fmFromUrl].every((m) => failureModes.has(m));
       if (!sameMembers) setFailureModes(fmFromUrl);
     }
 
@@ -492,7 +546,9 @@ export default function SLODashboard() {
     try {
       if (trimmed) localStorage.setItem(WINDOW_NAME_STORAGE_KEY, trimmed);
       else localStorage.removeItem(WINDOW_NAME_STORAGE_KEY);
-    } catch { /* quota / disabled — silently ignore */ }
+    } catch {
+      /* quota / disabled — silently ignore */
+    }
   }, [windowName]);
 
   // Persist windowHours / compareHours per-user with the same debounce as the
@@ -501,8 +557,11 @@ export default function SLODashboard() {
   // value to avoid thrashing localStorage during rapid toggling.
   useEffect(() => {
     const t = window.setTimeout(() => {
-      try { localStorage.setItem(WINDOW_HOURS_STORAGE_KEY, String(windowHours)); }
-      catch { /* quota / disabled — ignore */ }
+      try {
+        localStorage.setItem(WINDOW_HOURS_STORAGE_KEY, String(windowHours));
+      } catch {
+        /* quota / disabled — ignore */
+      }
     }, FILTER_PERSIST_DEBOUNCE_MS);
     return () => window.clearTimeout(t);
   }, [windowHours]);
@@ -511,7 +570,9 @@ export default function SLODashboard() {
       try {
         if (compareHours > 0) localStorage.setItem(COMPARE_HOURS_STORAGE_KEY, String(compareHours));
         else localStorage.removeItem(COMPARE_HOURS_STORAGE_KEY);
-      } catch { /* quota / disabled — ignore */ }
+      } catch {
+        /* quota / disabled — ignore */
+      }
     }, FILTER_PERSIST_DEBOUNCE_MS);
     return () => window.clearTimeout(t);
   }, [compareHours]);
@@ -551,62 +612,66 @@ export default function SLODashboard() {
   } | null>(null);
   const dismissError = useCallback(() => setErrorAgg(null), []);
 
-  const load = useCallback(async (showSpinner = false) => {
-    const myToken = ++requestTokenRef.current;
-    const startedAt = performance.now();
-    setDebounceStats((s) => ({ ...s, requested: s.requested + 1 }));
-    if (showSpinner) setRefreshing(true);
-    try {
-      // Fetch primary + comparison windows in parallel so the side-by-side
-      // view updates atomically. If only one is selected, just await one.
-      const [data, cmpData] = await Promise.all([
-        fetchSLOSummary(windowHours),
-        compareHours > 0 ? fetchSLOSummary(compareHours) : Promise.resolve(null),
-      ]);
-      if (!isMountedRef.current) return;
-      // Stale response — a newer request was kicked off after this one.
-      // Drop it silently; the in-flight newer request will populate state.
-      if (myToken !== requestTokenRef.current) {
-        setDebounceStats((s) => ({ ...s, dropped: s.dropped + 1 }));
-        return;
-      }
-      const durationMs = Math.round(performance.now() - startedAt);
-      committedCountRef.current += 1;
-      totalDurationRef.current += durationMs;
-      setDebounceStats((s) => ({
-        ...s,
-        lastDurationMs: durationMs,
-        avgDurationMs: Math.round(totalDurationRef.current / committedCountRef.current),
-      }));
-      setSummary(data);
-      setCompareSummary(cmpData);
-      setLastRefreshAt(new Date());
-      // Successful commit clears any aggregated error state — the user can
-      // see things are healthy again without us posting a "recovered" toast.
-      setErrorAgg(null);
-    } catch (err) {
-      logger.error('Failed to load SLO summary', err);
-      // Inline aggregator instead of per-failure toasts: rapid filter toggling
-      // can fire several requests; we want a single banner that summarizes the
-      // most recent error + how many failed since the last success.
-      if (myToken === requestTokenRef.current) {
-        const message = err instanceof Error ? err.message : 'Erro desconhecido';
-        setErrorAgg((prev) => ({
-          count: (prev?.count ?? 0) + 1,
-          lastMessage: message,
-          lastAt: new Date(),
+  const load = useCallback(
+    async (showSpinner = false) => {
+      const myToken = ++requestTokenRef.current;
+      const startedAt = performance.now();
+      setDebounceStats((s) => ({ ...s, requested: s.requested + 1 }));
+      if (showSpinner) setRefreshing(true);
+      try {
+        // Fetch primary + comparison windows in parallel so the side-by-side
+        // view updates atomically. If only one is selected, just await one.
+        const [data, cmpData] = await Promise.all([
+          fetchSLOSummary(windowHours),
+          compareHours > 0 ? fetchSLOSummary(compareHours) : Promise.resolve(null),
+        ]);
+        if (!isMountedRef.current) return;
+        // Stale response — a newer request was kicked off after this one.
+        // Drop it silently; the in-flight newer request will populate state.
+        if (myToken !== requestTokenRef.current) {
+          setDebounceStats((s) => ({ ...s, dropped: s.dropped + 1 }));
+          return;
+        }
+        const durationMs = Math.round(performance.now() - startedAt);
+        committedCountRef.current += 1;
+        totalDurationRef.current += durationMs;
+        setDebounceStats((s) => ({
+          ...s,
+          lastDurationMs: durationMs,
+          avgDurationMs: Math.round(totalDurationRef.current / committedCountRef.current),
         }));
+        setSummary(data);
+        setCompareSummary(cmpData);
+        setLastRefreshAt(new Date());
+        // Successful commit clears any aggregated error state — the user can
+        // see things are healthy again without us posting a "recovered" toast.
+        setErrorAgg(null);
+      } catch (err) {
+        logger.error('Failed to load SLO summary', err);
+        // Inline aggregator instead of per-failure toasts: rapid filter toggling
+        // can fire several requests; we want a single banner that summarizes the
+        // most recent error + how many failed since the last success.
+        if (myToken === requestTokenRef.current) {
+          const message = err instanceof Error ? err.message : 'Erro desconhecido';
+          setErrorAgg((prev) => ({
+            count: (prev?.count ?? 0) + 1,
+            lastMessage: message,
+            lastAt: new Date(),
+          }));
+        }
+      } finally {
+        // Only the latest request controls the spinner — stale ones don't
+        // get to flip it off prematurely, and a request that resolved after
+        // unmount must not touch state.
+        if (isMountedRef.current && myToken === requestTokenRef.current) {
+          setLoading(false);
+          setRefreshing(false);
+          setRecomputing(false);
+        }
       }
-    } finally {
-      // Only the latest request controls the spinner — stale ones don't
-      // get to flip it off prematurely.
-      if (isMountedRef.current && myToken === requestTokenRef.current) {
-        setLoading(false);
-        setRefreshing(false);
-        setRecomputing(false);
-      }
-    }
-  }, [windowHours, compareHours]);
+    },
+    [windowHours, compareHours],
+  );
 
   // Initial load + scheduled auto-refresh.
   //
@@ -651,7 +716,9 @@ export default function SLODashboard() {
     setAutoRefreshMs(value);
     try {
       localStorage.setItem(AUTO_REFRESH_STORAGE_KEY, String(value));
-    } catch {/* quota / privacy mode — ignore */}
+    } catch {
+      /* quota / privacy mode — ignore */
+    }
     if (value > 0) {
       const label = AUTO_REFRESH_OPTIONS.find((o) => o.value === value)?.label;
       toast.success('Auto-atualização ativada', { description: `A cada ${label}` });
@@ -662,12 +729,20 @@ export default function SLODashboard() {
 
   const isEmpty = !loading && summary && summary.total_traces === 0;
 
-  const p95Status = summary ? latencyStatus(summary.p95_latency_ms, SLO_TARGETS.p95LatencyMs) : 'healthy';
-  const p99Status = summary ? latencyStatus(summary.p99_latency_ms, SLO_TARGETS.p99LatencyMs) : 'healthy';
+  const p95Status = summary
+    ? latencyStatus(summary.p95_latency_ms, SLO_TARGETS.p95LatencyMs)
+    : 'healthy';
+  const p99Status = summary
+    ? latencyStatus(summary.p99_latency_ms, SLO_TARGETS.p99LatencyMs)
+    : 'healthy';
   const successStatus = summary ? successRateStatus(summary.success_rate) : 'healthy';
-  const errorBudgetConsumed = summary && summary.total_traces > 0
-    ? Math.min(((summary.error_count / summary.total_traces) * 100) / SLO_TARGETS.errorBudgetPct * 100, 999)
-    : 0;
+  const errorBudgetConsumed =
+    summary && summary.total_traces > 0
+      ? Math.min(
+          (((summary.error_count / summary.total_traces) * 100) / SLO_TARGETS.errorBudgetPct) * 100,
+          999,
+        )
+      : 0;
   const budgetStatus = errorBudgetStatus(errorBudgetConsumed);
 
   /**
@@ -675,24 +750,33 @@ export default function SLODashboard() {
    * A bucket counts as a "violation" when it triggers at least one selected
    * failure mode. We expose the matched modes so the chart can color-tag them.
    */
-  const classifyBucket = useCallback((p: { errors: number; p95_ms: number }): FailureMode[] => {
-    const matched: FailureMode[] = [];
-    if (failureModes.has('error') && p.errors > 0) matched.push('error');
-    if (failureModes.has('critical') && p.p95_ms > SLO_TARGETS.p99LatencyMs) matched.push('critical');
-    if (failureModes.has('latency') && p.p95_ms > SLO_TARGETS.p95LatencyMs) matched.push('latency');
-    return matched;
-  }, [failureModes]);
+  const classifyBucket = useCallback(
+    (p: { errors: number; p95_ms: number }): FailureMode[] => {
+      const matched: FailureMode[] = [];
+      if (failureModes.has('error') && p.errors > 0) matched.push('error');
+      if (failureModes.has('critical') && p.p95_ms > SLO_TARGETS.p99LatencyMs)
+        matched.push('critical');
+      if (failureModes.has('latency') && p.p95_ms > SLO_TARGETS.p95LatencyMs)
+        matched.push('latency');
+      return matched;
+    },
+    [failureModes],
+  );
 
-  const chartData = summary?.timeseries.map((p) => ({
-    time: new Date(p.bucket_hour).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-    p95: p.p95_ms,
-    p50: p.p50_ms,
-    target: SLO_TARGETS.p95LatencyMs,
-    // Extra fields consumed by the tooltip — not plotted as series.
-    _bucket_hour: p.bucket_hour,
-    _errors: p.errors,
-    _total: p.total,
-  })) ?? [];
+  const chartData =
+    summary?.timeseries.map((p) => ({
+      time: new Date(p.bucket_hour).toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      p95: p.p95_ms,
+      p50: p.p50_ms,
+      target: SLO_TARGETS.p95LatencyMs,
+      // Extra fields consumed by the tooltip — not plotted as series.
+      _bucket_hour: p.bucket_hour,
+      _errors: p.errors,
+      _total: p.total,
+    })) ?? [];
 
   // Total violation buckets under the current filter — surfaced in the
   // comparison table and the timeline header chip.
@@ -752,25 +836,28 @@ export default function SLODashboard() {
           </p>
           {/* Scope chip — surfaces the active drill-down so a shared link's
               recipient instantly sees the view is filtered to one agent. */}
-          {selectedAgentId && (() => {
-            const sel = summary?.top_agents.find((a) => a.agent_id === selectedAgentId);
-            const label = sel?.agent_name ?? `agente ${selectedAgentId.slice(0, 8)}…`;
-            return (
-              <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 pl-3 pr-1 py-0.5 text-meta">
-                <span className="text-muted-foreground">Escopo:</span>
-                <span className="font-medium text-foreground">{label}</span>
-                <button
-                  type="button"
-                  onClick={() => setSelectedAgentId('')}
-                  className="ml-1 rounded-full p-0.5 hover:bg-primary/20 focus-ring"
-                  aria-label="Remover escopo de agente"
-                  title="Limpar seleção"
-                >
-                  <span aria-hidden className="block h-4 w-4 leading-4 text-center">×</span>
-                </button>
-              </div>
-            );
-          })()}
+          {selectedAgentId &&
+            (() => {
+              const sel = summary?.top_agents.find((a) => a.agent_id === selectedAgentId);
+              const label = sel?.agent_name ?? `agente ${selectedAgentId.slice(0, 8)}…`;
+              return (
+                <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 pl-3 pr-1 py-0.5 text-meta">
+                  <span className="text-muted-foreground">Escopo:</span>
+                  <span className="font-medium text-foreground">{label}</span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedAgentId('')}
+                    className="ml-1 rounded-full p-0.5 hover:bg-primary/20 focus-ring"
+                    aria-label="Remover escopo de agente"
+                    title="Limpar seleção"
+                  >
+                    <span aria-hidden className="block h-4 w-4 leading-4 text-center">
+                      ×
+                    </span>
+                  </button>
+                </div>
+              );
+            })()}
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {/* Discreet "recomputing" chip — appears only while a debounced
@@ -796,16 +883,16 @@ export default function SLODashboard() {
               title={`Última atualização: ${lastRefreshAt.toLocaleString('pt-BR')}`}
             >
               {autoRefreshMs > 0 && (
-                <span
-                  className="relative inline-flex h-2 w-2"
-                  aria-hidden
-                >
+                <span className="relative inline-flex h-2 w-2" aria-hidden>
                   <span className="absolute inline-flex h-full w-full rounded-full bg-nexus-emerald opacity-60 animate-ping" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-nexus-emerald" />
                 </span>
               )}
               {(() => {
-                const seconds = Math.max(0, Math.round((Date.now() - lastRefreshAt.getTime()) / 1000));
+                const seconds = Math.max(
+                  0,
+                  Math.round((Date.now() - lastRefreshAt.getTime()) / 1000),
+                );
                 if (seconds < 60) return `há ${seconds}s`;
                 const m = Math.floor(seconds / 60);
                 return `há ${m}min`;
@@ -827,7 +914,10 @@ export default function SLODashboard() {
           </select>
           <select
             value={windowHours}
-            onChange={(e) => { setWindowHours(Number(e.target.value)); lockFiltersBriefly(); }}
+            onChange={(e) => {
+              setWindowHours(Number(e.target.value));
+              lockFiltersBriefly();
+            }}
             disabled={filtersLocked}
             className="rounded-md border border-input bg-background px-3 py-1.5 text-body-sm focus-ring disabled:opacity-60 disabled:cursor-not-allowed"
             aria-label="Janela de tempo"
@@ -841,12 +931,19 @@ export default function SLODashboard() {
           </select>
           <select
             value={compareHours}
-            onChange={(e) => { setCompareHours(Number(e.target.value)); lockFiltersBriefly(); }}
+            onChange={(e) => {
+              setCompareHours(Number(e.target.value));
+              lockFiltersBriefly();
+            }}
             disabled={filtersLocked}
             className="rounded-md border border-input bg-background px-3 py-1.5 text-body-sm focus-ring disabled:opacity-60 disabled:cursor-not-allowed"
             aria-label="Janela de comparação"
             aria-busy={filtersLocked}
-            title={filtersLocked ? 'Aguarde — aplicando última troca…' : 'Compara a janela atual com outra para ver tendências'}
+            title={
+              filtersLocked
+                ? 'Aguarde — aplicando última troca…'
+                : 'Compara a janela atual com outra para ver tendências'
+            }
           >
             <option value={0}>Comparar: —</option>
             {[1, 6, 24, 168]
@@ -902,9 +999,10 @@ export default function SLODashboard() {
               const scopeLabel = selectedAgentId
                 ? ` · escopo: ${selName || 'agente selecionado'}`
                 : '';
-              const successDescription = (named
-                ? `Janela "${named}" · cadência e filtros preservados na URL`
-                : 'Janela e cadência preservadas na URL') + scopeLabel;
+              const successDescription =
+                (named
+                  ? `Janela "${named}" · cadência e filtros preservados na URL`
+                  : 'Janela e cadência preservadas na URL') + scopeLabel;
 
               // Clipboard API is gated by: (a) secure context (HTTPS / localhost),
               // (b) Permissions-Policy `clipboard-write`, (c) document focus,
@@ -947,9 +1045,7 @@ export default function SLODashboard() {
           <AlertTriangle className="h-4 w-4 mt-0.5 text-destructive shrink-0" aria-hidden />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-              <span className="font-semibold text-destructive">
-                Falha ao carregar métricas SLO
-              </span>
+              <span className="font-semibold text-destructive">Falha ao carregar métricas SLO</span>
               {errorAgg.count > 1 && (
                 <span className="rounded-full border border-destructive/40 bg-destructive/15 px-1.5 py-0.5 text-meta font-mono text-destructive">
                   {errorAgg.count} falhas agregadas
@@ -984,7 +1080,9 @@ export default function SLODashboard() {
               aria-label="Dispensar aviso"
               title="Dispensar"
             >
-              <span aria-hidden className="block h-4 w-4 leading-4 text-center">×</span>
+              <span aria-hidden className="block h-4 w-4 leading-4 text-center">
+                ×
+              </span>
             </button>
           </div>
         </div>
@@ -992,7 +1090,9 @@ export default function SLODashboard() {
 
       {loading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-32" />)}
+          {[0, 1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
         </div>
       ) : isEmpty ? (
         <Card>
@@ -1000,1359 +1100,1669 @@ export default function SLODashboard() {
             <Activity className="h-12 w-12 text-muted-foreground/40 mb-4" />
             <h3 className="text-title-sm font-semibold mb-2">Sem dados ainda</h3>
             <p className="text-body-sm text-muted-foreground max-w-md">
-              Execute um agente ou workflow para gerar traces — as métricas de SLO aparecerão aqui em tempo real.
+              Execute um agente ou workflow para gerar traces — as métricas de SLO aparecerão aqui
+              em tempo real.
             </p>
-            <Button className="mt-4" onClick={() => { window.location.href = '/agents'; }}>
+            <Button
+              className="mt-4"
+              onClick={() => {
+                window.location.href = '/agents';
+              }}
+            >
               Ir para Agentes
             </Button>
           </CardContent>
         </Card>
-      ) : summary && (
-        <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <MetricCard
-              title="Taxa de Sucesso"
-              value={`${summary.success_rate.toFixed(2)}%`}
-              target={`≥ ${SLO_TARGETS.successRatePct}%`}
-              status={successStatus}
-              icon={Check}
-              current={summary.success_rate}
-              previous={compareSummary?.success_rate}
-              lowerIsBetter={false}
-              formatPrev={(n) => `${n.toFixed(2)}%`}
-              compareLabel={compareSummary ? `vs ${windowLabel(compareHours)}` : undefined}
-            />
-            <MetricCard
-              title="Latência P95"
-              value={`${summary.p95_latency_ms}ms`}
-              target={`< ${SLO_TARGETS.p95LatencyMs}ms`}
-              status={p95Status}
-              icon={Zap}
-              current={summary.p95_latency_ms}
-              previous={compareSummary?.p95_latency_ms}
-              lowerIsBetter
-              formatPrev={(n) => `${n}ms`}
-              compareLabel={compareSummary ? `vs ${windowLabel(compareHours)}` : undefined}
-            />
-            <MetricCard
-              title="Latência P99"
-              value={`${summary.p99_latency_ms}ms`}
-              target={`< ${SLO_TARGETS.p99LatencyMs}ms`}
-              status={p99Status}
-              icon={TrendingUp}
-              current={summary.p99_latency_ms}
-              previous={compareSummary?.p99_latency_ms}
-              lowerIsBetter
-              formatPrev={(n) => `${n}ms`}
-              compareLabel={compareSummary ? `vs ${windowLabel(compareHours)}` : undefined}
-            />
-            <MetricCard
-              title="Error Budget Consumido"
-              value={`${errorBudgetConsumed.toFixed(1)}%`}
-              target={`≤ 100%`}
-              status={budgetStatus}
-              icon={AlertTriangle}
-              current={errorBudgetConsumed}
-              previous={compareSummary && compareSummary.total_traces > 0
-                ? Math.min(((compareSummary.error_count / compareSummary.total_traces) * 100) / SLO_TARGETS.errorBudgetPct * 100, 999)
-                : undefined}
-              lowerIsBetter
-              formatPrev={(n) => `${n.toFixed(1)}%`}
-              compareLabel={compareSummary ? `vs ${windowLabel(compareHours)}` : undefined}
-            />
-          </div>
+      ) : (
+        summary && (
+          <>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <MetricCard
+                title="Taxa de Sucesso"
+                value={`${summary.success_rate.toFixed(2)}%`}
+                target={`≥ ${SLO_TARGETS.successRatePct}%`}
+                status={successStatus}
+                icon={Check}
+                current={summary.success_rate}
+                previous={compareSummary?.success_rate}
+                lowerIsBetter={false}
+                formatPrev={(n) => `${n.toFixed(2)}%`}
+                compareLabel={compareSummary ? `vs ${windowLabel(compareHours)}` : undefined}
+              />
+              <MetricCard
+                title="Latência P95"
+                value={`${summary.p95_latency_ms}ms`}
+                target={`< ${SLO_TARGETS.p95LatencyMs}ms`}
+                status={p95Status}
+                icon={Zap}
+                current={summary.p95_latency_ms}
+                previous={compareSummary?.p95_latency_ms}
+                lowerIsBetter
+                formatPrev={(n) => `${n}ms`}
+                compareLabel={compareSummary ? `vs ${windowLabel(compareHours)}` : undefined}
+              />
+              <MetricCard
+                title="Latência P99"
+                value={`${summary.p99_latency_ms}ms`}
+                target={`< ${SLO_TARGETS.p99LatencyMs}ms`}
+                status={p99Status}
+                icon={TrendingUp}
+                current={summary.p99_latency_ms}
+                previous={compareSummary?.p99_latency_ms}
+                lowerIsBetter
+                formatPrev={(n) => `${n}ms`}
+                compareLabel={compareSummary ? `vs ${windowLabel(compareHours)}` : undefined}
+              />
+              <MetricCard
+                title="Error Budget Consumido"
+                value={`${errorBudgetConsumed.toFixed(1)}%`}
+                target={`≤ 100%`}
+                status={budgetStatus}
+                icon={AlertTriangle}
+                current={errorBudgetConsumed}
+                previous={
+                  compareSummary && compareSummary.total_traces > 0
+                    ? Math.min(
+                        (((compareSummary.error_count / compareSummary.total_traces) * 100) /
+                          SLO_TARGETS.errorBudgetPct) *
+                          100,
+                        999,
+                      )
+                    : undefined
+                }
+                lowerIsBetter
+                formatPrev={(n) => `${n.toFixed(1)}%`}
+                compareLabel={compareSummary ? `vs ${windowLabel(compareHours)}` : undefined}
+              />
+            </div>
 
-          {/* Drill-down — only meaningful when a comparison window is selected,
+            {/* Drill-down — only meaningful when a comparison window is selected,
               because "contribution to delta" needs a baseline. We surface the
               3 buckets/agents that pulled each KPI hardest, with deep links
               into the trace explorer scoped to that hour or that agent. */}
-          {compareSummary && (() => {
-            const buckets = summary.timeseries ?? [];
-            // Per-bucket trace URL — TracesTimelinePage doesn't yet read these
-            // params, but we set a stable contract so the deep links keep working
-            // once the page is wired to filter by from/to/agent.
-            const bucketHref = (iso: string) => {
-              const from = new Date(iso);
-              const to = new Date(from.getTime() + 60 * 60 * 1000);
-              const qp = new URLSearchParams({
-                from: from.toISOString(),
-                to: to.toISOString(),
-              });
-              return `/traces?${qp.toString()}`;
-            };
-            const fmtBucketLabel = (iso: string) => {
-              const d = new Date(iso);
-              return d.toLocaleString('pt-BR', {
-                day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
-              });
-            };
+            {compareSummary &&
+              (() => {
+                const buckets = summary.timeseries ?? [];
+                // Per-bucket trace URL — TracesTimelinePage doesn't yet read these
+                // params, but we set a stable contract so the deep links keep working
+                // once the page is wired to filter by from/to/agent.
+                const bucketHref = (iso: string) => {
+                  const from = new Date(iso);
+                  const to = new Date(from.getTime() + 60 * 60 * 1000);
+                  const qp = new URLSearchParams({
+                    from: from.toISOString(),
+                    to: to.toISOString(),
+                  });
+                  return `/traces?${qp.toString()}`;
+                };
+                const fmtBucketLabel = (iso: string) => {
+                  const d = new Date(iso);
+                  return d.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  });
+                };
 
-            // Average baseline from comparison window — represents "normal"
-            // behavior. Buckets are scored by absolute distance from baseline
-            // (signed so we can show whether they pushed the metric up/down).
-            //
-            // When `includeTools` is OFF, we use the RPC's `*_no_tools`
-            // percentiles and `non_tool_errors` counts so the contributors
-            // ranking reflects only non-tool failures. Falls back gracefully
-            // for clients connected to an older RPC that doesn't expose them.
-            const cmpBuckets = compareSummary.timeseries ?? [];
+                // Average baseline from comparison window — represents "normal"
+                // behavior. Buckets are scored by absolute distance from baseline
+                // (signed so we can show whether they pushed the metric up/down).
+                //
+                // When `includeTools` is OFF, we use the RPC's `*_no_tools`
+                // percentiles and `non_tool_errors` counts so the contributors
+                // ranking reflects only non-tool failures. Falls back gracefully
+                // for clients connected to an older RPC that doesn't expose them.
+                const cmpBuckets = compareSummary.timeseries ?? [];
 
-            type Contributor = {
-              key: string;
-              label: string;
-              detail: string;
-              delta: number;
-              deltaLabel: string;
-              href: string;
-              worse: boolean;
-            };
+                type Contributor = {
+                  key: string;
+                  label: string;
+                  detail: string;
+                  delta: number;
+                  deltaLabel: string;
+                  href: string;
+                  worse: boolean;
+                };
 
-            type SectionDef = { title: string; kpi: string; rows: Contributor[]; empty: string };
+                type SectionDef = {
+                  title: string;
+                  kpi: string;
+                  rows: Contributor[];
+                  empty: string;
+                };
 
-            // Encapsulates the per-mode ranking so we can run it twice for the
-            // side-by-side compare view without duplicating logic.
-            const buildSectionsForMode = (includeTools: boolean): SectionDef[] => {
-              const pickP95 = (b: typeof cmpBuckets[number]): number =>
-                includeTools ? b.p95_ms : (b.p95_ms_no_tools ?? b.p95_ms);
-              const pickErrors = (b: typeof cmpBuckets[number]): number =>
-                includeTools ? b.errors : (b.non_tool_errors ?? b.errors);
+                // Encapsulates the per-mode ranking so we can run it twice for the
+                // side-by-side compare view without duplicating logic.
+                const buildSectionsForMode = (includeTools: boolean): SectionDef[] => {
+                  const pickP95 = (b: (typeof cmpBuckets)[number]): number =>
+                    includeTools ? b.p95_ms : (b.p95_ms_no_tools ?? b.p95_ms);
+                  const pickErrors = (b: (typeof cmpBuckets)[number]): number =>
+                    includeTools ? b.errors : (b.non_tool_errors ?? b.errors);
 
-              const baselineP95 = cmpBuckets.length
-                ? cmpBuckets.reduce((s, b) => s + pickP95(b), 0) / cmpBuckets.length
-                : 0;
-              const baselineErrors = cmpBuckets.length
-                ? cmpBuckets.reduce((s, b) => s + pickErrors(b), 0) / cmpBuckets.length
-                : 0;
+                  const baselineP95 = cmpBuckets.length
+                    ? cmpBuckets.reduce((s, b) => s + pickP95(b), 0) / cmpBuckets.length
+                    : 0;
+                  const baselineErrors = cmpBuckets.length
+                    ? cmpBuckets.reduce((s, b) => s + pickErrors(b), 0) / cmpBuckets.length
+                    : 0;
 
-              const topLatency: Contributor[] = [...buckets]
-                .map((b) => {
-                  const p95 = pickP95(b);
-                  return { bucket: b, p95, delta: p95 - baselineP95 };
-                })
-                .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
-                .slice(0, 3)
-                .map((row) => ({
-                  key: row.bucket.bucket_hour,
-                  label: fmtBucketLabel(row.bucket.bucket_hour),
-                  detail: `P95 ${row.p95}ms · ${row.bucket.total} traces` +
-                    (includeTools ? '' : ' · sem tools'),
-                  delta: row.delta,
-                  deltaLabel: `${row.delta > 0 ? '+' : ''}${Math.round(row.delta)}ms vs baseline`,
-                  href: bucketHref(row.bucket.bucket_hour),
-                  worse: row.delta > 0,
-                }));
+                  const topLatency: Contributor[] = [...buckets]
+                    .map((b) => {
+                      const p95 = pickP95(b);
+                      return { bucket: b, p95, delta: p95 - baselineP95 };
+                    })
+                    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
+                    .slice(0, 3)
+                    .map((row) => ({
+                      key: row.bucket.bucket_hour,
+                      label: fmtBucketLabel(row.bucket.bucket_hour),
+                      detail:
+                        `P95 ${row.p95}ms · ${row.bucket.total} traces` +
+                        (includeTools ? '' : ' · sem tools'),
+                      delta: row.delta,
+                      deltaLabel: `${row.delta > 0 ? '+' : ''}${Math.round(row.delta)}ms vs baseline`,
+                      href: bucketHref(row.bucket.bucket_hour),
+                      worse: row.delta > 0,
+                    }));
 
-              const topErrors: Contributor[] = [...buckets]
-                .map((b) => {
-                  const errs = pickErrors(b);
-                  return { bucket: b, errs, delta: errs - baselineErrors };
-                })
-                .filter((row) => row.errs > 0)
-                .sort((a, b) => b.delta - a.delta)
-                .slice(0, 3)
-                .map((row) => ({
-                  key: row.bucket.bucket_hour,
-                  label: fmtBucketLabel(row.bucket.bucket_hour),
-                  detail: `${row.errs} ${includeTools ? 'erros' : 'erros (não-tool)'} em ${row.bucket.total} traces`,
-                  delta: row.delta,
-                  deltaLabel: `${row.delta > 0 ? '+' : ''}${row.delta.toFixed(1)} vs média`,
-                  href: bucketHref(row.bucket.bucket_hour),
-                  worse: row.delta > 0,
-                }));
+                  const topErrors: Contributor[] = [...buckets]
+                    .map((b) => {
+                      const errs = pickErrors(b);
+                      return { bucket: b, errs, delta: errs - baselineErrors };
+                    })
+                    .filter((row) => row.errs > 0)
+                    .sort((a, b) => b.delta - a.delta)
+                    .slice(0, 3)
+                    .map((row) => ({
+                      key: row.bucket.bucket_hour,
+                      label: fmtBucketLabel(row.bucket.bucket_hour),
+                      detail: `${row.errs} ${includeTools ? 'erros' : 'erros (não-tool)'} em ${row.bucket.total} traces`,
+                      delta: row.delta,
+                      deltaLabel: `${row.delta > 0 ? '+' : ''}${row.delta.toFixed(1)} vs média`,
+                      href: bucketHref(row.bucket.bucket_hour),
+                      worse: row.delta > 0,
+                    }));
 
-              const topAgents: Contributor[] = (summary.top_agents ?? [])
-                .slice(0, 3)
-                .map((a) => {
-                  const errCount = includeTools ? a.errors : (a.non_tool_errors ?? a.errors);
-                  return {
-                    key: a.agent_id,
-                    label: a.agent_name,
-                    detail: `${a.traces} traces · ${errCount} ${includeTools ? 'erros' : 'erros (não-tool)'} · ${(a.success_rate ?? 100).toFixed(1)}% sucesso`,
-                    delta: a.p95_ms,
-                    deltaLabel: `P95 ${a.p95_ms}ms`,
-                    href: `/agents/${a.agent_id}/traces`,
-                    worse: a.p95_ms > SLO_TARGETS.p95LatencyMs,
-                  };
-                });
+                  const topAgents: Contributor[] = (summary.top_agents ?? [])
+                    .slice(0, 3)
+                    .map((a) => {
+                      const errCount = includeTools ? a.errors : (a.non_tool_errors ?? a.errors);
+                      return {
+                        key: a.agent_id,
+                        label: a.agent_name,
+                        detail: `${a.traces} traces · ${errCount} ${includeTools ? 'erros' : 'erros (não-tool)'} · ${(a.success_rate ?? 100).toFixed(1)}% sucesso`,
+                        delta: a.p95_ms,
+                        deltaLabel: `P95 ${a.p95_ms}ms`,
+                        href: `/agents/${a.agent_id}/traces`,
+                        worse: a.p95_ms > SLO_TARGETS.p95LatencyMs,
+                      };
+                    });
 
-              return [
-                { title: 'Latência (P95)', kpi: 'P95', rows: topLatency, empty: 'Sem buckets com latência registrada.' },
-                { title: 'Erros', kpi: 'erros', rows: topErrors, empty: 'Nenhum bucket com erros nesta janela.' },
-                { title: 'Agentes', kpi: 'agentes', rows: topAgents, empty: 'Nenhum agente com tráfego nesta janela.' },
-              ];
-            };
+                  return [
+                    {
+                      title: 'Latência (P95)',
+                      kpi: 'P95',
+                      rows: topLatency,
+                      empty: 'Sem buckets com latência registrada.',
+                    },
+                    {
+                      title: 'Erros',
+                      kpi: 'erros',
+                      rows: topErrors,
+                      empty: 'Nenhum bucket com erros nesta janela.',
+                    },
+                    {
+                      title: 'Agentes',
+                      kpi: 'agentes',
+                      rows: topAgents,
+                      empty: 'Nenhum agente com tráfego nesta janela.',
+                    },
+                  ];
+                };
 
-            const sections = buildSectionsForMode(includeToolFailures);
-            const sectionsCompare = compareToolModes
-              ? buildSectionsForMode(!includeToolFailures)
-              : null;
-
-            // Build absolute-URL sections for the PDF (relative `/traces?...`
-            // links would be unusable outside the app).
-            const origin = typeof window !== 'undefined' ? window.location.origin : '';
-            const buildPdfSections = (): DrilldownSection[] =>
-              sections.map((s) => ({
-                title: s.title,
-                kpi: s.kpi,
-                empty: s.empty,
-                rows: s.rows.map((r, idx) => ({
-                  rank: idx + 1,
-                  label: r.label,
-                  detail: r.detail,
-                  deltaLabel: r.deltaLabel,
-                  href: r.href.startsWith('http') ? r.href : `${origin}${r.href}`,
-                  worse: r.worse,
-                })),
-              }));
-
-            const handleExportPdf = () => {
-              try {
-                const scopedAgent = selectedAgentId
-                  ? summary.top_agents.find((a) => a.agent_id === selectedAgentId)
+                const sections = buildSectionsForMode(includeToolFailures);
+                const sectionsCompare = compareToolModes
+                  ? buildSectionsForMode(!includeToolFailures)
                   : null;
 
-                // Snapshot of the tool-failures toggle + totals across the
-                // currently filtered drill-down window. Sums use the same
-                // bucket source as the on-screen sections so the numbers in
-                // the PDF match what the reviewer is looking at.
-                const totalTraces = buckets.reduce((s, b) => s + (b.total ?? 0), 0);
-                const totalErrors = buckets.reduce((s, b) => s + (b.errors ?? 0), 0);
-                const nonToolErrors = buckets.reduce(
-                  (s, b) => s + (b.non_tool_errors ?? b.errors ?? 0),
-                  0,
-                );
-                const p95Ms = buckets.length
-                  ? buckets.reduce((s, b) => s + (b.p95_ms ?? 0), 0) / buckets.length
-                  : 0;
-                const p95MsNoTools = buckets.length
-                  ? buckets.reduce((s, b) => s + (b.p95_ms_no_tools ?? b.p95_ms ?? 0), 0) /
-                    buckets.length
-                  : 0;
+                // Build absolute-URL sections for the PDF (relative `/traces?...`
+                // links would be unusable outside the app).
+                const origin = typeof window !== 'undefined' ? window.location.origin : '';
+                const buildPdfSections = (): DrilldownSection[] =>
+                  sections.map((s) => ({
+                    title: s.title,
+                    kpi: s.kpi,
+                    empty: s.empty,
+                    rows: s.rows.map((r, idx) => ({
+                      rank: idx + 1,
+                      label: r.label,
+                      detail: r.detail,
+                      deltaLabel: r.deltaLabel,
+                      href: r.href.startsWith('http') ? r.href : `${origin}${r.href}`,
+                      worse: r.worse,
+                    })),
+                  }));
 
-                exportDrilldownPdf({
-                  windowLabel: windowLabel(windowHours),
-                  compareLabel: windowLabel(compareHours),
-                  windowName: sanitizeWindowName(windowName) || undefined,
-                  scopeLabel: scopedAgent?.agent_name,
-                  generatedAt: new Date(),
-                  sections: buildPdfSections(),
-                  dashboardUrl: typeof window !== 'undefined' ? window.location.href : '',
-                  toolFailures: {
-                    includeToolFailures,
-                    totalTraces,
-                    totalErrors,
-                    nonToolErrors,
-                    p95Ms,
-                    p95MsNoTools,
-                  },
-                });
-                toast.success('PDF do drill-down exportado');
-              } catch (err) {
-                logger.error('exportDrilldownPdf failed', { err });
-                toast.error('Não foi possível gerar o PDF');
-              }
-            };
+                const handleExportPdf = () => {
+                  try {
+                    const scopedAgent = selectedAgentId
+                      ? summary.top_agents.find((a) => a.agent_id === selectedAgentId)
+                      : null;
 
-            const totalRows = sections.reduce((acc, s) => acc + s.rows.length, 0);
+                    // Snapshot of the tool-failures toggle + totals across the
+                    // currently filtered drill-down window. Sums use the same
+                    // bucket source as the on-screen sections so the numbers in
+                    // the PDF match what the reviewer is looking at.
+                    const totalTraces = buckets.reduce((s, b) => s + (b.total ?? 0), 0);
+                    const totalErrors = buckets.reduce((s, b) => s + (b.errors ?? 0), 0);
+                    const nonToolErrors = buckets.reduce(
+                      (s, b) => s + (b.non_tool_errors ?? b.errors ?? 0),
+                      0,
+                    );
+                    const p95Ms = buckets.length
+                      ? buckets.reduce((s, b) => s + (b.p95_ms ?? 0), 0) / buckets.length
+                      : 0;
+                    const p95MsNoTools = buckets.length
+                      ? buckets.reduce((s, b) => s + (b.p95_ms_no_tools ?? b.p95_ms ?? 0), 0) /
+                        buckets.length
+                      : 0;
 
-            return (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1.5">
-                      <CardTitle className="flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-primary" />
-                        Drill-down do delta
-                      </CardTitle>
-                      <CardDescription>
-                        Top 3 contribuintes para cada KPI vs. baseline de {windowLabel(compareHours)}.
-                        Clique em um item para abrir os traces relacionados.
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {/* Tool failures toggle — recomputes percentiles & error counts
+                    exportDrilldownPdf({
+                      windowLabel: windowLabel(windowHours),
+                      compareLabel: windowLabel(compareHours),
+                      windowName: sanitizeWindowName(windowName) || undefined,
+                      scopeLabel: scopedAgent?.agent_name,
+                      generatedAt: new Date(),
+                      sections: buildPdfSections(),
+                      dashboardUrl: typeof window !== 'undefined' ? window.location.href : '',
+                      toolFailures: {
+                        includeToolFailures,
+                        totalTraces,
+                        totalErrors,
+                        nonToolErrors,
+                        p95Ms,
+                        p95MsNoTools,
+                      },
+                    });
+                    toast.success('PDF do drill-down exportado');
+                  } catch (err) {
+                    logger.error('exportDrilldownPdf failed', { err });
+                    toast.error('Não foi possível gerar o PDF');
+                  }
+                };
+
+                const totalRows = sections.reduce((acc, s) => acc + s.rows.length, 0);
+
+                return (
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="space-y-1.5">
+                          <CardTitle className="flex items-center gap-2">
+                            <TrendingUp className="h-4 w-4 text-primary" />
+                            Drill-down do delta
+                          </CardTitle>
+                          <CardDescription>
+                            Top 3 contribuintes para cada KPI vs. baseline de{' '}
+                            {windowLabel(compareHours)}. Clique em um item para abrir os traces
+                            relacionados.
+                          </CardDescription>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {/* Tool failures toggle — recomputes percentiles & error counts
                           from the RPC's *_no_tools / non_tool_errors fields when off.
                           Persisted in the URL as `?tools=0` so shared links keep
                           the same view. */}
-                      <Popover>
-                        <PopoverTrigger asChild>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                type="button"
+                                aria-label="Sobre tool failures e percentis"
+                                className="h-7 w-7 inline-flex items-center justify-center rounded-md border border-border/50 bg-background text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors focus-ring"
+                              >
+                                <Info className="h-3.5 w-3.5" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              align="end"
+                              className="w-80 text-meta leading-relaxed space-y-3"
+                            >
+                              <div className="space-y-1">
+                                <p className="text-body-sm font-semibold text-foreground">
+                                  O que conta como tool failure?
+                                </p>
+                                <p className="text-muted-foreground">
+                                  Traces de erro originados em{' '}
+                                  <span className="font-medium text-foreground">
+                                    chamadas de ferramenta
+                                  </span>{' '}
+                                  (eventos com prefixo{' '}
+                                  <code className="px-1 py-0.5 rounded bg-muted text-foreground/90 font-mono text-meta">
+                                    tool.*
+                                  </code>{' '}
+                                  ou{' '}
+                                  <code className="px-1 py-0.5 rounded bg-muted text-foreground/90 font-mono text-meta">
+                                    metadata.tool
+                                  </code>{' '}
+                                  presente). São falhas de integração externa — não erros do agente
+                                  em si.
+                                </p>
+                              </div>
+
+                              <div className="space-y-1.5 pt-2 border-t border-border/40">
+                                <p className="text-body-sm font-semibold text-foreground">
+                                  Como o toggle muda os percentis
+                                </p>
+                                <ul className="space-y-1 text-muted-foreground">
+                                  <li className="flex gap-2">
+                                    <span className="text-primary shrink-0" aria-hidden>
+                                      •
+                                    </span>
+                                    <span>
+                                      <span className="font-medium text-foreground">
+                                        Com tool failures
+                                      </span>{' '}
+                                      (padrão): p50/p95/p99 incluem todas as chamadas, e o ranking
+                                      conta cada erro.
+                                    </span>
+                                  </li>
+                                  <li className="flex gap-2">
+                                    <span className="text-primary shrink-0" aria-hidden>
+                                      •
+                                    </span>
+                                    <span>
+                                      <span className="font-medium text-foreground">
+                                        Sem tool failures
+                                      </span>
+                                      : os percentis são recalculados a partir dos campos{' '}
+                                      <code className="px-1 py-0.5 rounded bg-muted font-mono text-meta">
+                                        *_no_tools
+                                      </code>{' '}
+                                      da RPC, e o ranking usa{' '}
+                                      <code className="px-1 py-0.5 rounded bg-muted font-mono text-meta">
+                                        non_tool_errors
+                                      </code>
+                                      . Útil para isolar regressões do próprio agente.
+                                    </span>
+                                  </li>
+                                </ul>
+                              </div>
+
+                              <p className="text-meta text-muted-foreground/80 pt-2 border-t border-border/40">
+                                A escolha é persistida na URL (
+                                <code className="font-mono">?tools=0</code>) — links compartilhados
+                                preservam a visão.
+                              </p>
+                            </PopoverContent>
+                          </Popover>
+
                           <button
                             type="button"
-                            aria-label="Sobre tool failures e percentis"
-                            className="h-7 w-7 inline-flex items-center justify-center rounded-md border border-border/50 bg-background text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors focus-ring"
+                            role="switch"
+                            aria-checked={includeToolFailures}
+                            onClick={() => {
+                              setIncludeToolFailures((v) => {
+                                const next = !v;
+                                toast.success(
+                                  next
+                                    ? 'Tool failures incluídos no drill-down'
+                                    : 'Tool failures excluídos — usando percentis e erros não-tool',
+                                );
+                                return next;
+                              });
+                            }}
+                            className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-meta font-medium transition-colors focus-ring ${
+                              includeToolFailures
+                                ? 'border-primary/40 bg-primary/10 text-primary hover:bg-primary/15'
+                                : 'border-border/50 bg-background text-muted-foreground hover:bg-secondary/50'
+                            }`}
+                            title={
+                              includeToolFailures
+                                ? 'Tool failures contam como erros / latência. Clique para excluir.'
+                                : 'Tool failures excluídos do cálculo. Clique para incluir.'
+                            }
                           >
-                            <Info className="h-3.5 w-3.5" />
+                            <Wrench className="h-3.5 w-3.5" />
+                            {includeToolFailures ? 'Com tool failures' : 'Sem tool failures'}
                           </button>
-                        </PopoverTrigger>
-                        <PopoverContent
-                          align="end"
-                          className="w-80 text-meta leading-relaxed space-y-3"
-                        >
-                          <div className="space-y-1">
-                            <p className="text-body-sm font-semibold text-foreground">
-                              O que conta como tool failure?
-                            </p>
-                            <p className="text-muted-foreground">
-                              Traces de erro originados em <span className="font-medium text-foreground">chamadas de ferramenta</span>{' '}
-                              (eventos com prefixo <code className="px-1 py-0.5 rounded bg-muted text-foreground/90 font-mono text-meta">tool.*</code>{' '}
-                              ou <code className="px-1 py-0.5 rounded bg-muted text-foreground/90 font-mono text-meta">metadata.tool</code> presente).
-                              São falhas de integração externa — não erros do agente em si.
-                            </p>
-                          </div>
 
-                          <div className="space-y-1.5 pt-2 border-t border-border/40">
-                            <p className="text-body-sm font-semibold text-foreground">
-                              Como o toggle muda os percentis
-                            </p>
-                            <ul className="space-y-1 text-muted-foreground">
-                              <li className="flex gap-2">
-                                <span className="text-primary shrink-0" aria-hidden>•</span>
-                                <span>
-                                  <span className="font-medium text-foreground">Com tool failures</span> (padrão):
-                                  p50/p95/p99 incluem todas as chamadas, e o ranking conta cada erro.
-                                </span>
-                              </li>
-                              <li className="flex gap-2">
-                                <span className="text-primary shrink-0" aria-hidden>•</span>
-                                <span>
-                                  <span className="font-medium text-foreground">Sem tool failures</span>:
-                                  os percentis são recalculados a partir dos campos{' '}
-                                  <code className="px-1 py-0.5 rounded bg-muted font-mono text-meta">*_no_tools</code> da RPC,
-                                  e o ranking usa <code className="px-1 py-0.5 rounded bg-muted font-mono text-meta">non_tool_errors</code>.
-                                  Útil para isolar regressões do próprio agente.
-                                </span>
-                              </li>
-                            </ul>
-                          </div>
-
-                          <p className="text-meta text-muted-foreground/80 pt-2 border-t border-border/40">
-                            A escolha é persistida na URL (<code className="font-mono">?tools=0</code>) — links compartilhados preservam a visão.
-                          </p>
-                        </PopoverContent>
-                      </Popover>
-
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={includeToolFailures}
-                        onClick={() => {
-                          setIncludeToolFailures((v) => {
-                            const next = !v;
-                            toast.success(next
-                              ? 'Tool failures incluídos no drill-down'
-                              : 'Tool failures excluídos — usando percentis e erros não-tool');
-                            return next;
-                          });
-                        }}
-                        className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-meta font-medium transition-colors focus-ring ${
-                          includeToolFailures
-                            ? 'border-primary/40 bg-primary/10 text-primary hover:bg-primary/15'
-                            : 'border-border/50 bg-background text-muted-foreground hover:bg-secondary/50'
-                        }`}
-                        title={includeToolFailures
-                          ? 'Tool failures contam como erros / latência. Clique para excluir.'
-                          : 'Tool failures excluídos do cálculo. Clique para incluir.'}
-                      >
-                        <Wrench className="h-3.5 w-3.5" />
-                        {includeToolFailures ? 'Com tool failures' : 'Sem tool failures'}
-                      </button>
-
-                      {/* Side-by-side compare: renders the drill-down twice
+                          {/* Side-by-side compare: renders the drill-down twice
                           (Com vs Sem tool failures) so reviewers can spot the
                           deltas in top contributors at a glance. */}
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={compareToolModes}
-                        onClick={() => {
-                          setCompareToolModes((v) => {
-                            const next = !v;
-                            toast.success(next
-                              ? 'Comparando lado a lado: com vs sem tool failures'
-                              : 'Comparação lado a lado desativada');
-                            return next;
-                          });
-                        }}
-                        className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-meta font-medium transition-colors focus-ring ${
-                          compareToolModes
-                            ? 'border-primary/40 bg-primary/10 text-primary hover:bg-primary/15'
-                            : 'border-border/50 bg-background text-muted-foreground hover:bg-secondary/50'
-                        }`}
-                        title={compareToolModes
-                          ? 'Comparação lado a lado ativa. Clique para desativar.'
-                          : 'Comparar lado a lado os top contribuintes com e sem tool failures.'}
-                      >
-                        <Columns2 className="h-3.5 w-3.5" />
-                        {compareToolModes ? 'Comparando' : 'Comparar'}
-                      </button>
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={compareToolModes}
+                            onClick={() => {
+                              setCompareToolModes((v) => {
+                                const next = !v;
+                                toast.success(
+                                  next
+                                    ? 'Comparando lado a lado: com vs sem tool failures'
+                                    : 'Comparação lado a lado desativada',
+                                );
+                                return next;
+                              });
+                            }}
+                            className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-meta font-medium transition-colors focus-ring ${
+                              compareToolModes
+                                ? 'border-primary/40 bg-primary/10 text-primary hover:bg-primary/15'
+                                : 'border-border/50 bg-background text-muted-foreground hover:bg-secondary/50'
+                            }`}
+                            title={
+                              compareToolModes
+                                ? 'Comparação lado a lado ativa. Clique para desativar.'
+                                : 'Comparar lado a lado os top contribuintes com e sem tool failures.'
+                            }
+                          >
+                            <Columns2 className="h-3.5 w-3.5" />
+                            {compareToolModes ? 'Comparando' : 'Comparar'}
+                          </button>
 
-                      <DrilldownAuditPanel entries={auditEntries} onClear={clearAudit} />
+                          <DrilldownAuditPanel entries={auditEntries} onClear={clearAudit} />
 
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleExportPdf}
-                        disabled={totalRows === 0}
-                        className="gap-1.5"
-                        title={totalRows === 0
-                          ? 'Sem contribuintes para exportar'
-                          : 'Exportar relatório PDF com top 3 por KPI'}
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                        Exportar PDF
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {compareToolModes && sectionsCompare && (
-                    <div className="flex flex-wrap items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-meta">
-                      <Columns2 className="h-3.5 w-3.5 text-primary" />
-                      <span className="text-foreground font-medium">Modo de comparação ativo:</span>
-                      <span className="text-muted-foreground">
-                        coluna esquerda mostra <strong className="text-foreground">{includeToolFailures ? 'Com' : 'Sem'} tool failures</strong>{' '},
-                        coluna direita mostra <strong className="text-foreground">{includeToolFailures ? 'Sem' : 'Com'} tool failures</strong>.
-                        Itens marcados como <span className="text-nexus-amber">novo</span> aparecem só em um dos lados;{' '}
-                        <span className="text-primary">↑/↓</span> indicam mudança de posição no ranking.
-                      </span>
-                    </div>
-                  )}
-
-                  {(() => {
-                    // Render helper: a single contributor row, optionally
-                    // annotated with rank/presence diff badges when comparing.
-                    const renderRow = (
-                      row: typeof sections[number]['rows'][number],
-                      idx: number,
-                      diff?: { rankDelta: number | null; isNew: boolean },
-                    ) => (
-                      <li key={row.key}>
-                        <Link
-                          to={row.href}
-                          className="flex items-start gap-2 p-2 rounded-md border border-border/40 bg-secondary/20 hover:bg-secondary/50 hover:border-primary/40 transition-colors group focus-ring"
-                          title={`Abrir traces: ${row.label}`}
-                        >
-                          <span className="text-meta font-bold text-muted-foreground tabular-nums w-4 mt-0.5">
-                            #{idx + 1}
-                          </span>
-                          <span className="flex-1 min-w-0">
-                            <span className="flex items-center gap-1.5">
-                              <span className="block text-meta font-medium text-foreground truncate group-hover:text-primary">
-                                {row.label}
-                              </span>
-                              {diff?.isNew && (
-                                <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 border-nexus-amber/40 text-nexus-amber shrink-0">
-                                  novo
-                                </Badge>
-                              )}
-                              {diff && !diff.isNew && diff.rankDelta !== null && diff.rankDelta !== 0 && (
-                                <span
-                                  className={`text-meta font-mono shrink-0 ${
-                                    diff.rankDelta < 0 ? 'text-destructive' : 'text-nexus-emerald'
-                                  }`}
-                                  title={diff.rankDelta < 0
-                                    ? `Subiu ${Math.abs(diff.rankDelta)} posição(ões) no ranking — pior contribuinte agora`
-                                    : `Caiu ${diff.rankDelta} posição(ões) no ranking`}
-                                >
-                                  {diff.rankDelta < 0 ? `↑${Math.abs(diff.rankDelta)}` : `↓${diff.rankDelta}`}
-                                </span>
-                              )}
-                            </span>
-                            <span className="block text-meta text-muted-foreground truncate">
-                              {row.detail}
-                            </span>
-                            <span className={`block text-meta font-mono font-semibold mt-0.5 ${
-                              row.worse ? 'text-destructive' : 'text-nexus-emerald'
-                            }`}>
-                              {row.deltaLabel}
-                            </span>
-                          </span>
-                        </Link>
-                      </li>
-                    );
-
-                    // Compute rank/presence diffs between left (current mode)
-                    // and right (opposite mode) for each KPI section.
-                    const computeDiffs = (
-                      left: typeof sections[number]['rows'],
-                      right: typeof sections[number]['rows'],
-                    ) => {
-                      const leftKeys = new Map(left.map((r, i) => [r.key, i]));
-                      const rightKeys = new Map(right.map((r, i) => [r.key, i]));
-                      const leftDiffs = left.map((r, i) => {
-                        const otherIdx = rightKeys.get(r.key);
-                        if (otherIdx === undefined) return { rankDelta: null, isNew: true };
-                        return { rankDelta: i - otherIdx, isNew: false };
-                      });
-                      const rightDiffs = right.map((r, i) => {
-                        const otherIdx = leftKeys.get(r.key);
-                        if (otherIdx === undefined) return { rankDelta: null, isNew: true };
-                        return { rankDelta: i - otherIdx, isNew: false };
-                      });
-                      return { leftDiffs, rightDiffs };
-                    };
-
-                    if (!compareToolModes || !sectionsCompare) {
-                      return (
-                        <div className="grid gap-4 md:grid-cols-3">
-                          {sections.map((section) => (
-                            <div key={section.title} className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <h4 className="text-meta font-semibold uppercase text-muted-foreground tracking-wide">
-                                  {section.title}
-                                </h4>
-                                <Badge variant="outline" className="text-meta">{section.kpi}</Badge>
-                              </div>
-                              {section.rows.length === 0 ? (
-                                <p className="text-meta text-muted-foreground italic py-3">{section.empty}</p>
-                              ) : (
-                                <ul className="space-y-1.5">
-                                  {section.rows.map((row, idx) => renderRow(row, idx))}
-                                </ul>
-                              )}
-                            </div>
-                          ))}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleExportPdf}
+                            disabled={totalRows === 0}
+                            className="gap-1.5"
+                            title={
+                              totalRows === 0
+                                ? 'Sem contribuintes para exportar'
+                                : 'Exportar relatório PDF com top 3 por KPI'
+                            }
+                          >
+                            <Download className="h-3.5 w-3.5" />
+                            Exportar PDF
+                          </Button>
                         </div>
-                      );
-                    }
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {compareToolModes && sectionsCompare && (
+                        <div className="flex flex-wrap items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-meta">
+                          <Columns2 className="h-3.5 w-3.5 text-primary" />
+                          <span className="text-foreground font-medium">
+                            Modo de comparação ativo:
+                          </span>
+                          <span className="text-muted-foreground">
+                            coluna esquerda mostra{' '}
+                            <strong className="text-foreground">
+                              {includeToolFailures ? 'Com' : 'Sem'} tool failures
+                            </strong>{' '}
+                            , coluna direita mostra{' '}
+                            <strong className="text-foreground">
+                              {includeToolFailures ? 'Sem' : 'Com'} tool failures
+                            </strong>
+                            . Itens marcados como <span className="text-nexus-amber">novo</span>{' '}
+                            aparecem só em um dos lados; <span className="text-primary">↑/↓</span>{' '}
+                            indicam mudança de posição no ranking.
+                          </span>
+                        </div>
+                      )}
 
-                    // Compare mode: stack the 3 KPIs vertically; each KPI row
-                    // is split into 2 columns (left = current mode, right =
-                    // opposite). Side-by-side keeps deltas visually adjacent.
-                    const leftLabel = includeToolFailures ? 'Com tool failures' : 'Sem tool failures';
-                    const rightLabel = includeToolFailures ? 'Sem tool failures' : 'Com tool failures';
+                      {(() => {
+                        // Render helper: a single contributor row, optionally
+                        // annotated with rank/presence diff badges when comparing.
+                        const renderRow = (
+                          row: (typeof sections)[number]['rows'][number],
+                          idx: number,
+                          diff?: { rankDelta: number | null; isNew: boolean },
+                        ) => (
+                          <li key={row.key}>
+                            <Link
+                              to={row.href}
+                              className="flex items-start gap-2 p-2 rounded-md border border-border/40 bg-secondary/20 hover:bg-secondary/50 hover:border-primary/40 transition-colors group focus-ring"
+                              title={`Abrir traces: ${row.label}`}
+                            >
+                              <span className="text-meta font-bold text-muted-foreground tabular-nums w-4 mt-0.5">
+                                #{idx + 1}
+                              </span>
+                              <span className="flex-1 min-w-0">
+                                <span className="flex items-center gap-1.5">
+                                  <span className="block text-meta font-medium text-foreground truncate group-hover:text-primary">
+                                    {row.label}
+                                  </span>
+                                  {diff?.isNew && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-[9px] px-1 py-0 h-4 border-nexus-amber/40 text-nexus-amber shrink-0"
+                                    >
+                                      novo
+                                    </Badge>
+                                  )}
+                                  {diff &&
+                                    !diff.isNew &&
+                                    diff.rankDelta !== null &&
+                                    diff.rankDelta !== 0 && (
+                                      <span
+                                        className={`text-meta font-mono shrink-0 ${
+                                          diff.rankDelta < 0
+                                            ? 'text-destructive'
+                                            : 'text-nexus-emerald'
+                                        }`}
+                                        title={
+                                          diff.rankDelta < 0
+                                            ? `Subiu ${Math.abs(diff.rankDelta)} posição(ões) no ranking — pior contribuinte agora`
+                                            : `Caiu ${diff.rankDelta} posição(ões) no ranking`
+                                        }
+                                      >
+                                        {diff.rankDelta < 0
+                                          ? `↑${Math.abs(diff.rankDelta)}`
+                                          : `↓${diff.rankDelta}`}
+                                      </span>
+                                    )}
+                                </span>
+                                <span className="block text-meta text-muted-foreground truncate">
+                                  {row.detail}
+                                </span>
+                                <span
+                                  className={`block text-meta font-mono font-semibold mt-0.5 ${
+                                    row.worse ? 'text-destructive' : 'text-nexus-emerald'
+                                  }`}
+                                >
+                                  {row.deltaLabel}
+                                </span>
+                              </span>
+                            </Link>
+                          </li>
+                        );
 
-                    return (
-                      <div className="space-y-5">
-                        {sections.map((section, sIdx) => {
-                          const compareSection = sectionsCompare[sIdx];
-                          const { leftDiffs, rightDiffs } = computeDiffs(section.rows, compareSection.rows);
+                        // Compute rank/presence diffs between left (current mode)
+                        // and right (opposite mode) for each KPI section.
+                        const computeDiffs = (
+                          left: (typeof sections)[number]['rows'],
+                          right: (typeof sections)[number]['rows'],
+                        ) => {
+                          const leftKeys = new Map(left.map((r, i) => [r.key, i]));
+                          const rightKeys = new Map(right.map((r, i) => [r.key, i]));
+                          const leftDiffs = left.map((r, i) => {
+                            const otherIdx = rightKeys.get(r.key);
+                            if (otherIdx === undefined) return { rankDelta: null, isNew: true };
+                            return { rankDelta: i - otherIdx, isNew: false };
+                          });
+                          const rightDiffs = right.map((r, i) => {
+                            const otherIdx = leftKeys.get(r.key);
+                            if (otherIdx === undefined) return { rankDelta: null, isNew: true };
+                            return { rankDelta: i - otherIdx, isNew: false };
+                          });
+                          return { leftDiffs, rightDiffs };
+                        };
+
+                        if (!compareToolModes || !sectionsCompare) {
                           return (
-                            <div key={section.title} className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <h4 className="text-meta font-semibold uppercase text-muted-foreground tracking-wide">
-                                  {section.title}
-                                </h4>
-                                <Badge variant="outline" className="text-meta">{section.kpi}</Badge>
-                              </div>
-                              <div className="grid gap-3 md:grid-cols-2">
-                                <div className="space-y-1.5 rounded-md border border-primary/20 bg-primary/[0.03] p-2">
-                                  <p className="text-meta font-semibold uppercase tracking-wide text-primary/80">
-                                    {leftLabel}
-                                  </p>
+                            <div className="grid gap-4 md:grid-cols-3">
+                              {sections.map((section) => (
+                                <div key={section.title} className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="text-meta font-semibold uppercase text-muted-foreground tracking-wide">
+                                      {section.title}
+                                    </h4>
+                                    <Badge variant="outline" className="text-meta">
+                                      {section.kpi}
+                                    </Badge>
+                                  </div>
                                   {section.rows.length === 0 ? (
-                                    <p className="text-meta text-muted-foreground italic py-2">{section.empty}</p>
+                                    <p className="text-meta text-muted-foreground italic py-3">
+                                      {section.empty}
+                                    </p>
                                   ) : (
                                     <ul className="space-y-1.5">
-                                      {section.rows.map((row, idx) => renderRow(row, idx, leftDiffs[idx]))}
+                                      {section.rows.map((row, idx) => renderRow(row, idx))}
                                     </ul>
                                   )}
                                 </div>
-                                <div className="space-y-1.5 rounded-md border border-border/50 bg-secondary/10 p-2">
-                                  <p className="text-meta font-semibold uppercase tracking-wide text-muted-foreground">
-                                    {rightLabel}
-                                  </p>
-                                  {compareSection.rows.length === 0 ? (
-                                    <p className="text-meta text-muted-foreground italic py-2">{compareSection.empty}</p>
-                                  ) : (
-                                    <ul className="space-y-1.5">
-                                      {compareSection.rows.map((row, idx) => renderRow(row, idx, rightDiffs[idx]))}
-                                    </ul>
-                                  )}
-                                </div>
-                              </div>
+                              ))}
                             </div>
                           );
-                        })}
+                        }
+
+                        // Compare mode: stack the 3 KPIs vertically; each KPI row
+                        // is split into 2 columns (left = current mode, right =
+                        // opposite). Side-by-side keeps deltas visually adjacent.
+                        const leftLabel = includeToolFailures
+                          ? 'Com tool failures'
+                          : 'Sem tool failures';
+                        const rightLabel = includeToolFailures
+                          ? 'Sem tool failures'
+                          : 'Com tool failures';
+
+                        return (
+                          <div className="space-y-5">
+                            {sections.map((section, sIdx) => {
+                              const compareSection = sectionsCompare[sIdx];
+                              const { leftDiffs, rightDiffs } = computeDiffs(
+                                section.rows,
+                                compareSection.rows,
+                              );
+                              return (
+                                <div key={section.title} className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="text-meta font-semibold uppercase text-muted-foreground tracking-wide">
+                                      {section.title}
+                                    </h4>
+                                    <Badge variant="outline" className="text-meta">
+                                      {section.kpi}
+                                    </Badge>
+                                  </div>
+                                  <div className="grid gap-3 md:grid-cols-2">
+                                    <div className="space-y-1.5 rounded-md border border-primary/20 bg-primary/[0.03] p-2">
+                                      <p className="text-meta font-semibold uppercase tracking-wide text-primary/80">
+                                        {leftLabel}
+                                      </p>
+                                      {section.rows.length === 0 ? (
+                                        <p className="text-meta text-muted-foreground italic py-2">
+                                          {section.empty}
+                                        </p>
+                                      ) : (
+                                        <ul className="space-y-1.5">
+                                          {section.rows.map((row, idx) =>
+                                            renderRow(row, idx, leftDiffs[idx]),
+                                          )}
+                                        </ul>
+                                      )}
+                                    </div>
+                                    <div className="space-y-1.5 rounded-md border border-border/50 bg-secondary/10 p-2">
+                                      <p className="text-meta font-semibold uppercase tracking-wide text-muted-foreground">
+                                        {rightLabel}
+                                      </p>
+                                      {compareSection.rows.length === 0 ? (
+                                        <p className="text-meta text-muted-foreground italic py-2">
+                                          {compareSection.empty}
+                                        </p>
+                                      ) : (
+                                        <ul className="space-y-1.5">
+                                          {compareSection.rows.map((row, idx) =>
+                                            renderRow(row, idx, rightDiffs[idx]),
+                                          )}
+                                        </ul>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()}
+                    </CardContent>
+                  </Card>
+                );
+              })()}
+
+            {(() => {
+              const buckets = summary.timeseries ?? [];
+              // RPC buckets are hourly; expected = window hours.
+              const expectedBuckets = Math.max(1, windowHours);
+              const bucketsWithData = buckets.filter((b) => (b.total ?? 0) > 0).length;
+              const coveragePct = Math.min(100, (bucketsWithData / expectedBuckets) * 100);
+              const missingBuckets = Math.max(0, expectedBuckets - bucketsWithData);
+              const tracesPerHour = summary.total_traces / expectedBuckets;
+              const coverageStatus: SLOStatus =
+                coveragePct >= 90 ? 'healthy' : coveragePct >= 60 ? 'warning' : 'breached';
+              const coverageColor =
+                coverageStatus === 'healthy'
+                  ? 'bg-nexus-emerald'
+                  : coverageStatus === 'warning'
+                    ? 'bg-nexus-amber'
+                    : 'bg-destructive';
+              return (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-primary" />
+                      Cobertura dos dados
+                    </CardTitle>
+                    <CardDescription>
+                      Quantos traces e qual fração do período de {windowLabel(windowHours)} foi
+                      efetivamente usada no cálculo. Lacunas indicam dados faltantes — as métricas
+                      podem estar enviesadas.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-3 md:grid-cols-4">
+                      <div className="rounded-lg border border-border/40 p-3">
+                        <p className="text-meta uppercase text-muted-foreground tracking-wide">
+                          Traces analisados
+                        </p>
+                        <p className="text-2xl font-bold tabular-nums mt-1">
+                          {summary.total_traces.toLocaleString('pt-BR')}
+                        </p>
+                        <p className="text-meta text-muted-foreground mt-0.5">
+                          ~{tracesPerHour.toFixed(tracesPerHour < 10 ? 1 : 0)}/h em média
+                        </p>
                       </div>
-                    );
-                  })()}
-                </CardContent>
-              </Card>
-            );
-          })()}
+                      <div className="rounded-lg border border-border/40 p-3">
+                        <p className="text-meta uppercase text-muted-foreground tracking-wide">
+                          Cobertura temporal
+                        </p>
+                        <p
+                          className={`text-2xl font-bold tabular-nums mt-1 ${statusColor[coverageStatus]}`}
+                        >
+                          {coveragePct.toFixed(1)}%
+                        </p>
+                        <p className="text-meta text-muted-foreground mt-0.5">
+                          {bucketsWithData}/{expectedBuckets} janelas horárias com dados
+                        </p>
+                      </div>
+                      <div className="rounded-lg border border-border/40 p-3">
+                        <p className="text-meta uppercase text-muted-foreground tracking-wide">
+                          Lacunas
+                        </p>
+                        <p className="text-2xl font-bold tabular-nums mt-1">{missingBuckets}</p>
+                        <p className="text-meta text-muted-foreground mt-0.5">
+                          {missingBuckets === 0
+                            ? 'sem horas vazias'
+                            : `hora${missingBuckets > 1 ? 's' : ''} sem traces`}
+                        </p>
+                      </div>
+                      <div className="rounded-lg border border-border/40 p-3">
+                        <p className="text-meta uppercase text-muted-foreground tracking-wide">
+                          Confiança
+                        </p>
+                        <p className={`text-2xl font-bold mt-1 ${statusColor[coverageStatus]}`}>
+                          {coverageStatus === 'healthy'
+                            ? 'Alta'
+                            : coverageStatus === 'warning'
+                              ? 'Média'
+                              : 'Baixa'}
+                        </p>
+                        <p className="text-meta text-muted-foreground mt-0.5">
+                          baseada na cobertura
+                        </p>
+                      </div>
+                    </div>
 
-          {(() => {
-            const buckets = summary.timeseries ?? [];
-            // RPC buckets are hourly; expected = window hours.
-            const expectedBuckets = Math.max(1, windowHours);
-            const bucketsWithData = buckets.filter((b) => (b.total ?? 0) > 0).length;
-            const coveragePct = Math.min(100, (bucketsWithData / expectedBuckets) * 100);
-            const missingBuckets = Math.max(0, expectedBuckets - bucketsWithData);
-            const tracesPerHour = summary.total_traces / expectedBuckets;
-            const coverageStatus: SLOStatus =
-              coveragePct >= 90 ? 'healthy' : coveragePct >= 60 ? 'warning' : 'breached';
-            const coverageColor =
-              coverageStatus === 'healthy' ? 'bg-nexus-emerald'
-                : coverageStatus === 'warning' ? 'bg-nexus-amber'
-                : 'bg-destructive';
-            return (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-primary" />
-                    Cobertura dos dados
-                  </CardTitle>
-                  <CardDescription>
-                    Quantos traces e qual fração do período de {windowLabel(windowHours)} foi efetivamente usada no cálculo. Lacunas indicam dados faltantes — as métricas podem estar enviesadas.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid gap-3 md:grid-cols-4">
-                    <div className="rounded-lg border border-border/40 p-3">
-                      <p className="text-meta uppercase text-muted-foreground tracking-wide">Traces analisados</p>
-                      <p className="text-2xl font-bold tabular-nums mt-1">{summary.total_traces.toLocaleString('pt-BR')}</p>
-                      <p className="text-meta text-muted-foreground mt-0.5">
-                        ~{tracesPerHour.toFixed(tracesPerHour < 10 ? 1 : 0)}/h em média
-                      </p>
-                    </div>
-                    <div className="rounded-lg border border-border/40 p-3">
-                      <p className="text-meta uppercase text-muted-foreground tracking-wide">Cobertura temporal</p>
-                      <p className={`text-2xl font-bold tabular-nums mt-1 ${statusColor[coverageStatus]}`}>
-                        {coveragePct.toFixed(1)}%
-                      </p>
-                      <p className="text-meta text-muted-foreground mt-0.5">
-                        {bucketsWithData}/{expectedBuckets} janelas horárias com dados
-                      </p>
-                    </div>
-                    <div className="rounded-lg border border-border/40 p-3">
-                      <p className="text-meta uppercase text-muted-foreground tracking-wide">Lacunas</p>
-                      <p className="text-2xl font-bold tabular-nums mt-1">{missingBuckets}</p>
-                      <p className="text-meta text-muted-foreground mt-0.5">
-                        {missingBuckets === 0 ? 'sem horas vazias' : `hora${missingBuckets > 1 ? 's' : ''} sem traces`}
-                      </p>
-                    </div>
-                    <div className="rounded-lg border border-border/40 p-3">
-                      <p className="text-meta uppercase text-muted-foreground tracking-wide">Confiança</p>
-                      <p className={`text-2xl font-bold mt-1 ${statusColor[coverageStatus]}`}>
-                        {coverageStatus === 'healthy' ? 'Alta' : coverageStatus === 'warning' ? 'Média' : 'Baixa'}
-                      </p>
-                      <p className="text-meta text-muted-foreground mt-0.5">
-                        baseada na cobertura
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Visual bar — proportion of buckets with data. */}
-                  <div>
-                    <div className="flex items-center justify-between text-meta text-muted-foreground mb-1">
-                      <span>Janela de {windowLabel(windowHours)}</span>
-                      <span className="font-mono tabular-nums">
-                        {bucketsWithData} de {expectedBuckets} buckets
-                      </span>
-                    </div>
-                    <div
-                      className="h-2 w-full rounded-full bg-secondary/40 overflow-hidden"
-                      role="progressbar"
-                      aria-valuenow={Number(coveragePct.toFixed(1))}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-label="Cobertura temporal dos dados"
-                    >
+                    {/* Visual bar — proportion of buckets with data. */}
+                    <div>
+                      <div className="flex items-center justify-between text-meta text-muted-foreground mb-1">
+                        <span>Janela de {windowLabel(windowHours)}</span>
+                        <span className="font-mono tabular-nums">
+                          {bucketsWithData} de {expectedBuckets} buckets
+                        </span>
+                      </div>
                       <div
-                        className={`h-full ${coverageColor} transition-all`}
-                        style={{ width: `${coveragePct}%` }}
-                      />
+                        className="h-2 w-full rounded-full bg-secondary/40 overflow-hidden"
+                        role="progressbar"
+                        aria-valuenow={Number(coveragePct.toFixed(1))}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label="Cobertura temporal dos dados"
+                      >
+                        <div
+                          className={`h-full ${coverageColor} transition-all`}
+                          style={{ width: `${coveragePct}%` }}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  {missingBuckets > 0 && (
-                    <div className="flex items-start gap-2 text-meta p-2.5 rounded-md bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber">
-                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                      <span>
-                        {missingBuckets} {missingBuckets > 1 ? 'horas não tiveram traces' : 'hora não teve traces'} no período.
-                        Os percentis (P50/P95/P99) refletem apenas as {bucketsWithData} {bucketsWithData > 1 ? 'horas com atividade' : 'hora com atividade'} —
-                        considere ampliar a janela ou verificar a ingestão se a lacuna for inesperada.
-                      </span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })()}
+                    {missingBuckets > 0 && (
+                      <div className="flex items-start gap-2 text-meta p-2.5 rounded-md bg-nexus-amber/10 border border-nexus-amber/20 text-nexus-amber">
+                        <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                        <span>
+                          {missingBuckets}{' '}
+                          {missingBuckets > 1 ? 'horas não tiveram traces' : 'hora não teve traces'}{' '}
+                          no período. Os percentis (P50/P95/P99) refletem apenas as{' '}
+                          {bucketsWithData}{' '}
+                          {bucketsWithData > 1 ? 'horas com atividade' : 'hora com atividade'} —
+                          considere ampliar a janela ou verificar a ingestão se a lacuna for
+                          inesperada.
+                        </span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })()}
 
-          {compareSummary && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                  Comparação: {windowLabel(windowHours)} vs {windowLabel(compareHours)}
-                </CardTitle>
-                <CardDescription>
-                  Lado a lado — latências, erros e violações entre as duas janelas.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-body-sm">
-                    <thead className="text-meta uppercase text-muted-foreground border-b">
-                      <tr>
-                        <th className="text-left py-2 font-semibold">Métrica</th>
-                        <th className="text-right py-2 font-semibold">{windowLabel(windowHours)} (atual)</th>
-                        <th className="text-right py-2 font-semibold">{windowLabel(compareHours)}</th>
-                        <th className="text-right py-2 font-semibold">Δ</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {([
-                        { label: 'P50 (latência)', curr: summary.p50_latency_ms, prev: compareSummary.p50_latency_ms, suffix: 'ms', lowerBetter: true },
-                        { label: 'P95 (latência)', curr: summary.p95_latency_ms, prev: compareSummary.p95_latency_ms, suffix: 'ms', lowerBetter: true },
-                        { label: 'P99 (latência)', curr: summary.p99_latency_ms, prev: compareSummary.p99_latency_ms, suffix: 'ms', lowerBetter: true },
-                        { label: 'Taxa de sucesso', curr: summary.success_rate, prev: compareSummary.success_rate, suffix: '%', lowerBetter: false, decimals: 2 },
-                        { label: 'Total de traces', curr: summary.total_traces, prev: compareSummary.total_traces, suffix: '', lowerBetter: false },
-                        { label: 'Erros', curr: summary.error_count, prev: compareSummary.error_count, suffix: '', lowerBetter: true },
-                        {
-                          label: `Violações (${[...failureModes].map((m) => FAILURE_MODE_META[m].label.toLowerCase()).join(' + ')})`,
-                          curr: filteredViolations,
-                          prev: filteredViolationsCompare,
-                          suffix: '',
-                          lowerBetter: true,
-                        },
-                        { label: 'Custo total', curr: summary.total_cost_usd, prev: compareSummary.total_cost_usd, suffix: '', prefix: '$', lowerBetter: true, decimals: 4 },
-                        { label: 'Tokens', curr: summary.total_tokens, prev: compareSummary.total_tokens, suffix: '', lowerBetter: true },
-                      ] as Array<{ label: string; curr: number; prev: number; suffix: string; prefix?: string; lowerBetter: boolean; decimals?: number }>).map((row) => {
-                        const fmt = (n: number) =>
-                          `${row.prefix ?? ''}${row.decimals !== undefined ? n.toFixed(row.decimals) : n.toLocaleString('pt-BR')}${row.suffix}`;
-                        const d = formatDelta(row.curr, row.prev, row.lowerBetter);
-                        return (
-                          <tr key={row.label} className="border-b last:border-b-0 hover:bg-secondary/30">
-                            <td className="py-2.5 font-medium">{row.label}</td>
-                            <td className="text-right tabular-nums font-semibold">{fmt(row.curr)}</td>
-                            <td className="text-right tabular-nums text-muted-foreground">{fmt(row.prev)}</td>
-                            <td className={`text-right tabular-nums font-mono font-semibold ${d.className}`}>
-                              {d.arrow} {Math.abs(d.pct).toFixed(1)}%
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Breakdown por modo de falha — sempre exibe os 3 modos lado a
-              lado, independente do filtro ativo, para comparar como cada
-              bucket de violação muda entre as duas janelas. */}
-          {compareSummary && modeCountsCompare && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-nexus-amber" />
-                  Violações por tipo
-                </CardTitle>
-                <CardDescription>
-                  Quantos buckets de tempo dispararam cada modo de falha em cada janela.
-                  Um mesmo bucket pode contar em mais de um tipo.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-body-sm">
-                    <thead className="text-meta uppercase text-muted-foreground border-b">
-                      <tr>
-                        <th className="text-left py-2 font-semibold">Tipo</th>
-                        <th className="text-right py-2 font-semibold">{windowLabel(windowHours)} (atual)</th>
-                        <th className="text-right py-2 font-semibold">{windowLabel(compareHours)}</th>
-                        <th className="text-right py-2 font-semibold">Δ</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ALL_FAILURE_MODES.map((mode) => {
-                        const meta = FAILURE_MODE_META[mode];
-                        const curr = modeCountsCurrent[mode];
-                        const prev = modeCountsCompare[mode];
-                        const currPct = totalBucketsCurrent > 0 ? (curr / totalBucketsCurrent) * 100 : 0;
-                        const prevPct = totalBucketsCompare > 0 ? (prev / totalBucketsCompare) * 100 : 0;
-                        const d = formatDelta(curr, prev, true);
-                        return (
-                          <tr key={mode} className="border-b last:border-b-0 hover:bg-secondary/30">
-                            <td className="py-2.5 font-medium">
-                              <span className="inline-flex items-center gap-2">
-                                <span
-                                  className={`inline-block h-2.5 w-2.5 rounded-full ${meta.swatchClass}`}
-                                  aria-hidden="true"
-                                />
-                                <span title={meta.description}>{meta.label}</span>
-                              </span>
-                            </td>
-                            <td className="text-right tabular-nums font-semibold">
-                              {curr.toLocaleString('pt-BR')}
-                              <span className="ml-1 text-meta font-normal text-muted-foreground">
-                                ({currPct.toFixed(1)}%)
-                              </span>
-                            </td>
-                            <td className="text-right tabular-nums text-muted-foreground">
-                              {prev.toLocaleString('pt-BR')}
-                              <span className="ml-1 text-meta">({prevPct.toFixed(1)}%)</span>
-                            </td>
-                            <td className={`text-right tabular-nums font-mono font-semibold ${d.className}`}>
-                              {d.arrow} {Math.abs(d.pct).toFixed(1)}%
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                    <tfoot className="text-meta text-muted-foreground border-t">
-                      <tr>
-                        <td className="pt-2" colSpan={4}>
-                          Base: {totalBucketsCurrent} buckets na janela atual ·{' '}
-                          {totalBucketsCompare} buckets na comparação. Percentuais
-                          relativos ao total de buckets de cada janela.
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Insights detalhados — evidências numéricas com indicadores de
-              tendência. Métricas derivadas (custo/req, tokens/req, taxa de
-              erro normalizada) são calculadas client-side a partir dos
-              agregados do RPC para evitar alterações de schema. */}
-          {(() => {
-            const cmp = compareSummary;
-            const safeRate = (n: number, d: number) => (d > 0 ? n / d : 0);
-
-            const costPerReq = safeRate(summary.total_cost_usd, summary.total_traces);
-            const tokensPerReq = safeRate(summary.total_tokens, summary.total_traces);
-            const errorRate = safeRate(summary.error_count, summary.total_traces) * 100;
-            const tailSpread = summary.p99_latency_ms - summary.p95_latency_ms;
-
-            const cmpCostPerReq = cmp ? safeRate(cmp.total_cost_usd, cmp.total_traces) : undefined;
-            const cmpTokensPerReq = cmp ? safeRate(cmp.total_tokens, cmp.total_traces) : undefined;
-            const cmpErrorRate = cmp ? safeRate(cmp.error_count, cmp.total_traces) * 100 : undefined;
-            const cmpTailSpread = cmp ? cmp.p99_latency_ms - cmp.p95_latency_ms : undefined;
-
-            type Trend = ReturnType<typeof formatDelta>;
-            const trend = (curr: number, prev: number | undefined, lowerIsBetter: boolean): Trend | null =>
-              prev === undefined ? null : formatDelta(curr, prev, lowerIsBetter);
-
-            const rows: Array<{
-              label: string;
-              value: string;
-              prevValue?: string;
-              prevLabel?: string;
-              trend: Trend | null;
-              hint: string;
-            }> = [
-              {
-                label: 'P99 (cauda extrema)',
-                value: `${summary.p99_latency_ms}ms`,
-                prevValue: cmp ? `${cmp.p99_latency_ms}ms` : undefined,
-                prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
-                trend: trend(summary.p99_latency_ms, cmp?.p99_latency_ms, true),
-                hint: 'Latência sentida pelos 1% piores casos. Spikes aqui indicam outliers críticos.',
-              },
-              {
-                label: 'Spread P95 → P99',
-                value: `${tailSpread}ms`,
-                prevValue: cmp ? `${cmpTailSpread}ms` : undefined,
-                prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
-                trend: trend(tailSpread, cmpTailSpread, true),
-                hint: 'Diferença entre P95 e P99. Spread grande = poucos requests dominam a cauda.',
-              },
-              {
-                label: 'Taxa de erro (level=error)',
-                value: `${errorRate.toFixed(2)}%`,
-                prevValue: cmpErrorRate !== undefined ? `${cmpErrorRate.toFixed(2)}%` : undefined,
-                prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
-                trend: trend(errorRate, cmpErrorRate, true),
-                hint: `${summary.error_count} de ${summary.total_traces.toLocaleString('pt-BR')} traces. Granularidade por nível (warn/critical/tool) requer extensão do RPC.`,
-              },
-              {
-                label: 'Custo médio por requisição',
-                value: `$${costPerReq.toFixed(6)}`,
-                prevValue: cmpCostPerReq !== undefined ? `$${cmpCostPerReq.toFixed(6)}` : undefined,
-                prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
-                trend: trend(costPerReq, cmpCostPerReq, true),
-                hint: `Total $${summary.total_cost_usd.toFixed(4)} ÷ ${summary.total_traces.toLocaleString('pt-BR')} traces.`,
-              },
-              {
-                label: 'Tokens médios por requisição',
-                value: tokensPerReq.toFixed(0),
-                prevValue: cmpTokensPerReq !== undefined ? cmpTokensPerReq.toFixed(0) : undefined,
-                prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
-                trend: trend(tokensPerReq, cmpTokensPerReq, true),
-                hint: `Total ${summary.total_tokens.toLocaleString('pt-BR')} tokens ÷ ${summary.total_traces.toLocaleString('pt-BR')} traces.`,
-              },
-              {
-                label: 'Taxa de sucesso',
-                value: `${summary.success_rate.toFixed(2)}%`,
-                prevValue: cmp ? `${cmp.success_rate.toFixed(2)}%` : undefined,
-                prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
-                trend: trend(summary.success_rate, cmp?.success_rate, false),
-                hint: `Alvo SLO ≥ ${SLO_TARGETS.successRatePct}%. Inverte a taxa de erro: 100 − error_rate.`,
-              },
-            ];
-
-            return (
+            {compareSummary && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-primary" />
-                    Insights detalhados — evidências numéricas
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    Comparação: {windowLabel(windowHours)} vs {windowLabel(compareHours)}
                   </CardTitle>
                   <CardDescription>
-                    Métricas derivadas com {cmp ? `tendência vs. ${windowLabel(compareHours)}` : 'valores atuais (ative comparação para ver tendências)'}.
+                    Lado a lado — latências, erros e violações entre as duas janelas.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                    {rows.map((row) => (
-                      <div
-                        key={row.label}
-                        className="rounded-lg border border-border/40 bg-secondary/10 p-3 hover:bg-secondary/30 transition-colors"
-                        title={row.hint}
-                      >
-                        <p className="text-meta uppercase text-muted-foreground tracking-wide">
-                          {row.label}
-                        </p>
-                        <div className="flex items-baseline justify-between gap-2 mt-1">
-                          <p className="text-xl font-bold tabular-nums">{row.value}</p>
-                          {row.trend && (
-                            <span
-                              className={`text-meta font-mono font-semibold tabular-nums ${row.trend.className}`}
-                              aria-label={`Variação de ${Math.abs(row.trend.pct).toFixed(1)} por cento`}
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-body-sm">
+                      <thead className="text-meta uppercase text-muted-foreground border-b">
+                        <tr>
+                          <th className="text-left py-2 font-semibold">Métrica</th>
+                          <th className="text-right py-2 font-semibold">
+                            {windowLabel(windowHours)} (atual)
+                          </th>
+                          <th className="text-right py-2 font-semibold">
+                            {windowLabel(compareHours)}
+                          </th>
+                          <th className="text-right py-2 font-semibold">Δ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(
+                          [
+                            {
+                              label: 'P50 (latência)',
+                              curr: summary.p50_latency_ms,
+                              prev: compareSummary.p50_latency_ms,
+                              suffix: 'ms',
+                              lowerBetter: true,
+                            },
+                            {
+                              label: 'P95 (latência)',
+                              curr: summary.p95_latency_ms,
+                              prev: compareSummary.p95_latency_ms,
+                              suffix: 'ms',
+                              lowerBetter: true,
+                            },
+                            {
+                              label: 'P99 (latência)',
+                              curr: summary.p99_latency_ms,
+                              prev: compareSummary.p99_latency_ms,
+                              suffix: 'ms',
+                              lowerBetter: true,
+                            },
+                            {
+                              label: 'Taxa de sucesso',
+                              curr: summary.success_rate,
+                              prev: compareSummary.success_rate,
+                              suffix: '%',
+                              lowerBetter: false,
+                              decimals: 2,
+                            },
+                            {
+                              label: 'Total de traces',
+                              curr: summary.total_traces,
+                              prev: compareSummary.total_traces,
+                              suffix: '',
+                              lowerBetter: false,
+                            },
+                            {
+                              label: 'Erros',
+                              curr: summary.error_count,
+                              prev: compareSummary.error_count,
+                              suffix: '',
+                              lowerBetter: true,
+                            },
+                            {
+                              label: `Violações (${[...failureModes].map((m) => FAILURE_MODE_META[m].label.toLowerCase()).join(' + ')})`,
+                              curr: filteredViolations,
+                              prev: filteredViolationsCompare,
+                              suffix: '',
+                              lowerBetter: true,
+                            },
+                            {
+                              label: 'Custo total',
+                              curr: summary.total_cost_usd,
+                              prev: compareSummary.total_cost_usd,
+                              suffix: '',
+                              prefix: '$',
+                              lowerBetter: true,
+                              decimals: 4,
+                            },
+                            {
+                              label: 'Tokens',
+                              curr: summary.total_tokens,
+                              prev: compareSummary.total_tokens,
+                              suffix: '',
+                              lowerBetter: true,
+                            },
+                          ] as Array<{
+                            label: string;
+                            curr: number;
+                            prev: number;
+                            suffix: string;
+                            prefix?: string;
+                            lowerBetter: boolean;
+                            decimals?: number;
+                          }>
+                        ).map((row) => {
+                          const fmt = (n: number) =>
+                            `${row.prefix ?? ''}${row.decimals !== undefined ? n.toFixed(row.decimals) : n.toLocaleString('pt-BR')}${row.suffix}`;
+                          const d = formatDelta(row.curr, row.prev, row.lowerBetter);
+                          return (
+                            <tr
+                              key={row.label}
+                              className="border-b last:border-b-0 hover:bg-secondary/30"
                             >
-                              {row.trend.arrow} {Math.abs(row.trend.pct).toFixed(1)}%
-                            </span>
-                          )}
-                        </div>
-                        {row.prevValue && (
-                          <p className="text-meta text-muted-foreground mt-1 font-mono">
-                            {row.prevLabel}: <span className="tabular-nums">{row.prevValue}</span>
-                          </p>
-                        )}
-                        <p className="text-meta text-muted-foreground/80 mt-2 leading-snug">
-                          {row.hint}
-                        </p>
-                      </div>
-                    ))}
+                              <td className="py-2.5 font-medium">{row.label}</td>
+                              <td className="text-right tabular-nums font-semibold">
+                                {fmt(row.curr)}
+                              </td>
+                              <td className="text-right tabular-nums text-muted-foreground">
+                                {fmt(row.prev)}
+                              </td>
+                              <td
+                                className={`text-right tabular-nums font-mono font-semibold ${d.className}`}
+                              >
+                                {d.arrow} {Math.abs(d.pct).toFixed(1)}%
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </CardContent>
               </Card>
-            );
-          })()}
+            )}
 
-          <div className="grid gap-4 lg:grid-cols-3">
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <div className="flex items-start justify-between gap-3 flex-wrap">
-                  <div>
-                    <CardTitle>Latência ao longo do tempo</CardTitle>
-                    <CardDescription>
-                      P95 e P50 — linha pontilhada indica o alvo de {SLO_TARGETS.p95LatencyMs}ms.
-                      {' '}
-                      <span className="font-medium text-foreground">
-                        {filteredViolations} {filteredViolations === 1 ? 'violação' : 'violações'}
-                      </span>
-                      {' '}sob o filtro atual.
-                    </CardDescription>
+            {/* Breakdown por modo de falha — sempre exibe os 3 modos lado a
+              lado, independente do filtro ativo, para comparar como cada
+              bucket de violação muda entre as duas janelas. */}
+            {compareSummary && modeCountsCompare && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-nexus-amber" />
+                    Violações por tipo
+                  </CardTitle>
+                  <CardDescription>
+                    Quantos buckets de tempo dispararam cada modo de falha em cada janela. Um mesmo
+                    bucket pode contar em mais de um tipo.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-body-sm">
+                      <thead className="text-meta uppercase text-muted-foreground border-b">
+                        <tr>
+                          <th className="text-left py-2 font-semibold">Tipo</th>
+                          <th className="text-right py-2 font-semibold">
+                            {windowLabel(windowHours)} (atual)
+                          </th>
+                          <th className="text-right py-2 font-semibold">
+                            {windowLabel(compareHours)}
+                          </th>
+                          <th className="text-right py-2 font-semibold">Δ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ALL_FAILURE_MODES.map((mode) => {
+                          const meta = FAILURE_MODE_META[mode];
+                          const curr = modeCountsCurrent[mode];
+                          const prev = modeCountsCompare[mode];
+                          const currPct =
+                            totalBucketsCurrent > 0 ? (curr / totalBucketsCurrent) * 100 : 0;
+                          const prevPct =
+                            totalBucketsCompare > 0 ? (prev / totalBucketsCompare) * 100 : 0;
+                          const d = formatDelta(curr, prev, true);
+                          return (
+                            <tr
+                              key={mode}
+                              className="border-b last:border-b-0 hover:bg-secondary/30"
+                            >
+                              <td className="py-2.5 font-medium">
+                                <span className="inline-flex items-center gap-2">
+                                  <span
+                                    className={`inline-block h-2.5 w-2.5 rounded-full ${meta.swatchClass}`}
+                                    aria-hidden="true"
+                                  />
+                                  <span title={meta.description}>{meta.label}</span>
+                                </span>
+                              </td>
+                              <td className="text-right tabular-nums font-semibold">
+                                {curr.toLocaleString('pt-BR')}
+                                <span className="ml-1 text-meta font-normal text-muted-foreground">
+                                  ({currPct.toFixed(1)}%)
+                                </span>
+                              </td>
+                              <td className="text-right tabular-nums text-muted-foreground">
+                                {prev.toLocaleString('pt-BR')}
+                                <span className="ml-1 text-meta">({prevPct.toFixed(1)}%)</span>
+                              </td>
+                              <td
+                                className={`text-right tabular-nums font-mono font-semibold ${d.className}`}
+                              >
+                                {d.arrow} {Math.abs(d.pct).toFixed(1)}%
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                      <tfoot className="text-meta text-muted-foreground border-t">
+                        <tr>
+                          <td className="pt-2" colSpan={4}>
+                            Base: {totalBucketsCurrent} buckets na janela atual ·{' '}
+                            {totalBucketsCompare} buckets na comparação. Percentuais relativos ao
+                            total de buckets de cada janela.
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
                   </div>
-                </div>
-                {/* Failure-mode filters: choose which signals count as a
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Insights detalhados — evidências numéricas com indicadores de
+              tendência. Métricas derivadas (custo/req, tokens/req, taxa de
+              erro normalizada) são calculadas client-side a partir dos
+              agregados do RPC para evitar alterações de schema. */}
+            {(() => {
+              const cmp = compareSummary;
+              const safeRate = (n: number, d: number) => (d > 0 ? n / d : 0);
+
+              const costPerReq = safeRate(summary.total_cost_usd, summary.total_traces);
+              const tokensPerReq = safeRate(summary.total_tokens, summary.total_traces);
+              const errorRate = safeRate(summary.error_count, summary.total_traces) * 100;
+              const tailSpread = summary.p99_latency_ms - summary.p95_latency_ms;
+
+              const cmpCostPerReq = cmp
+                ? safeRate(cmp.total_cost_usd, cmp.total_traces)
+                : undefined;
+              const cmpTokensPerReq = cmp
+                ? safeRate(cmp.total_tokens, cmp.total_traces)
+                : undefined;
+              const cmpErrorRate = cmp
+                ? safeRate(cmp.error_count, cmp.total_traces) * 100
+                : undefined;
+              const cmpTailSpread = cmp ? cmp.p99_latency_ms - cmp.p95_latency_ms : undefined;
+
+              type Trend = ReturnType<typeof formatDelta>;
+              const trend = (
+                curr: number,
+                prev: number | undefined,
+                lowerIsBetter: boolean,
+              ): Trend | null =>
+                prev === undefined ? null : formatDelta(curr, prev, lowerIsBetter);
+
+              const rows: Array<{
+                label: string;
+                value: string;
+                prevValue?: string;
+                prevLabel?: string;
+                trend: Trend | null;
+                hint: string;
+              }> = [
+                {
+                  label: 'P99 (cauda extrema)',
+                  value: `${summary.p99_latency_ms}ms`,
+                  prevValue: cmp ? `${cmp.p99_latency_ms}ms` : undefined,
+                  prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
+                  trend: trend(summary.p99_latency_ms, cmp?.p99_latency_ms, true),
+                  hint: 'Latência sentida pelos 1% piores casos. Spikes aqui indicam outliers críticos.',
+                },
+                {
+                  label: 'Spread P95 → P99',
+                  value: `${tailSpread}ms`,
+                  prevValue: cmp ? `${cmpTailSpread}ms` : undefined,
+                  prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
+                  trend: trend(tailSpread, cmpTailSpread, true),
+                  hint: 'Diferença entre P95 e P99. Spread grande = poucos requests dominam a cauda.',
+                },
+                {
+                  label: 'Taxa de erro (level=error)',
+                  value: `${errorRate.toFixed(2)}%`,
+                  prevValue: cmpErrorRate !== undefined ? `${cmpErrorRate.toFixed(2)}%` : undefined,
+                  prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
+                  trend: trend(errorRate, cmpErrorRate, true),
+                  hint: `${summary.error_count} de ${summary.total_traces.toLocaleString('pt-BR')} traces. Granularidade por nível (warn/critical/tool) requer extensão do RPC.`,
+                },
+                {
+                  label: 'Custo médio por requisição',
+                  value: `$${costPerReq.toFixed(6)}`,
+                  prevValue:
+                    cmpCostPerReq !== undefined ? `$${cmpCostPerReq.toFixed(6)}` : undefined,
+                  prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
+                  trend: trend(costPerReq, cmpCostPerReq, true),
+                  hint: `Total $${summary.total_cost_usd.toFixed(4)} ÷ ${summary.total_traces.toLocaleString('pt-BR')} traces.`,
+                },
+                {
+                  label: 'Tokens médios por requisição',
+                  value: tokensPerReq.toFixed(0),
+                  prevValue: cmpTokensPerReq !== undefined ? cmpTokensPerReq.toFixed(0) : undefined,
+                  prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
+                  trend: trend(tokensPerReq, cmpTokensPerReq, true),
+                  hint: `Total ${summary.total_tokens.toLocaleString('pt-BR')} tokens ÷ ${summary.total_traces.toLocaleString('pt-BR')} traces.`,
+                },
+                {
+                  label: 'Taxa de sucesso',
+                  value: `${summary.success_rate.toFixed(2)}%`,
+                  prevValue: cmp ? `${cmp.success_rate.toFixed(2)}%` : undefined,
+                  prevLabel: cmp ? `vs ${windowLabel(compareHours)}` : undefined,
+                  trend: trend(summary.success_rate, cmp?.success_rate, false),
+                  hint: `Alvo SLO ≥ ${SLO_TARGETS.successRatePct}%. Inverte a taxa de erro: 100 − error_rate.`,
+                },
+              ];
+
+              return (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-primary" />
+                      Insights detalhados — evidências numéricas
+                    </CardTitle>
+                    <CardDescription>
+                      Métricas derivadas com{' '}
+                      {cmp
+                        ? `tendência vs. ${windowLabel(compareHours)}`
+                        : 'valores atuais (ative comparação para ver tendências)'}
+                      .
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                      {rows.map((row) => (
+                        <div
+                          key={row.label}
+                          className="rounded-lg border border-border/40 bg-secondary/10 p-3 hover:bg-secondary/30 transition-colors"
+                          title={row.hint}
+                        >
+                          <p className="text-meta uppercase text-muted-foreground tracking-wide">
+                            {row.label}
+                          </p>
+                          <div className="flex items-baseline justify-between gap-2 mt-1">
+                            <p className="text-xl font-bold tabular-nums">{row.value}</p>
+                            {row.trend && (
+                              <span
+                                className={`text-meta font-mono font-semibold tabular-nums ${row.trend.className}`}
+                                aria-label={`Variação de ${Math.abs(row.trend.pct).toFixed(1)} por cento`}
+                              >
+                                {row.trend.arrow} {Math.abs(row.trend.pct).toFixed(1)}%
+                              </span>
+                            )}
+                          </div>
+                          {row.prevValue && (
+                            <p className="text-meta text-muted-foreground mt-1 font-mono">
+                              {row.prevLabel}: <span className="tabular-nums">{row.prevValue}</span>
+                            </p>
+                          )}
+                          <p className="text-meta text-muted-foreground/80 mt-2 leading-snug">
+                            {row.hint}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })()}
+
+            <div className="grid gap-4 lg:grid-cols-3">
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div>
+                      <CardTitle>Latência ao longo do tempo</CardTitle>
+                      <CardDescription>
+                        P95 e P50 — linha pontilhada indica o alvo de {SLO_TARGETS.p95LatencyMs}ms.{' '}
+                        <span className="font-medium text-foreground">
+                          {filteredViolations} {filteredViolations === 1 ? 'violação' : 'violações'}
+                        </span>{' '}
+                        sob o filtro atual.
+                      </CardDescription>
+                    </div>
+                  </div>
+                  {/* Failure-mode filters: choose which signals count as a
                     violation in the timeline + comparison table. */}
-                <div className="flex items-center gap-2 flex-wrap pt-2">
-                  <span className="text-meta uppercase text-muted-foreground tracking-wide">
-                    Tipos de falha:
-                  </span>
-                  {ALL_FAILURE_MODES.map((mode) => {
-                    const active = failureModes.has(mode);
-                    return (
-                      <button
-                        key={mode}
-                        type="button"
-                        onClick={() => toggleFailureMode(mode)}
-                        title={FAILURE_MODE_META[mode].description}
-                        aria-pressed={active}
-                        className={`px-2.5 py-1 text-meta rounded-full border transition-colors focus-ring ${
-                          active
-                            ? 'bg-primary/15 border-primary/40 text-primary font-medium'
-                            : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary/60'
-                        }`}
-                      >
-                        {FAILURE_MODE_META[mode].label}
-                      </button>
-                    );
-                  })}
-                  <button
-                    type="button"
-                    disabled
-                    title="Granularidade de falhas de ferramentas requer extensão do RPC get_slo_summary — em breve."
-                    className="px-2.5 py-1 text-meta rounded-full border border-dashed border-border text-muted-foreground/60 cursor-not-allowed"
-                  >
-                    Tool failures (em breve)
-                  </button>
-                  {/* Reset — só aparece quando algo está fora do default
-                      (todos os modos ativos), evitando ruído visual quando
-                      já está no estado padrão. */}
-                  {failureModes.size !== ALL_FAILURE_MODES.length && (
+                  <div className="flex items-center gap-2 flex-wrap pt-2">
+                    <span className="text-meta uppercase text-muted-foreground tracking-wide">
+                      Tipos de falha:
+                    </span>
+                    {ALL_FAILURE_MODES.map((mode) => {
+                      const active = failureModes.has(mode);
+                      return (
+                        <button
+                          key={mode}
+                          type="button"
+                          onClick={() => toggleFailureMode(mode)}
+                          title={FAILURE_MODE_META[mode].description}
+                          aria-pressed={active}
+                          className={`px-2.5 py-1 text-meta rounded-full border transition-colors focus-ring ${
+                            active
+                              ? 'bg-primary/15 border-primary/40 text-primary font-medium'
+                              : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary/60'
+                          }`}
+                        >
+                          {FAILURE_MODE_META[mode].label}
+                        </button>
+                      );
+                    })}
                     <button
                       type="button"
-                      onClick={() => {
-                        setFailureModes(new Set(ALL_FAILURE_MODES));
-                        toast.success('Filtros de falha resetados');
-                      }}
-                      title="Voltar para todos os tipos de falha selecionados"
-                      className="ml-auto px-2.5 py-1 text-meta rounded-full border border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors focus-ring"
+                      disabled
+                      title="Granularidade de falhas de ferramentas requer extensão do RPC get_slo_summary — em breve."
+                      className="px-2.5 py-1 text-meta rounded-full border border-dashed border-border text-muted-foreground/60 cursor-not-allowed"
                     >
-                      Resetar filtros
+                      Tool failures (em breve)
                     </button>
-                  )}
-                </div>
-                {/* Data-fidelity disclosure — explica que parte das classificações
+                    {/* Reset — só aparece quando algo está fora do default
+                      (todos os modos ativos), evitando ruído visual quando
+                      já está no estado padrão. */}
+                    {failureModes.size !== ALL_FAILURE_MODES.length && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFailureModes(new Set(ALL_FAILURE_MODES));
+                          toast.success('Filtros de falha resetados');
+                        }}
+                        title="Voltar para todos os tipos de falha selecionados"
+                        className="ml-auto px-2.5 py-1 text-meta rounded-full border border-border bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors focus-ring"
+                      >
+                        Resetar filtros
+                      </button>
+                    )}
+                  </div>
+                  {/* Data-fidelity disclosure — explica que parte das classificações
                     é aproximada a partir do P95 agregado por bucket (não temos
                     granularidade por trace ainda) e que Tool failures depende
                     de extensão do RPC. Em <details> para não poluir o cabeçalho. */}
-                <details className="mt-3 text-meta rounded-md border border-nexus-amber/30 bg-nexus-amber/5 group">
-                  <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer list-none [&::-webkit-details-marker]:hidden focus-ring rounded-md">
-                    <AlertTriangle className="h-3.5 w-3.5 text-nexus-amber shrink-0" />
-                    <span className="font-medium text-foreground">
-                      Limitações de fidelidade dos filtros
-                    </span>
-                    <span className="ml-auto text-muted-foreground transition-transform group-open:rotate-180">
-                      ▾
-                    </span>
-                  </summary>
-                  <div className="px-3 pb-3 pt-1 space-y-2 text-muted-foreground border-t border-nexus-amber/20">
-                    <p>
-                      Os tipos de falha são derivados dos agregados por hora retornados
-                      pelo RPC <code className="text-foreground font-mono text-meta bg-secondary/50 px-1 rounded">get_slo_summary</code> —
-                      não há granularidade por trace individual.
-                    </p>
-                    <ul className="space-y-1.5 pl-1">
-                      <li className="flex items-start gap-2">
-                        <span
-                          className={`inline-block h-2 w-2 rounded-full mt-1 shrink-0 ${FAILURE_MODE_META.error.swatchClass}`}
-                          aria-hidden="true"
-                        />
-                        <span>
-                          <span className="font-medium text-foreground">Erros</span> — exato.
-                          Conta buckets com pelo menos 1 trace <code className="text-foreground font-mono text-meta bg-secondary/50 px-1 rounded">level=error</code>.
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span
-                          className={`inline-block h-2 w-2 rounded-full mt-1 shrink-0 ${FAILURE_MODE_META.critical.swatchClass}`}
-                          aria-hidden="true"
-                        />
-                        <span>
-                          <span className="font-medium text-foreground">Crítico</span> —
-                          aproximado: P95 do bucket {'>'} alvo P99 ({SLO_TARGETS.p99LatencyMs}ms).
-                          Não distingue outliers individuais dentro do bucket.
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span
-                          className={`inline-block h-2 w-2 rounded-full mt-1 shrink-0 ${FAILURE_MODE_META.latency.swatchClass}`}
-                          aria-hidden="true"
-                        />
-                        <span>
-                          <span className="font-medium text-foreground">Latência</span> —
-                          aproximado: P95 do bucket {'>'} alvo P95 ({SLO_TARGETS.p95LatencyMs}ms).
-                          Reflete a hora inteira, não cada chamada.
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span
-                          className="inline-block h-2 w-2 rounded-full mt-1 shrink-0 border border-dashed border-muted-foreground/60"
-                          aria-hidden="true"
-                        />
-                        <span>
-                          <span className="font-medium text-foreground">Tool failures</span> —
-                          requer suporte do backend. O RPC ainda não separa erros de
-                          ferramenta dos erros gerais; quando disponível, este filtro
-                          será habilitado automaticamente.
-                        </span>
-                      </li>
-                    </ul>
-                    <p className="pt-1 border-t border-nexus-amber/20">
-                      Para investigação trace-a-trace, use a página{' '}
-                      <Link to="/agents/traces" className="text-primary hover:underline font-medium">
-                        Traces
-                      </Link>
-                      {' '}com filtro por <code className="text-foreground font-mono text-meta bg-secondary/50 px-1 rounded">level</code> e janela equivalente.
-                    </p>
-                  </div>
-                </details>
-              </CardHeader>
-              <CardContent>
-                {chartData.length === 0 ? (
-                  <div className="h-64 flex items-center justify-center text-body-sm text-muted-foreground">
-                    Sem dados temporais para esta janela
-                  </div>
-                ) : (
-                  <>
-                    <LightAreaChart
-                      data={chartData}
-                      xKey="time"
-                      height={280}
-                      yFormatter={(v) => `${v}ms`}
-                      tooltipFormatter={(v, name) => `${v}ms (${name})`}
-                      tooltipTitle={(d) => {
-                        const iso = d._bucket_hour as string | undefined;
-                        if (!iso) return undefined;
-                        return new Date(iso).toLocaleString('pt-BR', {
-                          day: '2-digit', month: '2-digit',
-                          hour: '2-digit', minute: '2-digit',
-                        });
-                      }}
-                      tooltipExtras={(d) => {
-                        const p95 = Number(d.p95) || 0;
-                        const errors = Number(d._errors) || 0;
-                        const total = Number(d._total) || 0;
-                        // Evaluate ALL modes (independent of the active filter)
-                        // so the tooltip explains the full classification.
-                        const matched: FailureMode[] = [];
-                        if (errors > 0) matched.push('error');
-                        if (p95 > SLO_TARGETS.p99LatencyMs) matched.push('critical');
-                        if (p95 > SLO_TARGETS.p95LatencyMs) matched.push('latency');
-                        const matchedRows = matched.length
-                          ? matched.map((m) => ({
-                              color: FAILURE_MODE_META[m].cssVar,
-                              label: FAILURE_MODE_META[m].label,
-                              value: m === 'error'
-                                ? `${errors}/${total} traces`
-                                : `P95 ${p95}ms`,
-                            }))
-                          : [{ label: 'Nenhum modo disparado', value: '—' }];
-                        return [
-                          { title: 'Modos disparados', rows: matchedRows },
+                  <details className="mt-3 text-meta rounded-md border border-nexus-amber/30 bg-nexus-amber/5 group">
+                    <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer list-none [&::-webkit-details-marker]:hidden focus-ring rounded-md">
+                      <AlertTriangle className="h-3.5 w-3.5 text-nexus-amber shrink-0" />
+                      <span className="font-medium text-foreground">
+                        Limitações de fidelidade dos filtros
+                      </span>
+                      <span className="ml-auto text-muted-foreground transition-transform group-open:rotate-180">
+                        ▾
+                      </span>
+                    </summary>
+                    <div className="px-3 pb-3 pt-1 space-y-2 text-muted-foreground border-t border-nexus-amber/20">
+                      <p>
+                        Os tipos de falha são derivados dos agregados por hora retornados pelo RPC{' '}
+                        <code className="text-foreground font-mono text-meta bg-secondary/50 px-1 rounded">
+                          get_slo_summary
+                        </code>{' '}
+                        — não há granularidade por trace individual.
+                      </p>
+                      <ul className="space-y-1.5 pl-1">
+                        <li className="flex items-start gap-2">
+                          <span
+                            className={`inline-block h-2 w-2 rounded-full mt-1 shrink-0 ${FAILURE_MODE_META.error.swatchClass}`}
+                            aria-hidden="true"
+                          />
+                          <span>
+                            <span className="font-medium text-foreground">Erros</span> — exato.
+                            Conta buckets com pelo menos 1 trace{' '}
+                            <code className="text-foreground font-mono text-meta bg-secondary/50 px-1 rounded">
+                              level=error
+                            </code>
+                            .
+                          </span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span
+                            className={`inline-block h-2 w-2 rounded-full mt-1 shrink-0 ${FAILURE_MODE_META.critical.swatchClass}`}
+                            aria-hidden="true"
+                          />
+                          <span>
+                            <span className="font-medium text-foreground">Crítico</span> —
+                            aproximado: P95 do bucket {'>'} alvo P99 ({SLO_TARGETS.p99LatencyMs}ms).
+                            Não distingue outliers individuais dentro do bucket.
+                          </span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span
+                            className={`inline-block h-2 w-2 rounded-full mt-1 shrink-0 ${FAILURE_MODE_META.latency.swatchClass}`}
+                            aria-hidden="true"
+                          />
+                          <span>
+                            <span className="font-medium text-foreground">Latência</span> —
+                            aproximado: P95 do bucket {'>'} alvo P95 ({SLO_TARGETS.p95LatencyMs}ms).
+                            Reflete a hora inteira, não cada chamada.
+                          </span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span
+                            className="inline-block h-2 w-2 rounded-full mt-1 shrink-0 border border-dashed border-muted-foreground/60"
+                            aria-hidden="true"
+                          />
+                          <span>
+                            <span className="font-medium text-foreground">Tool failures</span> —
+                            requer suporte do backend. O RPC ainda não separa erros de ferramenta
+                            dos erros gerais; quando disponível, este filtro será habilitado
+                            automaticamente.
+                          </span>
+                        </li>
+                      </ul>
+                      <p className="pt-1 border-t border-nexus-amber/20">
+                        Para investigação trace-a-trace, use a página{' '}
+                        <Link
+                          to="/agents/traces"
+                          className="text-primary hover:underline font-medium"
+                        >
+                          Traces
+                        </Link>{' '}
+                        com filtro por{' '}
+                        <code className="text-foreground font-mono text-meta bg-secondary/50 px-1 rounded">
+                          level
+                        </code>{' '}
+                        e janela equivalente.
+                      </p>
+                    </div>
+                  </details>
+                </CardHeader>
+                <CardContent>
+                  {chartData.length === 0 ? (
+                    <div className="h-64 flex items-center justify-center text-body-sm text-muted-foreground">
+                      Sem dados temporais para esta janela
+                    </div>
+                  ) : (
+                    <>
+                      <LightAreaChart
+                        data={chartData}
+                        xKey="time"
+                        height={280}
+                        yFormatter={(v) => `${v}ms`}
+                        tooltipFormatter={(v, name) => `${v}ms (${name})`}
+                        tooltipTitle={(d) => {
+                          const iso = d._bucket_hour as string | undefined;
+                          if (!iso) return undefined;
+                          return new Date(iso).toLocaleString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          });
+                        }}
+                        tooltipExtras={(d) => {
+                          const p95 = Number(d.p95) || 0;
+                          const errors = Number(d._errors) || 0;
+                          const total = Number(d._total) || 0;
+                          // Evaluate ALL modes (independent of the active filter)
+                          // so the tooltip explains the full classification.
+                          const matched: FailureMode[] = [];
+                          if (errors > 0) matched.push('error');
+                          if (p95 > SLO_TARGETS.p99LatencyMs) matched.push('critical');
+                          if (p95 > SLO_TARGETS.p95LatencyMs) matched.push('latency');
+                          const matchedRows = matched.length
+                            ? matched.map((m) => ({
+                                color: FAILURE_MODE_META[m].cssVar,
+                                label: FAILURE_MODE_META[m].label,
+                                value: m === 'error' ? `${errors}/${total} traces` : `P95 ${p95}ms`,
+                              }))
+                            : [{ label: 'Nenhum modo disparado', value: '—' }];
+                          return [
+                            { title: 'Modos disparados', rows: matchedRows },
+                            {
+                              title: 'Limiares avaliados',
+                              rows: [
+                                {
+                                  color: FAILURE_MODE_META.latency.cssVar,
+                                  label: 'Alvo P95',
+                                  value: `${SLO_TARGETS.p95LatencyMs}ms`,
+                                },
+                                {
+                                  color: FAILURE_MODE_META.critical.cssVar,
+                                  label: 'Alvo P99 (crítico)',
+                                  value: `${SLO_TARGETS.p99LatencyMs}ms`,
+                                },
+                                {
+                                  color: FAILURE_MODE_META.error.cssVar,
+                                  label: 'Erros no bucket',
+                                  value: errors > 0 ? `> 0 (${errors})` : '0',
+                                },
+                              ],
+                            },
+                          ];
+                        }}
+                        showLegend
+                        series={[
                           {
-                            title: 'Limiares avaliados',
-                            rows: [
-                              {
-                                color: FAILURE_MODE_META.latency.cssVar,
-                                label: 'Alvo P95',
-                                value: `${SLO_TARGETS.p95LatencyMs}ms`,
-                              },
-                              {
-                                color: FAILURE_MODE_META.critical.cssVar,
-                                label: 'Alvo P99 (crítico)',
-                                value: `${SLO_TARGETS.p99LatencyMs}ms`,
-                              },
-                              {
-                                color: FAILURE_MODE_META.error.cssVar,
-                                label: 'Erros no bucket',
-                                value: errors > 0 ? `> 0 (${errors})` : '0',
-                              },
-                            ],
+                            dataKey: 'p95',
+                            name: 'P95',
+                            stroke: 'hsl(var(--primary))',
+                            strokeWidth: 2,
                           },
-                        ];
-                      }}
-                      showLegend
-                      series={[
-                        { dataKey: 'p95', name: 'P95', stroke: 'hsl(var(--primary))', strokeWidth: 2 },
-                        { dataKey: 'p50', name: 'P50', stroke: 'hsl(var(--muted-foreground))', fill: 'transparent', strokeWidth: 1.5 },
-                        { dataKey: 'target', name: `Alvo ${SLO_TARGETS.p95LatencyMs}ms`, stroke: 'hsl(var(--destructive))', fill: 'transparent', strokeWidth: 1 },
-                      ]}
-                    />
+                          {
+                            dataKey: 'p50',
+                            name: 'P50',
+                            stroke: 'hsl(var(--muted-foreground))',
+                            fill: 'transparent',
+                            strokeWidth: 1.5,
+                          },
+                          {
+                            dataKey: 'target',
+                            name: `Alvo ${SLO_TARGETS.p95LatencyMs}ms`,
+                            stroke: 'hsl(var(--destructive))',
+                            fill: 'transparent',
+                            strokeWidth: 1,
+                          },
+                        ]}
+                      />
 
-                    {/* Violation strip — one cell per timeline bucket. Color
+                      {/* Violation strip — one cell per timeline bucket. Color
                         signals which failure mode(s) matched. When multiple
                         modes match the same bucket, the cell is split into
                         equal-width vertical bands so all modes are visible.
                         Hover reveals the bucket time + matched modes. */}
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center justify-between gap-4 flex-wrap">
-                        <span className="text-meta uppercase tracking-wide text-muted-foreground">
-                          Violações por bucket
-                        </span>
-                        <div
-                          className="flex items-center gap-3 flex-wrap"
-                          role="group"
-                          aria-label="Legenda clicável das cores das violações — clique para alternar o filtro"
-                        >
-                          {ALL_FAILURE_MODES.map((mode) => {
-                            const meta = FAILURE_MODE_META[mode];
-                            const enabled = failureModes.has(mode);
-                            // Prevent disabling the last enabled mode (would empty the strip).
-                            const isLastEnabled = enabled && failureModes.size === 1;
-                            return (
-                              <button
-                                key={mode}
-                                type="button"
-                                onClick={() => toggleFailureMode(mode)}
-                                disabled={isLastEnabled}
-                                aria-pressed={enabled}
-                                title={
-                                  isLastEnabled
-                                    ? 'Mantenha pelo menos um tipo selecionado'
-                                    : `${meta.description} — clique para ${enabled ? 'ocultar' : 'mostrar'}`
-                                }
-                                className={`flex items-center gap-1.5 text-meta rounded-md px-1.5 py-0.5 border transition-colors focus-ring ${
-                                  enabled
-                                    ? 'text-foreground border-border bg-secondary/40 hover:bg-secondary/70'
-                                    : 'text-muted-foreground/70 line-through border-transparent hover:bg-secondary/40 hover:text-muted-foreground'
-                                } ${isLastEnabled ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`}
-                              >
-                                <span
-                                  aria-hidden
-                                  className={`h-2.5 w-2.5 rounded-sm ${meta.swatchClass} ${
-                                    enabled ? '' : 'opacity-40'
-                                  }`}
-                                />
-                                <span>{meta.label}</span>
-                              </button>
-                            );
-                          })}
+                      <div className="mt-4 space-y-2">
+                        <div className="flex items-center justify-between gap-4 flex-wrap">
+                          <span className="text-meta uppercase tracking-wide text-muted-foreground">
+                            Violações por bucket
+                          </span>
                           <div
-                            title="Bucket sem violação sob o filtro atual"
-                            className="flex items-center gap-1.5 text-meta text-muted-foreground"
+                            className="flex items-center gap-3 flex-wrap"
+                            role="group"
+                            aria-label="Legenda clicável das cores das violações — clique para alternar o filtro"
                           >
-                            <span aria-hidden className="h-2.5 w-2.5 rounded-sm bg-secondary border border-border" />
-                            <span>Sem violação</span>
+                            {ALL_FAILURE_MODES.map((mode) => {
+                              const meta = FAILURE_MODE_META[mode];
+                              const enabled = failureModes.has(mode);
+                              // Prevent disabling the last enabled mode (would empty the strip).
+                              const isLastEnabled = enabled && failureModes.size === 1;
+                              return (
+                                <button
+                                  key={mode}
+                                  type="button"
+                                  onClick={() => toggleFailureMode(mode)}
+                                  disabled={isLastEnabled}
+                                  aria-pressed={enabled}
+                                  title={
+                                    isLastEnabled
+                                      ? 'Mantenha pelo menos um tipo selecionado'
+                                      : `${meta.description} — clique para ${enabled ? 'ocultar' : 'mostrar'}`
+                                  }
+                                  className={`flex items-center gap-1.5 text-meta rounded-md px-1.5 py-0.5 border transition-colors focus-ring ${
+                                    enabled
+                                      ? 'text-foreground border-border bg-secondary/40 hover:bg-secondary/70'
+                                      : 'text-muted-foreground/70 line-through border-transparent hover:bg-secondary/40 hover:text-muted-foreground'
+                                  } ${isLastEnabled ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'}`}
+                                >
+                                  <span
+                                    aria-hidden
+                                    className={`h-2.5 w-2.5 rounded-sm ${meta.swatchClass} ${
+                                      enabled ? '' : 'opacity-40'
+                                    }`}
+                                  />
+                                  <span>{meta.label}</span>
+                                </button>
+                              );
+                            })}
+                            <div
+                              title="Bucket sem violação sob o filtro atual"
+                              className="flex items-center gap-1.5 text-meta text-muted-foreground"
+                            >
+                              <span
+                                aria-hidden
+                                className="h-2.5 w-2.5 rounded-sm bg-secondary border border-border"
+                              />
+                              <span>Sem violação</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div
-                        className="flex w-full overflow-hidden rounded-md border border-border bg-secondary/40 h-5"
-                        role="img"
-                        aria-label={`Tira de violações: ${filteredViolations} de ${chartData.length} buckets afetados`}
-                      >
-                        {(summary?.timeseries ?? []).map((bucket, i) => {
-                          const matched = classifyBucket(bucket);
-                          const time = new Date(bucket.bucket_hour).toLocaleString('pt-BR', {
-                            day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
-                          });
-                          const tooltip = matched.length === 0
-                            ? `${time} · sem violação`
-                            : `${time} · ${matched.map((m) => FAILURE_MODE_META[m].label).join(' + ')}`;
+                        <div
+                          className="flex w-full overflow-hidden rounded-md border border-border bg-secondary/40 h-5"
+                          role="img"
+                          aria-label={`Tira de violações: ${filteredViolations} de ${chartData.length} buckets afetados`}
+                        >
+                          {(summary?.timeseries ?? []).map((bucket, i) => {
+                            const matched = classifyBucket(bucket);
+                            const time = new Date(bucket.bucket_hour).toLocaleString('pt-BR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            });
+                            const tooltip =
+                              matched.length === 0
+                                ? `${time} · sem violação`
+                                : `${time} · ${matched.map((m) => FAILURE_MODE_META[m].label).join(' + ')}`;
 
-                          // Single-mode (or zero-mode) cell — flat color.
-                          if (matched.length <= 1) {
-                            const bg = matched.length === 0
-                              ? undefined
-                              : FAILURE_MODE_META[matched[0]].cssVar;
+                            // Single-mode (or zero-mode) cell — flat color.
+                            if (matched.length <= 1) {
+                              const bg =
+                                matched.length === 0
+                                  ? undefined
+                                  : FAILURE_MODE_META[matched[0]].cssVar;
+                              return (
+                                <div
+                                  key={bucket.bucket_hour + i}
+                                  title={tooltip}
+                                  className="flex-1 h-full transition-opacity hover:opacity-80 border-r border-background/40 last:border-r-0"
+                                  style={bg ? { backgroundColor: bg } : undefined}
+                                />
+                              );
+                            }
+
+                            // Multi-mode cell — split into equal vertical bands
+                            // so each matched mode is visually represented.
                             return (
                               <div
                                 key={bucket.bucket_hour + i}
                                 title={tooltip}
-                                className="flex-1 h-full transition-opacity hover:opacity-80 border-r border-background/40 last:border-r-0"
-                                style={bg ? { backgroundColor: bg } : undefined}
-                              />
+                                className="flex flex-1 h-full transition-opacity hover:opacity-80 border-r border-background/40 last:border-r-0"
+                              >
+                                {matched.map((m) => (
+                                  <div
+                                    key={m}
+                                    className="flex-1 h-full"
+                                    style={{ backgroundColor: FAILURE_MODE_META[m].cssVar }}
+                                  />
+                                ))}
+                              </div>
                             );
-                          }
-
-                          // Multi-mode cell — split into equal vertical bands
-                          // so each matched mode is visually represented.
-                          return (
-                            <div
-                              key={bucket.bucket_hour + i}
-                              title={tooltip}
-                              className="flex flex-1 h-full transition-opacity hover:opacity-80 border-r border-background/40 last:border-r-0"
-                            >
-                              {matched.map((m) => (
-                                <div
-                                  key={m}
-                                  className="flex-1 h-full"
-                                  style={{ backgroundColor: FAILURE_MODE_META[m].cssVar }}
-                                />
-                              ))}
-                            </div>
-                          );
-                        })}
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
-              </CardContent>
-            </Card>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Resumo</CardTitle>
+                  <CardDescription>Janela: {summary.window_hours}h</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 text-body-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Total traces</span>
+                    <span className="font-semibold tabular-nums">
+                      {summary.total_traces.toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Erros</span>
+                    <span className="font-semibold tabular-nums text-destructive">
+                      {summary.error_count.toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">P50</span>
+                    <span className="font-semibold tabular-nums">{summary.p50_latency_ms}ms</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Custo total</span>
+                    <span className="font-semibold tabular-nums">
+                      ${summary.total_cost_usd.toFixed(4)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Tokens</span>
+                    <span className="font-semibold tabular-nums">
+                      {summary.total_tokens.toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
             <Card>
               <CardHeader>
-                <CardTitle>Resumo</CardTitle>
-                <CardDescription>Janela: {summary.window_hours}h</CardDescription>
+                <CardTitle>Top 5 — Agentes com pior performance</CardTitle>
+                <CardDescription>Ordenados por P95 (latência mais alta primeiro)</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3 text-body-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Total traces</span>
-                  <span className="font-semibold tabular-nums">{summary.total_traces.toLocaleString('pt-BR')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Erros</span>
-                  <span className="font-semibold tabular-nums text-destructive">{summary.error_count.toLocaleString('pt-BR')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">P50</span>
-                  <span className="font-semibold tabular-nums">{summary.p50_latency_ms}ms</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Custo total</span>
-                  <span className="font-semibold tabular-nums">${summary.total_cost_usd.toFixed(4)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tokens</span>
-                  <span className="font-semibold tabular-nums">{summary.total_tokens.toLocaleString('pt-BR')}</span>
-                </div>
+              <CardContent>
+                {summary.top_agents.length === 0 ? (
+                  <p className="text-body-sm text-muted-foreground py-8 text-center">
+                    Nenhum agente com dados suficientes nesta janela.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-body-sm">
+                      <thead className="text-meta uppercase text-muted-foreground border-b">
+                        <tr>
+                          <th className="text-left py-2 font-semibold">Agente</th>
+                          <th className="text-right py-2 font-semibold">Traces</th>
+                          <th className="text-right py-2 font-semibold">Erros</th>
+                          <th className="text-right py-2 font-semibold">Sucesso</th>
+                          <th className="text-right py-2 font-semibold">P95</th>
+                          <th className="text-right py-2 font-semibold">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {summary.top_agents.map((a) => {
+                          const s = latencyStatus(a.p95_ms, SLO_TARGETS.p95LatencyMs);
+                          const isSelected = a.agent_id === selectedAgentId;
+                          return (
+                            <tr
+                              key={a.agent_id}
+                              onClick={() => setSelectedAgentId(isSelected ? '' : a.agent_id)}
+                              className={`border-b last:border-b-0 cursor-pointer transition-colors ${
+                                isSelected
+                                  ? 'bg-primary/10 hover:bg-primary/15'
+                                  : 'hover:bg-secondary/30'
+                              }`}
+                              title={
+                                isSelected
+                                  ? 'Clique para remover seleção'
+                                  : 'Clique para focar este agente (URL preserva o recorte)'
+                              }
+                              aria-selected={isSelected}
+                            >
+                              <td className="py-3 font-medium">
+                                {isSelected && (
+                                  <span className="mr-1.5 text-primary" aria-hidden>
+                                    ●
+                                  </span>
+                                )}
+                                {a.agent_name}
+                              </td>
+                              <td className="text-right tabular-nums">{a.traces}</td>
+                              <td className="text-right tabular-nums text-destructive">
+                                {a.errors}
+                              </td>
+                              <td className="text-right tabular-nums">
+                                {(a.success_rate ?? 100).toFixed(1)}%
+                              </td>
+                              <td
+                                className={`text-right tabular-nums font-semibold ${statusColor[s]}`}
+                              >
+                                {a.p95_ms}ms
+                              </td>
+                              <td className="text-right">
+                                <StatusBadge status={s} />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Top 5 — Agentes com pior performance</CardTitle>
-              <CardDescription>Ordenados por P95 (latência mais alta primeiro)</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {summary.top_agents.length === 0 ? (
-                <p className="text-body-sm text-muted-foreground py-8 text-center">
-                  Nenhum agente com dados suficientes nesta janela.
-                </p>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-body-sm">
-                    <thead className="text-meta uppercase text-muted-foreground border-b">
-                      <tr>
-                        <th className="text-left py-2 font-semibold">Agente</th>
-                        <th className="text-right py-2 font-semibold">Traces</th>
-                        <th className="text-right py-2 font-semibold">Erros</th>
-                        <th className="text-right py-2 font-semibold">Sucesso</th>
-                        <th className="text-right py-2 font-semibold">P95</th>
-                        <th className="text-right py-2 font-semibold">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {summary.top_agents.map((a) => {
-                        const s = latencyStatus(a.p95_ms, SLO_TARGETS.p95LatencyMs);
-                        const isSelected = a.agent_id === selectedAgentId;
-                        return (
-                          <tr
-                            key={a.agent_id}
-                            onClick={() => setSelectedAgentId(isSelected ? '' : a.agent_id)}
-                            className={`border-b last:border-b-0 cursor-pointer transition-colors ${
-                              isSelected
-                                ? 'bg-primary/10 hover:bg-primary/15'
-                                : 'hover:bg-secondary/30'
-                            }`}
-                            title={isSelected ? 'Clique para remover seleção' : 'Clique para focar este agente (URL preserva o recorte)'}
-                            aria-selected={isSelected}
-                          >
-                            <td className="py-3 font-medium">
-                              {isSelected && <span className="mr-1.5 text-primary" aria-hidden>●</span>}
-                              {a.agent_name}
-                            </td>
-                            <td className="text-right tabular-nums">{a.traces}</td>
-                            <td className="text-right tabular-nums text-destructive">{a.errors}</td>
-                            <td className="text-right tabular-nums">{(a.success_rate ?? 100).toFixed(1)}%</td>
-                            <td className={`text-right tabular-nums font-semibold ${statusColor[s]}`}>{a.p95_ms}ms</td>
-                            <td className="text-right"><StatusBadge status={s} /></td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </>
+          </>
+        )
       )}
       {/* Internal debounce telemetry — small, monospaced, muted. Lets an
           operator audit whether rapid filter toggling is actually being
@@ -2364,14 +2774,35 @@ export default function SLODashboard() {
         title="Métricas internas: ajuda a auditar se o debounce/token-guard está coalescendo trocas rápidas de filtro"
       >
         <span>debounce telemetry</span>
-        <span>· requests: <span className="text-foreground">{debounceStats.requested}</span></span>
-        <span>· dropped (token): <span className={debounceStats.dropped > 0 ? 'text-nexus-emerald' : 'text-foreground'}>{debounceStats.dropped}</span></span>
-        <span>· last: <span className="text-foreground">{debounceStats.lastDurationMs ?? '—'}{debounceStats.lastDurationMs != null ? 'ms' : ''}</span></span>
-        <span>· avg: <span className="text-foreground">{debounceStats.avgDurationMs ?? '—'}{debounceStats.avgDurationMs != null ? 'ms' : ''}</span></span>
+        <span>
+          · requests: <span className="text-foreground">{debounceStats.requested}</span>
+        </span>
+        <span>
+          · dropped (token):{' '}
+          <span className={debounceStats.dropped > 0 ? 'text-nexus-emerald' : 'text-foreground'}>
+            {debounceStats.dropped}
+          </span>
+        </span>
+        <span>
+          · last:{' '}
+          <span className="text-foreground">
+            {debounceStats.lastDurationMs ?? '—'}
+            {debounceStats.lastDurationMs != null ? 'ms' : ''}
+          </span>
+        </span>
+        <span>
+          · avg:{' '}
+          <span className="text-foreground">
+            {debounceStats.avgDurationMs ?? '—'}
+            {debounceStats.avgDurationMs != null ? 'ms' : ''}
+          </span>
+        </span>
       </div>
       <ManualCopyDialog
         open={manualCopyUrl !== null}
-        onOpenChange={(open) => { if (!open) setManualCopyUrl(null); }}
+        onOpenChange={(open) => {
+          if (!open) setManualCopyUrl(null);
+        }}
         value={manualCopyUrl ?? ''}
         label="URL do painel"
         reason="O navegador bloqueou o acesso à área de transferência (permissão negada, contexto inseguro ou janela sem foco)."

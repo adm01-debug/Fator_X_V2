@@ -8,11 +8,21 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { getAgentById } from '@/services/agentsService';
 import { listAgentTraces, type AgentTraceRow } from '@/services/agentTracesService';
 import {
-  alertRulesService, evaluateRule, makeRuleFromTemplate, ALERT_RULE_TEMPLATES,
+  alertRulesService,
+  evaluateRule,
+  makeRuleFromTemplate,
+  ALERT_RULE_TEMPLATES,
   type AlertRule,
 } from '@/services/alertRulesService';
 import { AlertRulesList } from '@/components/agents/alerts/AlertRulesList';
@@ -36,7 +46,8 @@ export default function AgentAlertsPage() {
     staleTime: 30_000,
   });
 
-  const traces = useMemo(() => traceData.traces ?? [], [traceData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+  const traces = ((traceData as { traces?: AgentTraceRow[] }).traces ?? []) as AgentTraceRow[];
 
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -56,7 +67,10 @@ export default function AgentAlertsPage() {
     }
   }, [rules, selectedId]);
 
-  const selected = useMemo(() => rules.find((r) => r.id === selectedId) ?? null, [rules, selectedId]);
+  const selected = useMemo(
+    () => rules.find((r) => r.id === selectedId) ?? null,
+    [rules, selectedId],
+  );
 
   const triggeredIds = useMemo(() => {
     const set = new Set<string>();
@@ -135,7 +149,11 @@ export default function AgentAlertsPage() {
                 <DropdownMenuLabel>Aplicar template pronto</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {ALERT_RULE_TEMPLATES.map((t, i) => (
-                  <DropdownMenuItem key={t.name} onClick={() => handleApplyTemplate(i)} className="flex-col items-start gap-0.5">
+                  <DropdownMenuItem
+                    key={t.name}
+                    onClick={() => handleApplyTemplate(i)}
+                    className="flex-col items-start gap-0.5"
+                  >
                     <span className="text-meta font-medium">{t.name}</span>
                     <span className="text-meta text-muted-foreground">{t.description}</span>
                   </DropdownMenuItem>
@@ -159,8 +177,12 @@ export default function AgentAlertsPage() {
           <span className="text-meta text-muted-foreground">{summary.active} ativas</span>
           <div className="ml-auto flex items-center gap-2">
             <span className="text-meta text-muted-foreground">Disparariam agora:</span>
-            <Badge className="bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30 border">⚠ {summary.warnings} warning</Badge>
-            <Badge className="bg-destructive/15 text-destructive border-destructive/30 border">✗ {summary.criticals} critical</Badge>
+            <Badge className="bg-nexus-amber/15 text-nexus-amber border-nexus-amber/30 border">
+              ⚠ {summary.warnings} warning
+            </Badge>
+            <Badge className="bg-destructive/15 text-destructive border-destructive/30 border">
+              ✗ {summary.criticals} critical
+            </Badge>
           </div>
         </CardContent>
       </Card>

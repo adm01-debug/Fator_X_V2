@@ -1,5 +1,5 @@
 -- SBOM Snapshots
-CREATE TABLE public.sbom_snapshots (
+CREATE TABLE IF NOT EXISTS public.sbom_snapshots (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE public.sbom_snapshots (
 CREATE INDEX idx_sbom_snapshots_workspace ON public.sbom_snapshots(workspace_id, created_at DESC);
 
 -- SBOM Components
-CREATE TABLE public.sbom_components (
+CREATE TABLE IF NOT EXISTS public.sbom_components (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   snapshot_id UUID NOT NULL REFERENCES public.sbom_snapshots(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -31,7 +31,7 @@ CREATE INDEX idx_sbom_components_snapshot ON public.sbom_components(snapshot_id)
 CREATE INDEX idx_sbom_components_name_version ON public.sbom_components(name, version);
 
 -- Vulnerability Findings
-CREATE TABLE public.vulnerability_findings (
+CREATE TABLE IF NOT EXISTS public.vulnerability_findings (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   snapshot_id UUID NOT NULL REFERENCES public.sbom_snapshots(id) ON DELETE CASCADE,

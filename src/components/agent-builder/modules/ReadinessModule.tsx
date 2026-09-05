@@ -5,30 +5,41 @@ import { ExternalLink } from 'lucide-react';
 import { NexusRadarChart } from '../ui/NexusRadarChart';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
 import { LIFECYCLE_STAGES } from '@/data/agentBuilderData';
-import type { AgentConfig, ReadinessScore, ReadinessItem } from '@/types/agentTypes';
-
-type ReadinessCategory = { score: number; max: number; items: ReadinessItem[] };
+import type { ReadinessScore, ReadinessItem, AgentConfig } from '@/types/agentTypes';
 
 interface DetailedReadinessScore extends Omit<ReadinessScore, 'recommendations'> {
   recommendations: { label: string; tabId: string }[];
 }
 
 function computeReadiness(agent: AgentConfig): DetailedReadinessScore {
-  const categories: Record<string, ReadinessCategory> = {};
+  const categories: ReadinessScore['categories'] = {};
   const blockers: string[] = [];
   const recommendations: { label: string; tabId: string }[] = [];
-
 
   // Identity (max 10)
   const identityItems: ReadinessItem[] = [
     { label: 'Nome definido', passed: !!agent.name, weight: 3, is_blocker: false },
     { label: 'Missão definida', passed: !!agent.mission, weight: 3, is_blocker: false },
     { label: 'Persona selecionada', passed: !!agent.persona, weight: 2, is_blocker: false },
-    { label: 'Escopo definido (>50 chars)', passed: (agent.scope || '').length > 50, weight: 2, is_blocker: false },
+    {
+      label: 'Escopo definido (>50 chars)',
+      passed: (agent.scope || '').length > 50,
+      weight: 2,
+      is_blocker: false,
+    },
   ];
-  categories.identity = { score: identityItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 10, items: identityItems };
-  if (!agent.name) recommendations.push({ label: '💡 Defina um nome para o agente', tabId: 'identity' });
-  if ((agent.scope || '').length <= 50) recommendations.push({ label: '💡 Detalhe o escopo do agente (>50 chars) para +2 pontos', tabId: 'identity' });
+  categories.identity = {
+    score: identityItems.filter((i) => i.passed).reduce((s, i) => s + i.weight, 0),
+    max: 10,
+    items: identityItems,
+  };
+  if (!agent.name)
+    recommendations.push({ label: '💡 Defina um nome para o agente', tabId: 'identity' });
+  if ((agent.scope || '').length <= 50)
+    recommendations.push({
+      label: '💡 Detalhe o escopo do agente (>50 chars) para +2 pontos',
+      tabId: 'identity',
+    });
 
   // Brain (max 12)
   const brainItems: ReadinessItem[] = [
@@ -36,82 +47,227 @@ function computeReadiness(agent: AgentConfig): DetailedReadinessScore {
     { label: 'Fallback configurado', passed: !!agent.model_fallback, weight: 3, is_blocker: false },
     { label: 'Raciocínio definido', passed: !!agent.reasoning, weight: 4, is_blocker: false },
   ];
-  categories.brain = { score: brainItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 12, items: brainItems };
-  if (!agent.model_fallback) recommendations.push({ label: '💡 Configurar modelo fallback aumentaria +3 pontos', tabId: 'brain' });
+  categories.brain = {
+    score: brainItems.filter((i) => i.passed).reduce((s, i) => s + i.weight, 0),
+    max: 12,
+    items: brainItems,
+  };
+  if (!agent.model_fallback)
+    recommendations.push({
+      label: '💡 Configurar modelo fallback aumentaria +3 pontos',
+      tabId: 'brain',
+    });
 
   // Memory (max 12)
-  const longTermCount = [agent.memory_episodic, agent.memory_semantic, agent.memory_procedural, agent.memory_profile, agent.memory_shared].filter(Boolean).length;
+  const longTermCount = [
+    agent.memory_episodic,
+    agent.memory_semantic,
+    agent.memory_procedural,
+    agent.memory_profile,
+    agent.memory_shared,
+  ].filter(Boolean).length;
   const memoryItems: ReadinessItem[] = [
     { label: 'Short-term ativo', passed: agent.memory_short_term, weight: 3, is_blocker: false },
-    { label: '≥2 memórias de longo prazo', passed: longTermCount >= 2, weight: 4, is_blocker: false },
+    {
+      label: '≥2 memórias de longo prazo',
+      passed: longTermCount >= 2,
+      weight: 4,
+      is_blocker: false,
+    },
     { label: 'Governança configurada', passed: longTermCount > 0, weight: 3, is_blocker: false },
-    { label: 'Consolidação definida', passed: !!agent.memory_consolidation, weight: 2, is_blocker: false },
+    {
+      label: 'Consolidação definida',
+      passed: !!agent.memory_consolidation,
+      weight: 2,
+      is_blocker: false,
+    },
   ];
-  categories.memory = { score: memoryItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 12, items: memoryItems };
-  if (longTermCount < 2) recommendations.push({ label: '💡 Ativar memória episódica ou semântica aumentaria o score em +4', tabId: 'memory' });
+  categories.memory = {
+    score: memoryItems.filter((i) => i.passed).reduce((s, i) => s + i.weight, 0),
+    max: 12,
+    items: memoryItems,
+  };
+  if (longTermCount < 2)
+    recommendations.push({
+      label: '💡 Ativar memória episódica ou semântica aumentaria o score em +4',
+      tabId: 'memory',
+    });
 
   // RAG (max 12)
   const ragItems: ReadinessItem[] = [
-    { label: 'Arquitetura selecionada', passed: !!agent.rag_architecture, weight: 3, is_blocker: false },
+    {
+      label: 'Arquitetura selecionada',
+      passed: !!agent.rag_architecture,
+      weight: 3,
+      is_blocker: false,
+    },
     { label: 'Vector DB selecionado', passed: !!agent.rag_vector_db, weight: 3, is_blocker: false },
-    { label: '≥1 fonte de conhecimento', passed: (agent.rag_sources || []).length > 0, weight: 3, is_blocker: false },
+    {
+      label: '≥1 fonte de conhecimento',
+      passed: (agent.rag_sources || []).length > 0,
+      weight: 3,
+      is_blocker: false,
+    },
     { label: 'Reranker ativo', passed: agent.rag_reranker, weight: 1, is_blocker: false },
     { label: 'Hybrid search ativo', passed: agent.rag_hybrid_search, weight: 2, is_blocker: false },
   ];
-  categories.rag = { score: ragItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 12, items: ragItems };
+  categories.rag = {
+    score: ragItems.filter((i) => i.passed).reduce((s, i) => s + i.weight, 0),
+    max: 12,
+    items: ragItems,
+  };
 
   // Tools (max 8)
   const activeTools = (agent.tools || []).filter((t) => t.enabled);
   const toolsItems: ReadinessItem[] = [
-    { label: '≥3 ferramentas ativas', passed: activeTools.length >= 3, weight: 3, is_blocker: false },
-    { label: 'Governança configurada', passed: activeTools.length > 0, weight: 3, is_blocker: false },
-    { label: 'MCP server configurado', passed: (agent.mcp_servers || []).length > 0, weight: 2, is_blocker: false },
+    {
+      label: '≥3 ferramentas ativas',
+      passed: activeTools.length >= 3,
+      weight: 3,
+      is_blocker: false,
+    },
+    {
+      label: 'Governança configurada',
+      passed: activeTools.length > 0,
+      weight: 3,
+      is_blocker: false,
+    },
+    {
+      label: 'MCP server configurado',
+      passed: (agent.mcp_servers || []).length > 0,
+      weight: 2,
+      is_blocker: false,
+    },
   ];
-  categories.tools = { score: toolsItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 8, items: toolsItems };
+  categories.tools = {
+    score: toolsItems.filter((i) => i.passed).reduce((s, i) => s + i.weight, 0),
+    max: 8,
+    items: toolsItems,
+  };
 
   // Prompt (max 15)
   const promptItems: ReadinessItem[] = [
-    { label: 'System prompt >200 chars', passed: (agent.system_prompt || '').length > 200, weight: 5, is_blocker: false },
-    { label: '≥2 técnicas de prompt', passed: (agent.prompt_techniques || []).filter((t) => t.enabled).length >= 2, weight: 3, is_blocker: false },
-    { label: '≥2 few-shot examples', passed: (agent.few_shot_examples || []).length >= 2, weight: 4, is_blocker: false },
-    { label: 'Output format definido', passed: !!agent.output_format, weight: 3, is_blocker: false },
+    {
+      label: 'System prompt >200 chars',
+      passed: (agent.system_prompt || '').length > 200,
+      weight: 5,
+      is_blocker: false,
+    },
+    {
+      label: '≥2 técnicas de prompt',
+      passed: (agent.prompt_techniques || []).filter((t) => t.enabled).length >= 2,
+      weight: 3,
+      is_blocker: false,
+    },
+    {
+      label: '≥2 few-shot examples',
+      passed: (agent.few_shot_examples || []).length >= 2,
+      weight: 4,
+      is_blocker: false,
+    },
+    {
+      label: 'Output format definido',
+      passed: !!agent.output_format,
+      weight: 3,
+      is_blocker: false,
+    },
   ];
-  categories.prompt = { score: promptItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 15, items: promptItems };
-  if ((agent.system_prompt || '').length <= 200) recommendations.push({ label: '💡 Expandir o system prompt (>200 chars) para +5 pontos', tabId: 'prompt' });
+  categories.prompt = {
+    score: promptItems.filter((i) => i.passed).reduce((s, i) => s + i.weight, 0),
+    max: 15,
+    items: promptItems,
+  };
+  if ((agent.system_prompt || '').length <= 200)
+    recommendations.push({
+      label: '💡 Expandir o system prompt (>200 chars) para +5 pontos',
+      tabId: 'prompt',
+    });
 
   // Guardrails (max 15)
-  const hasPI = (agent.guardrails || []).some((g) => g.name.toLowerCase().includes('injection') && g.enabled);
-  const hasPII = (agent.guardrails || []).some((g) => g.name.toLowerCase().includes('pii') && g.enabled);
+  const hasPI = (agent.guardrails || []).some(
+    (g) => g.name.toLowerCase().includes('injection') && g.enabled,
+  );
+  const hasPII = (agent.guardrails || []).some(
+    (g) => g.name.toLowerCase().includes('pii') && g.enabled,
+  );
   const activeGuardrailsCount = (agent.guardrails || []).filter((g) => g.enabled).length;
   const guardrailItems: ReadinessItem[] = [
-    { label: 'Prompt injection ativo', passed: hasPI, weight: 5, is_blocker: true, fix_hint: 'Ative o guardrail Prompt Injection Detection na aba Guardrails' },
-    { label: '≥5 guardrails ativos', passed: activeGuardrailsCount >= 5, weight: 4, is_blocker: false },
+    {
+      label: 'Prompt injection ativo',
+      passed: hasPI,
+      weight: 5,
+      is_blocker: true,
+      fix_hint: 'Ative o guardrail Prompt Injection Detection na aba Guardrails',
+    },
+    {
+      label: '≥5 guardrails ativos',
+      passed: activeGuardrailsCount >= 5,
+      weight: 4,
+      is_blocker: false,
+    },
     { label: 'PII redaction ativo', passed: hasPII, weight: 3, is_blocker: false },
     { label: 'Audit trail ativo', passed: true, weight: 3, is_blocker: false },
   ];
-  categories.guardrails = { score: guardrailItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 15, items: guardrailItems };
+  categories.guardrails = {
+    score: guardrailItems.filter((i) => i.passed).reduce((s, i) => s + i.weight, 0),
+    max: 15,
+    items: guardrailItems,
+  };
   if (!hasPI) blockers.push('⛔ Prompt Injection Detection não está ativo');
 
   // Testing (max 10)
   const testItems: ReadinessItem[] = [
-    { label: '≥3 cenários de teste', passed: (agent.test_cases || []).length >= 3, weight: 4, is_blocker: true, fix_hint: 'Crie cenários de teste na aba Avaliação & Testes' },
-    { label: '≥1 bateria executada', passed: !!agent.last_test_results, weight: 3, is_blocker: false },
-    { label: 'Accuracy >80%', passed: (agent.last_test_results?.accuracy ?? 0) > 80, weight: 3, is_blocker: false },
+    {
+      label: '≥3 cenários de teste',
+      passed: (agent.test_cases || []).length >= 3,
+      weight: 4,
+      is_blocker: true,
+      fix_hint: 'Crie cenários de teste na aba Avaliação & Testes',
+    },
+    {
+      label: '≥1 bateria executada',
+      passed: !!agent.last_test_results,
+      weight: 3,
+      is_blocker: false,
+    },
+    {
+      label: 'Accuracy >80%',
+      passed: (agent.last_test_results?.accuracy ?? 0) > 80,
+      weight: 3,
+      is_blocker: false,
+    },
   ];
-  categories.testing = { score: testItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 10, items: testItems };
-  if ((agent.test_cases || []).length < 3) blockers.push('⛔ Nenhum cenário de teste criado (mínimo 3)');
+  categories.testing = {
+    score: testItems.filter((i) => i.passed).reduce((s, i) => s + i.weight, 0),
+    max: 10,
+    items: testItems,
+  };
+  if ((agent.test_cases || []).length < 3)
+    blockers.push('⛔ Nenhum cenário de teste criado (mínimo 3)');
 
   // Observability (max 6)
   const obsItems: ReadinessItem[] = [
-    { label: 'Logging ativo', passed: agent.logging_enabled, weight: 3, is_blocker: true, fix_hint: 'Ative logging na aba Traces & Observabilidade' },
+    {
+      label: 'Logging ativo',
+      passed: agent.logging_enabled,
+      weight: 3,
+      is_blocker: true,
+      fix_hint: 'Ative logging na aba Traces & Observabilidade',
+    },
     { label: 'Alerting ativo', passed: agent.alerting_enabled, weight: 3, is_blocker: false },
   ];
-  categories.observability = { score: obsItems.filter(i => i.passed).reduce((s, i) => s + i.weight, 0), max: 6, items: obsItems };
+  categories.observability = {
+    score: obsItems.filter((i) => i.passed).reduce((s, i) => s + i.weight, 0),
+    max: 6,
+    items: obsItems,
+  };
   if (!agent.logging_enabled) blockers.push('⛔ Logging não está habilitado');
 
   const total = Object.values(categories).reduce((s, c) => s + c.score, 0);
   const maxTotal = Object.values(categories).reduce((s, c) => s + c.max, 0);
-  const pct = Math.round((total / maxTotal) * 100);
+  const totalNum = Number(total);
+  const maxTotalNum = Number(maxTotal);
+  const pct = Math.round((totalNum / maxTotalNum) * 100);
 
   let maturity_level: DetailedReadinessScore['maturity_level'] = 'prototype';
   if (pct >= 80) maturity_level = 'production_ready';
@@ -147,7 +303,11 @@ export function ReadinessModule() {
 
   return (
     <div className="space-y-8">
-      <SectionTitle icon="🏆" title="Score de Prontidão" subtitle="Avaliação completa de produção e maturidade" />
+      <SectionTitle
+        icon="🏆"
+        title="Score de Prontidão"
+        subtitle="Avaliação completa de produção e maturidade"
+      />
 
       {/* Score Central */}
       <div className="flex flex-col md:flex-row gap-6 items-center">
@@ -175,20 +335,28 @@ export function ReadinessModule() {
       </div>
 
       {/* Category Breakdown */}
-      <SectionTitle icon="📊" title="Score por Categoria" subtitle="Detalhamento do score em cada área" />
+      <SectionTitle
+        icon="📊"
+        title="Score por Categoria"
+        subtitle="Detalhamento do score em cada área"
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {Object.entries(readiness.categories).map(([key, cat]) => (
           <div key={key} className="rounded-xl border border-border bg-card p-4 space-y-3">
             <div className="flex justify-between items-center">
               <h4 className="text-body-sm font-semibold capitalize">{key}</h4>
-              <span className="text-body-sm font-bold text-foreground">{cat.score}/{cat.max}</span>
+              <span className="text-body-sm font-bold text-foreground">
+                {cat.score}/{cat.max}
+              </span>
             </div>
             <ProgressBar value={cat.score} max={cat.max} />
             <div className="space-y-1">
               {cat.items.map((item) => (
-                <div key={item.label} className="flex items-center gap-2 text-xs">
+                <div key={item.label} className="flex items-center gap-2 text-meta">
                   <span>{item.passed ? '✅' : '❌'}</span>
-                  <span className={item.passed ? 'text-muted-foreground' : 'text-foreground'}>{item.label}</span>
+                  <span className={item.passed ? 'text-muted-foreground' : 'text-foreground'}>
+                    {item.label}
+                  </span>
                   {item.is_blocker && !item.passed && (
                     <span className="text-[hsl(var(--nexus-red))] font-semibold">BLOCKER</span>
                   )}
@@ -202,10 +370,16 @@ export function ReadinessModule() {
       {/* Blockers */}
       {readiness.blockers.length > 0 && (
         <>
-          <SectionTitle icon="⛔" title="Blockers" subtitle="Itens que impedem deploy em produção" />
+          <SectionTitle
+            icon="⛔"
+            title="Blockers"
+            subtitle="Itens que impedem deploy em produção"
+          />
           <div className="rounded-xl border border-[hsl(var(--nexus-red))] bg-[hsl(var(--nexus-red))/0.05] p-4 space-y-2">
             {readiness.blockers.map((b, i) => (
-              <p key={i} className="text-body-sm text-[hsl(var(--nexus-red))]">{b}</p>
+              <p key={i} className="text-body-sm text-[hsl(var(--nexus-red))]">
+                {b}
+              </p>
             ))}
           </div>
         </>
@@ -214,14 +388,21 @@ export function ReadinessModule() {
       {/* Recommendations */}
       {readiness.recommendations.length > 0 && (
         <>
-          <SectionTitle icon="💡" title="Recomendações" subtitle="Ações sugeridas para melhorar o score" />
+          <SectionTitle
+            icon="💡"
+            title="Recomendações"
+            subtitle="Ações sugeridas para melhorar o score"
+          />
           <div className="rounded-xl border border-[hsl(var(--nexus-yellow))] bg-[hsl(var(--nexus-yellow))/0.05] p-4 space-y-2">
             {readiness.recommendations.map((r, i) => (
-              <div key={i} className="flex items-center justify-between gap-4 p-2 rounded-lg hover:bg-[hsl(var(--nexus-yellow))/0.1] transition-colors group">
+              <div
+                key={i}
+                className="flex items-center justify-between gap-4 p-2 rounded-lg hover:bg-[hsl(var(--nexus-yellow))/0.1] transition-colors group"
+              >
                 <p className="text-body-sm text-[hsl(var(--nexus-yellow))]">{r.label}</p>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="h-7 text-meta text-[hsl(var(--nexus-yellow))] hover:text-[hsl(var(--nexus-yellow))] hover:bg-[hsl(var(--nexus-yellow))/0.2] opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => setActiveTab(r.tabId)}
                 >
@@ -243,9 +424,7 @@ export function ReadinessModule() {
               <div key={stage.id} className="flex items-center gap-1">
                 <div
                   className={`px-3 py-1.5 rounded-lg text-meta font-medium transition-all ${
-                    isActive
-                      ? 'ring-2 ring-offset-1 ring-offset-background'
-                      : 'opacity-50'
+                    isActive ? 'ring-2 ring-offset-1 ring-offset-background' : 'opacity-50'
                   }`}
                   style={{
                     background: isActive ? `${stage.color}20` : 'transparent',

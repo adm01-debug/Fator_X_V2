@@ -2,7 +2,7 @@
 -- GAME DAYS — Incident Drills
 -- ============================================
 
-CREATE TABLE public.game_days (
+CREATE TABLE IF NOT EXISTS public.game_days (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE public.game_days (
 CREATE INDEX idx_game_days_workspace ON public.game_days(workspace_id, scheduled_at DESC);
 CREATE INDEX idx_game_days_status ON public.game_days(status) WHERE status IN ('scheduled','running');
 
-CREATE TABLE public.game_day_events (
+CREATE TABLE IF NOT EXISTS public.game_day_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   game_day_id UUID NOT NULL REFERENCES public.game_days(id) ON DELETE CASCADE,
   event_type TEXT NOT NULL CHECK (event_type IN ('fault_injected','detection','mitigation','resolution','note')),
@@ -33,7 +33,7 @@ CREATE TABLE public.game_day_events (
 );
 CREATE INDEX idx_game_day_events_drill ON public.game_day_events(game_day_id, occurred_at);
 
-CREATE TABLE public.game_day_scorecards (
+CREATE TABLE IF NOT EXISTS public.game_day_scorecards (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   game_day_id UUID NOT NULL UNIQUE REFERENCES public.game_days(id) ON DELETE CASCADE,
   mttr_seconds INTEGER,

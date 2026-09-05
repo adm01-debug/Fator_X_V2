@@ -1,0 +1,537 @@
+/**
+ * skill-harvester — coleta skills de agentes no GitHub, classifica por
+ * departamento, aplica sanitização/segurança e grava candidatos em staging.
+ *
+ * Somente admins de workspace podem executar. Nenhuma escrita direta no
+ * `skill_registry` — a promoção acontece na curadoria manual.
+ */
+import {
+  getCorsHeaders,
+  handleCorsPreflight,
+  jsonResponse,
+  errorResponse,
+  authenticateRequest,
+  createAdminClient,
+  checkRateLimit,
+  getRateLimitIdentifier,
+  createRateLimitResponse,
+  RATE_LIMITS,
+  parseBody,
+  z,
+  installRuntimeAlerts,
+} from '../_shared/mod.ts';
+import {
+  DEFAULT_TOPICS,
+  DEPARTMENT_QUERIES,
+  SKILL_DEPARTMENTS,
+  isLicenseAllowed,
+  type SkillDepartment,
+} from './departments.ts';
+import {
+  classifyDepartment,
+  computeQualityScore,
+  inferCategory,
+  isMcpUrlAllowed,
+  isMetaRepository,
+  LOW_CONFIDENCE_THRESHOLD,
+  MIN_QUALITY_SCORE,
+  normalizeForHash,
+  parseFrontmatter,
+  scanContentRisks,
+  sha256Hex,
+  slugify,
+  stripUnsafe,
+} from './lib.ts';
+import { getRawFile, getTree, ghGet, resolveMode, searchRepos, type GhRepo } from './github.ts';
+
+installRuntimeAlerts();
+
+/** `owner/repo` — evita que uma string arbitrária vire caminho de API. */
+const REPO_SLUG_RE = /^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/;
+
+const RequestSchema = z.object({
+  departments: z.array(z.enum(SKILL_DEPARTMENTS)).max(10).default([]),
+  topics: z.array(z.string().min(2).max(60)).max(20).default([]),
+  extraQueries: z.array(z.string().min(2).max(120)).max(20).default([]),
+  /** Monorepos alvo (`owner/repo`). Quando presente, a busca por queries é ignorada. */
+  repos: z
+    .array(z.string().trim().regex(REPO_SLUG_RE, 'Formato esperado: owner/repo'))
+    .max(10)
+    .default([]),
+  /** Teto de SKILL.md lidos por repositório — monorepos como sales-skills/sales têm centenas. */
+  filesPerRepo: z.number().int().min(1).max(1000).default(8),
+  /** Deslocamento na lista ordenada de SKILL.md — permite varrer um monorepo em lotes. */
+  fileOffset: z.number().int().min(0).max(100000).default(0),
+  maxRepos: z.number().int().min(1).max(200).default(40),
+  maxCandidates: z.number().int().min(1).max(1000).default(120),
+  minStars: z.number().int().min(0).max(100000).default(3),
+  dryRun: z.boolean().default(false),
+});
+
+/**
+ * Orçamento de tempo de parede. A Edge Function é encerrada pela plataforma
+ * por volta de 150s; parar em 105s garante que ainda sobre janela para gravar
+ * os candidatos já coletados, fechar a run e responder. Sem isso, um monorepo
+ * grande morre no meio e a run fica presa em `running` para sempre.
+ */
+const TIME_BUDGET_MS = 105_000;
+
+/** Concorrência de leitura de arquivos brutos (raw.githubusercontent). */
+const RAW_CONCURRENCY = 6;
+
+/** Tamanho do lote de gravação — `raw_content` vai até 20KB por linha. */
+const UPSERT_CHUNK = 50;
+
+const SKILL_FILE_RE = /(^|\/)(SKILL\.md|skill\.md)$/;
+const AGENT_JSON_RE = /(^|\/)(agent\.json|mcp\.json)$/;
+
+interface CandidateRow {
+  run_id: string;
+  name: string;
+  slug: string;
+  description: string;
+  version: string;
+  author: string;
+  category: string;
+  department: string | null;
+  department_confidence: number;
+  department_source: string;
+  tags: string[];
+  source_repo: string;
+  source_url: string;
+  source_path: string;
+  source_license: string | null;
+  source_commit: string | null;
+  stars: number;
+  last_commit_at: string | null;
+  quality_score: number;
+  content_hash: string;
+  raw_content: string;
+  skill_config: Record<string, unknown>;
+  mcp_server_url: string | null;
+  status: string;
+  rejection_reasons: string[];
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') return handleCorsPreflight(req);
+  if (req.method !== 'POST') return errorResponse(req, 'Método não permitido', 405);
+
+  const started = Date.now();
+
+  try {
+    const auth = await authenticateRequest(req);
+    if (auth.error) return auth.error;
+
+    const rate = await checkRateLimit(getRateLimitIdentifier(req, auth.user.id), RATE_LIMITS.heavy);
+    if (!rate.allowed) return createRateLimitResponse(req, rate);
+
+    const admin = createAdminClient();
+
+    // Autorização: apenas admins de workspace
+    const { data: isAdmin, error: adminErr } = await admin.rpc('is_workspace_admin', {
+      _user_id: auth.user.id,
+    });
+    if (adminErr) {
+      console.error('is_workspace_admin falhou:', adminErr.message);
+      return errorResponse(req, 'Falha ao validar permissões', 500);
+    }
+    if (!isAdmin) return errorResponse(req, 'Acesso restrito a administradores', 403);
+
+    const parsed = await parseBody(req, RequestSchema);
+    if (!parsed.success)
+      return errorResponse(req, 'Payload inválido', 400, { details: parsed.error });
+    const body = parsed.data;
+
+    const mode = resolveMode();
+
+    // Monta as queries.
+    // Modo dirigido (`repos`): o curador aponta monorepos conhecidos e a busca
+    // por palavra-chave é suprimida — economiza a cota de search da API e evita
+    // trazer ruído quando o alvo já é conhecido.
+    const directMode = body.repos.length > 0;
+    const departments: SkillDepartment[] =
+      body.departments.length > 0 ? body.departments : [...SKILL_DEPARTMENTS];
+    const topics = directMode ? [] : body.topics.length > 0 ? body.topics : DEFAULT_TOPICS;
+
+    const queries: string[] = directMode
+      ? body.repos.map((r) => `repo:${r}`)
+      : [
+          ...topics.map((t) => `topic:${t} stars:>=${body.minStars}`),
+          ...departments.flatMap((d) =>
+            DEPARTMENT_QUERIES[d].map(
+              (q) => `${q} in:name,description,readme stars:>=${body.minStars}`,
+            ),
+          ),
+          ...body.extraQueries,
+        ];
+
+    // Registra a run
+    const { data: run, error: runErr } = await admin
+      .from('skill_harvest_runs')
+      .insert({
+        triggered_by: auth.user.id,
+        queries,
+        departments,
+        status: 'running',
+      })
+      .select('id')
+      .single();
+
+    if (runErr || !run) {
+      console.error('Falha ao criar run:', runErr?.message);
+      return errorResponse(req, 'Falha ao registrar execução', 500);
+    }
+    const runId = run.id as string;
+
+    // ─── Varredura
+    const seenRepos = new Set<string>();
+    const repos: GhRepo[] = [];
+    const errors: string[] = [];
+
+    if (directMode) {
+      for (const full of body.repos) {
+        if (seenRepos.has(full)) continue;
+        const res = await ghGet<GhRepo>(`repos/${full}`);
+        if (!res.ok || !res.data) {
+          errors.push(`[${res.status}] repos/${full}: ${(res.errorBody ?? '').slice(0, 160)}`);
+          continue;
+        }
+        seenRepos.add(full);
+        repos.push(res.data);
+      }
+    } else {
+      for (const q of queries) {
+        if (repos.length >= body.maxRepos) break;
+        const res = await searchRepos(q, Math.min(30, body.maxRepos));
+        if (!res.ok) {
+          errors.push(`[${res.status}] ${q}: ${(res.errorBody ?? '').slice(0, 160)}`);
+          if (res.retryAfterMs && res.retryAfterMs >= 20_000) break; // rate limit duro
+          continue;
+        }
+        for (const r of res.data?.items ?? []) {
+          if (seenRepos.has(r.full_name)) continue;
+          seenRepos.add(r.full_name);
+          repos.push(r);
+          if (repos.length >= body.maxRepos) break;
+        }
+      }
+    }
+
+    // ─── Extração de candidatos
+    const candidates: CandidateRow[] = [];
+    const hashes = new Set<string>();
+    let rejected = 0;
+    /** Total de SKILL.md existentes por repositório — alimenta a paginação na UI. */
+    const repoFileTotals: Record<string, number> = {};
+    /** Verdadeiro quando paramos por orçamento de tempo, não por fim dos dados. */
+    let truncated = false;
+    let nextFileOffset = body.fileOffset;
+
+    const outOfTime = () => Date.now() - started > TIME_BUDGET_MS;
+
+    for (const repo of repos) {
+      if (candidates.length >= body.maxCandidates) break;
+      if (outOfTime()) {
+        truncated = true;
+        break;
+      }
+
+      const repoLicenseSpdx =
+        repo.license?.spdx_id && repo.license.spdx_id !== 'NOASSERTION'
+          ? repo.license.spdx_id
+          : null;
+
+      const tree = await getTree(repo.full_name, repo.default_branch);
+      if (!tree.ok || !tree.data) continue;
+
+      const paths = tree.data.tree.filter((e) => e.type === 'blob').map((e) => e.path);
+      const hasTests = paths.some(
+        (p) => /(^|\/)(tests?|__tests__|spec)\//i.test(p) || /\.(test|spec)\.[jt]sx?$/.test(p),
+      );
+      const hasDocs = paths.some((p) => /(^|\/)(docs?|README\.md)/i.test(p));
+
+      // Ordenar é o que torna a paginação estável: sem isso, dois lotes
+      // consecutivos poderiam reler os mesmos arquivos e pular outros.
+      const allSkillFiles = paths.filter((p) => SKILL_FILE_RE.test(p)).sort();
+      repoFileTotals[repo.full_name] = allSkillFiles.length;
+
+      const skillFiles = allSkillFiles.slice(body.fileOffset, body.fileOffset + body.filesPerRepo);
+      const agentFiles = paths.filter((p) => AGENT_JSON_RE.test(p)).slice(0, 2);
+
+      // Fallback: repositório inteiro vira 1 candidato quando não há SKILL.md.
+      // Só vale para o primeiro lote — em lotes seguintes o README já foi lido.
+      const targets =
+        allSkillFiles.length > 0 ? skillFiles : body.fileOffset === 0 ? ['README.md'] : [];
+      if (targets.length === 0) continue;
+
+      // O manifesto do agente é do REPOSITÓRIO, não do arquivo. Buscá-lo uma
+      // única vez evita centenas de requisições idênticas num monorepo.
+      let repoMcpUrl: string | null = null;
+      const repoSkillConfig: Record<string, unknown> = {};
+      const repoManifestRisks: string[] = [];
+      if (agentFiles.length > 0) {
+        const agentRaw = await getRawFile(repo.full_name, repo.default_branch, agentFiles[0]);
+        if (agentRaw) {
+          try {
+            const parsedAgent = JSON.parse(agentRaw) as Record<string, unknown>;
+            const servers = parsedAgent.servers;
+            if (Array.isArray(servers) && servers.length > 0) {
+              const first = servers[0] as { url?: string };
+              if (typeof first.url === 'string' && isMcpUrlAllowed(first.url))
+                repoMcpUrl = first.url;
+              else if (typeof first.url === 'string')
+                repoManifestRisks.push('mcp:host_not_allowlisted');
+            }
+            repoSkillConfig.agent_manifest = {
+              model: typeof parsedAgent.model === 'string' ? parsedAgent.model : null,
+              servers_count: Array.isArray(servers) ? servers.length : 0,
+            };
+          } catch {
+            repoManifestRisks.push('manifest:invalid_json');
+          }
+        }
+      }
+
+      // Leitura em janelas concorrentes: a latência de rede domina o tempo de
+      // parede, e o raw.githubusercontent não consome a cota da API REST.
+      let consumed = 0;
+      for (let i = 0; i < targets.length; i += RAW_CONCURRENCY) {
+        if (candidates.length >= body.maxCandidates) break;
+        if (outOfTime()) {
+          truncated = true;
+          break;
+        }
+
+        const window = targets.slice(i, i + RAW_CONCURRENCY);
+        const raws = await Promise.all(
+          window.map((p) =>
+            getRawFile(repo.full_name, repo.default_branch, p)
+              .then((raw) => ({ path: p, raw }))
+              .catch(() => ({ path: p, raw: null as string | null })),
+          ),
+        );
+
+        for (const { path, raw } of raws) {
+          consumed++;
+          if (candidates.length >= body.maxCandidates) break;
+          if (!raw || raw.trim().length < 80) continue;
+
+          const fm = parseFrontmatter(raw);
+          const fmName = typeof fm.data.name === 'string' ? fm.data.name : '';
+          const fmDesc = typeof fm.data.description === 'string' ? fm.data.description : '';
+          const fmTags = Array.isArray(fm.data.tags) ? fm.data.tags : [];
+          // Monorepos de skills declaram a licença por arquivo; ela é mais
+          // específica que a do repositório e por isso tem precedência.
+          const fmLicense =
+            typeof fm.data.license === 'string' ? stripUnsafe(fm.data.license, 60).trim() : '';
+          const licenseSpdx = (isLicenseAllowed(fmLicense) ? fmLicense : null) ?? repoLicenseSpdx;
+          const licenseOk = isLicenseAllowed(licenseSpdx);
+
+          const name = stripUnsafe(fmName || deriveName(path, repo.full_name), 120);
+          const description = stripUnsafe(fmDesc || repo.description || '', 1200);
+          const tags = Array.from(
+            new Set(
+              [...(repo.topics ?? []), ...fmTags]
+                .map((t) => stripUnsafe(String(t), 40).toLowerCase())
+                .filter(Boolean),
+            ),
+          ).slice(0, 20);
+
+          if (name.length < 2) continue;
+
+          const contentHash = await sha256Hex(
+            normalizeForHash(`${repo.full_name}:${name}:${raw.slice(0, 4000)}`),
+          );
+          if (hashes.has(contentHash)) continue;
+          hashes.add(contentHash);
+
+          // Segurança de conteúdo
+          const risks = [...scanContentRisks(raw), ...repoManifestRisks];
+          const mcpUrl = repoMcpUrl;
+          const skillConfig = { ...repoSkillConfig };
+
+          const fmCompleteness =
+            (fmName ? 0.5 : 0) + (fmDesc ? 0.3 : 0) + (fmTags.length > 0 ? 0.2 : 0);
+
+          // A classificação precisa vir ANTES da nota: a confiança departamental
+          // é um dos sinais de especificidade da fórmula de qualidade.
+          const classification = classifyDepartment({ name, description, tags, content: fm.body });
+          const category = inferCategory({
+            name,
+            description,
+            tags,
+            hasMcpServer: Boolean(mcpUrl),
+          });
+
+          // Coletâneas (awesome-lists, cursos, roadmaps) não são skills
+          // instaláveis — detectá-las aqui evita que a popularidade do
+          // repositório carregue a nota para cima.
+          const isMeta = isMetaRepository({
+            name,
+            slug: repo.full_name,
+            description,
+            tags,
+            content: fm.body,
+          });
+
+          const quality = computeQualityScore({
+            stars: repo.stargazers_count,
+            lastCommitAt: repo.pushed_at,
+            hasDocs,
+            hasTests,
+            licenseAllowed: licenseOk,
+            frontmatterCompleteness: fmCompleteness,
+            descriptionLength: description.length,
+            isMeta,
+            departmentConfidence: classification.confidence,
+          });
+
+          const reasons = [...risks];
+          if (!licenseSpdx) reasons.push('license:missing');
+          else if (!licenseOk) reasons.push(`license:blocked:${licenseSpdx}`);
+          if (quality < MIN_QUALITY_SCORE) reasons.push(`quality:below_threshold:${quality}`);
+          if (isMeta) reasons.push('meta:collection_repo');
+          if (classification.confidence < LOW_CONFIDENCE_THRESHOLD)
+            reasons.push('department:low_confidence');
+
+          const blocking = reasons.some(
+            (r) =>
+              r.startsWith('secret:') ||
+              r.startsWith('prompt_injection:') ||
+              r.startsWith('shell:') ||
+              r.startsWith('exfiltration:') ||
+              r.startsWith('license:') ||
+              r.startsWith('quality:') ||
+              r.startsWith('meta:') ||
+              r.startsWith('department:'),
+          );
+          if (blocking) rejected++;
+
+          candidates.push({
+            run_id: runId,
+            name,
+            slug: slugify(`${repo.owner?.login ?? 'gh'}-${name}`),
+            description,
+            version:
+              typeof fm.data.version === 'string' ? String(fm.data.version).slice(0, 20) : '1.0.0',
+            author: repo.owner?.login ?? repo.full_name.split('/')[0],
+            category,
+            department: classification.department,
+            department_confidence: classification.confidence,
+            department_source: classification.source,
+            tags,
+            source_repo: repo.full_name,
+            source_url: `${repo.html_url}/blob/${repo.default_branch}/${path}`,
+            source_path: path,
+            source_license: licenseSpdx,
+            source_commit: null,
+            stars: repo.stargazers_count,
+            last_commit_at: repo.pushed_at,
+            quality_score: quality,
+            content_hash: contentHash,
+            raw_content: stripUnsafe(raw, 20_000),
+            skill_config: skillConfig,
+            mcp_server_url: mcpUrl,
+            status: blocking ? 'auto_rejected' : 'pending',
+            rejection_reasons: reasons,
+          });
+        }
+      }
+
+      // O próximo lote começa onde este parou — inclusive quando o corte veio
+      // do orçamento de tempo no meio do repositório.
+      if (allSkillFiles.length > 0) {
+        nextFileOffset = Math.max(nextFileOffset, body.fileOffset + consumed);
+        if (body.fileOffset + consumed < allSkillFiles.length) truncated = true;
+      }
+    }
+
+    let inserted = 0;
+    if (!body.dryRun && candidates.length > 0) {
+      // Gravação em lotes: 800 linhas × 20KB de `raw_content` estouram o
+      // limite de payload de uma única requisição PostgREST.
+      for (let i = 0; i < candidates.length; i += UPSERT_CHUNK) {
+        const chunk = candidates.slice(i, i + UPSERT_CHUNK);
+        // upsert por content_hash — reexecuções não duplicam
+        const { data: ins, error: insErr } = await admin
+          .from('skill_harvest_candidates')
+          .upsert(chunk, { onConflict: 'content_hash', ignoreDuplicates: true })
+          .select('id');
+        if (insErr) {
+          console.error('Falha ao gravar candidatos:', insErr.message);
+          errors.push(`insert[${i}]: ${insErr.message}`);
+        } else {
+          inserted += ins?.length ?? 0;
+        }
+      }
+    }
+
+    const durationMs = Date.now() - started;
+
+    const { error: updErr } = await admin
+      .from('skill_harvest_runs')
+      .update({
+        repos_scanned: repos.length,
+        candidates_found: candidates.length,
+        candidates_accepted: candidates.length - rejected,
+        candidates_rejected: rejected,
+        duration_ms: durationMs,
+        status: errors.length > 0 && candidates.length === 0 ? 'failed' : 'completed',
+        error: errors.length > 0 ? errors.slice(0, 10).join(' | ').slice(0, 2000) : null,
+      })
+      .eq('id', runId);
+    if (updErr) console.error('Falha ao fechar run:', updErr.message);
+
+    const { error: auditErr } = await admin.rpc('log_audit_entry', {
+      p_action: 'skill_harvest_run',
+      p_entity_type: 'skill_harvest_runs',
+      p_entity_id: runId,
+      p_metadata: {
+        repos_scanned: repos.length,
+        candidates_found: candidates.length,
+        inserted,
+        rejected,
+        github_mode: mode,
+        duration_ms: durationMs,
+        file_offset: body.fileOffset,
+        next_file_offset: nextFileOffset,
+        truncated,
+      },
+    });
+    if (auditErr) console.error('Falha ao registrar auditoria:', auditErr.message);
+
+    return jsonResponse(req, {
+      run_id: runId,
+      github_mode: mode,
+      repos_scanned: repos.length,
+      candidates_found: candidates.length,
+      candidates_inserted: inserted,
+      candidates_auto_rejected: rejected,
+      duration_ms: durationMs,
+      errors: errors.slice(0, 10),
+      dry_run: body.dryRun,
+      /** Paginação de monorepos: quando `truncated`, reenvie com `fileOffset = next_file_offset`. */
+      file_offset: body.fileOffset,
+      next_file_offset: nextFileOffset,
+      truncated,
+      repo_file_totals: repoFileTotals,
+    });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error('skill-harvester falhou:', message);
+    return new Response(JSON.stringify({ error: 'Falha interna no harvester', details: message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+    });
+  }
+});
+
+function deriveName(path: string, repoFullName: string): string {
+  const parts = path.split('/').filter(Boolean);
+  if (parts.length >= 2) {
+    const folder = parts[parts.length - 2];
+    if (folder && !/^(src|skills|\.claude)$/i.test(folder)) return folder.replace(/[-_]/g, ' ');
+  }
+  return repoFullName.split('/')[1]?.replace(/[-_]/g, ' ') ?? repoFullName;
+}

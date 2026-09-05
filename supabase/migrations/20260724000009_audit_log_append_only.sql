@@ -46,17 +46,19 @@ BEGIN
     END IF;
 END;
 $$;
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_audit_log_workspace ON public.audit_log(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_audit_log_workspace ON public.audit_log(workspace_id);
 
 -- PASSO 3: Refinar policies — service_role faz INSERT, membros leem
 -- Drop policies existentes
 DROP POLICY IF EXISTS "Users can insert own audit logs" ON public.audit_log;
 
 -- service_role: INSERT (Edge Functions e cron jobs insertam via service_role)
+DROP POLICY IF EXISTS "audit_log_service_insert" ON public.audit_log;
 CREATE POLICY "audit_log_service_insert" ON public.audit_log
-    FOR INSERT WITH CHECK (auth.jwt_role() = 'service_role');
+    FOR INSERT WITH CHECK (current_setting('request.jwt.claim.role', true) = 'service_role');
 
 -- Admins + owners do workspace leem logs do workspace
+DROP POLICY IF EXISTS "audit_log_workspace_read" ON public.audit_log;
 CREATE POLICY "audit_log_workspace_read" ON public.audit_log
     FOR SELECT USING (
         (
@@ -71,7 +73,7 @@ CREATE POLICY "audit_log_workspace_read" ON public.audit_log
             -- Own logs são sempre visíveis
             user_id = auth.uid()
         )
-        OR auth.jwt_role() = 'service_role'
+        OR current_setting('request.jwt.claim.role', true) = 'service_role'
     );
 
 -- UPDATE/DELETE: apenas service_role (para operações de migração legítimas)
@@ -176,7 +178,7 @@ END;
 $$;
 
 -- PASSO 6: Index para Retention Policy (LGPD — retenção de 5 anos)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_audit_log_created_at_retention
+CREATE INDEX IF NOT EXISTS idx_audit_log_created_at_retention
     ON public.audit_log(created_at DESC);
 
 COMMIT;
@@ -188,16 +190,16 @@ DO $$
 BEGIN
     -- Confirma que os triggers append-only existem
     IF NOT EXISTS (
-        SELECT 1 FROM pg_triggers
-        WHERE tablename = 'audit_log'
+        SELECT 1 FROM pg_trigger
+        WHERE tgrelid = 'public.audit_log'::regclass
           AND tgname = 'prevent_audit_log_update'
     ) THEN
         RAISE EXCEPTION 'Trigger prevent_audit_log_update não existe!';
     END IF;
 
     IF NOT EXISTS (
-        SELECT 1 FROM pg_triggers
-        WHERE tablename = 'audit_log'
+        SELECT 1 FROM pg_trigger
+        WHERE tgrelid = 'public.audit_log'::regclass
           AND tgname = 'prevent_audit_log_delete'
     ) THEN
         RAISE EXCEPTION 'Trigger prevent_audit_log_delete não existe!';

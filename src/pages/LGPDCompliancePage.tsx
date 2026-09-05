@@ -4,12 +4,24 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Shield, Trash2, Download, AlertTriangle, Loader2, FileText } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { listConsentRecords, listDeletionRequests, exportMyData, requestDeletion, manageConsent } from '@/services/lgpdService';
+import {
+  listConsentRecords,
+  listDeletionRequests,
+  exportMyData,
+  requestDeletion,
+  manageConsent,
+} from '@/services/lgpdService';
 
 import { toast } from 'sonner';
 
@@ -36,11 +48,19 @@ export default function LGPDCompliancePage() {
       const data = await exportMyData();
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = `meus-dados-${new Date().toISOString().split('T')[0]}.json`;
-      a.click(); URL.revokeObjectURL(url);
-      toast.success(`Dados exportados: ${data.traces} traces, ${data.sessions} sessões, ${data.memories} memórias`);
-    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
-    finally { setExporting(false); }
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `meus-dados-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success(
+        `Dados exportados: ${data.traces} traces, ${data.sessions} sessões, ${data.memories} memórias`,
+      );
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Erro inesperado');
+    } finally {
+      setExporting(false);
+    }
   };
 
   const handleRequestDeletion = async (scope: string) => {
@@ -50,8 +70,11 @@ export default function LGPDCompliancePage() {
       const data = await requestDeletion(scope);
       toast.success(`${data.items_deleted} itens deletados (escopo: ${scope})`);
       queryClient.invalidateQueries({ queryKey: ['lgpd_deletions'] });
-    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
-    finally { setDeleting(false); }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Erro inesperado');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const handleConsent = async (purpose: string, grant: boolean) => {
@@ -59,45 +82,92 @@ export default function LGPDCompliancePage() {
       await manageConsent(purpose, grant);
       toast.success(grant ? 'Consentimento registrado' : 'Consentimento revogado');
       queryClient.invalidateQueries({ queryKey: ['lgpd_consents'] });
-    } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado"); }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Erro inesperado');
+    }
   };
 
   const purposes = [
-    { key: 'ai_processing', label: 'Processamento por IA', desc: 'Suas mensagens são processadas por modelos de linguagem para gerar respostas.' },
-    { key: 'data_storage', label: 'Armazenamento de Dados', desc: 'Traces, sessões e memórias são armazenados para histórico e melhoria.' },
-    { key: 'analytics', label: 'Analytics e Métricas', desc: 'Dados agregados de uso para dashboards e relatórios.' },
+    {
+      key: 'ai_processing',
+      label: 'Processamento por IA',
+      desc: 'Suas mensagens são processadas por modelos de linguagem para gerar respostas.',
+    },
+    {
+      key: 'data_storage',
+      label: 'Armazenamento de Dados',
+      desc: 'Traces, sessões e memórias são armazenados para histórico e melhoria.',
+    },
+    {
+      key: 'analytics',
+      label: 'Analytics e Métricas',
+      desc: 'Dados agregados de uso para dashboards e relatórios.',
+    },
   ];
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
-      <PageHeader title="Conformidade LGPD" description="Gerencie consentimento, dados pessoais e solicitações de exclusão" />
+      <PageHeader
+        title="Conformidade LGPD"
+        description="Gerencie consentimento, dados pessoais e solicitações de exclusão"
+      />
 
       <Tabs defaultValue="consent" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="consent" className="gap-1.5"><Shield className="h-3.5 w-3.5" /> Consentimento</TabsTrigger>
-          <TabsTrigger value="data" className="gap-1.5"><Download className="h-3.5 w-3.5" /> Meus Dados</TabsTrigger>
-          <TabsTrigger value="deletion" className="gap-1.5"><Trash2 className="h-3.5 w-3.5" /> Exclusão</TabsTrigger>
-          <TabsTrigger value="history" className="gap-1.5"><FileText className="h-3.5 w-3.5" /> Histórico</TabsTrigger>
+          <TabsTrigger value="consent" className="gap-1.5">
+            <Shield className="h-3.5 w-3.5" /> Consentimento
+          </TabsTrigger>
+          <TabsTrigger value="data" className="gap-1.5">
+            <Download className="h-3.5 w-3.5" /> Meus Dados
+          </TabsTrigger>
+          <TabsTrigger value="deletion" className="gap-1.5">
+            <Trash2 className="h-3.5 w-3.5" /> Exclusão
+          </TabsTrigger>
+          <TabsTrigger value="history" className="gap-1.5">
+            <FileText className="h-3.5 w-3.5" /> Histórico
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="consent" className="space-y-4">
           <div className="nexus-card">
-            <h3 className="text-body-sm font-heading font-semibold text-foreground mb-4">Bases Legais para Processamento</h3>
+            <h3 className="text-body-sm font-heading font-semibold text-foreground mb-4">
+              Bases Legais para Processamento
+            </h3>
             <div className="space-y-4">
-              {purposes.map(p => {
-                const consent = consents.find((c: Record<string, unknown>) => c.purpose === p.key && c.granted);
+              {purposes.map((p) => {
+                const consent = consents.find((c) => c.purpose === p.key && c.granted);
                 return (
-                  <div key={p.key} className="flex items-start justify-between py-3 border-b border-border/30 last:border-0">
+                  <div
+                    key={p.key}
+                    className="flex items-start justify-between py-3 border-b border-border/30 last:border-0"
+                  >
                     <div>
                       <p className="text-body-sm font-medium text-foreground">{p.label}</p>
                       <p className="text-meta text-muted-foreground mt-0.5">{p.desc}</p>
-                      {consent && <p className="text-meta text-nexus-emerald mt-1">Consentido em {new Date(consent.created_at).toLocaleDateString('pt-BR')}</p>}
+                      {consent && (
+                        <p className="text-meta text-nexus-emerald mt-1">
+                          Consentido em {new Date(consent.created_at).toLocaleDateString('pt-BR')}
+                        </p>
+                      )}
                     </div>
                     <div className="flex gap-2">
                       {consent ? (
-                        <Button variant="outline" size="sm" className="text-meta text-destructive" onClick={() => handleConsent(p.key, false)}>Revogar</Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-meta text-destructive"
+                          onClick={() => handleConsent(p.key, false)}
+                        >
+                          Revogar
+                        </Button>
                       ) : (
-                        <Button size="sm" className="text-meta nexus-gradient-bg text-primary-foreground" onClick={() => handleConsent(p.key, true)}>Consentir</Button>
+                        <Button
+                          size="sm"
+                          className="text-meta nexus-gradient-bg text-primary-foreground"
+                          onClick={() => handleConsent(p.key, true)}
+                        >
+                          Consentir
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -109,10 +179,23 @@ export default function LGPDCompliancePage() {
 
         <TabsContent value="data" className="space-y-4">
           <div className="nexus-card">
-            <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">Exportar Meus Dados</h3>
-            <p className="text-meta text-muted-foreground mb-4">Baixe todos os seus dados pessoais em formato JSON, conforme Art. 18 da LGPD (direito de acesso).</p>
-            <Button onClick={handleExportData} disabled={exporting} className="nexus-gradient-bg text-primary-foreground gap-2">
-              {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3">
+              Exportar Meus Dados
+            </h3>
+            <p className="text-meta text-muted-foreground mb-4">
+              Baixe todos os seus dados pessoais em formato JSON, conforme Art. 18 da LGPD (direito
+              de acesso).
+            </p>
+            <Button
+              onClick={handleExportData}
+              disabled={exporting}
+              className="nexus-gradient-bg text-primary-foreground gap-2"
+            >
+              {exporting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
               Exportar dados (JSON)
             </Button>
           </div>
@@ -123,12 +206,25 @@ export default function LGPDCompliancePage() {
             <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-destructive" /> Solicitação de Exclusão
             </h3>
-            <p className="text-meta text-muted-foreground mb-4">Conforme Art. 18 da LGPD, você tem direito à eliminação dos seus dados pessoais. Esta ação é irreversível.</p>
+            <p className="text-meta text-muted-foreground mb-4">
+              Conforme Art. 18 da LGPD, você tem direito à eliminação dos seus dados pessoais. Esta
+              ação é irreversível.
+            </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {['traces', 'sessions', 'memories', 'all'].map(scope => (
-                <Button key={scope} variant={scope === 'all' ? 'destructive' : 'outline'} size="sm" className="text-meta"
-                  onClick={() => setPendingScope(scope)} disabled={deleting}>
-                  {deleting ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Trash2 className="h-3 w-3 mr-1" />}
+              {['traces', 'sessions', 'memories', 'all'].map((scope) => (
+                <Button
+                  key={scope}
+                  variant={scope === 'all' ? 'destructive' : 'outline'}
+                  size="sm"
+                  className="text-meta"
+                  onClick={() => setPendingScope(scope)}
+                  disabled={deleting}
+                >
+                  {deleting ? (
+                    <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                  ) : (
+                    <Trash2 className="h-3 w-3 mr-1" />
+                  )}
                   {scope === 'all' ? 'Deletar TUDO' : `Deletar ${scope}`}
                 </Button>
               ))}
@@ -138,34 +234,75 @@ export default function LGPDCompliancePage() {
 
         <TabsContent value="history" className="space-y-3">
           {deletions.length === 0 && consents.length === 0 ? (
-            <div className="text-center py-12 text-body-sm text-muted-foreground">Nenhum registro de consentimento ou exclusão.</div>
+            <div className="text-center py-12 text-body-sm text-muted-foreground">
+              Nenhum registro de consentimento ou exclusão.
+            </div>
           ) : (
             <div className="space-y-2">
-              {[...deletions.map((d) => ({ id: d.id, _type: 'deletion' as const, _date: d.requested_at, label: `Exclusão: ${d.reason ?? ''}`, status: d.status, granted: false })), ...consents.map((c) => ({ id: c.id, _type: 'consent' as const, _date: c.created_at, label: `${c.granted ? 'Consentimento' : 'Revogação'}: ${c.consent_type}`, status: c.granted ? 'ativo' : 'revogado', granted: c.granted }))]
+              {[
+                ...deletions.map((d) => ({
+                  id: d.id,
+                  _type: 'deletion' as const,
+                  _date: d.requested_at,
+                  label: `Exclusão: ${d.reason ?? ''}`,
+                  status: d.status,
+                  granted: false,
+                })),
+                ...consents.map((c) => ({
+                  id: c.id,
+                  _type: 'consent' as const,
+                  _date: c.created_at,
+                  label: `${c.granted ? 'Consentimento' : 'Revogação'}: ${c.consent_type}`,
+                  status: c.granted ? 'ativo' : 'revogado',
+                  granted: c.granted,
+                })),
+              ]
                 .sort((a, b) => new Date(b._date).getTime() - new Date(a._date).getTime())
                 .slice(0, 30)
                 .map((item) => (
-                <div key={item.id}
-                  className="nexus-card flex items-center justify-between text-meta">
-                  <div className="flex items-center gap-3">
-                    {item._type === 'deletion' ? <Trash2 className="h-3.5 w-3.5 text-destructive" /> : <Shield className="h-3.5 w-3.5 text-primary" />}
-                    <div>
-                      <span className="text-foreground font-medium">{item.label}</span>
-                      <p className="text-meta text-muted-foreground">{new Date(item._date).toLocaleString('pt-BR')}</p>
+                  <div
+                    key={item.id}
+                    className="nexus-card flex items-center justify-between text-meta"
+                  >
+                    <div className="flex items-center gap-3">
+                      {item._type === 'deletion' ? (
+                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                      ) : (
+                        <Shield className="h-3.5 w-3.5 text-primary" />
+                      )}
+                      <div>
+                        <span className="text-foreground font-medium">{item.label}</span>
+                        <p className="text-meta text-muted-foreground">
+                          {new Date(item._date).toLocaleString('pt-BR')}
+                        </p>
+                      </div>
                     </div>
+                    <Badge
+                      variant={
+                        item.status === 'completed' || item.granted
+                          ? 'default'
+                          : item.status === 'failed'
+                            ? 'destructive'
+                            : 'outline'
+                      }
+                      className="text-meta"
+                    >
+                      {item.status}
+                    </Badge>
                   </div>
-                  <Badge variant={item.status === 'completed' || item.granted ? 'default' : item.status === 'failed' ? 'destructive' : 'outline'} className="text-meta">
-                    {item.status}
-                  </Badge>
-                </div>
-              ))}
+                ))}
             </div>
           )}
         </TabsContent>
       </Tabs>
 
       {/* Confirmation dialog for data deletion */}
-      <AlertDialog open={!!pendingScope} onOpenChange={(open) => { if (!open) setPendingScope(null); }}>
+      <AlertDialog
+        open={!!pendingScope}
+        onOpenChange={(open) => {
+          if (!open) setPendingScope(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar exclusão de dados</AlertDialogTitle>

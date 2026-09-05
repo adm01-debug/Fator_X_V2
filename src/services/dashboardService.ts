@@ -78,7 +78,9 @@ export function subscribeToAlerts(onChange: () => void): () => void {
       onChange();
     })
     .subscribe();
-  return () => { supabaseExternal.removeChannel(channel); };
+  return () => {
+    supabaseExternal.removeChannel(channel);
+  };
 }
 
 /**
@@ -105,7 +107,15 @@ export async function getUnresolvedAlerts(limit = 5) {
 /**
  * Recent traces for the dashboard activity feed.
  */
-export async function getRecentDashboardTraces(limit = 5) {
+export interface DashboardTrace {
+  id: string;
+  event: string;
+  level: string | null;
+  latency_ms: number | null;
+  created_at: string;
+}
+
+export async function getRecentDashboardTraces(limit = 5): Promise<DashboardTrace[]> {
   try {
     const { data, error } = await supabaseExternal
       .from('agent_traces')
@@ -116,17 +126,10 @@ export async function getRecentDashboardTraces(limit = 5) {
       logger.error('Failed to fetch recent traces', { error: error.message });
       return [];
     }
-    interface TraceRow {
-      id: string;
-      event: string | null;
-      level: string | null;
-      latency_ms: number | null;
-      created_at: string | null;
-    }
-    return ((data ?? []) as TraceRow[]).map((t) => ({
+    return (data ?? []).map((t: { event?: string | null; [key: string]: unknown }) => ({
       ...t,
-      event: t.event || 'agent.execution'
-    }));
+      event: t.event || 'agent.execution',
+    })) as DashboardTrace[];
   } catch {
     return [];
   }

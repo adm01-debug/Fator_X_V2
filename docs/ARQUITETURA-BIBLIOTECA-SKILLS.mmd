@@ -1,0 +1,54 @@
+graph TB
+    subgraph ING["1. INGESTAO"]
+        HARV["skill-harvester (Edge)<br/>importacao GitHub dirigida"]
+        CKPT["skill_harvest_checkpoints<br/>retomada + expurgo pg_cron"]
+        COMP["Skill Composer<br/>criacao guiada + Zod"]
+        MKT["Marketplace / Templates<br/>openclaw_agent_templates"]
+        HARV --> CKPT
+    end
+
+    subgraph CAT["2. CATALOGO"]
+        REG[("skill_registry<br/>UPSERT idempotente<br/>department / confidence / source")]
+        TAXO["Taxonomia canonica<br/>de departamentos"]
+        ATTR["Atribuicao + licenca SPDX"]
+        REG --- TAXO
+        REG --- ATTR
+    end
+
+    subgraph CUR["3. CURADORIA"]
+        LEX["Classificador lexico<br/>skillDepartmentClassifier"]
+        QUEUE["Fila LLM em lote<br/>llmClassificationQueue"]
+        LLM["skill-classify-llm (Edge)"]
+        DESC["skill-describe-llm (Edge)<br/>enriquecimento de descricao"]
+        REVIEW["Revisao humana<br/>decide_skill_reclassification"]
+        CALIB["Governanca de limiar<br/>instabilidade + override auditado"]
+        AUD[("audit_log<br/>log_audit_entry")]
+        LEX -->|confianca baixa| QUEUE --> LLM --> REVIEW
+        DESC --> REVIEW
+        REVIEW --> AUD
+        CALIB --> AUD
+        CALIB -.calibra.-> LEX
+    end
+
+    subgraph VINC["4. VINCULACAO"]
+        DEMAND["skillDemandService<br/>demanda real vs orfa"]
+        RECO["skillRecommenderService<br/>Jaccard + categoria"]
+        LINK["templateSkillLinkService<br/>agente <-> skills"]
+        DEMAND --> RECO --> LINK
+    end
+
+    subgraph RT["5. RUNTIME"]
+        LOADER["progressiveSkillLoader<br/>orcamento de contexto"]
+        SHARED["_shared/skills.ts<br/>sanitizacao / dedup / ordenacao"]
+        PROMPT["Prompt do agente<br/>llm-gateway"]
+        LOADER --> SHARED --> PROMPT
+    end
+
+    HARV --> REG
+    COMP --> REG
+    MKT --> REG
+    REG --> LEX
+    REVIEW -->|department_source=human<br/>confidence=1.0| REG
+    REG --> DEMAND
+    LINK --> LOADER
+    PROMPT -.telemetria de uso.-> DEMAND

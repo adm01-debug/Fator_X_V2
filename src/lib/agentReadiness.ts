@@ -1,5 +1,4 @@
 import type { AgentConfig } from '@/types/agentTypes';
-import type { DbRow } from '@/types/dbRow';
 
 export interface ReadinessCheck {
   id: string;
@@ -19,18 +18,70 @@ export interface ReadinessResult {
 
 export function computeReadinessScore(agent: AgentConfig): ReadinessResult {
   const checks: ReadinessCheck[] = [
-    { id: 'name', label: 'Nome do agente definido', passed: !!agent.name?.trim(), tabId: 'identity' },
-    { id: 'mission', label: 'Missão descrita', passed: !!agent.mission && agent.mission.length >= 20, tabId: 'identity' },
+    {
+      id: 'name',
+      label: 'Nome do agente definido',
+      passed: !!agent.name?.trim(),
+      tabId: 'identity',
+    },
+    {
+      id: 'mission',
+      label: 'Missão descrita',
+      passed: !!agent.mission && agent.mission.length >= 20,
+      tabId: 'identity',
+    },
     { id: 'persona', label: 'Persona configurada', passed: !!agent.persona, tabId: 'identity' },
     { id: 'model', label: 'Modelo selecionado', passed: !!agent.model, tabId: 'brain' },
-    { id: 'system_prompt', label: 'System prompt ≥ 200 caracteres', passed: (agent.system_prompt?.length ?? 0) >= 200, tabId: 'prompt' },
-    { id: 'tools', label: '≥ 1 ferramenta ativa', passed: (agent.tools ?? []).some((t: { enabled?: boolean }) => t.enabled), tabId: 'tools' },
-    { id: 'guardrails', label: '≥ 1 guardrail ativo', passed: (agent.guardrails ?? []).some((g: { enabled?: boolean }) => g.enabled), tabId: 'guardrails' },
-    { id: 'tests', label: '≥ 1 caso de teste', passed: (agent.test_cases ?? []).length >= 1, tabId: 'testing' },
-    { id: 'observability', label: 'Logging habilitado', passed: !!agent.logging_enabled, tabId: 'observability' },
-    { id: 'deploy', label: 'Canal de deploy configurado', passed: (((agent as Record<string, unknown>).deploy_channels as unknown[] | undefined) ?? []).length > 0 || !!(agent as Record<string, unknown>).deploy_channel, tabId: 'deploy' },
-    { id: 'billing', label: 'Budget mensal definido', passed: !!agent.monthly_budget && agent.monthly_budget > 0, tabId: 'billing' },
-    { id: 'memory', label: '≥ 1 tipo de memória ativa', passed: !!(agent.memory_short_term || agent.memory_episodic || agent.memory_semantic), tabId: 'memory' },
+    {
+      id: 'system_prompt',
+      label: 'System prompt ≥ 200 caracteres',
+      passed: (agent.system_prompt?.length ?? 0) >= 200,
+      tabId: 'prompt',
+    },
+    {
+      id: 'tools',
+      label: '≥ 1 ferramenta ativa',
+      passed: (agent.tools ?? []).some((t: { enabled?: boolean }) => t.enabled),
+      tabId: 'tools',
+    },
+    {
+      id: 'guardrails',
+      label: '≥ 1 guardrail ativo',
+      passed: (agent.guardrails ?? []).some((g: { enabled?: boolean }) => g.enabled),
+      tabId: 'guardrails',
+    },
+    {
+      id: 'tests',
+      label: '≥ 1 caso de teste',
+      passed: (agent.test_cases ?? []).length >= 1,
+      tabId: 'testing',
+    },
+    {
+      id: 'observability',
+      label: 'Logging habilitado',
+      passed: !!agent.logging_enabled,
+      tabId: 'observability',
+    },
+    {
+      id: 'deploy',
+      label: 'Canal de deploy configurado',
+      passed:
+        ((agent as { deploy_channels?: unknown[] }).deploy_channels ?? []).length > 0 ||
+        !!(agent as { deploy_channel?: unknown }).deploy_channel,
+      tabId: 'deploy',
+    },
+    {
+      id: 'billing',
+      label: 'Budget mensal definido',
+      passed: !!agent.monthly_budget && agent.monthly_budget > 0,
+      tabId: 'billing',
+    },
+    {
+      id: 'memory',
+      label: '≥ 1 tipo de memória ativa',
+      passed: !!(agent.memory_short_term || agent.memory_episodic || agent.memory_semantic),
+      tabId: 'memory',
+    },
   ];
 
   const passed = checks.filter((c) => c.passed).length;
@@ -46,9 +97,32 @@ export function computeReadinessScore(agent: AgentConfig): ReadinessResult {
   return { score, passed, total, checks, missing, level };
 }
 
-export const READINESS_COLORS: Record<ReadinessResult['level'], { bg: string; text: string; border: string; label: string }> = {
-  critical: { bg: 'bg-destructive/10', text: 'text-destructive', border: 'border-destructive/40', label: 'Crítico' },
-  warning: { bg: 'bg-nexus-amber/10', text: 'text-nexus-amber', border: 'border-nexus-amber/40', label: 'Em progresso' },
-  good: { bg: 'bg-nexus-emerald/10', text: 'text-nexus-emerald', border: 'border-nexus-emerald/40', label: 'Quase lá' },
-  excellent: { bg: 'bg-nexus-emerald/15', text: 'text-nexus-emerald', border: 'border-nexus-emerald/60', label: 'Pronto' },
+export const READINESS_COLORS: Record<
+  ReadinessResult['level'],
+  { bg: string; text: string; border: string; label: string }
+> = {
+  critical: {
+    bg: 'bg-destructive/10',
+    text: 'text-destructive',
+    border: 'border-destructive/40',
+    label: 'Crítico',
+  },
+  warning: {
+    bg: 'bg-nexus-amber/10',
+    text: 'text-nexus-amber',
+    border: 'border-nexus-amber/40',
+    label: 'Em progresso',
+  },
+  good: {
+    bg: 'bg-nexus-emerald/10',
+    text: 'text-nexus-emerald',
+    border: 'border-nexus-emerald/40',
+    label: 'Quase lá',
+  },
+  excellent: {
+    bg: 'bg-nexus-emerald/15',
+    text: 'text-nexus-emerald',
+    border: 'border-nexus-emerald/60',
+    label: 'Pronto',
+  },
 };

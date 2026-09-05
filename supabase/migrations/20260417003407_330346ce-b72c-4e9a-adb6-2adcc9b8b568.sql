@@ -1,7 +1,7 @@
 -- Marketplace Monetizado — Revenue Share infrastructure
 
 -- 1. Pricing/metadata overlay para skills (skill_registry vive no DB externo)
-CREATE TABLE public.skill_marketplace_meta (
+CREATE TABLE IF NOT EXISTS public.skill_marketplace_meta (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   skill_id UUID NOT NULL UNIQUE,
   creator_id UUID NOT NULL,
@@ -30,7 +30,7 @@ CREATE TRIGGER trg_smm_updated_at BEFORE UPDATE ON public.skill_marketplace_meta
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- 2. Compras
-CREATE TABLE public.skill_purchases (
+CREATE TABLE IF NOT EXISTS public.skill_purchases (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   skill_id UUID NOT NULL,
   buyer_id UUID NOT NULL,
@@ -51,7 +51,7 @@ CREATE POLICY "buyer inserts purchases" ON public.skill_purchases
   FOR INSERT TO authenticated WITH CHECK (buyer_id = auth.uid());
 
 -- 3. Reviews
-CREATE TABLE public.skill_reviews (
+CREATE TABLE IF NOT EXISTS public.skill_reviews (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   skill_id UUID NOT NULL,
   reviewer_id UUID NOT NULL,
@@ -72,7 +72,7 @@ CREATE POLICY "reviewer deletes own review" ON public.skill_reviews
   FOR DELETE TO authenticated USING (reviewer_id = auth.uid());
 
 -- 4. Creator payouts
-CREATE TABLE public.creator_payouts (
+CREATE TABLE IF NOT EXISTS public.creator_payouts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   creator_id UUID NOT NULL,
   period_start DATE NOT NULL,

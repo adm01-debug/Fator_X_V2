@@ -41,11 +41,17 @@ REVOKE ALL ON FUNCTION internal.drop_old_partitions(int) FROM public, anon, auth
 GRANT EXECUTE ON FUNCTION internal.drop_old_partitions(int) TO service_role;
 
 -- Agenda dia 2 de cada mês às 04:00 UTC (depois da criação da nova partição no dia 25 do mês anterior).
-SELECT cron.unschedule('drop-old-partitions')
-WHERE EXISTS (SELECT 1 FROM cron.job WHERE jobname='drop-old-partitions');
-
-SELECT cron.schedule(
-  'drop-old-partitions',
-  '0 4 2 * *',
-  $cron$SELECT internal.drop_old_partitions(90);$cron$
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'drop-old-partitions') THEN
+      PERFORM cron.unschedule('drop-old-partitions');
+    END IF;
+    PERFORM cron.schedule(
+      'drop-old-partitions',
+      '0 4 2 * *',
+      'SELECT internal.drop_old_partitions(90);'
+    );
+  END IF;
+END;
+$$;

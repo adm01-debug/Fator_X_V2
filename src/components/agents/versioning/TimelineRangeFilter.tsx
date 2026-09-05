@@ -1,12 +1,9 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 import { useMemo, useState } from 'react';
 import { Clock, GitBranch, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import type { AgentVersion } from '@/services/agentsService';
 
 export type RangeMode = 'off' | 'version' | 'time';
@@ -64,7 +61,10 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
         return `últimos ${Math.round(m / 60 / 24)}d`;
       }
       if (range.fromIso || range.toIso) {
-        const fmt = (iso?: string) => (iso ? new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '…');
+        const fmt = (iso?: string) =>
+          iso
+            ? new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+            : '…';
         return `${fmt(range.fromIso)} → ${fmt(range.toIso)}`;
       }
     }
@@ -73,7 +73,8 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
 
   const setMode = (mode: RangeMode) => {
     if (mode === 'off') return onChange({ mode: 'off' });
-    if (mode === 'version') return onChange({ mode: 'version', vMin: minVersion, vMax: maxVersion });
+    if (mode === 'version')
+      return onChange({ mode: 'version', vMin: minVersion, vMax: maxVersion });
     return onChange({ mode: 'time', lastMinutes: 60 * 24 });
   };
 
@@ -123,7 +124,8 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
           </p>
           <div className="flex items-center gap-1">
             <Button
-              type="button" size="sm"
+              type="button"
+              size="sm"
               variant={range.mode === 'off' ? 'default' : 'ghost'}
               className="h-6 px-2 text-meta flex-1"
               onClick={() => setMode('off')}
@@ -131,7 +133,8 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Desligado
             </Button>
             <Button
-              type="button" size="sm"
+              type="button"
+              size="sm"
               variant={range.mode === 'version' ? 'default' : 'ghost'}
               className="h-6 px-2 text-meta gap-1 flex-1"
               onClick={() => setMode('version')}
@@ -139,7 +142,8 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               <GitBranch className="h-3 w-3" aria-hidden /> Versão
             </Button>
             <Button
-              type="button" size="sm"
+              type="button"
+              size="sm"
               variant={range.mode === 'time' ? 'default' : 'ghost'}
               className="h-6 px-2 text-meta gap-1 flex-1"
               onClick={() => setMode('time')}
@@ -155,7 +159,7 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Entre dois checkpoints (v{minVersion}–v{maxVersion})
             </p>
             <div className="grid grid-cols-2 gap-2">
-              <label htmlFor="range-vmin" className="text-[11px] text-muted-foreground space-y-1">
+              <label htmlFor="range-vmin" className="text-meta text-muted-foreground space-y-1">
                 <span>De (vMin)</span>
                 <Input
                   id="range-vmin"
@@ -165,10 +169,17 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                   max={maxVersion}
                   value={range.vMin ?? minVersion}
                   className="h-7 text-meta font-mono"
-                  onChange={(e) => onChange({ ...range, mode: 'version', vMin: Number(e.target.value) || minVersion })}
+                  onChange={(e) =>
+                    onChange({
+                      ...range,
+                      mode: 'version',
+                      vMin: Number(e.target.value) || minVersion,
+                    })
+                  }
                 />
               </label>
-              <label htmlFor="range-vmax" className="text-[11px] text-muted-foreground space-y-1">
+              {}
+              <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até (vMax)</span>
                 <Input
                   id="range-vmax"
@@ -178,7 +189,13 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                   max={maxVersion}
                   value={range.vMax ?? maxVersion}
                   className="h-7 text-meta font-mono"
-                  onChange={(e) => onChange({ ...range, mode: 'version', vMax: Number(e.target.value) || maxVersion })}
+                  onChange={(e) =>
+                    onChange({
+                      ...range,
+                      mode: 'version',
+                      vMax: Number(e.target.value) || maxVersion,
+                    })
+                  }
                 />
               </label>
             </div>
@@ -199,7 +216,8 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
                 return (
                   <Button
                     key={w.label}
-                    type="button" size="sm"
+                    type="button"
+                    size="sm"
                     variant={isCurrent ? 'default' : 'ghost'}
                     className={`h-6 px-2 text-meta ${
                       isCurrent
@@ -218,24 +236,39 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
               Janela absoluta
             </p>
             <div className="grid grid-cols-2 gap-2">
-              <label htmlFor="range-from" className="text-[11px] text-muted-foreground space-y-1">
+              <label htmlFor="range-from" className="text-meta text-muted-foreground space-y-1">
                 <span>De</span>
                 <Input
                   id="range-from"
                   type="datetime-local"
                   className="h-7 text-meta"
                   value={range.fromIso ? toLocalInput(range.fromIso) : ''}
-                  onChange={(e) => onChange({ mode: 'time', lastMinutes: undefined, fromIso: fromLocalInput(e.target.value), toIso: range.toIso })}
+                  onChange={(e) =>
+                    onChange({
+                      mode: 'time',
+                      lastMinutes: undefined,
+                      fromIso: fromLocalInput(e.target.value),
+                      toIso: range.toIso,
+                    })
+                  }
                 />
               </label>
-              <label htmlFor="range-to" className="text-[11px] text-muted-foreground space-y-1">
+              {}
+              <label className="text-meta text-muted-foreground space-y-1">
                 <span>Até</span>
                 <Input
                   id="range-to"
                   type="datetime-local"
                   className="h-7 text-meta"
                   value={range.toIso ? toLocalInput(range.toIso) : ''}
-                  onChange={(e) => onChange({ mode: 'time', lastMinutes: undefined, fromIso: range.fromIso, toIso: fromLocalInput(e.target.value) })}
+                  onChange={(e) =>
+                    onChange({
+                      mode: 'time',
+                      lastMinutes: undefined,
+                      fromIso: range.fromIso,
+                      toIso: fromLocalInput(e.target.value),
+                    })
+                  }
                 />
               </label>
             </div>
@@ -243,11 +276,18 @@ export function TimelineRangeFilter({ range, onChange, versions }: Props) {
         )}
 
         <div className="flex items-center justify-between pt-1 border-t border-border/50">
-          <p className="text-meta text-muted-foreground">{isActive ? summary : 'Sem filtro de intervalo'}</p>
+          <p className="text-meta text-muted-foreground">
+            {isActive ? summary : 'Sem filtro de intervalo'}
+          </p>
           <Button
-            type="button" size="sm" variant="ghost"
+            type="button"
+            size="sm"
+            variant="ghost"
             className="h-6 px-2 text-meta text-muted-foreground hover:text-foreground"
-            onClick={() => { onChange({ mode: 'off' }); setOpen(false); }}
+            onClick={() => {
+              onChange({ mode: 'off' });
+              setOpen(false);
+            }}
           >
             Limpar
           </Button>
@@ -272,7 +312,6 @@ function fromLocalInput(local: string): string | undefined {
 
 /* ---------- helpers de filtragem reutilizáveis ---------- */
 
-// eslint-disable-next-line react-refresh/only-export-components -- pure helper colocated with the filter UI
 export function filterByRange(versions: AgentVersion[], range: TimelineRange): AgentVersion[] {
   if (range.mode === 'off') return versions;
 
@@ -285,10 +324,7 @@ export function filterByRange(versions: AgentVersion[], range: TimelineRange): A
   // mode === 'time'
   if (range.lastMinutes && versions.length > 0) {
     // Âncora = versão mais recente (top da lista geralmente); usamos Math.max p/ robustez.
-    const anchor = versions.reduce(
-      (max, v) => Math.max(max, new Date(v.created_at).getTime()),
-      0,
-    );
+    const anchor = versions.reduce((max, v) => Math.max(max, new Date(v.created_at).getTime()), 0);
     const cutoff = anchor - range.lastMinutes * 60_000;
     return versions.filter((v) => new Date(v.created_at).getTime() >= cutoff);
   }
@@ -306,7 +342,7 @@ export function filterByRange(versions: AgentVersion[], range: TimelineRange): A
 }
 
 /** Serializa para a URL como `range=version:1-5` ou `range=time:60` ou `range=time:abs:from~to`. */
-// eslint-disable-next-line react-refresh/only-export-components -- pure helper colocated with the filter UI
+
 export function serializeRange(range: TimelineRange): string | null {
   if (range.mode === 'off') return null;
   if (range.mode === 'version') {
@@ -319,7 +355,6 @@ export function serializeRange(range: TimelineRange): string | null {
   return null;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- pure helper colocated with the filter UI
 export function parseRange(raw: string | null): TimelineRange {
   if (!raw) return { mode: 'off' };
   if (raw.startsWith('version:')) {

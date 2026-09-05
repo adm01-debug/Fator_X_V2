@@ -69,13 +69,15 @@ REVOKE ALL ON FUNCTION internal.cleanup_orphan_sessions() FROM public, anon, aut
 DO $$
 DECLARE v_jobid int;
 BEGIN
-  SELECT jobid INTO v_jobid FROM cron.job WHERE jobname = 'cleanup-orphan-sessions';
-  IF v_jobid IS NOT NULL THEN
-    PERFORM cron.unschedule(v_jobid);
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    SELECT jobid INTO v_jobid FROM cron.job WHERE jobname = 'cleanup-orphan-sessions';
+    IF v_jobid IS NOT NULL THEN
+      PERFORM cron.unschedule(v_jobid);
+    END IF;
+    PERFORM cron.schedule(
+      'cleanup-orphan-sessions',
+      '*/10 * * * *',
+      $cron$ SELECT internal.cleanup_orphan_sessions(); $cron$
+    );
   END IF;
-  PERFORM cron.schedule(
-    'cleanup-orphan-sessions',
-    '*/10 * * * *',
-    $cron$ SELECT internal.cleanup_orphan_sessions(); $cron$
-  );
 END $$;

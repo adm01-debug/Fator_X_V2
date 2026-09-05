@@ -15,17 +15,41 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import type { DbRow } from '@/types/dbRow';
 
-type RiskCategory = 'strategic' | 'operational' | 'technical' | 'security' | 'compliance' | 'financial' | 'reputational';
+type RiskCategory =
+  | 'strategic'
+  | 'operational'
+  | 'technical'
+  | 'security'
+  | 'compliance'
+  | 'financial'
+  | 'reputational';
 type RiskTreatment = 'accept' | 'mitigate' | 'transfer' | 'avoid';
 type RiskStatus = 'identified' | 'assessed' | 'treated' | 'monitored' | 'closed';
 
@@ -45,7 +69,15 @@ interface Risk {
   created_at: string;
 }
 
-const CATEGORIES: RiskCategory[] = ['strategic', 'operational', 'technical', 'security', 'compliance', 'financial', 'reputational'];
+const CATEGORIES: RiskCategory[] = [
+  'strategic',
+  'operational',
+  'technical',
+  'security',
+  'compliance',
+  'financial',
+  'reputational',
+];
 const TREATMENTS: RiskTreatment[] = ['accept', 'mitigate', 'transfer', 'avoid'];
 const STATUSES: RiskStatus[] = ['identified', 'assessed', 'treated', 'monitored', 'closed'];
 
@@ -74,7 +106,9 @@ export default function RiskRegisterPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('risk_register')
-        .select('id, title, description, category, likelihood, impact, inherent_score, residual_score, treatment, mitigation_plan, status, next_review_due, created_at')
+        .select(
+          'id, title, description, category, likelihood, impact, inherent_score, residual_score, treatment, mitigation_plan, status, next_review_due, created_at',
+        )
         .eq('workspace_id', workspaceId!)
         .order('inherent_score', { ascending: false });
       if (error) throw error;
@@ -83,97 +117,17 @@ export default function RiskRegisterPage() {
     enabled: !!workspaceId,
   });
 
+  // Heatmap 5x5: matrix[likelihood - 1][impact - 1] = riscos abertos naquela célula
   const heatmap = useMemo(() => {
-    const matrix: Risk[][][] = Array.from({ length: 5 }, () => Array.from({ length: 5 }, () => []));
+    const matrix: Risk[][][] = Array.from({ length: 5 }, () =>
+      Array.from({ length: 5 }, () => [] as Risk[]),
+    );
     for (const r of risks) {
       if (r.status === 'closed') continue;
-      matrix[r.likelihood - 1][r.impact - 1].push(r);
+      const l = Math.min(5, Math.max(1, r.likelihood)) - 1;
+      const i = Math.min(5, Math.max(1, r.impact)) - 1;
+      matrix[l][i].push(r);
     }
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- run only when workspaceId changes; refresh is recreated each render and would loop if added
-  useEffect(() => { refresh(); }, [workspaceId]);
-
-  useEffect(() => {
-    if (!selectedRisk) { setReviews([]); return; }
-    listRiskReviews(selectedRisk.id).then(setReviews).catch(err => logger.error("reviews fetch:", err));
-    setReviewScore(selectedRisk.residual_score ?? selectedRisk.inherent_score);
-  }, [selectedRisk]);
-
-  const filtered = useMemo(() => {
-    return risks.filter(r => {
-      if (filterCategory !== "all" && r.category !== filterCategory) return false;
-      if (filterStatus === "active" && r.status === "closed") return false;
-      if (filterStatus === "closed" && r.status !== "closed") return false;
-      if (filterStatus === "overdue" && !isReviewOverdue(r.next_review_due)) return false;
-      return true;
-    });
-  }, [risks, filterCategory, filterStatus]);
-
-  const handleCreate = async () => {
-    if (!workspaceId || !title.trim()) return;
-    setSubmitting(true);
-    try {
-      await registerRisk({
-        workspaceId, title: title.trim(),
-        description: description.trim() || undefined,
-        category, likelihood, impact, treatment,
-        mitigationPlan: mitigationPlan.trim() || undefined,
-      });
-      toast.success("Risco registrado");
-      setCreateOpen(false);
-      setTitle(""); setDescription(""); setMitigationPlan("");
-      setLikelihood(3); setImpact(3); setCategory("security"); setTreatment("mitigate");
-      await refresh();
-    } catch (err) {
-      logger.error("register failed:", err);
-      toast.error(err instanceof Error ? err.message : "Falha ao registrar risco");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleReview = async () => {
-    if (!selectedRisk) return;
-    setSubmitting(true);
-    try {
-      await reviewRisk(selectedRisk.id, reviewScore, reviewNotes.trim() || undefined);
-      toast.success("Review registrado");
-      setReviewNotes("");
-      const updated = (await listRisks(workspaceId!)).find(r => r.id === selectedRisk.id);
-      if (updated) setSelectedRisk(updated);
-      await refresh();
-    } catch (err) {
-      logger.error("review failed:", err);
-      toast.error(err instanceof Error ? err.message : "Falha ao registrar review");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleClose = async () => {
-    if (!selectedRisk) return;
-    if (!confirm("Fechar este risco? Esta ação será registrada no audit log.")) return;
-    setSubmitting(true);
-    try {
-      await closeRisk(selectedRisk.id);
-      toast.success("Risco fechado");
-      setSelectedRisk(null);
-      await refresh();
-    } catch (err) {
-      logger.error("close failed:", err);
-      toast.error(err instanceof Error ? err.message : "Falha ao fechar risco");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // Heatmap aggregation: 5x5 grid
-  const heatmapMatrix = useMemo(() => {
-    const matrix: number[][] = Array.from({ length: 5 }, () => Array(5).fill(0));
-    summary?.heatmap.forEach(({ likelihood: l, impact: i, count }) => {
-      matrix[5 - i][l - 1] = count; // top-left = high impact, low likelihood
-    });
     return matrix;
   }, [risks]);
 
@@ -241,7 +195,10 @@ export default function RiskRegisterPage() {
                 Novo Risco
               </Button>
             </DialogTrigger>
-            <NewRiskDialog onSubmit={(v) => createRisk.mutate(v)} isPending={createRisk.isPending} />
+            <NewRiskDialog
+              onSubmit={(v) => createRisk.mutate(v)}
+              isPending={createRisk.isPending}
+            />
           </Dialog>
         }
       />
@@ -259,14 +216,22 @@ export default function RiskRegisterPage() {
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <div className="inline-grid gap-1" style={{ gridTemplateColumns: 'auto repeat(5, minmax(64px, 1fr))' }}>
+            <div
+              className="inline-grid gap-1"
+              style={{ gridTemplateColumns: 'auto repeat(5, minmax(64px, 1fr))' }}
+            >
               <div />
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={`h-${i}`} className="text-center text-meta text-muted-foreground pb-1">Impacto {i}</div>
+                <div key={`h-${i}`} className="text-center text-meta text-muted-foreground pb-1">
+                  Impacto {i}
+                </div>
               ))}
               {[5, 4, 3, 2, 1].map((likelihood) => (
                 <>
-                  <div key={`l-${likelihood}`} className="text-meta text-muted-foreground pr-2 self-center whitespace-nowrap">
+                  <div
+                    key={`l-${likelihood}`}
+                    className="text-meta text-muted-foreground pr-2 self-center whitespace-nowrap"
+                  >
                     Prob. {likelihood}
                   </div>
                   {[1, 2, 3, 4, 5].map((impact) => {
@@ -301,7 +266,9 @@ export default function RiskRegisterPage() {
           {isLoading ? (
             <p className="text-body-sm text-muted-foreground">Carregando...</p>
           ) : risks.length === 0 ? (
-            <p className="text-body-sm text-muted-foreground">Nenhum risco registrado. Clique em "Novo Risco" para começar.</p>
+            <p className="text-body-sm text-muted-foreground">
+              Nenhum risco registrado. Clique em "Novo Risco" para começar.
+            </p>
           ) : (
             <Table>
               <TableHeader>
@@ -320,10 +287,17 @@ export default function RiskRegisterPage() {
                   <TableRow key={r.id}>
                     <TableCell className="font-medium">{r.title}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="capitalize">{r.category}</Badge>
+                      <Badge variant="outline" className="capitalize">
+                        {r.category}
+                      </Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      <span className={cn('inline-flex items-center justify-center rounded-md px-2 py-1 text-meta font-bold min-w-[32px]', scoreColor(r.inherent_score))}>
+                      <span
+                        className={cn(
+                          'inline-flex items-center justify-center rounded-md px-2 py-1 text-meta font-bold min-w-[32px]',
+                          scoreColor(r.inherent_score),
+                        )}
+                      >
                         {r.inherent_score}
                       </span>
                     </TableCell>
@@ -337,14 +311,18 @@ export default function RiskRegisterPage() {
                     <TableCell className="text-right">
                       <Select
                         value={r.status}
-                        onValueChange={(v) => updateStatus.mutate({ id: r.id, status: v as RiskStatus })}
+                        onValueChange={(v) =>
+                          updateStatus.mutate({ id: r.id, status: v as RiskStatus })
+                        }
                       >
                         <SelectTrigger className="w-32 h-8 text-meta ml-auto">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           {STATUSES.map((s) => (
-                            <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
+                            <SelectItem key={s} value={s} className="capitalize">
+                              {s}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -408,7 +386,15 @@ function NewRiskDialog({ onSubmit, isPending }: NewRiskDialogProps) {
       toast.error('Título obrigatório');
       return;
     }
-    onSubmit({ title, description, category, likelihood, impact, treatment, mitigation_plan: mitigationPlan });
+    onSubmit({
+      title,
+      description,
+      category,
+      likelihood,
+      impact,
+      treatment,
+      mitigation_plan: mitigationPlan,
+    });
   };
 
   return (
@@ -422,7 +408,11 @@ function NewRiskDialog({ onSubmit, isPending }: NewRiskDialogProps) {
       <div className="grid gap-4 py-2">
         <div className="grid gap-2">
           <Label>Título</Label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Exposição de chaves de API em logs" />
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Ex: Exposição de chaves de API em logs"
+          />
         </div>
         <div className="grid gap-2">
           <Label>Descrição</Label>
@@ -432,10 +422,14 @@ function NewRiskDialog({ onSubmit, isPending }: NewRiskDialogProps) {
           <div className="grid gap-2">
             <Label>Categoria</Label>
             <Select value={category} onValueChange={(v) => setCategory(v as RiskCategory)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {CATEGORIES.map((c) => (
-                  <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>
+                  <SelectItem key={c} value={c} className="capitalize">
+                    {c}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -443,18 +437,30 @@ function NewRiskDialog({ onSubmit, isPending }: NewRiskDialogProps) {
           <div className="grid gap-2">
             <Label>Probabilidade (1-5)</Label>
             <Select value={String(likelihood)} onValueChange={(v) => setLikelihood(Number(v))}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
-                {[1, 2, 3, 4, 5].map((n) => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <SelectItem key={n} value={String(n)}>
+                    {n}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
           <div className="grid gap-2">
             <Label>Impacto (1-5)</Label>
             <Select value={String(impact)} onValueChange={(v) => setImpact(Number(v))}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
-                {[1, 2, 3, 4, 5].map((n) => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <SelectItem key={n} value={String(n)}>
+                    {n}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -462,22 +468,33 @@ function NewRiskDialog({ onSubmit, isPending }: NewRiskDialogProps) {
         <div className="grid gap-2">
           <Label>Tratamento</Label>
           <Select value={treatment} onValueChange={(v) => setTreatment(v as RiskTreatment)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               {TREATMENTS.map((t) => (
-                <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>
+                <SelectItem key={t} value={t} className="capitalize">
+                  {t}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
         <div className="grid gap-2">
           <Label>Plano de Mitigação</Label>
-          <Textarea value={mitigationPlan} onChange={(e) => setMitigationPlan(e.target.value)} rows={3} />
+          <Textarea
+            value={mitigationPlan}
+            onChange={(e) => setMitigationPlan(e.target.value)}
+            rows={3}
+          />
         </div>
         <div className="rounded-md bg-muted p-3 flex items-center gap-3">
           <CheckCircle2 className="h-4 w-4 text-nexus-primary" />
           <span className="text-body-sm">
-            Score inerente: <strong className={cn('px-2 py-0.5 rounded', scoreColor(likelihood * impact))}>{likelihood * impact}</strong>
+            Score inerente:{' '}
+            <strong className={cn('px-2 py-0.5 rounded', scoreColor(likelihood * impact))}>
+              {likelihood * impact}
+            </strong>
           </span>
         </div>
       </div>

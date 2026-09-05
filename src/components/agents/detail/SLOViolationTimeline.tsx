@@ -14,7 +14,10 @@ interface Props {
 const SEGMENTS = 14;
 
 export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick }: Props) {
-  const maxSeverity = Math.max(1, ...data.map((d) => d.p95Violations + d.p99Violations * 2 + d.errors * 2));
+  const maxSeverity = Math.max(
+    1,
+    ...data.map((d) => d.p95Violations + d.p99Violations * 2 + d.errors * 2),
+  );
   const dailyByDate = new Map(daily.map((d) => [d.date, d]));
 
   const handleClick = (date: string) => {
@@ -29,9 +32,17 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
           const severity = day.p95Violations + day.p99Violations * 2 + day.errors * 2;
           const filled = Math.min(SEGMENTS, Math.round((severity / maxSeverity) * SEGMENTS));
           const status: 'healthy' | 'warning' | 'critical' =
-            day.errors > 0 || day.p99Violations > 0 ? 'critical' : day.p95Violations > 0 ? 'warning' : 'healthy';
+            day.errors > 0 || day.p99Violations > 0
+              ? 'critical'
+              : day.p95Violations > 0
+                ? 'warning'
+                : 'healthy';
           const segColor =
-            status === 'critical' ? 'bg-destructive' : status === 'warning' ? 'bg-nexus-amber' : 'bg-nexus-emerald';
+            status === 'critical'
+              ? 'bg-destructive'
+              : status === 'warning'
+                ? 'bg-nexus-amber'
+                : 'bg-nexus-emerald';
           const totalViolations = day.p95Violations + day.p99Violations + day.errors;
 
           const handleViolationClick = (e: React.MouseEvent, kind: ViolationKind) => {
@@ -42,12 +53,17 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
           return (
             <Tooltip key={day.date}>
               <TooltipTrigger asChild>
-                {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- elemento com onClick + onKeyDown para navegação por teclado em timeline */}
+                {}
                 <div
                   role="button"
                   tabIndex={0}
                   onClick={() => handleClick(day.date)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(day.date); } }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleClick(day.date);
+                    }
+                  }}
                   className="
                     grid items-center gap-2 sm:gap-3 py-1.5 sm:py-1 px-2 -mx-2 rounded-md
                     hover:bg-secondary/40 cursor-pointer transition-colors
@@ -55,7 +71,9 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                     grid-cols-[40px_1fr] sm:grid-cols-[44px_1fr_auto]
                   "
                 >
-                  <span className="text-meta font-mono text-muted-foreground tabular-nums">{day.label}</span>
+                  <span className="text-meta font-mono text-muted-foreground tabular-nums">
+                    {day.label}
+                  </span>
 
                   {/* Strip — span full row on mobile (pills go on second row) */}
                   <div className="flex items-center gap-0.5 col-start-2 sm:col-auto" aria-hidden>
@@ -68,14 +86,18 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                   </div>
 
                   {/* Pills — stack below strip on mobile, sit inline on sm+ */}
-                  <div className="
+                  <div
+                    className="
                     flex items-center gap-1 flex-wrap
                     col-start-2 sm:col-auto
                     justify-start sm:justify-end
                     sm:min-w-[80px]
-                  ">
+                  "
+                  >
                     {totalViolations === 0 ? (
-                      <span className="text-meta tabular-nums text-muted-foreground">sem violações</span>
+                      <span className="text-meta tabular-nums text-muted-foreground">
+                        sem violações
+                      </span>
                     ) : (
                       <>
                         {day.p95Violations > 0 && (
@@ -118,17 +140,25 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
               </TooltipTrigger>
               <TooltipContent side="top" className="text-meta max-w-[280px]">
                 <div className="space-y-1">
-                  <p className="font-semibold">{day.label} · {day.total} trace{day.total !== 1 ? 's' : ''}</p>
+                  <p className="font-semibold">
+                    {day.label} · {day.total} trace{day.total !== 1 ? 's' : ''}
+                  </p>
 
                   <div className="pt-1 border-t border-border/50 space-y-0.5">
-                    <p className="text-meta uppercase tracking-wide text-muted-foreground font-semibold">Latência observada</p>
+                    <p className="text-meta uppercase tracking-wide text-muted-foreground font-semibold">
+                      Latência observada
+                    </p>
                     <div className="flex justify-between gap-3 font-mono">
                       <span className="text-muted-foreground">p50</span>
                       <span>{day.p50Ms}ms</span>
                     </div>
                     <div className="flex justify-between gap-3 font-mono">
                       <span className="text-muted-foreground">p95</span>
-                      <span className={day.p95Ms > day.thresholds.p95 ? 'text-nexus-amber font-semibold' : ''}>
+                      <span
+                        className={
+                          day.p95Ms > day.thresholds.p95 ? 'text-nexus-amber font-semibold' : ''
+                        }
+                      >
                         {day.p95Ms}ms
                       </span>
                     </div>
@@ -147,17 +177,25 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                       </p>
                       {day.matchedRules.includes('p95') && (
                         <p className="text-nexus-amber">
-                          ⚠ p95 &gt; {day.thresholds.p95}ms — {day.p95Violations} trace{day.p95Violations !== 1 ? 's' : ''}
+                          ⚠ p95 &gt; {day.thresholds.p95}ms — {day.p95Violations} trace
+                          {day.p95Violations !== 1 ? 's' : ''}
                           {day.p95Ms > day.thresholds.p95 && (
-                            <span className="text-muted-foreground"> (+{day.p95Ms - day.thresholds.p95}ms)</span>
+                            <span className="text-muted-foreground">
+                              {' '}
+                              (+{day.p95Ms - day.thresholds.p95}ms)
+                            </span>
                           )}
                         </p>
                       )}
                       {day.matchedRules.includes('p99') && (
                         <p className="text-destructive">
-                          ✕ p99 &gt; {day.thresholds.p99}ms — {day.p99Violations} trace{day.p99Violations !== 1 ? 's' : ''}
+                          ✕ p99 &gt; {day.thresholds.p99}ms — {day.p99Violations} trace
+                          {day.p99Violations !== 1 ? 's' : ''}
                           {day.maxLatencyMs > day.thresholds.p99 && (
-                            <span className="text-muted-foreground"> (+{day.maxLatencyMs - day.thresholds.p99}ms no pico)</span>
+                            <span className="text-muted-foreground">
+                              {' '}
+                              (+{day.maxLatencyMs - day.thresholds.p99}ms no pico)
+                            </span>
                           )}
                         </p>
                       )}
@@ -168,7 +206,9 @@ export function SLOViolationTimeline({ data, daily, onDayClick, onViolationClick
                       )}
                     </div>
                   ) : (
-                    <p className="pt-1 border-t border-border/50 text-nexus-emerald">✓ dentro dos SLOs</p>
+                    <p className="pt-1 border-t border-border/50 text-nexus-emerald">
+                      ✓ dentro dos SLOs
+                    </p>
                   )}
 
                   <p className="text-muted-foreground pt-1 border-t border-border/50 text-meta">

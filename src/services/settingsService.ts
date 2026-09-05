@@ -38,7 +38,9 @@ export interface Environment {
  * Returns workspace secrets with masked values (RPC handles masking).
  */
 export async function listMaskedSecrets(workspaceId: string): Promise<MaskedSecret[]> {
-  const { data, error } = await supabaseExternal.rpc('get_masked_secrets', { p_workspace_id: workspaceId });
+  const { data, error } = await supabaseExternal.rpc('get_masked_secrets', {
+    p_workspace_id: workspaceId,
+  });
   if (error) {
     logger.error('Failed to list masked secrets', { workspaceId, error: error.message });
     throw error;
@@ -59,9 +61,12 @@ export async function createWorkspaceSecret(params: {
     workspace_id: params.workspaceId,
     key_name: params.keyName,
     key_value: params.keyValue,
-  });
+  } as never);
   if (error) {
-    logger.error('Failed to create workspace secret', { keyName: params.keyName, error: error.message });
+    logger.error('Failed to create workspace secret', {
+      keyName: params.keyName,
+      error: error.message,
+    });
     throw error;
   }
 }
@@ -84,7 +89,7 @@ export async function rotateWorkspaceSecret(id: string, newValue: string): Promi
   if (!newValue.trim()) throw new Error('Novo valor é obrigatório');
   const { error } = await supabaseExternal
     .from('workspace_secrets')
-    .update({ encrypted_value: new TextEncoder().encode(newValue.trim()) } as Record<string, unknown>)
+    .update({ encrypted_value: new TextEncoder().encode(newValue.trim()) } as never)
     .eq('id', id);
   if (error) {
     logger.error('Failed to rotate workspace secret', { id, error: error.message });
@@ -145,10 +150,7 @@ export async function createEnvironment(workspaceId: string, name: string): Prom
  * Deletes an environment by id.
  */
 export async function deleteEnvironment(id: string): Promise<void> {
-  const { error } = await supabaseExternal
-    .from('environments')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabaseExternal.from('environments').delete().eq('id', id);
   if (error) {
     logger.error('Failed to delete environment', { id, error: error.message });
     throw error;

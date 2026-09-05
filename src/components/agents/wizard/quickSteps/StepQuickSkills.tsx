@@ -1,10 +1,22 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Wrench } from 'lucide-react';
+import { Wrench, Pin, Sparkles, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { MAX_PROMPT_SKILLS } from '@/lib/skills/promptSimulation';
+import {
+  evaluateInstallImpact,
+  trimSelectionToCap,
+  type NamedSkillRef,
+} from '@/lib/skills/installGuard';
 import { SkillsPickerPanel } from '@/components/skills/SkillsPickerPanel';
 import { SkillRecommendationsCard } from '@/components/skills/SkillRecommendationsCard';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { listSkills } from '@/services/skillsRegistryService';
 import { recommendSkills } from '@/services/skillRecommenderService';
+import { resolveQuickTypeTemplateIds } from '@/services/quickTypeTemplateMap';
+import { fetchAggregatedTemplateSkillLinks } from '@/services/templateSkillLinkService';
 
 interface StepQuickSkillsProps {
   mission: string;
@@ -28,16 +40,50 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
     staleTime: 60_000,
   });
 
+  // Templates da galeria equivalentes ao tipo escolhido no wizard rápido.
+  const templateIds = useMemo(() => resolveQuickTypeTemplateIds(role ?? ''), [role]);
+
+  // Curadoria herdada: reaproveita os vínculos já persistidos e revisados por
+  // um admin, em vez de depender só da similaridade textual da missão.
+  const { data: inherited = [] } = useQuery({
+    queryKey: ['quick_inherited_links', templateIds.join('|')],
+    queryFn: () => fetchAggregatedTemplateSkillLinks(templateIds, 5),
+    enabled: templateIds.length > 0,
+    staleTime: 60_000,
+    retry: false,
+  });
+
   const recommendations = useMemo(() => {
     if (!allSkills?.skills) return [];
-    return recommendSkills(
-      { mission: debouncedMission, role },
-      allSkills.skills,
-      5,
-    );
+    return recommendSkills({ mission: debouncedMission, role }, allSkills.skills, 5);
   }, [debouncedMission, role, allSkills]);
 
   const recommendedIds = recommendations.map((r) => r.skill.id);
+  const inheritedIds = inherited.map((l) => l.skillId);
+
+  // Guarda de teto: o compilador só injeta MAX_PROMPT_SKILLS nomes distintos.
+  // Projetamos a ocupação já na seleção para o operador não descobrir a perda
+  // depois que o agente estiver rodando pior sem explicação aparente.
+  const selectedRefs: NamedSkillRef[] = useMemo(() => {
+    const porId = new Map((allSkills?.skills ?? []).map((s) => [s.id, s.name] as const));
+    return selectedIds
+      .filter((id) => porId.has(id))
+      .map((id) => ({ id, name: porId.get(id) ?? '' }));
+  }, [selectedIds, allSkills]);
+
+  const capGuard = useMemo(
+    () =>
+      selectedRefs.length > 0
+        ? evaluateInstallImpact({ installed: [], selected: selectedRefs })
+        : null,
+    [selectedRefs],
+  );
+
+  const handleTrimToCap = () => {
+    const cabem = trimSelectionToCap({ installed: [], selected: selectedRefs });
+    const mantidos = new Set(cabem.map((s) => s.id));
+    onChange(selectedIds.filter((id) => mantidos.has(id)));
+  };
 
   const handleSelect = (id: string) => {
     if (selectedIds.includes(id)) onChange(selectedIds.filter((x) => x !== id));
@@ -47,6 +93,10 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
   const handleInstallAll = () => {
     const merged = Array.from(new Set([...selectedIds, ...recommendedIds]));
     onChange(merged);
+  };
+
+  const handleInstallInherited = () => {
+    onChange(Array.from(new Set([...selectedIds, ...inheritedIds])));
   };
 
   return (
@@ -64,6 +114,88 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
         </div>
       </div>
 
+      {capGuard && capGuard.effectiveAdds > 0 && capGuard.headroomAfter <= 5 && (
+        <div
+          className={cn(
+            'rounded-xl border p-3 text-body-sm flex items-start gap-2',
+            capGuard.additionalDropped > 0
+              ? 'border-destructive/40 bg-destructive/10 text-destructive'
+              : 'border-warning/40 bg-warning/10 text-foreground',
+          )}
+          role="status"
+        >
+          <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+          <div className="space-y-1">
+            <p className="font-medium">
+              {capGuard.projectedSlots}/{MAX_PROMPT_SKILLS} slots do prompt
+            </p>
+            <p className="text-muted-foreground">{capGuard.message}</p>
+            {capGuard.additionalDropped > 0 && (
+              <Button type="button" size="sm" variant="outline" onClick={handleTrimToCap}>
+                Manter só o que cabe
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {inherited.length > 0 && (
+        <section className="rounded-xl border border-nexus-purple/30 bg-nexus-purple/5 p-4 space-y-3">
+          <header className="flex items-start justify-between gap-3">
+            <div className="space-y-1">
+              <h3 className="text-body-sm font-bold text-foreground flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-nexus-purple" />
+                Herdadas de blueprints equivalentes
+              </h3>
+              <p className="text-meta text-muted-foreground">
+                Vínculos já curados para os templates da galeria com o mesmo perfil.
+              </p>
+            </div>
+            <Button type="button" size="sm" variant="outline" onClick={handleInstallInherited}>
+              Selecionar todas
+            </Button>
+          </header>
+
+          <ul className="space-y-2">
+            {inherited.map((l) => (
+              <li key={l.skillId} className="flex items-start gap-3">
+                <Checkbox
+                  id={`inherited-${l.skillId}`}
+                  checked={selectedIds.includes(l.skillId)}
+                  onCheckedChange={() => handleSelect(l.skillId)}
+                  aria-label={`Instalar skill ${l.skillName}`}
+                  className="mt-0.5"
+                />
+                <label
+                  htmlFor={`inherited-${l.skillId}`}
+                  className="flex-1 cursor-pointer space-y-0.5"
+                >
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="text-body-sm font-semibold text-foreground">
+                      {l.skillName}
+                    </span>
+                    {l.origin === 'manual' && (
+                      <Badge
+                        variant="outline"
+                        className="gap-1 text-[9px] uppercase font-bold border-nexus-purple/40 text-nexus-purple"
+                      >
+                        <Pin className="h-2.5 w-2.5" /> Curadoria
+                      </Badge>
+                    )}
+                    {l.templateCount > 1 && (
+                      <Badge variant="secondary" className="text-[9px] font-bold">
+                        {l.templateCount} blueprints
+                      </Badge>
+                    )}
+                  </span>
+                  <span className="block text-meta text-muted-foreground">{l.reason}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <SkillRecommendationsCard
         recommendations={recommendations}
         selectedIds={selectedIds}
@@ -74,7 +206,7 @@ export function StepQuickSkills({ mission, role, selectedIds, onChange }: StepQu
       <SkillsPickerPanel
         selectedIds={selectedIds}
         onChange={onChange}
-        recommendedIds={recommendedIds}
+        recommendedIds={Array.from(new Set([...recommendedIds, ...inheritedIds]))}
         emptyDescription="Nenhuma skill disponível — publique uma no /skills/composer."
       />
     </div>

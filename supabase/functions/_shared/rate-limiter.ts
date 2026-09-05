@@ -20,12 +20,20 @@ export interface RateLimitResult {
 
 export const RATE_LIMITS = {
   standard: { windowMs: 60_000, maxRequests: 30, name: 'standard' } as RateLimitConfig,
-  llm:      { windowMs: 60_000, maxRequests: 15, name: 'llm' } as RateLimitConfig,
-  heavy:    { windowMs: 60_000, maxRequests: 5,  name: 'heavy' } as RateLimitConfig,
-  auth:     { windowMs: 300_000, maxRequests: 10, name: 'auth' } as RateLimitConfig,
-  webhook:  { windowMs: 60_000, maxRequests: 60, name: 'webhook' } as RateLimitConfig,
-  datahub:  { windowMs: 60_000, maxRequests: 20, name: 'datahub' } as RateLimitConfig,
-  oracle:   { windowMs: 60_000, maxRequests: 3,  name: 'oracle' } as RateLimitConfig,
+  llm: { windowMs: 60_000, maxRequests: 15, name: 'llm' } as RateLimitConfig,
+  heavy: { windowMs: 60_000, maxRequests: 5, name: 'heavy' } as RateLimitConfig,
+  auth: { windowMs: 300_000, maxRequests: 10, name: 'auth' } as RateLimitConfig,
+  webhook: { windowMs: 60_000, maxRequests: 60, name: 'webhook' } as RateLimitConfig,
+  datahub: { windowMs: 60_000, maxRequests: 20, name: 'datahub' } as RateLimitConfig,
+  oracle: { windowMs: 60_000, maxRequests: 3, name: 'oracle' } as RateLimitConfig,
+  // `light` e `moderate` já eram usados por 8 funções (webhooks Bitrix/Slack/
+  // WhatsApp, smoke tests, rechunk) e não existiam aqui: o acesso resolvia
+  // para `undefined` e `checkRateLimit` lia `windowMs` de undefined —
+  // TypeError no primeiro request. Formalizados com os valores que o uso
+  // pressupõe: `light` para endpoints baratos de alta frequência (webhooks),
+  // `moderate` para trabalho de custo médio.
+  light: { windowMs: 60_000, maxRequests: 60, name: 'light' } as RateLimitConfig,
+  moderate: { windowMs: 60_000, maxRequests: 20, name: 'moderate' } as RateLimitConfig,
 } as const;
 
 // In-memory store: identifier -> timestamps[]
@@ -37,7 +45,7 @@ function cleanup(now: number) {
   if (now - lastCleanup < CLEANUP_INTERVAL) return;
   lastCleanup = now;
   for (const [key, timestamps] of store) {
-    const filtered = timestamps.filter(t => now - t < 300_000);
+    const filtered = timestamps.filter((t) => now - t < 300_000);
     if (filtered.length === 0) store.delete(key);
     else store.set(key, filtered);
   }
@@ -67,7 +75,7 @@ export function checkRateLimit(
 
   const timestamps = store.get(identifier) || [];
   const windowStart = now - config.windowMs;
-  const recent = timestamps.filter(t => t > windowStart);
+  const recent = timestamps.filter((t) => t > windowStart);
 
   if (recent.length >= config.maxRequests) {
     const oldest = recent[0];
@@ -99,11 +107,11 @@ export function checkRateLimit(
  */
 export function checkRateLimitFromRequest(
   req: Request,
-  options: { preset: keyof typeof RATE_LIMITS } | { config: RateLimitConfig } = { preset: 'standard' },
+  options: { preset: keyof typeof RATE_LIMITS } | { config: RateLimitConfig } = {
+    preset: 'standard',
+  },
 ): RateLimitResult {
-  const config = 'preset' in options
-    ? RATE_LIMITS[options.preset]
-    : options.config;
+  const config = 'preset' in options ? RATE_LIMITS[options.preset] : options.config;
   const identifier = getRateLimitIdentifier(req);
   return checkRateLimit(identifier, config);
 }
@@ -134,6 +142,31 @@ export function createRateLimitResponse(
         'X-RateLimit-Remaining': String(result.remaining),
         'X-RateLimit-Reset': String(Math.ceil(result.resetAt / 1000)),
       },
-    }
+    },
   );
+}
+
+/**
+ * Envelopa um handler aplicando rate limit antes de executá-lo.
+ *
+ * Existe porque o barril `mod.ts` já anunciava este símbolo: a falta dele
+ * derrubava o boot de TODA Edge Function que importa o barril, não só de quem
+ * usava rate limit. Preferi implementar o contrato prometido a apagá-lo — o
+ * padrão "limite antes do trabalho" é o correto para funções caras.
+ */
+export function withRateLimit(
+  handler: (req: Request) => Promise<Response> | Response,
+  options: { preset: keyof typeof RATE_LIMITS } | { config: RateLimitConfig } = {
+    preset: 'standard',
+  },
+  corsHeaders: Record<string, string> = {},
+): (req: Request) => Promise<Response> {
+  return async (req: Request): Promise<Response> => {
+    // Preflight não consome cota: navegador não escolhe emitir OPTIONS.
+    if (req.method === 'OPTIONS') return await handler(req);
+
+    const result = checkRateLimitFromRequest(req, options);
+    if (!result.allowed) return createRateLimitResponse(result, corsHeaders);
+    return await handler(req);
+  };
 }

@@ -2,7 +2,7 @@
  * Tracing — Exporters (fire-and-forget)
  */
 
-import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { fromTable } from '@/lib/supabaseExtended';
 import { logger } from '@/lib/logger';
 import type { TraceData } from './tracingTypes';
 
@@ -27,7 +27,7 @@ export async function exportToSupabase(trace: TraceData): Promise<void> {
         spans: trace.spans,
       },
     };
-    await (supabaseExternal.from('trace_events').insert as (...args: unknown[]) => unknown)(insertData);
+    await fromTable('trace_events').insert(insertData);
   } catch (err: unknown) {
     logger.error('Trace export to Supabase failed', {
       trace_id: trace.trace_id,
@@ -74,20 +74,17 @@ export async function exportToLangfuse(trace: TraceData): Promise<void> {
 }
 
 export async function exportUsageRecord(trace: TraceData): Promise<void> {
-  const totalCost = trace.spans.reduce(
-    (s, sp) => s + Number(sp.attributes['cost.usd'] ?? 0),
-    0
-  );
+  const totalCost = trace.spans.reduce((s, sp) => s + Number(sp.attributes['cost.usd'] ?? 0), 0);
   if (totalCost <= 0) return;
   const totalTokens = trace.spans.reduce(
     (s, sp) =>
       s +
       Number(sp.attributes['gen_ai.usage.input_tokens'] ?? 0) +
       Number(sp.attributes['gen_ai.usage.output_tokens'] ?? 0),
-    0
+    0,
   );
   try {
-    await (supabaseExternal.from('usage_records').insert as (...args: unknown[]) => unknown)({
+    await fromTable('usage_records').insert({
       agent_id: trace.agent_id,
       record_type: 'llm_call',
       cost_usd: totalCost,

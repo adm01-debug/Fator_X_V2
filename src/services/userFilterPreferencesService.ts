@@ -6,7 +6,7 @@ import { fromTable } from '@/lib/supabaseExtended';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 
-export type FilterScope = 'agent_traces';
+export type FilterScope = 'agent_traces' | 'skills_marketplace' | 'skill_demand';
 
 export async function getUserFilters<T = Record<string, unknown>>(
   scope: FilterScope,
@@ -36,11 +36,10 @@ export async function saveUserFilters<T = Record<string, unknown>>(
   const userId = userData.user?.id;
   if (!userId) return false;
   try {
-    const { error } = await fromTable('user_filter_preferences')
-      .upsert(
-        { user_id: userId, scope, filters, updated_at: new Date().toISOString() },
-        { onConflict: 'user_id,scope' },
-      );
+    const { error } = await fromTable('user_filter_preferences').upsert(
+      { user_id: userId, scope, filters, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id,scope' },
+    );
     if (error) throw error;
     return true;
   } catch (e) {

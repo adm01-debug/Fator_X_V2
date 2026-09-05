@@ -1,5 +1,5 @@
 -- Eval Suite tables
-CREATE TABLE public.agent_eval_datasets (
+CREATE TABLE IF NOT EXISTS public.agent_eval_datasets (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   agent_id UUID,
@@ -11,7 +11,7 @@ CREATE TABLE public.agent_eval_datasets (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.agent_eval_runs (
+CREATE TABLE IF NOT EXISTS public.agent_eval_runs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   dataset_id UUID NOT NULL REFERENCES public.agent_eval_datasets(id) ON DELETE CASCADE,
@@ -31,7 +31,7 @@ CREATE TABLE public.agent_eval_runs (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.agent_eval_results (
+CREATE TABLE IF NOT EXISTS public.agent_eval_results (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   run_id UUID NOT NULL REFERENCES public.agent_eval_runs(id) ON DELETE CASCADE,
   item_index INTEGER NOT NULL,

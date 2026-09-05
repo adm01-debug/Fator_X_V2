@@ -2,8 +2,7 @@ import type { OracleResult } from '@/stores/oracleStore';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
-/** jsPDF instance augmented by the jspdf-autotable plugin (no bundled types). */
-type JsPdfWithAutoTable = jsPDF & {
+type AutoTableDoc = jsPDF & {
   autoTable: (options: Record<string, unknown>) => void;
   lastAutoTable: { finalY: number };
 };
@@ -47,30 +46,48 @@ export function exportToMarkdown(
         lines.push(`<details><summary>💭 Raciocínio</summary>\n\n${r.thinking}\n</details>\n`);
       }
       lines.push(`${r.content}\n`);
-      lines.push(`- Tokens: ${r.tokens.total.toLocaleString()} | Custo: $${r.cost_usd.toFixed(4)} | Latência: ${(r.latency_ms / 1000).toFixed(1)}s\n`);
+      lines.push(
+        `- Tokens: ${r.tokens.total.toLocaleString()} | Custo: $${r.cost_usd.toFixed(4)} | Latência: ${(r.latency_ms / 1000).toFixed(1)}s\n`,
+      );
     });
   }
 
   if (results.consensus_points?.length) {
     lines.push(`## Mapa de Consenso`);
-    const models = [...new Set(results.consensus_points.flatMap(p => p.modelPositions?.map(mp => mp.model) || []))];
+    const models = [
+      ...new Set(
+        results.consensus_points.flatMap((p) => p.modelPositions?.map((mp) => mp.model) || []),
+      ),
+    ];
     if (models.length > 0) {
       const shortName = (m: string) => m.split('/').pop() || m;
       lines.push(`| Ponto | ${models.map(shortName).join(' | ')} | Status |`);
       lines.push(`|---|${models.map(() => '---|').join('')}---|`);
-      results.consensus_points.forEach(p => {
-        const posIcon: Record<string, string> = { agree: '✅', disagree: '❌', partially_agree: '⚠️', not_mentioned: '—' };
-        const levelIcon: Record<string, string> = { strong: '🟢', partial: '🟡', disputed: '🔴', unique: '🔵' };
-        const positions = models.map(m => {
-          const pos = p.modelPositions?.find(mp => mp.model === m);
+      results.consensus_points.forEach((p) => {
+        const posIcon: Record<string, string> = {
+          agree: '✅',
+          disagree: '❌',
+          partially_agree: '⚠️',
+          not_mentioned: '—',
+        };
+        const levelIcon: Record<string, string> = {
+          strong: '🟢',
+          partial: '🟡',
+          disputed: '🔴',
+          unique: '🔵',
+        };
+        const positions = models.map((m) => {
+          const pos = p.modelPositions?.find((mp) => mp.model === m);
           return posIcon[pos?.position || 'not_mentioned'];
         });
-        lines.push(`| ${p.claim} | ${positions.join(' | ')} | ${levelIcon[p.consensusLevel] || '—'} |`);
+        lines.push(
+          `| ${p.claim} | ${positions.join(' | ')} | ${levelIcon[p.consensusLevel] || '—'} |`,
+        );
       });
     } else {
-       results.consensus_points.forEach(p => {
-         lines.push(`- **${p.claim}**: ${p.consensusLevel}`);
-       });
+      results.consensus_points.forEach((p) => {
+        lines.push(`- **${p.claim}**: ${p.consensusLevel}`);
+      });
     }
     lines.push(``);
   }
@@ -94,16 +111,20 @@ export function exportToJson(
   mode: string,
   chairmanModel: string,
 ) {
-  return JSON.stringify({
-    metadata: {
-      exported_at: new Date().toISOString(),
-      mode,
-      preset: presetName,
-      chairman: chairmanModel,
+  return JSON.stringify(
+    {
+      metadata: {
+        exported_at: new Date().toISOString(),
+        mode,
+        preset: presetName,
+        chairman: chairmanModel,
+      },
+      query,
+      results,
     },
-    query,
-    results
-  }, null, 2);
+    null,
+    2,
+  );
 }
 
 // ═══ PDF EXPORT ═══
@@ -115,14 +136,14 @@ export function exportToPdf(
   mode: string,
   chairmanModel: string,
 ) {
-  const doc = new jsPDF() as JsPdfWithAutoTable;
+  const doc = new jsPDF() as AutoTableDoc;
   const date = new Date().toLocaleString('pt-BR');
 
   // Header
   doc.setFontSize(22);
   doc.setTextColor(40, 40, 40);
   doc.text('Relatorio de Auditoria - Oraculo', 14, 22);
-  
+
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
   doc.text(`Data: ${date}`, 14, 30);
@@ -155,7 +176,7 @@ export function exportToPdf(
   doc.text(queryLines, 14, finalY + 7);
 
   // Synthesis section
-  const synthesisY = finalY + (queryLines.length * 6) + 15;
+  const synthesisY = finalY + queryLines.length * 6 + 15;
   doc.setFontSize(14);
   doc.setTextColor(40, 40, 40);
   doc.text('Sintese do Presidente:', 14, synthesisY);
@@ -169,7 +190,7 @@ export function exportToPdf(
     doc.addPage();
     doc.setFontSize(16);
     doc.text('Respostas Individuais do Conselho', 14, 22);
-    
+
     results.stage1_results.forEach((r, i) => {
       doc.addPage();
       doc.setFontSize(16);
@@ -178,7 +199,7 @@ export function exportToPdf(
       doc.setFontSize(10);
       doc.setTextColor(100, 100, 100);
       doc.text(`Modelo: ${r.model}${r.failover ? ' (FAILOVER UTILIZADO)' : ''}`, 14, 27);
-      
+
       doc.autoTable({
         startY: 35,
         head: [['Atributo', 'Valor']],
@@ -195,7 +216,7 @@ export function exportToPdf(
       doc.setFontSize(12);
       doc.setTextColor(40, 40, 40);
       doc.text('Resposta:', 14, nextY);
-      
+
       doc.setFontSize(9);
       doc.setTextColor(60, 60, 60);
       const memberLines = doc.splitTextToSize(r.content, 180);

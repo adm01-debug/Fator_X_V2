@@ -27,15 +27,15 @@ CREATE INDEX IF NOT EXISTS idx_agent_memories_workspace ON public.agent_memories
 -- ═══ 2. PGVECTOR — Embeddings para RAG e Memória Semântica ═══
 CREATE EXTENSION IF NOT EXISTS vector;
 
-ALTER TABLE public.chunks ADD COLUMN IF NOT EXISTS embedding vector(1536);
+ALTER TABLE public.chunks ADD COLUMN IF NOT EXISTS embedding extensions.vector(1536);
 CREATE INDEX IF NOT EXISTS idx_chunks_embedding ON public.chunks USING hnsw (embedding vector_cosine_ops);
 
-ALTER TABLE public.agent_memories ADD COLUMN IF NOT EXISTS embedding vector(1536);
+ALTER TABLE public.agent_memories ADD COLUMN IF NOT EXISTS embedding extensions.vector(1536);
 CREATE INDEX IF NOT EXISTS idx_memories_embedding ON public.agent_memories USING hnsw (embedding vector_cosine_ops);
 
 -- Semantic search function for RAG
 CREATE OR REPLACE FUNCTION public.match_chunks(
-  query_embedding vector(1536),
+  query_embedding extensions.vector(1536),
   match_count INT DEFAULT 5,
   match_threshold FLOAT DEFAULT 0.7,
   filter_kb_id UUID DEFAULT NULL
@@ -73,7 +73,7 @@ $$;
 
 -- Semantic search for memories
 CREATE OR REPLACE FUNCTION public.match_memories(
-  query_embedding vector(1536),
+  query_embedding extensions.vector(1536),
   p_agent_id UUID,
   match_count INT DEFAULT 5,
   match_threshold FLOAT DEFAULT 0.6

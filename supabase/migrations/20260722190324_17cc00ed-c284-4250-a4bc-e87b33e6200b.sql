@@ -1,7 +1,7 @@
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
-CREATE TABLE public.notebook_notes (
+CREATE TABLE IF NOT EXISTS public.notebook_notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   collection_id UUID NOT NULL REFERENCES public.collections(id) ON DELETE CASCADE,
@@ -14,10 +14,10 @@ CREATE TABLE public.notebook_notes (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_notebook_notes_collection ON public.notebook_notes(collection_id);
-CREATE INDEX idx_notebook_notes_workspace ON public.notebook_notes(workspace_id);
-CREATE INDEX idx_notebook_notes_title_trgm ON public.notebook_notes USING gin (title public.gin_trgm_ops);
-CREATE INDEX idx_notebook_notes_tags ON public.notebook_notes USING gin (tags);
+CREATE INDEX IF NOT EXISTS idx_notebook_notes_collection ON public.notebook_notes(collection_id);
+CREATE INDEX IF NOT EXISTS idx_notebook_notes_workspace ON public.notebook_notes(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_notebook_notes_title_trgm ON public.notebook_notes USING gin (title public.gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_notebook_notes_tags ON public.notebook_notes USING gin (tags);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.notebook_notes TO authenticated;
 GRANT ALL ON public.notebook_notes TO service_role;
@@ -38,7 +38,7 @@ CREATE TRIGGER update_notebook_notes_updated_at
   BEFORE UPDATE ON public.notebook_notes
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
-CREATE TABLE public.knowledge_links (
+CREATE TABLE IF NOT EXISTS public.knowledge_links (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   source_type TEXT NOT NULL CHECK (source_type IN ('note','document','entity','chunk')),
@@ -52,10 +52,10 @@ CREATE TABLE public.knowledge_links (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_knowledge_links_source ON public.knowledge_links(source_type, source_id);
-CREATE INDEX idx_knowledge_links_target ON public.knowledge_links(target_type, target_id);
-CREATE INDEX idx_knowledge_links_workspace ON public.knowledge_links(workspace_id);
-CREATE INDEX idx_knowledge_links_kind ON public.knowledge_links(link_kind);
+CREATE INDEX IF NOT EXISTS idx_knowledge_links_source ON public.knowledge_links(source_type, source_id);
+CREATE INDEX IF NOT EXISTS idx_knowledge_links_target ON public.knowledge_links(target_type, target_id);
+CREATE INDEX IF NOT EXISTS idx_knowledge_links_workspace ON public.knowledge_links(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_knowledge_links_kind ON public.knowledge_links(link_kind);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.knowledge_links TO authenticated;
 GRANT ALL ON public.knowledge_links TO service_role;

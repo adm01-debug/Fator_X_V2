@@ -5,7 +5,7 @@ CREATE TYPE public.bcp_system_status AS ENUM ('operational','degraded','down','r
 CREATE TYPE public.bcp_test_type AS ENUM ('tabletop','walkthrough','simulation','full_failover');
 
 -- business_systems
-CREATE TABLE public.business_systems (
+CREATE TABLE IF NOT EXISTS public.business_systems (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -49,7 +49,7 @@ CREATE TRIGGER trg_business_systems_updated
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- bcp_test_runs
-CREATE TABLE public.bcp_test_runs (
+CREATE TABLE IF NOT EXISTS public.bcp_test_runs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   system_id UUID NOT NULL REFERENCES public.business_systems(id) ON DELETE CASCADE,
   test_type public.bcp_test_type NOT NULL DEFAULT 'tabletop',

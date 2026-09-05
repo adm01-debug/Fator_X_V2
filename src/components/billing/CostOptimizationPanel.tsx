@@ -6,15 +6,23 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Lightbulb, TrendingDown, ArrowRight, Zap, DollarSign, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import {
+  Lightbulb,
+  TrendingDown,
+  ArrowRight,
+  Zap,
+  DollarSign,
+  AlertTriangle,
+  CheckCircle2,
+} from 'lucide-react';
 import { getAgentUsage, getModelPricing } from '@/services/billingService';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import type { DbRow } from '@/types/dbRow';
 
 interface Recommendation {
   id: string;
-  type: 'model_downgrade' | 'cache_opportunity' | 'idle_agent' | 'budget_alert' | 'batch_optimization';
+  type:
+    'model_downgrade' | 'cache_opportunity' | 'idle_agent' | 'budget_alert' | 'batch_optimization';
   severity: 'high' | 'medium' | 'low';
   title: string;
   description: string;
@@ -25,8 +33,14 @@ interface Recommendation {
 
 export function CostOptimizationPanel() {
   const navigate = useNavigate();
-  const { data: usage = [] } = useQuery({ queryKey: ['agent_usage_opt'], queryFn: () => getAgentUsage(30) });
-  useQuery({ queryKey: ['model_pricing_opt'], queryFn: getModelPricing });
+  const { data: usage = [] } = useQuery({
+    queryKey: ['agent_usage_opt'],
+    queryFn: () => getAgentUsage(30),
+  });
+  const { data: pricing = [] } = useQuery({
+    queryKey: ['model_pricing_opt'],
+    queryFn: getModelPricing,
+  });
   const { data: agents = [] } = useQuery({
     queryKey: ['agents_for_opt'],
     queryFn: async () => {
@@ -46,10 +60,10 @@ export function CostOptimizationPanel() {
       'gemini-2.5-pro': 'gemini-2.5-flash (-80% custo)',
     };
 
-    agents.forEach(agent => {
+    agents.forEach((agent) => {
       if (agent.status === 'production' || agent.status === 'monitoring') {
         const model = agent.model || '';
-        const match = expensiveModels.find(m => model.includes(m));
+        const match = expensiveModels.find((m) => model.includes(m));
         if (match) {
           recs.push({
             id: `downgrade-${agent.id}`,
@@ -68,7 +82,7 @@ export function CostOptimizationPanel() {
     // 2. Detect idle agents (in production but no usage in 7+ days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    agents.forEach(agent => {
+    agents.forEach((agent) => {
       if ((agent.status === 'production' || agent.status === 'staging') && agent.updated_at) {
         const lastUpdate = new Date(agent.updated_at);
         if (lastUpdate < sevenDaysAgo) {
@@ -80,7 +94,8 @@ export function CostOptimizationPanel() {
               type: 'idle_agent',
               severity: 'medium',
               title: `"${agent.name}" parece inativo`,
-              description: 'Nenhum uso nos últimos 7 dias. Considere mover para staging ou arquivar para economizar recursos.',
+              description:
+                'Nenhum uso nos últimos 7 dias. Considere mover para staging ou arquivar para economizar recursos.',
               actionLabel: 'Gerenciar',
               actionPath: `/builder/${agent.id}`,
             });
@@ -101,7 +116,7 @@ export function CostOptimizationPanel() {
 
     agentUsageMap.forEach((stats, agentId) => {
       if (stats.requests > 10 && stats.errors / stats.requests > 0.15) {
-        const agent = agents.find(a => a.id === agentId);
+        const agent = agents.find((a) => a.id === agentId);
         recs.push({
           id: `errors-${agentId}`,
           type: 'batch_optimization',
@@ -122,14 +137,16 @@ export function CostOptimizationPanel() {
         type: 'cache_opportunity',
         severity: 'low',
         title: 'Dica: Habilite cache de respostas',
-        description: 'Respostas idênticas para consultas repetidas podem ser cacheadas para reduzir custos em até 30%.',
+        description:
+          'Respostas idênticas para consultas repetidas podem ser cacheadas para reduzir custos em até 30%.',
       });
     }
 
     return recs;
-  }, [agents, usage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+  }, [agents, usage, pricing]);
 
-  const totalSavings = recommendations.filter(r => r.severity === 'high').length;
+  const totalSavings = recommendations.filter((r) => r.severity === 'high').length;
   const severityColors = {
     high: 'bg-destructive/10 text-destructive border-destructive/20',
     medium: 'bg-nexus-amber/10 text-nexus-amber border-nexus-amber/20',
@@ -155,13 +172,14 @@ export function CostOptimizationPanel() {
         </div>
         {totalSavings > 0 && (
           <Badge className="bg-nexus-amber/10 text-nexus-amber border-nexus-amber/20 text-meta gap-1">
-            <Zap className="h-3 w-3" /> {totalSavings} ação{totalSavings > 1 ? 'ões' : ''} prioritária{totalSavings > 1 ? 's' : ''}
+            <Zap className="h-3 w-3" /> {totalSavings} ação{totalSavings > 1 ? 'ões' : ''}{' '}
+            prioritária{totalSavings > 1 ? 's' : ''}
           </Badge>
         )}
       </div>
 
       <div className="space-y-3">
-        {recommendations.map(rec => (
+        {recommendations.map((rec) => (
           <div key={rec.id} className={`rounded-lg border p-3 ${severityColors[rec.severity]}`}>
             <div className="flex items-start gap-3">
               <div className="shrink-0 mt-0.5">{severityIcons[rec.severity]}</div>

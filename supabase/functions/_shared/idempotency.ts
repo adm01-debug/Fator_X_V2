@@ -60,7 +60,7 @@ export async function buildWebhookDedupKey(
 
   // Strategy 3: Body hash (stable, collision-resistant)
   try {
-    const body = rawBody ?? await req.text();
+    const body = rawBody ?? (await req.text());
     if (body && body !== '{}' && body !== '[]') {
       const hash = await sha256Hex(body);
       return `webhook:${webhookId}:bodyhash:${hash}`;
@@ -96,7 +96,13 @@ export async function checkIdempotency(
   const client = supabaseClient as {
     from: (t: string) => {
       select: (cols: string) => {
-        eq: (k: string, v: unknown) => { single: () => Promise<{ data: Record<string, unknown>; error: { code?: string } | null }> };
+        eq: (
+          k: string,
+          v: unknown,
+        ) => {
+          single: () => Promise<{ data: Record<string, unknown>; error: { code?: string } | null }>;
+        };
+      };
     };
   };
 
@@ -133,10 +139,7 @@ export async function checkIdempotency(
  * Returns true if this instance won the race (should process).
  * Returns false if another instance already claimed this key.
  */
-export async function claimIdempotencyKey(
-  supabase: unknown,
-  key: string,
-): Promise<boolean> {
+export async function claimIdempotencyKey(supabase: unknown, key: string): Promise<boolean> {
   if (!key) return true; // no key = no dedup
   const client = supabase as {
     from: (t: string) => {
@@ -195,14 +198,12 @@ export async function saveIdempotency(
     };
   };
 
-  const { error } = await client
-    .from('idempotency_keys')
-    .insert({
-      key,
-      status_code: statusCode,
-      response_body: responseBody,
-      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    });
+  const { error } = await client.from('idempotency_keys').insert({
+    key,
+    status_code: statusCode,
+    response_body: responseBody,
+    expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  });
 
   if (error && error.code !== '23505') {
     console.error('[idempotency] save error:', error);
@@ -247,11 +248,8 @@ export async function saveWebhookIdempotency(
 // ──────────────────────────────────────────────────────────────────────────────
 
 async function sha256Hex(text: string): Promise<string> {
-  const buf = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(text),
-  );
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(buf))
-    .map(b => b.toString(16).padStart(2, '0'))
+    .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
 }

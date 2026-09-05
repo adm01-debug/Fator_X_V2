@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { Json } from '@/integrations/supabase/types';
-import type { TablesUpdate } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 import type { DbRow } from '@/types/dbRow';
 
@@ -61,7 +59,13 @@ export function useAgentWorkflows(agentId?: string) {
   });
 
   const createWorkflow = useMutation({
-    mutationFn: async (input: { name: string; description?: string; workspace_id: string; nodes?: DbRow[]; edges?: DbRow[] }) => {
+    mutationFn: async (input: {
+      name: string;
+      description?: string;
+      workspace_id: string;
+      nodes?: DbRow[];
+      edges?: DbRow[];
+    }) => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error('Não autenticado');
       const { data, error } = await supabase
@@ -71,8 +75,8 @@ export function useAgentWorkflows(agentId?: string) {
           workspace_id: input.workspace_id,
           name: input.name,
           description: input.description,
-          nodes: (input.nodes ?? []) as unknown as Json,
-          edges: (input.edges ?? []) as unknown as Json,
+          nodes: (input.nodes ?? []) as never,
+          edges: (input.edges ?? []) as never,
           created_by: u.user.id,
         })
         .select()
@@ -88,9 +92,19 @@ export function useAgentWorkflows(agentId?: string) {
   });
 
   const updateWorkflow = useMutation({
-    mutationFn: async (input: { id: string; nodes?: DbRow[]; edges?: DbRow[]; name?: string; description?: string; status?: string }) => {
+    mutationFn: async (input: {
+      id: string;
+      nodes?: DbRow[];
+      edges?: DbRow[];
+      name?: string;
+      description?: string;
+      status?: string;
+    }) => {
       const { id, ...patch } = input;
-      const { error } = await supabase.from('agent_workflows').update(patch as unknown as TablesUpdate<'agent_workflows'>).eq('id', id);
+      const { error } = await supabase
+        .from('agent_workflows')
+        .update(patch as never)
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

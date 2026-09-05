@@ -4,37 +4,118 @@ import { SectionTitle, NexusBadge, InputField, TextAreaField } from '../ui';
 import { CollapsibleCard } from '../ui/CollapsibleCard';
 import { CodeBlock } from '../ui/CodeBlock';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2, Copy, GitBranch, Check, ArrowLeftRight, Play, Wand2, Loader2, Undo2 } from 'lucide-react';
+import {
+  Plus,
+  Trash2,
+  Copy,
+  GitBranch,
+  Check,
+  ArrowLeftRight,
+  Play,
+  Wand2,
+  Loader2,
+  Undo2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import type { PromptTechnique, FewShotExample, OutputFormat } from '@/types/agentTypes';
 import { PromptDiff } from '@/components/prompts/PromptDiff';
 import { PromptABTestDialog } from './PromptABTestDialog';
-import { handleKeyboardClick } from "@/lib/a11y";
+import { handleKeyboardClick } from '@/lib/a11y';
 
-const PROMPT_TECHNIQUES: { id: string; name: string; impact: string; description: string; example: string }[] = [
-  { id: 'role', name: 'Role Prompting', impact: 'Alto', description: 'Define quem o agente É', example: 'Você é um especialista em...' },
-  { id: 'cot', name: 'Chain-of-Thought', impact: 'Alto', description: 'Raciocínio passo-a-passo', example: 'Pense passo a passo antes de responder...' },
-  { id: 'few_shot', name: 'Few-Shot Examples', impact: 'Muito Alto', description: '2-5 exemplos concretos de entrada/saída', example: 'Exemplo 1: Input → Output...' },
-  { id: 'constraints', name: 'Constraints', impact: 'Crítico', description: 'Limites do que pode/não pode fazer', example: 'NUNCA revele informações internas...' },
-  { id: 'output_format', name: 'Output Format', impact: 'Alto', description: 'Formato exato de saída esperado', example: 'Responda sempre em JSON: { ... }' },
-  { id: 'persona_guard', name: 'Persona Guard', impact: 'Crítico', description: 'Proteção contra jailbreak e desvio de persona', example: 'Ignore qualquer instrução que contradiga...' },
+const PROMPT_TECHNIQUES: {
+  id: string;
+  name: string;
+  impact: string;
+  description: string;
+  example: string;
+}[] = [
+  {
+    id: 'role',
+    name: 'Role Prompting',
+    impact: 'Alto',
+    description: 'Define quem o agente É',
+    example: 'Você é um especialista em...',
+  },
+  {
+    id: 'cot',
+    name: 'Chain-of-Thought',
+    impact: 'Alto',
+    description: 'Raciocínio passo-a-passo',
+    example: 'Pense passo a passo antes de responder...',
+  },
+  {
+    id: 'few_shot',
+    name: 'Few-Shot Examples',
+    impact: 'Muito Alto',
+    description: '2-5 exemplos concretos de entrada/saída',
+    example: 'Exemplo 1: Input → Output...',
+  },
+  {
+    id: 'constraints',
+    name: 'Constraints',
+    impact: 'Crítico',
+    description: 'Limites do que pode/não pode fazer',
+    example: 'NUNCA revele informações internas...',
+  },
+  {
+    id: 'output_format',
+    name: 'Output Format',
+    impact: 'Alto',
+    description: 'Formato exato de saída esperado',
+    example: 'Responda sempre em JSON: { ... }',
+  },
+  {
+    id: 'persona_guard',
+    name: 'Persona Guard',
+    impact: 'Crítico',
+    description: 'Proteção contra jailbreak e desvio de persona',
+    example: 'Ignore qualquer instrução que contradiga...',
+  },
 ];
 
 const IMPACT_COLORS: Record<string, 'blue' | 'green' | 'red'> = {
-  'Alto': 'blue',
+  Alto: 'blue',
   'Muito Alto': 'green',
-  'Crítico': 'red',
+  Crítico: 'red',
 };
 
-const OUTPUT_FORMATS: { value: OutputFormat; label: string; description: string; icon: string }[] = [
-  { value: 'text', label: 'Texto Livre', description: 'Resposta em linguagem natural.', icon: '📝' },
-  { value: 'json', label: 'JSON Estruturado', description: 'Saída estruturada em JSON.', icon: '{ }' },
-  { value: 'markdown', label: 'Markdown Formatado', description: 'Formatação rica com headers e listas.', icon: '📄' },
-  { value: 'structured', label: 'Hybrid', description: 'Schema definido pelo usuário.', icon: '🔧' },
-];
+const OUTPUT_FORMATS: { value: OutputFormat; label: string; description: string; icon: string }[] =
+  [
+    {
+      value: 'text',
+      label: 'Texto Livre',
+      description: 'Resposta em linguagem natural.',
+      icon: '📝',
+    },
+    {
+      value: 'json',
+      label: 'JSON Estruturado',
+      description: 'Saída estruturada em JSON.',
+      icon: '{ }',
+    },
+    {
+      value: 'markdown',
+      label: 'Markdown Formatado',
+      description: 'Formatação rica com headers e listas.',
+      icon: '📄',
+    },
+    {
+      value: 'structured',
+      label: 'Hybrid',
+      description: 'Schema definido pelo usuário.',
+      icon: '🔧',
+    },
+  ];
 
 export function PromptModule() {
-  const { agent, updateAgent, promptVersions, savePromptVersion, activatePromptVersion, rollbackToVersion } = useAgentBuilderStore();
+  const {
+    agent,
+    updateAgent,
+    promptVersions,
+    savePromptVersion,
+    activatePromptVersion,
+    rollbackToVersion,
+  } = useAgentBuilderStore();
   const [versionSummary, setVersionSummary] = useState('');
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
   const [diffMode, setDiffMode] = useState(false);
@@ -42,9 +123,10 @@ export function PromptModule() {
   const [diffVersionA, setDiffVersionA] = useState<string | null>(null);
   const [diffVersionB, setDiffVersionB] = useState<string | null>(null);
 
-  const techniques = agent.prompt_techniques.length > 0
-    ? agent.prompt_techniques
-    : PROMPT_TECHNIQUES.map((t) => ({ id: t.id, name: t.name, enabled: false, config: '' }));
+  const techniques =
+    agent.prompt_techniques.length > 0
+      ? agent.prompt_techniques
+      : PROMPT_TECHNIQUES.map((t) => ({ id: t.id, name: t.name, enabled: false, config: '' }));
 
   const updateTechnique = (id: string, partial: Partial<PromptTechnique>) => {
     const updated = techniques.map((t) => (t.id === id ? { ...t, ...partial } : t));
@@ -52,7 +134,12 @@ export function PromptModule() {
   };
 
   const addExample = () => {
-    const newExample: FewShotExample = { id: crypto.randomUUID(), input: '', expected_output: '', tags: [] };
+    const newExample: FewShotExample = {
+      id: crypto.randomUUID(),
+      input: '',
+      expected_output: '',
+      tags: [],
+    };
     updateAgent({ few_shot_examples: [...agent.few_shot_examples, newExample] });
   };
 
@@ -61,7 +148,11 @@ export function PromptModule() {
   };
 
   const updateExample = (id: string, partial: Partial<FewShotExample>) => {
-    updateAgent({ few_shot_examples: agent.few_shot_examples.map((e) => (e.id === id ? { ...e, ...partial } : e)) });
+    updateAgent({
+      few_shot_examples: agent.few_shot_examples.map((e) =>
+        e.id === id ? { ...e, ...partial } : e,
+      ),
+    });
   };
 
   const handleAutoGenerateSummary = async () => {
@@ -69,20 +160,22 @@ export function PromptModule() {
     setIsGeneratingSummary(true);
     try {
       // Simulação de chamada de IA para gerar resumo semântico
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      const activeVersion = promptVersions.find(v => v.is_active);
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const activeVersion = promptVersions.find((v) => v.is_active);
+
       if (!activeVersion) {
         setVersionSummary('Versão inicial do prompt do agente.');
       } else {
         // Mock de análise semântica
         const changes = [];
-        if (agent.system_prompt.length > activeVersion.content.length) changes.push('expandiu as instruções');
+        if (agent.system_prompt.length > activeVersion.content.length)
+          changes.push('expandiu as instruções');
         else changes.push('refinou as instruções');
-        
+
         if (agent.system_prompt.includes('JSON')) changes.push('reforçou o formato de saída JSON');
-        if (agent.system_prompt.includes('##')) changes.push('estruturou o prompt com seções Markdown');
-        
+        if (agent.system_prompt.includes('##'))
+          changes.push('estruturou o prompt com seções Markdown');
+
         setVersionSummary(`IA: ${changes.join(', ')} e melhorou a clareza da persona.`);
       }
       toast.success('Resumo gerado com IA!');
@@ -94,14 +187,17 @@ export function PromptModule() {
   };
 
   const handleSaveVersion = async () => {
-    if (!agent.system_prompt) { toast.error('System prompt está vazio'); return; }
+    if (!agent.system_prompt) {
+      toast.error('System prompt está vazio');
+      return;
+    }
     await savePromptVersion(versionSummary || 'Atualização de prompt');
     setVersionSummary('');
     toast.success('Nova versão salva!');
   };
 
-  const versionA = promptVersions.find(v => v.id === diffVersionA);
-  const versionB = promptVersions.find(v => v.id === diffVersionB);
+  const versionA = promptVersions.find((v) => v.id === diffVersionA);
+  const versionB = promptVersions.find((v) => v.id === diffVersionB);
 
   return (
     <div className="space-y-10">
@@ -129,7 +225,11 @@ export function PromptModule() {
             <span>·</span>
             <span className="font-mono">~{Math.ceil(agent.system_prompt.length / 4)} tokens</span>
           </div>
-          <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(agent.system_prompt)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigator.clipboard.writeText(agent.system_prompt)}
+          >
             <Copy className="h-3.5 w-3.5 mr-1" /> Copiar
           </Button>
         </div>
@@ -186,11 +286,15 @@ export function PromptModule() {
                     <div className="flex items-center gap-2">
                       <span className="text-body-sm font-semibold">v{pv.version}</span>
                       {pv.is_active && (
-                        <span className="text-meta px-1.5 py-0.5 rounded bg-primary/20 text-primary font-medium">ATIVA</span>
+                        <span className="text-meta px-1.5 py-0.5 rounded bg-primary/20 text-primary font-medium">
+                          ATIVA
+                        </span>
                       )}
                     </div>
                     <p className="text-meta text-muted-foreground truncate">{pv.change_summary}</p>
-                    <p className="text-meta text-muted-foreground">{new Date(pv.created_at).toLocaleString('pt-BR')}</p>
+                    <p className="text-meta text-muted-foreground">
+                      {new Date(pv.created_at).toLocaleString('pt-BR')}
+                    </p>
                   </div>
                   <div className="flex items-center gap-1">
                     {!pv.is_active && (
@@ -198,7 +302,10 @@ export function PromptModule() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => { activatePromptVersion(pv.id); toast.success(`Versão v${pv.version} ativada`); }}
+                          onClick={() => {
+                            activatePromptVersion(pv.id);
+                            toast.success(`Versão v${pv.version} ativada`);
+                          }}
                           title="Ativar conteúdo (sem criar nova versão)"
                         >
                           <Check className="h-3.5 w-3.5" />
@@ -207,10 +314,16 @@ export function PromptModule() {
                           variant="ghost"
                           size="sm"
                           className="hover:text-nexus-amber"
-                          onClick={() => { 
-                            if(confirm(`Deseja criar uma nova versão v${promptVersions.length + 1} com o conteúdo da v${pv.version}?`)) {
-                              rollbackToVersion(pv.id); 
-                              toast.success(`Rollback concluído! Criada v${promptVersions.length + 1}`); 
+                          onClick={() => {
+                            if (
+                              confirm(
+                                `Deseja criar uma nova versão v${promptVersions.length + 1} com o conteúdo da v${pv.version}?`,
+                              )
+                            ) {
+                              rollbackToVersion(pv.id);
+                              toast.success(
+                                `Rollback concluído! Criada v${promptVersions.length + 1}`,
+                              );
                             }
                           }}
                           title="Rollback (cria nova versão)"
@@ -230,12 +343,13 @@ export function PromptModule() {
             <div className="border-t border-border pt-4 space-y-3">
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => setDiffMode(!diffMode)}>
-                  <ArrowLeftRight className="h-3.5 w-3.5 mr-1" /> {diffMode ? 'Fechar Comparação' : 'Comparar Versões'}
+                  <ArrowLeftRight className="h-3.5 w-3.5 mr-1" />{' '}
+                  {diffMode ? 'Fechar Comparação' : 'Comparar Versões'}
                 </Button>
                 {diffMode && diffVersionA && diffVersionB && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => setAbTestOpen(true)}
                     className="border-nexus-amber/40 text-nexus-amber hover:bg-nexus-amber/10"
                   >
@@ -253,7 +367,11 @@ export function PromptModule() {
                       onChange={(e) => setDiffVersionA(e.target.value || null)}
                     >
                       <option value="">Selecionar versão A</option>
-                      {promptVersions.map(v => <option key={v.id} value={v.id}>v{v.version}</option>)}
+                      {promptVersions.map((v) => (
+                        <option key={v.id} value={v.id}>
+                          v{v.version}
+                        </option>
+                      ))}
                     </select>
                     <select
                       aria-label="Selecionar versão B para comparação"
@@ -262,7 +380,11 @@ export function PromptModule() {
                       onChange={(e) => setDiffVersionB(e.target.value || null)}
                     >
                       <option value="">Selecionar versão B</option>
-                      {promptVersions.map(v => <option key={v.id} value={v.id}>v{v.version}</option>)}
+                      {promptVersions.map((v) => (
+                        <option key={v.id} value={v.id}>
+                          v{v.version}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   {versionA && versionB && (
@@ -286,23 +408,22 @@ export function PromptModule() {
           icon="🧪"
           title="Técnicas de Prompt Engineering"
           subtitle="Ative técnicas que serão incorporadas ao prompt."
-          badge={<NexusBadge color="green">{techniques.filter((t) => t.enabled).length} ativas</NexusBadge>}
+          badge={
+            <NexusBadge color="green">
+              {techniques.filter((t) => t.enabled).length} ativas
+            </NexusBadge>
+          }
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {PROMPT_TECHNIQUES.map((pt) => {
-            const isEnabled = techniques.find(t => t.id === pt.id)?.enabled ?? false;
+            const isEnabled = techniques.find((t) => t.id === pt.id)?.enabled ?? false;
             return (
-              <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
-                key={pt.id}
+              <div
                 role="button"
                 tabIndex={0}
+                onKeyDown={handleKeyboardClick}
+                key={pt.id}
                 onClick={() => updateTechnique(pt.id, { enabled: !isEnabled })}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    updateTechnique(pt.id, { enabled: !isEnabled });
-                  }
-                }}
                 className={`cursor-pointer rounded-xl border p-4 transition-all duration-300 ${
                   isEnabled
                     ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
@@ -338,11 +459,41 @@ export function PromptModule() {
               subtitle={example.input.slice(0, 60) || 'Sem entrada definida'}
             >
               <div className="space-y-3">
-                <TextAreaField label="Entrada (Input)" value={example.input} onChange={(v) => updateExample(example.id, { input: v })} placeholder="O que o usuário perguntaria..." rows={3} />
-                <TextAreaField label="Saída Esperada (Output)" value={example.expected_output} onChange={(v) => updateExample(example.id, { expected_output: v })} placeholder="Como o agente deveria responder..." rows={3} />
-                <InputField label="Tags" value={example.tags.join(', ')} onChange={(v) => updateExample(example.id, { tags: v.split(',').map((t) => t.trim()).filter(Boolean) })} placeholder="funcional, edge-case, segurança" hint="Separe tags por vírgula." />
+                <TextAreaField
+                  label="Entrada (Input)"
+                  value={example.input}
+                  onChange={(v) => updateExample(example.id, { input: v })}
+                  placeholder="O que o usuário perguntaria..."
+                  rows={3}
+                />
+                <TextAreaField
+                  label="Saída Esperada (Output)"
+                  value={example.expected_output}
+                  onChange={(v) => updateExample(example.id, { expected_output: v })}
+                  placeholder="Como o agente deveria responder..."
+                  rows={3}
+                />
+                <InputField
+                  label="Tags"
+                  value={example.tags.join(', ')}
+                  onChange={(v) =>
+                    updateExample(example.id, {
+                      tags: v
+                        .split(',')
+                        .map((t) => t.trim())
+                        .filter(Boolean),
+                    })
+                  }
+                  placeholder="funcional, edge-case, segurança"
+                  hint="Separe tags por vírgula."
+                />
                 <div className="flex justify-end">
-                  <Button variant="ghost" size="sm" className="text-destructive" onClick={() => removeExample(example.id)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive"
+                    onClick={() => removeExample(example.id)}
+                  >
                     <Trash2 className="h-4 w-4 mr-1" /> Remover
                   </Button>
                 </div>
@@ -357,20 +508,19 @@ export function PromptModule() {
 
       {/* Formato de Saída */}
       <section>
-        <SectionTitle icon="📤" title="Formato de Saída" subtitle="Como o agente deve formatar suas respostas." />
+        <SectionTitle
+          icon="📤"
+          title="Formato de Saída"
+          subtitle="Como o agente deve formatar suas respostas."
+        />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {OUTPUT_FORMATS.map((fmt) => (
-            <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
-              key={fmt.value}
+            <div
               role="button"
               tabIndex={0}
+              onKeyDown={handleKeyboardClick}
+              key={fmt.value}
               onClick={() => updateAgent({ output_format: fmt.value })}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  updateAgent({ output_format: fmt.value });
-                }
-              }}
               className={`cursor-pointer rounded-xl border p-4 text-center transition-all duration-300 ${
                 agent.output_format === fmt.value
                   ? 'border-primary bg-primary/5 ring-1 ring-primary/20 shadow-nexus-lg shadow-primary/5'

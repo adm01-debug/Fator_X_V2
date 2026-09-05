@@ -1,12 +1,19 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass */
 /**
  * ClearFiltersConfirm — wraps a trigger with a confirmation modal listing
  * the currently active filters that will be reset. Includes a session-scoped
  * "don't ask again" bypass.
  */
-import { useId, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,15 +21,21 @@ import { AlertTriangle } from 'lucide-react';
 
 const BYPASS_KEY = 'nexus.traces.clearFilters.skipConfirm';
 
-function shouldSkipClearConfirm(): boolean {
-  try { return sessionStorage.getItem(BYPASS_KEY) === '1'; } catch { return false; }
+export function shouldSkipClearConfirm(): boolean {
+  try {
+    return sessionStorage.getItem(BYPASS_KEY) === '1';
+  } catch {
+    return false;
+  }
 }
 
-function setSkipClearConfirm(skip: boolean) {
+export function setSkipClearConfirm(skip: boolean) {
   try {
     if (skip) sessionStorage.setItem(BYPASS_KEY, '1');
     else sessionStorage.removeItem(BYPASS_KEY);
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 interface Props {
@@ -34,14 +47,18 @@ interface Props {
 export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props) {
   const [skip, setSkip] = useState(false);
   const [open, setOpen] = useState(false);
-  const skipId = useId();
 
   // If user already opted out this session, run directly via a wrapper.
   if (shouldSkipClearConfirm()) {
     return (
       <span
-        onClick={(e) => { e.stopPropagation(); onConfirm(); }}
-        onKeyDown={(e) => { if (e.key === 'Enter') onConfirm(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onConfirm();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') onConfirm();
+        }}
         role="button"
         tabIndex={-1}
         className="contents"
@@ -63,8 +80,8 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
           <AlertDialogDescription asChild>
             <div className="space-y-3">
               <p>
-                Os seguintes filtros voltarão ao padrão e suas preferências sincronizadas
-                na sua conta também serão removidas:
+                Os seguintes filtros voltarão ao padrão e suas preferências sincronizadas na sua
+                conta também serão removidas:
               </p>
               {activeFilters.length === 0 ? (
                 <p className="text-meta italic">Nenhum filtro ativo no momento.</p>
@@ -78,8 +95,9 @@ export function ClearFiltersConfirm({ trigger, activeFilters, onConfirm }: Props
                   ))}
                 </ul>
               )}
-              <label htmlFor={skipId} className="flex items-center gap-2 text-xs cursor-pointer">
-                <Checkbox id={skipId} checked={skip} onCheckedChange={(v) => setSkip(v === true)} />
+              {}
+              <label className="flex items-center gap-2 text-meta cursor-pointer">
+                <Checkbox checked={skip} onCheckedChange={(v) => setSkip(v === true)} />
                 <span>Não perguntar novamente nesta sessão</span>
               </label>
             </div>

@@ -7,11 +7,22 @@
  * copiando os mesmos campos da versão imediatamente anterior ao rollback
  * (a versão de referência), revertendo o efeito sem apagar histórico.
  */
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Undo2, FileText, Wrench, Cpu, ArrowRight, Clock, Loader2, AlertTriangle, TimerOff, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Undo2,
+  FileText,
+  Wrench,
+  Cpu,
+  ArrowRight,
+  Clock,
+  Loader2,
+  AlertTriangle,
+  TimerOff,
+  Plus,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,11 +32,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
-import { restoreAgentVersion, type AgentVersion } from "@/services/agentsService";
-import { summarizeRestoreOptions } from "./restoreHelpers";
-import { supabaseExternal } from "@/integrations/supabase/externalClient";
+} from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
+import { restoreAgentVersion, type AgentVersion } from '@/services/agentsService';
+import { summarizeRestoreOptions } from './restoreHelpers';
+import { supabaseExternal } from '@/integrations/supabase/externalClient';
 
 /**
  * Fallback: busca uma versão específica do agente direto do servidor.
@@ -38,9 +49,9 @@ import { supabaseExternal } from "@/integrations/supabase/externalClient";
  */
 async function fetchAgentVersionById(versionId: string): Promise<AgentVersion | null> {
   const { data, error } = await supabaseExternal
-    .from("agent_versions")
-    .select("*")
-    .eq("id", versionId)
+    .from('agent_versions')
+    .select('*')
+    .eq('id', versionId)
     .maybeSingle();
   if (error) throw error;
   return (data as AgentVersion | null) ?? null;
@@ -76,35 +87,35 @@ interface RestoreEntry {
 
 function extractRestoreMeta(v: AgentVersion): RestoreMetadata | null {
   const cfg = v.config;
-  if (!cfg || typeof cfg !== "object") return null;
+  if (!cfg || typeof cfg !== 'object') return null;
   const raw = (cfg as Record<string, unknown>).restore_metadata;
-  if (!raw || typeof raw !== "object") return null;
+  if (!raw || typeof raw !== 'object') return null;
   const m = raw as Record<string, unknown>;
-  if (typeof m.restored_from_version !== "number") return null;
+  if (typeof m.restored_from_version !== 'number') return null;
   const opts = (m.options ?? {}) as Record<string, unknown>;
   return {
     restored_from_version: m.restored_from_version,
-    restored_from_version_id: String(m.restored_from_version_id ?? ""),
-    restored_at: String(m.restored_at ?? v.created_at ?? ""),
+    restored_from_version_id: String(m.restored_from_version_id ?? ''),
+    restored_at: String(m.restored_at ?? v.created_at ?? ''),
     options: {
       copyPrompt: !!opts.copyPrompt,
       copyTools: !!opts.copyTools,
       copyModel: !!opts.copyModel,
     },
-    custom_summary: typeof m.custom_summary === "string" ? m.custom_summary : null,
+    custom_summary: typeof m.custom_summary === 'string' ? m.custom_summary : null,
     config_overrides: m.config_overrides as Record<string, unknown> | null,
-    model_override: typeof m.model_override === "string" ? m.model_override : null,
+    model_override: typeof m.model_override === 'string' ? m.model_override : null,
   };
 }
 
 function formatDate(iso: string): string {
   try {
-    return new Date(iso).toLocaleString("pt-BR", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return new Date(iso).toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   } catch {
     return iso;
@@ -112,9 +123,9 @@ function formatDate(iso: string): string {
 }
 
 const FIELD_LABELS = {
-  copyPrompt: "Prompt + missão",
-  copyTools: "Ferramentas",
-  copyModel: "Modelo + reasoning",
+  copyPrompt: 'Prompt + missão',
+  copyTools: 'Ferramentas',
+  copyModel: 'Modelo + reasoning',
 } as const;
 
 // summarizeRestoreOptions movida para ./restoreHelpers.ts para reuso no AgentDetailPage.
@@ -135,7 +146,7 @@ function formatRemaining(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000));
   const m = Math.floor(total / 60);
   const s = total % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
+  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 /**
@@ -157,7 +168,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [undoTarget, setUndoTarget] = useState<RestoreEntry | null>(null);
-  const [filter, setFilter] = useState<"all" | "prompt" | "tools" | "model">("all");
+  const [filter, setFilter] = useState<'all' | 'prompt' | 'tools' | 'model'>('all');
 
   // Re-uses overrides from a history entry for a NEW rollback
   const handleReuseOverrides = (entry: RestoreEntry) => {
@@ -167,13 +178,15 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
     // that AgentDetailPage can listen to, or better, we'll just show a toast
     // with instructions for now if the parent state is hard to reach.
     // BETTER: we'll add a state in AgentDetailPage to handle "Pending Overrides".
-    window.dispatchEvent(new CustomEvent('nexus:apply-rollback-overrides', { 
-      detail: { 
-        options: entry.meta.options,
-        configOverrides: entry.meta.config_overrides,
-        modelOverride: entry.meta.model_override
-      } 
-    }));
+    window.dispatchEvent(
+      new CustomEvent('nexus:apply-rollback-overrides', {
+        detail: {
+          options: entry.meta.options,
+          configOverrides: entry.meta.config_overrides,
+          modelOverride: entry.meta.model_override,
+        },
+      }),
+    );
     toast.info(`Configurações de v${entry.versionNumber} preparadas para um novo rollback.`);
   };
 
@@ -184,11 +197,11 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
     versions.forEach((v, idx) => {
       const meta = extractRestoreMeta(v);
       if (!meta) return;
-      
+
       // Aplicar filtro
-      if (filter === "prompt" && !meta.options.copyPrompt) return;
-      if (filter === "tools" && !meta.options.copyTools) return;
-      if (filter === "model" && !meta.options.copyModel) return;
+      if (filter === 'prompt' && !meta.options.copyPrompt) return;
+      if (filter === 'tools' && !meta.options.copyTools) return;
+      if (filter === 'model' && !meta.options.copyModel) return;
 
       result.push({
         versionId: v.id,
@@ -229,18 +242,16 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
       //    rollback que estamos prestes a desfazer. Se existir, abortar e
       //    pedir reload — desfazer cegamente sobrescreveria o trabalho novo.
       const { data: latest, error: latestErr } = await supabaseExternal
-        .from("agent_versions")
-        .select("version, id, change_summary, created_at")
-        .eq("agent_id", agentId)
-        .order("version", { ascending: false })
+        .from('agent_versions')
+        .select('version, id, change_summary, created_at')
+        .eq('agent_id', agentId)
+        .order('version', { ascending: false })
         .limit(1)
         .maybeSingle();
       if (latestErr) {
-        throw new Error(
-          `Não foi possível verificar a versão mais recente: ${latestErr.message}`,
-        );
+        throw new Error(`Não foi possível verificar a versão mais recente: ${latestErr.message}`);
       }
-      if (latest && typeof latest.version === "number" && latest.version > entry.versionNumber) {
+      if (latest && typeof latest.version === 'number' && latest.version > entry.versionNumber) {
         // Marcador especial para o onError exibir o toast com ação "Recarregar".
         const err = new Error(
           `Uma versão nova foi criada simultaneamente. ` +
@@ -259,18 +270,16 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
       //    `restored_from_version_id` que o próprio rollback registrou.
       if (!preRollback && entry.meta.restored_from_version_id) {
         try {
-          preRollback = await fetchAgentVersionById(
-            entry.meta.restored_from_version_id,
-          );
+          preRollback = await fetchAgentVersionById(entry.meta.restored_from_version_id);
           // Revalida a lista para que próximas interações já tenham o estado correto.
           if (preRollback) {
-            queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
-            queryClient.invalidateQueries({ queryKey: ["agent-versions", agentId] });
+            queryClient.invalidateQueries({ queryKey: ['agent_versions', agentId] });
+            queryClient.invalidateQueries({ queryKey: ['agent-versions', agentId] });
           }
         } catch (err) {
           throw new Error(
             `Falha ao recarregar a versão de referência (v${entry.meta.restored_from_version}) do servidor: ${
-              err instanceof Error ? err.message : "erro desconhecido"
+              err instanceof Error ? err.message : 'erro desconhecido'
             }`,
           );
         }
@@ -282,42 +291,29 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
         );
       }
 
-      return restoreAgentVersion(
-        agentId,
-        preRollback,
-        currentVersion,
-        {
-          copyPrompt: entry.meta.options.copyPrompt,
-          copyTools: entry.meta.options.copyTools,
-          copyModel: entry.meta.options.copyModel,
-          customSummary: `Desfazer rollback v${entry.versionNumber} → restaurado de v${preRollback.version}`,
-          configOverrides: (entry.meta.config_overrides ?? undefined) as Partial<{
-            temperature: number | null;
-            max_tokens: number | null;
-            reasoning: string | null;
-            tools: unknown[] | null;
-          }> | undefined,
-          modelOverride: entry.meta.model_override
-        },
-      );
+      return restoreAgentVersion(agentId, preRollback, currentVersion, {
+        copyPrompt: entry.meta.options.copyPrompt,
+        copyTools: entry.meta.options.copyTools,
+        copyModel: entry.meta.options.copyModel,
+        customSummary: `Desfazer rollback v${entry.versionNumber} → restaurado de v${preRollback.version}`,
+        configOverrides: entry.meta.config_overrides as Record<string, unknown>,
+        modelOverride: entry.meta.model_override,
+      });
     },
     onSuccess: (data, entry) => {
-      queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
-      queryClient.invalidateQueries({ queryKey: ["agent", agentId] });
+      queryClient.invalidateQueries({ queryKey: ['agent_versions', agentId] });
+      queryClient.invalidateQueries({ queryKey: ['agent', agentId] });
       setUndoTarget(null);
       // summary unused after description change
       const shortSummary = summarizeRestoreOptions(entry.meta.options);
-      toast.success(
-        `Desfazer rollback: ${shortSummary}`,
-        {
-          description: `v${data.version} criada a partir de v${entry.preRollback?.version ?? entry.meta.restored_from_version}.`,
-          action: {
-            label: "Ver na timeline",
-            onClick: () => navigate(`/agents/${agentId}/versions/v/${data.id}`),
-          },
-          duration: 6000,
+      toast.success(`Desfazer rollback: ${shortSummary}`, {
+        description: `v${data.version} criada a partir de v${entry.preRollback?.version ?? entry.meta.restored_from_version}.`,
+        action: {
+          label: 'Ver na timeline',
+          onClick: () => navigate(`/agents/${agentId}/versions/v/${data.id}`),
         },
-      );
+        duration: 6000,
+      });
     },
     onError: (e: Error) => {
       const stale = (e as Error & { stale?: boolean }).stale;
@@ -330,17 +326,17 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
         toast.error(e.message, {
           duration: 10000,
           action: {
-            label: "Recarregar",
+            label: 'Recarregar',
             onClick: () => {
-              queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
-              queryClient.invalidateQueries({ queryKey: ["agent-versions", agentId] });
-              queryClient.invalidateQueries({ queryKey: ["agent", agentId] });
+              queryClient.invalidateQueries({ queryKey: ['agent_versions', agentId] });
+              queryClient.invalidateQueries({ queryKey: ['agent-versions', agentId] });
+              queryClient.invalidateQueries({ queryKey: ['agent', agentId] });
             },
           },
         });
         return;
       }
-      toast.error(e.message || "Falha ao desfazer rollback");
+      toast.error(e.message || 'Falha ao desfazer rollback');
     },
   });
 
@@ -361,10 +357,22 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <FilterButton active={filter === "all"} onClick={() => setFilter("all")} label="Tudo" />
-          <FilterButton active={filter === "prompt"} onClick={() => setFilter("prompt")} label="Prompt" />
-          <FilterButton active={filter === "tools"} onClick={() => setFilter("tools")} label="Tools" />
-          <FilterButton active={filter === "model"} onClick={() => setFilter("model")} label="Modelo" />
+          <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} label="Tudo" />
+          <FilterButton
+            active={filter === 'prompt'}
+            onClick={() => setFilter('prompt')}
+            label="Prompt"
+          />
+          <FilterButton
+            active={filter === 'tools'}
+            onClick={() => setFilter('tools')}
+            label="Tools"
+          />
+          <FilterButton
+            active={filter === 'model'}
+            onClick={() => setFilter('model')}
+            label="Modelo"
+          />
         </div>
       </div>
 
@@ -372,13 +380,15 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
         {entries.length === 0 && (
           <li className="flex flex-col items-center justify-center py-8 text-center bg-secondary/10 rounded-lg border border-dashed border-border/40">
             <Clock className="h-6 w-6 text-muted-foreground/40 mb-2" />
-            <p className="text-meta text-muted-foreground">Nenhum rollback encontrado para este filtro.</p>
-            {filter !== "all" && (
-              <Button 
-                variant="link" 
-                size="sm" 
-                className="text-meta h-auto p-0 mt-1" 
-                onClick={() => setFilter("all")}
+            <p className="text-meta text-muted-foreground">
+              Nenhum rollback encontrado para este filtro.
+            </p>
+            {filter !== 'all' && (
+              <Button
+                variant="link"
+                size="sm"
+                className="text-meta h-auto p-0 mt-1"
+                onClick={() => setFilter('all')}
               >
                 Limpar filtros
               </Button>
@@ -421,7 +431,9 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                 </div>
                 <div className="flex items-center gap-1 text-meta text-muted-foreground">
                   <Clock className="h-2.5 w-2.5" aria-hidden />
-                  <time dateTime={entry.meta.restored_at}>{formatDate(entry.meta.restored_at)}</time>
+                  <time dateTime={entry.meta.restored_at}>
+                    {formatDate(entry.meta.restored_at)}
+                  </time>
                 </div>
               </div>
 
@@ -435,13 +447,8 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
               {/* Resumo curto das opções (sempre presente, complementa os badges) */}
               <p className="text-meta text-muted-foreground italic mb-1.5">
                 {summarizeRestoreOptions(entry.meta.options, {
-                  config: (entry.meta.config_overrides ?? undefined) as Partial<{
-                    temperature: number | null;
-                    max_tokens: number | null;
-                    reasoning: string | null;
-                    tools: unknown[] | null;
-                  }> | undefined,
-                  model: entry.meta.model_override
+                  config: entry.meta.config_overrides as Record<string, unknown>,
+                  model: entry.meta.model_override,
                 })}
               </p>
 
@@ -468,15 +475,17 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                   </span>
                 )}
                 {entry.meta.config_overrides && (
-                  <span 
+                  <span
                     className="text-[9px] uppercase tracking-wider text-nexus-amber bg-nexus-amber/10 px-1.5 py-0.5 rounded font-semibold border border-nexus-amber/20"
-                    title={`Ajustes manuais: ${Object.entries(entry.meta.config_overrides).map(([k, v]) => `${k}=${v}`).join(', ')}`}
+                    title={`Ajustes manuais: ${Object.entries(entry.meta.config_overrides)
+                      .map(([k, v]) => `${k}=${v}`)
+                      .join(', ')}`}
                   >
                     ajustes manuais
                   </span>
                 )}
                 {entry.meta.model_override && (
-                  <span 
+                  <span
                     className="text-[9px] uppercase tracking-wider text-nexus-emerald bg-nexus-emerald/10 px-1.5 py-0.5 rounded font-semibold border border-nexus-emerald/20"
                     title={`Modelo alterado para: ${entry.meta.model_override}`}
                   >
@@ -510,8 +519,8 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     <span
                       className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-meta font-mono tabular-nums border ${
                         urgent
-                          ? "bg-destructive/10 text-destructive border-destructive/30 animate-pulse"
-                          : "bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30"
+                          ? 'bg-destructive/10 text-destructive border-destructive/30 animate-pulse'
+                          : 'bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30'
                       }`}
                       title={`Você ainda pode desfazer este rollback por mais ${formatRemaining(remainingMs)} (janela total de ${UNDO_WINDOW_MS / 60000} min)`}
                       aria-live="polite"
@@ -537,15 +546,20 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                     className="h-5 px-1.5 text-meta gap-0.5 text-nexus-amber hover:text-nexus-amber hover:bg-nexus-amber/10 disabled:opacity-40"
                     onClick={() => {
                       if (stale) {
-                        toast.error(`Uma versão mais nova (v${currentVersion.version}) foi detectada. Recarregue para revisar antes de desfazer.`, {
-                          action: {
-                            label: 'Recarregar',
-                            onClick: () => {
-                              queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
-                              queryClient.invalidateQueries({ queryKey: ["agent", agentId] });
-                            }
-                          }
-                        });
+                        toast.error(
+                          `Uma versão mais nova (v${currentVersion.version}) foi detectada. Recarregue para revisar antes de desfazer.`,
+                          {
+                            action: {
+                              label: 'Recarregar',
+                              onClick: () => {
+                                queryClient.invalidateQueries({
+                                  queryKey: ['agent_versions', agentId],
+                                });
+                                queryClient.invalidateQueries({ queryKey: ['agent', agentId] });
+                              },
+                            },
+                          },
+                        );
                         return;
                       }
                       setUndoTarget(entry);
@@ -557,7 +571,7 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
                         : stale
                           ? `Versão mais nova (v${currentVersion?.version}) já existe — recarregue antes de desfazer`
                           : !entry.preRollback
-                            ? "Sem versão de referência anterior — não é possível desfazer"
+                            ? 'Sem versão de referência anterior — não é possível desfazer'
                             : `Desfazer este rollback restaurando os mesmos campos de v${entry.preRollback?.version} (expira em ${formatRemaining(remainingMs)})`
                     }
                   >
@@ -590,12 +604,11 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
         // Estado da janela de undo para o alvo aberto no modal — recalculado
         // a cada tick para que o botão de confirmar fique desabilitado
         // automaticamente caso a janela expire enquanto o diálogo está aberto.
-        const targetRestoredAt = undoTarget
-          ? new Date(undoTarget.meta.restored_at).getTime()
-          : 0;
-        const targetExpiresAt = Number.isFinite(targetRestoredAt) && targetRestoredAt > 0
-          ? targetRestoredAt + UNDO_WINDOW_MS
-          : 0;
+        const targetRestoredAt = undoTarget ? new Date(undoTarget.meta.restored_at).getTime() : 0;
+        const targetExpiresAt =
+          Number.isFinite(targetRestoredAt) && targetRestoredAt > 0
+            ? targetRestoredAt + UNDO_WINDOW_MS
+            : 0;
         const targetRemainingMs = targetExpiresAt - now;
         const targetExpired = !undoTarget || targetExpiresAt === 0 || targetRemainingMs <= 0;
         const targetUrgent = !targetExpired && targetRemainingMs < 60 * 1000;
@@ -607,243 +620,251 @@ export function RestoreHistorySection({ agentId, versions }: Props) {
         const targetStale =
           !!undoTarget && !!currentVersion && currentVersion.version > undoTarget.versionNumber;
         return (
-      <AlertDialog
-        open={!!undoTarget}
-        onOpenChange={(open) => {
-          if (!open && !undoMut.isPending) setUndoTarget(null);
-        }}
-      >
-        <AlertDialogContent className="max-w-xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <Undo2 className="h-5 w-5 text-nexus-amber" aria-hidden />
-              Confirmar Desfazer Rollback
-            </AlertDialogTitle>
-            <AlertDialogDescription asChild>
-              <div className="space-y-3 text-body-sm">
-                <p>
-                  Será criada uma nova versão{" "}
-                  <span className="font-mono font-semibold text-foreground">
-                    v{nextVersionNumber}
-                  </span>{" "}
-                  copiando os mesmos campos do rollback original — mas vindos da versão de
-                  referência <span className="font-mono font-semibold text-foreground">
-                    v{undoTarget?.preRollback?.version}
-                  </span>{" "}
-                  (estado anterior ao rollback).
-                </p>
+          <AlertDialog
+            open={!!undoTarget}
+            onOpenChange={(open) => {
+              if (!open && !undoMut.isPending) setUndoTarget(null);
+            }}
+          >
+            <AlertDialogContent className="max-w-xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center gap-2">
+                  <Undo2 className="h-5 w-5 text-nexus-amber" aria-hidden />
+                  Confirmar Desfazer Rollback
+                </AlertDialogTitle>
+                <AlertDialogDescription asChild>
+                  <div className="space-y-3 text-body-sm">
+                    <p>
+                      Será criada uma nova versão{' '}
+                      <span className="font-mono font-semibold text-foreground">
+                        v{nextVersionNumber}
+                      </span>{' '}
+                      copiando os mesmos campos do rollback original — mas vindos da versão de
+                      referência{' '}
+                      <span className="font-mono font-semibold text-foreground">
+                        v{undoTarget?.preRollback?.version}
+                      </span>{' '}
+                      (estado anterior ao rollback).
+                    </p>
 
-                {/* Quadro comparativo: rollback alvo, referência e nova versão */}
-                <div className="rounded-lg bg-secondary/40 p-3 text-meta space-y-1.5">
-                  <div className="flex justify-between gap-2">
-                    <span className="text-muted-foreground">Rollback que será desfeito</span>
-                    <span className="font-mono text-foreground">
-                      v{undoTarget?.versionNumber}
-                      {undoTarget?.meta.restored_from_version !== undefined && (
-                        <span className="text-muted-foreground/70">
-                          {" "}(restaurado de v{undoTarget.meta.restored_from_version})
-                        </span>
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between gap-2">
-                    <span className="text-muted-foreground">Versão de referência</span>
-                    <span className="font-mono text-foreground">
-                      v{undoTarget?.preRollback?.version} ·{" "}
-                      {String(undoTarget?.preRollback?.model ?? "—")}
-                    </span>
-                  </div>
-                  <div className="flex justify-between gap-2">
-                    <span className="text-muted-foreground">Nova versão</span>
-                    <span className="font-mono text-nexus-emerald">v{nextVersionNumber}</span>
-                  </div>
-                </div>
-
-                {/* Lista de campos que serão restaurados — espelha o rollback original */}
-                <fieldset className="rounded-lg border border-border bg-card/40 p-3">
-                  <legend className="text-meta font-semibold uppercase tracking-wider text-foreground px-1">
-                    Campos que serão restaurados
-                  </legend>
-                  <ul className="space-y-1.5 mt-1">
-                    {(["copyPrompt", "copyTools", "copyModel"] as const).map((key) => {
-                      const active = !!undoTarget?.meta.options[key];
-                      const Icon =
-                        key === "copyPrompt" ? FileText : key === "copyTools" ? Wrench : Cpu;
-                      return (
-                        <li
-                          key={key}
-                          className={`flex items-center gap-2 text-meta ${
-                            active ? "text-foreground" : "text-muted-foreground/50 line-through"
-                          }`}
-                        >
-                          <Icon
-                            className={`h-3 w-3 ${
-                              active ? "text-primary" : "text-muted-foreground/40"
-                            }`}
-                            aria-hidden
-                          />
-                          {FIELD_LABELS[key]}
-                          {!active && (
-                            <span className="text-meta uppercase tracking-wider text-muted-foreground/60">
-                              (não incluído)
+                    {/* Quadro comparativo: rollback alvo, referência e nova versão */}
+                    <div className="rounded-lg bg-secondary/40 p-3 text-meta space-y-1.5">
+                      <div className="flex justify-between gap-2">
+                        <span className="text-muted-foreground">Rollback que será desfeito</span>
+                        <span className="font-mono text-foreground">
+                          v{undoTarget?.versionNumber}
+                          {undoTarget?.meta.restored_from_version !== undefined && (
+                            <span className="text-muted-foreground/70">
+                              {' '}
+                              (restaurado de v{undoTarget.meta.restored_from_version})
                             </span>
                           )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </fieldset>
+                        </span>
+                      </div>
+                      <div className="flex justify-between gap-2">
+                        <span className="text-muted-foreground">Versão de referência</span>
+                        <span className="font-mono text-foreground">
+                          v{undoTarget?.preRollback?.version} ·{' '}
+                          {String(undoTarget?.preRollback?.model ?? '—')}
+                        </span>
+                      </div>
+                      <div className="flex justify-between gap-2">
+                        <span className="text-muted-foreground">Nova versão</span>
+                        <span className="font-mono text-nexus-emerald">v{nextVersionNumber}</span>
+                      </div>
+                    </div>
 
-                {/* Banner do contador da janela de undo dentro do modal —
+                    {/* Lista de campos que serão restaurados — espelha o rollback original */}
+                    <fieldset className="rounded-lg border border-border bg-card/40 p-3">
+                      <legend className="text-meta font-semibold uppercase tracking-wider text-foreground px-1">
+                        Campos que serão restaurados
+                      </legend>
+                      <ul className="space-y-1.5 mt-1">
+                        {(['copyPrompt', 'copyTools', 'copyModel'] as const).map((key) => {
+                          const active = !!undoTarget?.meta.options[key];
+                          const Icon =
+                            key === 'copyPrompt' ? FileText : key === 'copyTools' ? Wrench : Cpu;
+                          return (
+                            <li
+                              key={key}
+                              className={`flex items-center gap-2 text-meta ${
+                                active ? 'text-foreground' : 'text-muted-foreground/50 line-through'
+                              }`}
+                            >
+                              <Icon
+                                className={`h-3 w-3 ${
+                                  active ? 'text-primary' : 'text-muted-foreground/40'
+                                }`}
+                                aria-hidden
+                              />
+                              {FIELD_LABELS[key]}
+                              {!active && (
+                                <span className="text-meta uppercase tracking-wider text-muted-foreground/60">
+                                  (não incluído)
+                                </span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </fieldset>
+
+                    {/* Banner do contador da janela de undo dentro do modal —
                     espelha o badge da lista para reforçar a urgência. */}
-                {undoTarget && (
-                  targetExpired ? (
-                    <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-meta text-destructive">
-                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
-                      <span>
-                        A janela de <strong>{UNDO_WINDOW_MS / 60000} minutos</strong> para
-                        desfazer este rollback expirou. Para reverter, abra o gerenciador de
-                        versões e restaure manualmente a partir de v
-                        {undoTarget.preRollback?.version ?? "—"}.
-                      </span>
-                    </div>
-                  ) : (
-                    <div
-                      className={`flex items-center gap-2 rounded-lg border p-2.5 text-meta ${
-                        targetUrgent
-                          ? "border-destructive/30 bg-destructive/5 text-destructive"
-                          : "border-nexus-amber/30 bg-nexus-amber/5 text-nexus-amber"
-                      }`}
-                      aria-live="polite"
-                    >
-                      <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      <span>
-                        Janela para desfazer expira em{" "}
-                        <strong className="font-mono tabular-nums">
-                          {formatRemaining(targetRemainingMs)}
-                        </strong>
-                        . Após esse prazo, o botão de confirmar será desabilitado.
-                      </span>
-                    </div>
-                  )
-                )}
+                    {undoTarget &&
+                      (targetExpired ? (
+                        <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-meta text-destructive">
+                          <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
+                          <span>
+                            A janela de <strong>{UNDO_WINDOW_MS / 60000} minutos</strong> para
+                            desfazer este rollback expirou. Para reverter, abra o gerenciador de
+                            versões e restaure manualmente a partir de v
+                            {undoTarget.preRollback?.version ?? '—'}.
+                          </span>
+                        </div>
+                      ) : (
+                        <div
+                          className={`flex items-center gap-2 rounded-lg border p-2.5 text-meta ${
+                            targetUrgent
+                              ? 'border-destructive/30 bg-destructive/5 text-destructive'
+                              : 'border-nexus-amber/30 bg-nexus-amber/5 text-nexus-amber'
+                          }`}
+                          aria-live="polite"
+                        >
+                          <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                          <span>
+                            Janela para desfazer expira em{' '}
+                            <strong className="font-mono tabular-nums">
+                              {formatRemaining(targetRemainingMs)}
+                            </strong>
+                            . Após esse prazo, o botão de confirmar será desabilitado.
+                          </span>
+                        </div>
+                      ))}
 
-                {/* Aviso quando o rollback não tem nenhuma referência —
+                    {/* Aviso quando o rollback não tem nenhuma referência —
                     nem local nem id no metadata (caso muito raro: rollback
                     aplicado contra a primeira versão do agente). */}
-                {undoTarget &&
-                  !undoTarget.preRollback &&
-                  !undoTarget.meta.restored_from_version_id && (
-                  <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-meta text-destructive">
-                    <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
-                    <span>
-                      Não há versão anterior ao rollback para usar como referência — não é
-                      possível desfazer.
-                    </span>
-                  </div>
-                )}
+                    {undoTarget &&
+                      !undoTarget.preRollback &&
+                      !undoTarget.meta.restored_from_version_id && (
+                        <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-meta text-destructive">
+                          <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
+                          <span>
+                            Não há versão anterior ao rollback para usar como referência — não é
+                            possível desfazer.
+                          </span>
+                        </div>
+                      )}
 
-                {/* Aviso informativo: vamos recarregar do servidor on-confirm. */}
-                {undoTarget &&
-                  !undoTarget.preRollback &&
-                  undoTarget.meta.restored_from_version_id && (
-                  <div className="flex items-start gap-2 rounded-lg border border-nexus-amber/30 bg-nexus-amber/5 p-2.5 text-meta text-nexus-amber">
-                    <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
-                    <span>
-                      A versão de referência (v{undoTarget.meta.restored_from_version}) não
-                      está carregada localmente — será recarregada do servidor ao confirmar.
-                    </span>
-                  </div>
-                )}
+                    {/* Aviso informativo: vamos recarregar do servidor on-confirm. */}
+                    {undoTarget &&
+                      !undoTarget.preRollback &&
+                      undoTarget.meta.restored_from_version_id && (
+                        <div className="flex items-start gap-2 rounded-lg border border-nexus-amber/30 bg-nexus-amber/5 p-2.5 text-meta text-nexus-amber">
+                          <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
+                          <span>
+                            A versão de referência (v{undoTarget.meta.restored_from_version}) não
+                            está carregada localmente — será recarregada do servidor ao confirmar.
+                          </span>
+                        </div>
+                      )}
 
-                {/* Aviso de drift: versão mais nova já criada após o rollback. */}
-                {targetStale && undoTarget && (
-                  <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-meta text-destructive">
-                    <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
-                    <span>
-                      Foi criada uma versão mais nova (v{currentVersion?.version}) depois
-                      deste rollback (v{undoTarget.versionNumber}). Recarregue antes de
-                      desfazer para revisar o que mudou — desfazer agora pode sobrescrever
-                      essas mudanças.
-                    </span>
-                  </div>
-                )}
+                    {/* Aviso de drift: versão mais nova já criada após o rollback. */}
+                    {targetStale && undoTarget && (
+                      <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-meta text-destructive">
+                        <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden />
+                        <span>
+                          Foi criada uma versão mais nova (v{currentVersion?.version}) depois deste
+                          rollback (v{undoTarget.versionNumber}). Recarregue antes de desfazer para
+                          revisar o que mudou — desfazer agora pode sobrescrever essas mudanças.
+                        </span>
+                      </div>
+                    )}
 
-                <p className="text-meta text-muted-foreground">
-                  Nenhum histórico será apagado — desfazer o rollback é não destrutivo e
-                  cria uma nova versão.
-                </p>
-              </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            {targetStale && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  queryClient.invalidateQueries({ queryKey: ["agent_versions", agentId] });
-                  queryClient.invalidateQueries({ queryKey: ["agent-versions", agentId] });
-                  queryClient.invalidateQueries({ queryKey: ["agent", agentId] });
-                  setUndoTarget(null);
-                }}
-                disabled={undoMut.isPending}
-              >
-                Recarregar
-              </Button>
-            )}
-            <AlertDialogCancel disabled={undoMut.isPending}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                if (undoTarget && !targetExpired && !targetStale) undoMut.mutate(undoTarget);
-              }}
-              disabled={
-                undoMut.isPending ||
-                targetExpired ||
-                targetStale ||
-                (!undoTarget?.preRollback && !undoTarget?.meta.restored_from_version_id)
-              }
-              className="gap-1.5"
-              title={
-                targetExpired
-                  ? `Janela de ${UNDO_WINDOW_MS / 60000} min para desfazer expirou`
-                  : targetStale
-                    ? "Versão mais nova detectada — recarregue antes de desfazer"
-                    : !undoTarget?.preRollback && !undoTarget?.meta.restored_from_version_id
-                      ? "Sem versão de referência anterior"
-                      : `Confirmar — expira em ${formatRemaining(targetRemainingMs)}`
-              }
-            >
-              {undoMut.isPending ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Undo2 className="h-3.5 w-3.5" aria-hidden />
-              )}
-              {targetExpired
-                ? "Janela expirada"
-                : targetStale
-                  ? "Recarregue antes"
-                  : "Confirmar desfazer"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+                    <p className="text-meta text-muted-foreground">
+                      Nenhum histórico será apagado — desfazer o rollback é não destrutivo e cria
+                      uma nova versão.
+                    </p>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                {targetStale && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      queryClient.invalidateQueries({ queryKey: ['agent_versions', agentId] });
+                      queryClient.invalidateQueries({ queryKey: ['agent-versions', agentId] });
+                      queryClient.invalidateQueries({ queryKey: ['agent', agentId] });
+                      setUndoTarget(null);
+                    }}
+                    disabled={undoMut.isPending}
+                  >
+                    Recarregar
+                  </Button>
+                )}
+                <AlertDialogCancel disabled={undoMut.isPending}>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (undoTarget && !targetExpired && !targetStale) undoMut.mutate(undoTarget);
+                  }}
+                  disabled={
+                    undoMut.isPending ||
+                    targetExpired ||
+                    targetStale ||
+                    (!undoTarget?.preRollback && !undoTarget?.meta.restored_from_version_id)
+                  }
+                  className="gap-1.5"
+                  title={
+                    targetExpired
+                      ? `Janela de ${UNDO_WINDOW_MS / 60000} min para desfazer expirou`
+                      : targetStale
+                        ? 'Versão mais nova detectada — recarregue antes de desfazer'
+                        : !undoTarget?.preRollback && !undoTarget?.meta.restored_from_version_id
+                          ? 'Sem versão de referência anterior'
+                          : `Confirmar — expira em ${formatRemaining(targetRemainingMs)}`
+                  }
+                >
+                  {undoMut.isPending ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Undo2 className="h-3.5 w-3.5" aria-hidden />
+                  )}
+                  {targetExpired
+                    ? 'Janela expirada'
+                    : targetStale
+                      ? 'Recarregue antes'
+                      : 'Confirmar desfazer'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         );
       })()}
     </div>
   );
 }
 
-function FilterButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+function FilterButton({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded transition-colors ${
         active
-          ? "bg-primary/20 text-primary font-bold border border-primary/30"
-          : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground border border-transparent"
+          ? 'bg-primary/20 text-primary font-bold border border-primary/30'
+          : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground border border-transparent'
       }`}
     >
       {label}
@@ -863,8 +884,8 @@ function RestoreOptionBadge({
     <span
       className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-meta font-mono ${
         active
-          ? "bg-primary/10 text-primary border border-primary/20"
-          : "bg-muted/30 text-muted-foreground/50 border border-border/40 line-through"
+          ? 'bg-primary/10 text-primary border border-primary/20'
+          : 'bg-muted/30 text-muted-foreground/50 border border-border/40 line-through'
       }`}
     >
       {icon}

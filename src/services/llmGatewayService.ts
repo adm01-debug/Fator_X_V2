@@ -29,7 +29,7 @@ async function tracedInvoke<T = unknown>(
     extractCostUsd?: (data: DbRow) => number | undefined;
     extractTokens?: (data: DbRow) => { input?: number; output?: number } | undefined;
     extractModel?: (body: DbRow) => string | undefined;
-  } = {}
+  } = {},
 ): Promise<T> {
   const ctx = startTrace({
     agentId: options.agentId,
@@ -47,12 +47,14 @@ async function tracedInvoke<T = unknown>(
   try {
     // Propagate W3C traceparent so edge function can continue the same trace (Sprint 26)
     // Format: 00-{32 hex traceId}-{16 hex spanId}-{2 hex flags}
-    const traceId = typeof ctx.traceId === 'string' && ctx.traceId.length > 0
-      ? ctx.traceId
-      : crypto.randomUUID().replace(/-/g, '');
-    const spanId = typeof span.id === 'string' && span.id.length > 0
-      ? span.id
-      : crypto.randomUUID().replace(/-/g, '').slice(0, 16);
+    const traceId =
+      typeof ctx.traceId === 'string' && ctx.traceId.length > 0
+        ? ctx.traceId
+        : crypto.randomUUID().replace(/-/g, '');
+    const spanId =
+      typeof span.id === 'string' && span.id.length > 0
+        ? span.id
+        : crypto.randomUUID().replace(/-/g, '').slice(0, 16);
     const traceparent = `00-${traceId.padEnd(32, '0').slice(0, 32)}-${spanId.padEnd(16, '0').slice(0, 16)}-01`;
     const { data, error } = await supabase.functions.invoke(functionName, {
       body: body as Record<string, unknown>,
@@ -98,7 +100,7 @@ export async function invokeLLMGateway(body: {
   sessionId?: string;
 }) {
   const retryLimit = 2;
-  const fallbacks = ["gpt-4o-mini", "claude-3-haiku-20240307", "gemini-1.5-flash"];
+  const fallbacks = ['gpt-4o-mini', 'claude-3-haiku-20240307', 'gemini-1.5-flash'];
   let attempt = 0;
   let lastError: unknown;
 
@@ -108,10 +110,10 @@ export async function invokeLLMGateway(body: {
 
     try {
       if (attempt > 0) {
-        logger.warn(`Self-Healing: Triggering fallback model due to previous failure`, { 
-          original_model: body.model, 
+        logger.warn(`Self-Healing: Triggering fallback model due to previous failure`, {
+          original_model: body.model,
           fallback_model: currentModel,
-          attempt 
+          attempt,
         });
       }
 
@@ -123,7 +125,9 @@ export async function invokeLLMGateway(body: {
         extractCostUsd: (d) => (d as { cost_usd?: number })?.cost_usd,
         extractTokens: (d) => {
           const r = d as { usage?: { input_tokens?: number; output_tokens?: number } };
-          return r?.usage ? { input: r.usage.input_tokens, output: r.usage.output_tokens } : undefined;
+          return r?.usage
+            ? { input: r.usage.input_tokens, output: r.usage.output_tokens }
+            : undefined;
         },
       });
     } catch (err) {
@@ -131,11 +135,11 @@ export async function invokeLLMGateway(body: {
       lastError = err;
       if (attempt <= retryLimit) {
         const backoff = Math.pow(2, attempt) * 500; // Faster backoff for self-healing
-        logger.warn(`llm-gateway attempt ${attempt} failed, retrying with self-healing...`, { 
+        logger.warn(`llm-gateway attempt ${attempt} failed, retrying with self-healing...`, {
           error: (err as Error).message,
-          next_model: fallbacks[attempt - 1] || body.model
+          next_model: fallbacks[attempt - 1] || body.model,
         });
-        await new Promise(r => setTimeout(r, backoff));
+        await new Promise((r) => setTimeout(r, backoff));
       }
     }
   }
@@ -149,7 +153,8 @@ export async function invokeGuardrailsEngine(body: Record<string, unknown>) {
 export async function invokeOracleResearch(body: Record<string, unknown>) {
   return tracedInvoke('oracle-research', body, {
     spanKind: 'llm',
-    extractCostUsd: (d) => (d as { metrics?: { total_cost_usd?: number } })?.metrics?.total_cost_usd,
+    extractCostUsd: (d) =>
+      (d as { metrics?: { total_cost_usd?: number } })?.metrics?.total_cost_usd,
     extractTokens: (d) => {
       const m = (d as { metrics?: { total_tokens?: number } })?.metrics;
       return m?.total_tokens ? { input: m.total_tokens, output: 0 } : undefined;
@@ -181,29 +186,47 @@ export async function invokeTestRunner(body: Record<string, unknown>) {
 export async function invokeTracedFunction<T = unknown>(
   functionName: string,
   body: DbRow,
-  options?: Parameters<typeof tracedInvoke>[2]
+  options?: Parameters<typeof tracedInvoke>[2],
 ): Promise<T> {
   return tracedInvoke<T>(functionName, body, options);
 }
 
-export async function saveWorkspaceSecret(wsId: string, keyName: string, value: string, isUpdate: boolean) {
+export async function saveWorkspaceSecret(
+  wsId: string,
+  keyName: string,
+  value: string,
+  isUpdate: boolean,
+) {
   try {
     if (isUpdate) {
-      const { error } = await supabaseExternal.from('workspace_secrets').update({ key_value: value, updated_at: new Date().toISOString() })
-        .eq('workspace_id', wsId).eq('key_name', keyName);
+      const { error } = await supabaseExternal
+        .from('workspace_secrets')
+        .update({ key_value: value, updated_at: new Date().toISOString() } as never)
+        .eq('workspace_id', wsId)
+        .eq('key_name', keyName);
       if (error) throw error;
     } else {
-      const { error } = await supabaseExternal.from('workspace_secrets').insert({ workspace_id: wsId, key_name: keyName, key_value: value });
+      const { error } = await supabaseExternal
+        .from('workspace_secrets')
+        .insert({ workspace_id: wsId, key_name: keyName, key_value: value } as never);
       if (error) throw error;
     }
   } catch (err) {
-    logger.error('saveWorkspaceSecret failed', { keyName, error: err instanceof Error ? err.message : String(err) });
+    logger.error('saveWorkspaceSecret failed', {
+      keyName,
+      error: err instanceof Error ? err.message : String(err),
+    });
     throw err;
   }
 }
 
 export async function getMaskedSecrets(wsId: string) {
-  const { data, error } = await supabaseExternal.rpc('get_masked_secrets', { p_workspace_id: wsId });
-  if (error) { logger.error('getMaskedSecrets failed', { error: error.message }); throw error; }
+  const { data, error } = await supabaseExternal.rpc('get_masked_secrets', {
+    p_workspace_id: wsId,
+  });
+  if (error) {
+    logger.error('getMaskedSecrets failed', { error: error.message });
+    throw error;
+  }
   return data ?? [];
 }

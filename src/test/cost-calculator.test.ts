@@ -30,12 +30,23 @@ vi.mock('@/integrations/supabase/client', () => ({
       select: vi.fn(() => ({
         order: vi.fn(() => ({
           data: [
-            { model_pattern: 'anthropic/claude-sonnet', input_cost_per_1k: 0.003, output_cost_per_1k: 0.015 },
+            {
+              model_pattern: 'anthropic/claude-sonnet',
+              input_cost_per_1k: 0.003,
+              output_cost_per_1k: 0.015,
+            },
             { model_pattern: 'openai/gpt-4o', input_cost_per_1k: 0.0025, output_cost_per_1k: 0.01 },
           ],
-          error: null
+          error: null,
         })),
-        single: vi.fn(() => ({ data: { model_pattern: 'anthropic/claude-sonnet', input_cost_per_1k: 0.003, output_cost_per_1k: 0.015 }, error: null })),
+        single: vi.fn(() => ({
+          data: {
+            model_pattern: 'anthropic/claude-sonnet',
+            input_cost_per_1k: 0.003,
+            output_cost_per_1k: 0.015,
+          },
+          error: null,
+        })),
         eq: vi.fn().mockReturnThis(),
       })),
     })),
@@ -51,13 +62,13 @@ vi.mock('@/integrations/supabase/client', () => ({
             costBrl: (inputCost + outputCost) * 5.75,
             model: body.model,
             provider: body.model.split('/')[0],
-            breakdown: { inputCost, outputCost }
+            breakdown: { inputCost, outputCost },
           },
-          error: null
+          error: null,
         };
-      })
-    }
-  }
+      }),
+    },
+  },
 }));
 
 describe('costCalculatorService — pricing lookup', () => {
@@ -141,7 +152,7 @@ describe('costCalculatorService — estimateWorkflowCost', () => {
     const e = await estimateWorkflowCost(
       [{ id: 'n1', type: 'llm', data: {} }],
       'anthropic',
-      'sonnet'
+      'sonnet',
     );
     expect(e.estimatedInputTokens).toBeGreaterThan(0);
     expect(e.totalCostUsd).toBeGreaterThan(0);
@@ -159,12 +170,10 @@ describe('costCalculatorService — estimateWorkflowCost', () => {
   });
 
   it('respects per-node provider/model overrides in node.data', async () => {
-    const nodes = [
-      { id: 'n1', type: 'llm', data: { provider: 'openai', model: 'gpt-4o' } },
-    ];
+    const nodes = [{ id: 'n1', type: 'llm', data: { provider: 'openai', model: 'gpt-4o' } }];
     const e = await estimateWorkflowCost(nodes, 'anthropic', 'sonnet');
     expect(e.breakdown?.[0].provider).toBe('openai');
-    expect(e.breakdown?.[0].model).toBe('gpt-4o');
+    expect(e.breakdown?.[0].model).toBe('openai/gpt-4o');
   });
 });
 

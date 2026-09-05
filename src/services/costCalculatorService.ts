@@ -1,6 +1,19 @@
-
-export type { ModelPricing, CostEstimate, CostBreakdownItem, ActualCost, BudgetConfig, BudgetStatus } from './types/costCalculatorTypes';
-import type { ModelPricing, CostEstimate, CostBreakdownItem, ActualCost, BudgetConfig, BudgetStatus } from './types/costCalculatorTypes';
+export type {
+  ModelPricing,
+  CostEstimate,
+  CostBreakdownItem,
+  ActualCost,
+  BudgetConfig,
+  BudgetStatus,
+} from './types/costCalculatorTypes';
+import type {
+  ModelPricing,
+  CostEstimate,
+  CostBreakdownItem,
+  ActualCost,
+  BudgetConfig,
+  BudgetStatus,
+} from './types/costCalculatorTypes';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 import { listModelPrices } from '@/lib/llmPricing';
@@ -17,48 +30,32 @@ function getFallbackPricing(): ModelPricing[] {
 
 // ──────── Pricing ────────
 
-type PricingRow = { model_pattern: string; input_cost_per_1k: number; output_cost_per_1k: number };
-
 /**
- * Static fallback pricing (USD per 1k tokens). Used whenever the
- * `model_pricing` DB table is empty or unreachable so cost estimation,
- * comparison and budget checks keep working offline / on a fresh project.
- * Patterns are matched as case-insensitive substrings of `provider/model`.
+ * Get pricing for a specific model from DB via direct query
  */
-const DEFAULT_PRICING: PricingRow[] = [
-  { model_pattern: 'anthropic/claude-opus', input_cost_per_1k: 0.015, output_cost_per_1k: 0.075 },
-  { model_pattern: 'anthropic/claude-sonnet', input_cost_per_1k: 0.003, output_cost_per_1k: 0.015 },
-  { model_pattern: 'anthropic/claude-haiku', input_cost_per_1k: 0.0008, output_cost_per_1k: 0.004 },
-  { model_pattern: 'openai/gpt-4o-mini', input_cost_per_1k: 0.00015, output_cost_per_1k: 0.0006 },
-  { model_pattern: 'openai/gpt-4o', input_cost_per_1k: 0.0025, output_cost_per_1k: 0.01 },
-  { model_pattern: 'openai/gpt-4', input_cost_per_1k: 0.03, output_cost_per_1k: 0.06 },
-  { model_pattern: 'google/gemini-1.5-flash', input_cost_per_1k: 0.000075, output_cost_per_1k: 0.0003 },
-  { model_pattern: 'google/gemini-1.5-pro', input_cost_per_1k: 0.00125, output_cost_per_1k: 0.005 },
-];
-
-/**
- * Load raw pricing rows from the DB, falling back to the static table
- * when the query fails or returns nothing.
- */
-async function loadPricingRows(): Promise<PricingRow[]> {
-  try {
-    const { data, error } = await supabase.from('model_pricing').select('*');
-    if (!error && Array.isArray(data) && data.length > 0) return data as PricingRow[];
-  } catch {
-    // ignore — fall through to defaults
-  }
-  return DEFAULT_PRICING;
-}
-
-/**
- * Get pricing for a specific model from DB (with static fallback)
- */
-export async function getModelPricing(provider: string, model: string): Promise<ModelPricing | null> {
+export async function getModelPricing(
+  provider: string,
+  model: string,
+): Promise<ModelPricing | null> {
   const fullModel = model.includes('/') ? model : `${provider}/${model}`;
-  const pricingList = await loadPricingRows();
+  const { data: pricingList, error } = await supabase
+    .from('model_pricing')
+    .select('*')
+    .order('model_pattern');
 
-  const sorted = [...availablePricing].sort((a, b) => b.model_pattern.length - a.model_pattern.length);
-  const match = sorted.find(p => fullModel.toLowerCase().includes(p.model_pattern.toLowerCase()));
+  const availablePricing =
+    error || !pricingList || pricingList.length === 0
+      ? getFallbackPricing().map((price) => ({
+          model_pattern: price.model,
+          input_cost_per_1k: price.inputPricePerMToken / 1000,
+          output_cost_per_1k: price.outputPricePerMToken / 1000,
+        }))
+      : pricingList;
+
+  const sorted = [...availablePricing].sort(
+    (a, b) => b.model_pattern.length - a.model_pattern.length,
+  );
+  const match = sorted.find((p) => fullModel.toLowerCase().includes(p.model_pattern.toLowerCase()));
 
   if (!match) return null;
 
@@ -67,32 +64,24 @@ export async function getModelPricing(provider: string, model: string): Promise<
     model: match.model_pattern,
     inputPricePerMToken: Number(match.input_cost_per_1k) * 1000,
     outputPricePerMToken: Number(match.output_cost_per_1k) * 1000,
-    lastUpdated: new Date().toISOString()
+    lastUpdated: new Date().toISOString(),
   };
 }
 
 /**
- * Get all available pricing entries from DB (with static fallback)
+ * Get all available pricing entries from DB
  */
 export async function getAllPricing(): Promise<ModelPricing[]> {
-  let rows: PricingRow[] | null = null;
-  try {
-    const { data, error } = await supabase
-      .from('model_pricing')
-      .select('*')
-      .order('model_pattern');
-    if (!error && Array.isArray(data) && data.length > 0) rows = data as PricingRow[];
-  } catch {
-    // ignore — fall through to defaults
-  }
-  if (!rows) rows = DEFAULT_PRICING;
+  const { data, error } = await supabase.from('model_pricing').select('*').order('model_pattern');
 
-  return rows.map(p => ({
+  if (error || !data || data.length === 0) return getFallbackPricing();
+
+  return (data || []).map((p) => ({
     provider: p.model_pattern.split('/')[0] || 'auto',
     model: p.model_pattern,
     inputPricePerMToken: Number(p.input_cost_per_1k) * 1000,
     outputPricePerMToken: Number(p.output_cost_per_1k) * 1000,
-    lastUpdated: new Date().toISOString()
+    lastUpdated: new Date().toISOString(),
   }));
 }
 
@@ -122,7 +111,7 @@ export async function calculateCost(
   provider: string,
   model: string,
   inputTokens: number,
-  outputTokens: number
+  outputTokens: number,
 ): Promise<ActualCost> {
   if (inputTokens < 0 || outputTokens < 0) {
     throw new Error('Token counts must be non-negative');
@@ -132,11 +121,11 @@ export async function calculateCost(
 
   try {
     const { data, error } = await supabase.functions.invoke('cost-calculator', {
-      body: { 
+      body: {
         model: fullModel,
         inputTokens,
-        outputTokens
-      }
+        outputTokens,
+      },
     });
 
     if (error) throw error;
@@ -193,7 +182,7 @@ export async function estimateWorkflowCost(
     data: Record<string, unknown>;
   }>,
   defaultProvider: string,
-  defaultModel: string
+  defaultModel: string,
 ): Promise<CostEstimate> {
   const breakdown: CostBreakdownItem[] = [];
   let totalInput = 0;
@@ -243,23 +232,23 @@ export async function estimateWorkflowCost(
  */
 function estimateNodeTokens(
   nodeType: string,
-  nodeData: Record<string, unknown>
+  nodeData: Record<string, unknown>,
 ): { input: number; output: number } {
   const estimates: Record<string, { input: number; output: number }> = {
-    'llm': { input: 2000, output: 1000 },
+    llm: { input: 2000, output: 1000 },
     'llm-call': { input: 2000, output: 1000 },
     'rag-search': { input: 1500, output: 500 },
     'tool-call': { input: 500, output: 200 },
-    'condition': { input: 200, output: 50 },
-    'transform': { input: 300, output: 300 },
-    'input': { input: 100, output: 0 },
-    'output': { input: 0, output: 100 },
-    'webhook': { input: 200, output: 200 },
-    'code': { input: 1000, output: 500 },
-    'oracle': { input: 8000, output: 4000 },
-    'guardrails': { input: 500, output: 100 },
-    'memory': { input: 300, output: 100 },
-    'handoff': { input: 1000, output: 200 },
+    condition: { input: 200, output: 50 },
+    transform: { input: 300, output: 300 },
+    input: { input: 100, output: 0 },
+    output: { input: 0, output: 100 },
+    webhook: { input: 200, output: 200 },
+    code: { input: 1000, output: 500 },
+    oracle: { input: 8000, output: 4000 },
+    guardrails: { input: 500, output: 100 },
+    memory: { input: 300, output: 100 },
+    handoff: { input: 1000, output: 200 },
   };
 
   const base = estimates[nodeType] ?? { input: 500, output: 300 };
@@ -314,7 +303,7 @@ export function checkRequestBudget(estimatedCostUsd: number): {
 
 export function calculateBudgetStatus(
   dailySpentUsd: number,
-  monthlySpentUsd: number
+  monthlySpentUsd: number,
 ): BudgetStatus {
   const dailyPercent = (dailySpentUsd / currentBudget.maxCostPerDayUsd) * 100;
   const monthlyPercent = (monthlySpentUsd / currentBudget.maxCostPerMonthUsd) * 100;
@@ -360,13 +349,15 @@ export function formatTokenCount(tokens: number): string {
  */
 export async function compareCosts(
   inputTokens: number,
-  outputTokens: number
-): Promise<Array<{
-  provider: string;
-  model: string;
-  costUsd: number;
-  costBrl: number;
-}>> {
+  outputTokens: number,
+): Promise<
+  Array<{
+    provider: string;
+    model: string;
+    costUsd: number;
+    costBrl: number;
+  }>
+> {
   const pricingList = await getAllPricing();
   const results = await Promise.all(
     pricingList.map(async (p) => {
@@ -377,7 +368,7 @@ export async function compareCosts(
         costUsd: cost.totalCostUsd,
         costBrl: cost.totalCostBrl,
       };
-    })
+    }),
   );
   return results.sort((a, b) => a.costUsd - b.costUsd);
 }

@@ -1,28 +1,29 @@
-/**
- * Utilitários de acessibilidade compartilhados.
- *
- * `handleKeyboardClick` transforma um elemento não-nativo em botão acionável
- * por teclado (Enter e Espaço), preservando a semântica esperada pela WCAG 2.1.
- */
-import type { KeyboardEvent } from "react";
+import type { KeyboardEvent } from 'react';
 
 /**
- * Handler `onKeyDown` que dispara o clique quando o usuário pressiona
- * Enter ou Espaço. Combine sempre com `role="button"` e `tabIndex={0}`.
- *
- * @example
- * <div
- *   role="button"
- *   tabIndex={0}
- *   onClick={handleAction}
- *   onKeyDown={handleKeyboardClick}
- * />
+ * Returns an onKeyDown handler that invokes `handler` when the user presses
+ * Enter or Space, mirroring a click. Use on elements given role="button" and
+ * tabIndex={0} so they are keyboard-operable.
+ */
+export function onActivateKey<T = Element>(handler: () => void) {
+  return (e: KeyboardEvent<T>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handler();
+    }
+  };
+}
+
+/**
+ * Drop-in `onKeyDown` handler for elements with `role="button"` and
+ * `tabIndex={0}` that already declare an `onClick`. Pressing Enter or Space
+ * dispatches a synthetic click on the element itself, so the keyboard path and
+ * the pointer path stay in sync without duplicating the callback.
  */
 export function handleKeyboardClick<T extends HTMLElement = HTMLElement>(
   e: KeyboardEvent<T>,
 ): void {
-  if (e.key === "Enter" || e.key === " ") {
-    e.preventDefault();
-    (e.currentTarget as HTMLElement).click();
-  }
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  e.preventDefault();
+  e.currentTarget.click();
 }

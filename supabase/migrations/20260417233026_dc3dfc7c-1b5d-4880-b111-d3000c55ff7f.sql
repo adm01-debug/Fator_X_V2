@@ -1,5 +1,5 @@
 -- Chaos Engineering experiments table
-CREATE TABLE public.chaos_experiments (
+CREATE TABLE IF NOT EXISTS public.chaos_experiments (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,

@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const OFFLINE_TITLE = 'Sem conexão com a internet';
-const OFFLINE_DESCRIPTION =
-  'Verifique sua conexão. O sistema entrará em modo de segurança.';
+const OFFLINE_DESCRIPTION = 'Verifique sua conexão. O sistema entrará em modo de segurança.';
 
 function showOfflineToast() {
   toast.error(OFFLINE_TITLE, {
@@ -30,15 +29,7 @@ export function useNetworkStatus() {
 
     const handleOffline = () => {
       setIsOnline(false);
-      toast.error('Sem conexão com a internet', {
-        id: 'network-offline',
-        description: 'Verifique sua conexão. O sistema entrará em modo de segurança.',
-        duration: Infinity,
-        action: {
-          label: 'Tentar Reconectar',
-          onClick: () => window.location.reload(),
-        },
-      });
+      showOfflineToast();
     };
 
     const handleOnline = () => {
@@ -52,12 +43,6 @@ export function useNetworkStatus() {
 
     window.addEventListener('offline', handleOffline);
     window.addEventListener('online', handleOnline);
-
-    // Detect the case where the app is loaded while already offline —
-    // the 'offline' event won't fire on mount, so check explicitly.
-    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-      handleOffline();
-    }
 
     return () => {
       window.removeEventListener('offline', handleOffline);

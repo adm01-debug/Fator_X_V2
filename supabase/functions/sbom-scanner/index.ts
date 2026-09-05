@@ -1,7 +1,14 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
+import { z } from 'https://esm.sh/zod@3.23.8';
 
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv, getCorsHeaders } from "../_shared/mod.ts";
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+  getCorsHeaders,
+} from '../_shared/mod.ts';
 const ScanRequestSchema = z.object({
   workspace_id: z.string().uuid(),
   snapshot_id: z.string().uuid(),
@@ -21,17 +28,17 @@ interface OSVVuln {
   database_specific?: { severity?: string; cvss_score?: number };
 }
 
-function severityFromCvss(score: number | null): "critical" | "high" | "medium" | "low" {
-  if (score === null) return "medium";
-  if (score >= 9) return "critical";
-  if (score >= 7) return "high";
-  if (score >= 4) return "medium";
-  return "low";
+function severityFromCvss(score: number | null): 'critical' | 'high' | 'medium' | 'low' {
+  if (score === null) return 'medium';
+  if (score >= 9) return 'critical';
+  if (score >= 7) return 'high';
+  if (score >= 4) return 'medium';
+  return 'low';
 }
 
 function parseCvssScore(severity?: Array<{ type: string; score: string }>): number | null {
   if (!severity?.length) return null;
-  const cvss = severity.find((s) => s.type.startsWith("CVSS"));
+  const cvss = severity.find((s) => s.type.startsWith('CVSS'));
   if (!cvss) return null;
   const match = cvss.score.match(/CVSS:[\d.]+\/.*?\/.*?(\d+\.\d+)/);
   if (match) return parseFloat(match[1]);
@@ -42,15 +49,15 @@ function parseCvssScore(severity?: Array<{ type: string; score: string }>): numb
 
 function ecosystemMap(eco: string): string {
   const map: Record<string, string> = {
-    npm: "npm",
-    deno: "npm",
-    pypi: "PyPI",
-    cargo: "crates.io",
-    go: "Go",
-    maven: "Maven",
-    rubygems: "RubyGems",
+    npm: 'npm',
+    deno: 'npm',
+    pypi: 'PyPI',
+    cargo: 'crates.io',
+    go: 'Go',
+    maven: 'Maven',
+    rubygems: 'RubyGems',
   };
-  return map[eco] || "npm";
+  return map[eco] || 'npm';
 }
 
 function getFixedVersion(vuln: OSVVuln, pkgName: string): string | null {
@@ -66,71 +73,75 @@ function getFixedVersion(vuln: OSVVuln, pkgName: string): string | null {
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+  if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
   try {
-    const authHeader = req.headers.get("Authorization");
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "missing auth" }), {
+      return new Response(JSON.stringify({ error: 'missing auth' }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const supabase = createClient(
-      requireEnv("SUPABASE_URL"),
-      requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
+      requireEnv('SUPABASE_URL'),
+      requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
       { global: { headers: { Authorization: authHeader } } },
     );
 
-    const userClient = createClient(
-      requireEnv("SUPABASE_URL"),
-      requireEnv("SUPABASE_ANON_KEY"),
-      { global: { headers: { Authorization: authHeader } } },
-    );
+    const userClient = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_ANON_KEY'), {
+      global: { headers: { Authorization: authHeader } },
+    });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !userData.user) {
-      return new Response(JSON.stringify({ error: "unauthorized" }), {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = ScanRequestSchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          error: 'Payload inválido',
+          details: parsedBody.error.flatten().fieldErrors,
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
     }
     const body: ScanRequest = parsedBody.data;
     if (!body.workspace_id || !body.snapshot_id) {
-      return new Response(JSON.stringify({ error: "workspace_id and snapshot_id required" }), {
+      return new Response(JSON.stringify({ error: 'workspace_id and snapshot_id required' }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // Verify admin via RLS-aware query
     const { data: snap, error: snapErr } = await userClient
-      .from("sbom_snapshots")
-      .select("id, workspace_id")
-      .eq("id", body.snapshot_id)
+      .from('sbom_snapshots')
+      .select('id, workspace_id')
+      .eq('id', body.snapshot_id)
       .single();
     if (snapErr || !snap) {
-      return new Response(JSON.stringify({ error: "snapshot not found or forbidden" }), {
+      return new Response(JSON.stringify({ error: 'snapshot not found or forbidden' }), {
         status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // Fetch components
     const { data: components, error: compErr } = await supabase
-      .from("sbom_components")
-      .select("id, name, version, ecosystem")
-      .eq("snapshot_id", body.snapshot_id);
+      .from('sbom_components')
+      .select('id, name, version, ecosystem')
+      .eq('snapshot_id', body.snapshot_id);
     if (compErr) throw compErr;
 
     const counts = { scanned: 0, found_critical: 0, found_high: 0, found_medium: 0, found_low: 0 };
@@ -138,9 +149,9 @@ Deno.serve(async (req) => {
     for (const comp of components || []) {
       counts.scanned += 1;
       try {
-        const osvRes = await fetch("https://api.osv.dev/v1/query", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const osvRes = await fetch('https://api.osv.dev/v1/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             package: { name: comp.name, ecosystem: ecosystemMap(comp.ecosystem) },
             version: comp.version,
@@ -156,13 +167,13 @@ Deno.serve(async (req) => {
           const fixedVer = getFixedVersion(v, comp.name);
           const refUrl = v.references?.[0]?.url || `https://osv.dev/vulnerability/${v.id}`;
 
-          await supabase.rpc("record_vulnerability", {
+          await supabase.rpc('record_vulnerability', {
             p_snapshot_id: body.snapshot_id,
             p_component_id: comp.id,
             p_cve_id: v.id,
             p_severity: sev,
             p_cvss_score: cvss,
-            p_summary: (v.summary || v.details || "").slice(0, 500),
+            p_summary: (v.summary || v.details || '').slice(0, 500),
             p_fixed_version: fixedVer,
             p_reference_url: refUrl,
           });
@@ -175,13 +186,13 @@ Deno.serve(async (req) => {
     }
 
     return new Response(JSON.stringify({ ok: true, ...counts }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    console.error("sbom-scanner error:", e);
+    console.error('sbom-scanner error:', e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });

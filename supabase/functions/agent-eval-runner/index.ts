@@ -1,16 +1,31 @@
 // Eval Suite runner — executa dataset contra agente + LLM-as-judge
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.58.0';
-import { z } from "https://esm.sh/zod@3.23.8";
-import { checkIdempotency, saveIdempotency } from "../_shared/idempotency.ts";
+import { z } from 'https://esm.sh/zod@3.23.8';
+import { checkIdempotency, saveIdempotency } from '../_shared/idempotency.ts';
 
-import { getCorsHeaders, requireEnv, validateRequiredEnv, checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS } from "../_shared/mod.ts";
-validateRequiredEnv(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_ANON_KEY', 'LOVABLE_API_KEY']);
-const EvalRunnerBodySchema = z.object({
-  agent_id: z.string().uuid().optional(),
-  workspace_id: z.string().uuid().optional(),
-  eval_set_id: z.string().uuid().optional(),
-  test_cases: z.array(z.record(z.unknown())).max(200).optional(),
-}).passthrough();
+import {
+  getCorsHeaders,
+  requireEnv,
+  validateRequiredEnv,
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+} from '../_shared/mod.ts';
+validateRequiredEnv([
+  'SUPABASE_URL',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'SUPABASE_ANON_KEY',
+  'LOVABLE_API_KEY',
+]);
+const EvalRunnerBodySchema = z
+  .object({
+    agent_id: z.string().uuid().optional(),
+    workspace_id: z.string().uuid().optional(),
+    eval_set_id: z.string().uuid().optional(),
+    test_cases: z.array(z.record(z.unknown())).max(200).optional(),
+  })
+  .passthrough();
 
 interface EvalItem {
   input: string;
@@ -72,7 +87,10 @@ Use score >= 0.7 para passed=true.`;
   const data = await resp.json();
   if (!resp.ok) throw new Error(data?.error?.message || 'Judge failed');
   let raw = String(data?.choices?.[0]?.message?.content ?? '{}').trim();
-  raw = raw.replace(/^```json\s*/i, '').replace(/```$/, '').trim();
+  raw = raw
+    .replace(/^```json\s*/i, '')
+    .replace(/```$/, '')
+    .trim();
   try {
     const parsed = JSON.parse(raw);
     return {
@@ -105,7 +123,7 @@ Deno.serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+  if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
   try {
     const apiKey = requireEnv('LOVABLE_API_KEY');
@@ -127,7 +145,13 @@ Deno.serve(async (req) => {
     const rawBody = await req.json().catch(() => null);
     const parsedBody = EvalRunnerBodySchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          error: 'Payload inválido',
+          details: parsedBody.error.flatten().fieldErrors,
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      );
     }
     const body = parsedBody.data;
     const { dataset_id, agent_id } = body as { dataset_id: string; agent_id: string };
@@ -157,7 +181,7 @@ Deno.serve(async (req) => {
 
     const items = (dataset.items as EvalItem[]) ?? [];
     const model = agent.model || 'google/gemini-2.5-flash';
-    const systemPrompt = (agent.config as Record<string, unknown>)?.system_prompt as string ?? '';
+    const systemPrompt = ((agent.config as Record<string, unknown>)?.system_prompt as string) ?? '';
 
     const { data: run, error: runErr } = await admin
       .from('agent_eval_runs')
@@ -188,7 +212,12 @@ Deno.serve(async (req) => {
         try {
           const agentResp = await callAgent(systemPrompt, item.input, model, apiKey);
           const cost = estimateCost(model, agentResp.tokens_in, agentResp.tokens_out);
-          const judge = await judgeResult(item.expected_output, agentResp.text, item.criteria ?? [], apiKey);
+          const judge = await judgeResult(
+            item.expected_output,
+            agentResp.text,
+            item.criteria ?? [],
+            apiKey,
+          );
 
           totalScore += judge.score;
           totalLatency += agentResp.latency_ms;
@@ -238,7 +267,11 @@ Deno.serve(async (req) => {
     })().catch(async (e) => {
       await admin
         .from('agent_eval_runs')
-        .update({ status: 'failed', error_message: e instanceof Error ? e.message : String(e), completed_at: new Date().toISOString() })
+        .update({
+          status: 'failed',
+          error_message: e instanceof Error ? e.message : String(e),
+          completed_at: new Date().toISOString(),
+        })
         .eq('id', run.id);
     });
 

@@ -1,8 +1,7 @@
-import { supabase } from "@/integrations/supabase/client";
-import { logger } from "@/lib/logger";
-import type { DbRow } from '@/types/dbRow';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
-export type CodeRuntime = "python" | "node" | "deno";
+export type CodeRuntime = 'python' | 'node' | 'deno';
 
 export interface CodeExecution {
   id: string;
@@ -16,15 +15,23 @@ export interface CodeExecution {
   files: Array<{ name: string; size: number }>;
   duration_ms: number;
   memory_mb: number;
-  status: "pending" | "running" | "completed" | "failed" | "timeout";
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'timeout';
   simulated: boolean;
   error_message: string | null;
   created_at: string;
 }
 
+/** Payload of a streamed code-interpreter event (stdout/stderr/result/error). */
+export interface CodeStreamEvent {
+  chunk?: string;
+  message?: string;
+  simulated?: boolean;
+  [key: string]: unknown;
+}
+
 export const codeInterpreterService = {
   async execute(runtime: CodeRuntime, code: string, workspace_id?: string): Promise<CodeExecution> {
-    const { data, error } = await supabase.functions.invoke("code-interpreter-execute", {
+    const { data, error } = await supabase.functions.invoke('code-interpreter-execute', {
       body: { runtime, code, workspace_id },
     });
     if (error) throw error;
@@ -32,38 +39,43 @@ export const codeInterpreterService = {
   },
 
   async streamExecute(
-    runtime: CodeRuntime, 
-    code: string, 
-    onEvent: (event: string, data: unknown) => void,
-    workspace_id?: string
+    runtime: CodeRuntime,
+    code: string,
+    onEvent: (event: string, data: CodeStreamEvent) => void,
+    workspace_id?: string,
   ): Promise<void> {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error("Não autenticado");
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) throw new Error('Não autenticado');
 
-    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/code-interpreter-execute`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`,
-        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/code-interpreter-execute`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ runtime, code, workspace_id, stream: true }),
       },
-      body: JSON.stringify({ runtime, code, workspace_id, stream: true }),
-    });
+    );
 
     if (!response.ok) throw new Error(`Falha no streaming: ${response.statusText}`);
     const reader = response.body?.getReader();
-    if (!reader) throw new Error("Corpo da resposta vazio");
+    if (!reader) throw new Error('Corpo da resposta vazio');
 
     const decoder = new TextDecoder();
-    let buffer = "";
+    let buffer = '';
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
 
       buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n\n");
-      buffer = lines.pop() || "";
+      const lines = buffer.split('\n\n');
+      buffer = lines.pop() || '';
 
       for (const line of lines) {
         if (!line.trim()) continue;
@@ -73,7 +85,7 @@ export const codeInterpreterService = {
           try {
             onEvent(eventMatch[1], JSON.parse(dataMatch[1]));
           } catch (e) {
-            logger.error("Erro ao processar evento SSE no codeInterpreterService", e);
+            logger.error('Erro ao processar evento SSE no codeInterpreterService', e);
           }
         }
       }
@@ -82,23 +94,25 @@ export const codeInterpreterService = {
 
   async list(limit = 20): Promise<CodeExecution[]> {
     const { data, error } = await supabase
-      .from("code_executions")
-      .select("*")
-      .order("created_at", { ascending: false })
+      .from('code_executions')
+      .select('*')
+      .order('created_at', { ascending: false })
       .limit(limit);
     if (error) throw error;
     return (data ?? []) as unknown as CodeExecution[];
   },
 
   async remove(id: string): Promise<void> {
-    const { error } = await supabase.from("code_executions").delete().eq("id", id);
+    const { error } = await supabase.from('code_executions').delete().eq('id', id);
     if (error) throw error;
   },
 
   async clearAll(): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
-    const { error } = await supabase.from("code_executions").delete().eq("user_id", user.id);
+    const { error } = await supabase.from('code_executions').delete().eq('user_id', user.id);
     if (error) throw error;
   },
 };

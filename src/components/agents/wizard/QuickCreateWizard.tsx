@@ -30,7 +30,14 @@ import { StepQuickType } from './quickSteps/StepQuickType';
 import { StepQuickModel } from './quickSteps/StepQuickModel';
 import { StepQuickPrompt } from './quickSteps/StepQuickPrompt';
 import { StepQuickSkills } from './quickSteps/StepQuickSkills';
-import { bulkInstallSkills } from '@/services/skillsRegistryService';
+import { bulkInstallSkills, getSkillsByIds } from '@/services/skillsRegistryService';
+import {
+  evaluateInstallImpact,
+  trimSelectionToCap,
+  type NamedSkillRef,
+} from '@/lib/skills/installGuard';
+import { buildInstallCapRecord, classifyInstallCap } from '@/lib/skills/installCapAudit';
+import { audit } from '@/lib/auditService';
 import { z } from 'zod';
 import { PreflightReviewSummary } from './quickSteps/PreflightReviewSummary';
 import { DraftRecoveryBanner, type DraftBannerEntry } from './DraftRecoveryBanner';
@@ -49,7 +56,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 // AlertDialog moved into PromptVariantDiffDialog
-import { QUICK_AGENT_TEMPLATES as TEMPLATES_FOR_DIALOG, PROMPT_VARIANT_META as VARIANT_META_FOR_DIALOG } from '@/data/quickAgentTemplates';
+import {
+  QUICK_AGENT_TEMPLATES as TEMPLATES_FOR_DIALOG,
+  PROMPT_VARIANT_META as VARIANT_META_FOR_DIALOG,
+} from '@/data/quickAgentTemplates';
 import { PromptVariantDiffDialog } from './quickSteps/PromptVariantDiffDialog';
 import {
   loadDrafts,
@@ -77,11 +87,21 @@ const FIELD_LABEL: Partial<Record<keyof QuickAgentForm, string>> = {
 };
 const skillsStepSchema = z.object({});
 const STEPS = [
-  { key: 'identity', label: 'Identidade', schema: quickIdentitySchema, fields: ['name', 'emoji', 'mission', 'description'] },
+  {
+    key: 'identity',
+    label: 'Identidade',
+    schema: quickIdentitySchema,
+    fields: ['name', 'emoji', 'mission', 'description'],
+  },
   { key: 'type', label: 'Tipo', schema: quickTypeSchema, fields: ['type'] },
   { key: 'model', label: 'Modelo', schema: quickModelSchema, fields: ['model'] },
+  {
+    key: 'skills',
+    label: 'Skills',
+    schema: skillsStepSchema,
+    fields: [] as Array<keyof QuickAgentForm>,
+  },
   { key: 'prompt', label: 'Prompt', schema: quickPromptSchema, fields: ['prompt'] },
-  { key: 'skills', label: 'Skills', schema: skillsStepSchema, fields: [] as Array<keyof QuickAgentForm> },
 ] as const;
 
 const TYPE_LABEL: Record<QuickAgentType, string> = {
@@ -97,7 +117,7 @@ const TYPE_LABEL: Record<QuickAgentType, string> = {
 // User-tunable minimum prompt depth before "Criar agente" unlocks.
 // Persisted across sessions so the choice sticks per browser.
 const PROMPT_DEPTH_OPTIONS = [5, 8, 12] as const;
-type PromptDepth = typeof PROMPT_DEPTH_OPTIONS[number];
+type PromptDepth = (typeof PROMPT_DEPTH_OPTIONS)[number];
 const PROMPT_DEPTH_KEY = 'nexus.quickWizard.minPromptDepth';
 const DEFAULT_PROMPT_DEPTH: PromptDepth = 8;
 
@@ -105,7 +125,9 @@ function loadPromptDepth(): PromptDepth {
   try {
     const raw = localStorage.getItem(PROMPT_DEPTH_KEY);
     const n = raw ? Number(raw) : NaN;
-    return (PROMPT_DEPTH_OPTIONS as readonly number[]).includes(n) ? (n as PromptDepth) : DEFAULT_PROMPT_DEPTH;
+    return (PROMPT_DEPTH_OPTIONS as readonly number[]).includes(n)
+      ? (n as PromptDepth)
+      : DEFAULT_PROMPT_DEPTH;
   } catch {
     return DEFAULT_PROMPT_DEPTH;
   }
@@ -114,9 +136,7 @@ function loadPromptDepth(): PromptDepth {
 function countPromptWords(text: string): number {
   // Strip code fences/markdown noise so the count reflects real prose, not
   // boilerplate the user pasted in.
-  const stripped = text
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/[`*_~#>-]/g, ' ');
+  const stripped = text.replace(/```[\s\S]*?```/g, ' ').replace(/[`*_~#>-]/g, ' ');
   const matches = stripped.trim().match(/\S+/g);
   return matches ? matches.length : 0;
 }
@@ -129,8 +149,23 @@ interface QuickCreateWizardProps {
 // Parse síncrono dos params rf_* — usado para hidratar o estado inicial
 // ANTES do primeiro render, evitando flicker (sem passar por estado vazio).
 type RfErrorType = 'required' | 'too_small' | 'too_big' | 'invalid_type' | 'custom' | 'unknown';
-const RF_VALID_FIELDS: Array<keyof QuickAgentForm> = ['name', 'emoji', 'mission', 'description', 'type', 'model', 'prompt'];
-const RF_VALID_TYPES: readonly RfErrorType[] = ['required', 'too_small', 'too_big', 'invalid_type', 'custom', 'unknown'];
+const RF_VALID_FIELDS: Array<keyof QuickAgentForm> = [
+  'name',
+  'emoji',
+  'mission',
+  'description',
+  'type',
+  'model',
+  'prompt',
+];
+const RF_VALID_TYPES: readonly RfErrorType[] = [
+  'required',
+  'too_small',
+  'too_big',
+  'invalid_type',
+  'custom',
+  'unknown',
+];
 
 function parseDeeplinkParams(sp: URLSearchParams): {
   valid: boolean;
@@ -148,7 +183,9 @@ function parseDeeplinkParams(sp: URLSearchParams): {
   }
   const stepIdx = Math.max(0, Math.min(STEPS.length - 1, Number(sp.get('rf_step') ?? 0) || 0));
   const rawType = sp.get('rf_type') ?? 'unknown';
-  const errorType = (RF_VALID_TYPES as readonly string[]).includes(rawType) ? (rawType as RfErrorType) : 'unknown';
+  const errorType = (RF_VALID_TYPES as readonly string[]).includes(rawType)
+    ? (rawType as RfErrorType)
+    : 'unknown';
   // rf_focus=1 sinaliza "focar automaticamente o campo no carregamento".
   // Default false para preservar o comportamento antigo dos links já gerados.
   const autoFocus = sp.get('rf_focus') === '1';
@@ -168,10 +205,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   const { user } = useAuth();
   // Hidratação síncrona dos params rf_* — calculada UMA VEZ antes do
   // primeiro render para evitar flicker entre "vazio → destacado".
-  // Lê os params rf_* uma única vez na montagem para hidratar o estado inicial
-  // sem flicker. Intencionalmente NÃO depende de `searchParams`: mudanças
-  // posteriores na URL não devem recalcular o estado inicial.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   const initialDeeplink = useMemo(() => parseDeeplinkParams(searchParams), []);
   const [step, setStep] = useState(initialDeeplink.valid ? initialDeeplink.stepIdx : 0);
   const [saving, setSaving] = useState(false);
@@ -179,10 +213,14 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
 
   const [form, setForm] = useState<QuickAgentForm>(() => ({
     ...QUICK_AGENT_DEFAULTS,
-    ...initialData
+    ...initialData,
   }));
   const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
-  const [draftsStore, setDraftsStore] = useState<DraftsStoreV2>({ version: 2, activeId: null, drafts: [] });
+  const [draftsStore, setDraftsStore] = useState<DraftsStoreV2>({
+    version: 2,
+    activeId: null,
+    drafts: [],
+  });
   const [pendingDrafts, setPendingDrafts] = useState<DraftEntry[]>([]);
   const [draftDecided, setDraftDecided] = useState(false);
   const [highlightField, setHighlightField] = useState<keyof QuickAgentForm | null>(
@@ -190,7 +228,9 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   );
   // Resumo visual do erro pós-restauração — exibido junto do highlightField.
   // Nulo = nenhum feedback ativo. Auto-limpa quando o usuário corrige o campo.
-  const [restoreFeedback, setRestoreFeedback] = useState<import('./RestoreFeedbackBanner').RestoreFeedbackInfo | null>(
+  const [restoreFeedback, setRestoreFeedback] = useState<
+    import('./RestoreFeedbackBanner').RestoreFeedbackInfo | null
+  >(
     initialDeeplink.valid && initialDeeplink.field
       ? {
           stepIdx: initialDeeplink.stepIdx,
@@ -209,32 +249,45 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   // Mantida no DOM via aria-live="polite" sr-only para não interromper o fluxo.
   const [a11yFocusAnnounce, setA11yFocusAnnounce] = useState('');
   const [promptCustomLocked, setPromptCustomLocked] = useState(false);
-  const [selectedVariant, setSelectedVariant] = useState<import('@/data/quickAgentTemplates').PromptVariantId | null>(null);
-  const [pendingVariant, setPendingVariant] = useState<import('@/data/quickAgentTemplates').PromptVariantId | null>(null);
-  const [lockEvents, setLockEvents] = useState<import('./quickSteps/PromptLockEventLog').PromptLockEvent[]>([]);
+  const [selectedVariant, setSelectedVariant] = useState<
+    import('@/data/quickAgentTemplates').PromptVariantId | null
+  >(null);
+  const [pendingVariant, setPendingVariant] = useState<
+    import('@/data/quickAgentTemplates').PromptVariantId | null
+  >(null);
+  const [lockEvents, setLockEvents] = useState<
+    import('./quickSteps/PromptLockEventLog').PromptLockEvent[]
+  >([]);
   // Persisted user rule: when ON, edits coming from the section checklist
   // (Inserir Persona/Escopo/Formato/Regras) auto-unlock the Custom mode.
-  const { enabled: checklistAutoUnlock, setEnabled: setChecklistAutoUnlock } = useChecklistAutoUnlock();
+  const { enabled: checklistAutoUnlock, setEnabled: setChecklistAutoUnlock } =
+    useChecklistAutoUnlock();
   const pushLockEvent = (
     kind: import('./quickSteps/PromptLockEventLog').PromptLockEventKind,
     detail?: string,
   ) => {
-    setLockEvents((prev) => [
-      ...prev,
-      {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        at: Date.now(),
-        kind,
-        detail,
-      },
-    ].slice(-30));
+    setLockEvents((prev) =>
+      [
+        ...prev,
+        {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          at: Date.now(),
+          kind,
+          detail,
+        },
+      ].slice(-30),
+    );
   };
   const lastTypeRef = useRef<QuickAgentType | null>(null);
   const lastTypeForLockRef = useRef<string>(QUICK_AGENT_DEFAULTS.type);
 
   const [minPromptDepth, setMinPromptDepth] = useState<PromptDepth>(() => loadPromptDepth());
   useEffect(() => {
-    try { localStorage.setItem(PROMPT_DEPTH_KEY, String(minPromptDepth)); } catch { /* ignore quota */ }
+    try {
+      localStorage.setItem(PROMPT_DEPTH_KEY, String(minPromptDepth));
+    } catch {
+      /* ignore quota */
+    }
   }, [minPromptDepth]);
   const promptWordCount = useMemo(() => countPromptWords(form.prompt), [form.prompt]);
   const meetsDepth = promptWordCount >= minPromptDepth;
@@ -245,8 +298,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   const sectionStatus = useMemo(() => {
     const missing = getMissingSections(form.prompt);
     const thin = getThinSections(form.prompt);
-    const labelOf = (k: string) =>
-      REQUIRED_PROMPT_SECTIONS.find((s) => s.key === k)?.label ?? k;
+    const labelOf = (k: string) => REQUIRED_PROMPT_SECTIONS.find((s) => s.key === k)?.label ?? k;
     return {
       missingKeys: missing,
       thinKeys: thin.map((t) => t.key),
@@ -272,6 +324,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   // Deeplink rf_*: a hidratação do estado já foi feita SÍNCRONA via lazy
   // initializers acima (sem flicker). Aqui só limpamos params inválidos da
   // URL para não confundir o usuário em recargas futuras.
+
   useEffect(() => {
     const rfField = searchParams.get('rf_field');
     if (rfField && !RF_VALID_FIELDS.includes(rfField as keyof QuickAgentForm)) {
@@ -279,7 +332,8 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       ['rf_field', 'rf_step', 'rf_type', 'rf_msg', 'rf_focus'].forEach((k) => next.delete(k));
       setSearchParams(next, { replace: true });
     }
-  }, [searchParams, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+  }, []);
 
   // Gera URL atual + params rf_* e copia para o clipboard. Botão "Copiar link"
   // do RestoreFeedbackBanner: permite compartilhar um link que já abre o wizard
@@ -303,7 +357,9 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         description: `Reabre o wizard no campo "${restoreFeedback.fieldLabel ?? restoreFeedback.field}".`,
       });
     } catch {
-      toast.error('Não consegui copiar', { description: 'Copie manualmente da barra de endereço.' });
+      toast.error('Não consegui copiar', {
+        description: 'Copie manualmente da barra de endereço.',
+      });
     }
   };
 
@@ -345,8 +401,8 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
   // Auto-focus no mount quando o deeplink veio com rf_focus=1.
   // Usa o mesmo caminho do "Corrigir agora" (rAF duplo + scroll + foco) para
   // garantir que o input já esteja montado quando .focus() for chamado.
-  // Roda apenas uma vez — `initialDeeplink` é estável (useMemo sem deps) e o
-  // efeito remove rf_focus da URL ao final; re-executar re-roubaria o foco.
+  // Roda apenas uma vez — `initialDeeplink` é estável (useMemo sem deps).
+
   useEffect(() => {
     if (!initialDeeplink.valid || !initialDeeplink.autoFocus || !initialDeeplink.field) return;
     const inputId = FIELD_INPUT_ID[initialDeeplink.field];
@@ -369,7 +425,7 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     const next = new URLSearchParams(searchParams);
     next.delete('rf_focus');
     setSearchParams(next, { replace: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, []);
 
   // On mount: load store, filter recoverable drafts.
@@ -404,12 +460,18 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     if (!draftDecided) return;
     if (!isDraftMeaningful(form) && !draftsStore.activeId) return;
     setDraftsStore((prev) => {
-      const { store } = upsertDraft(prev, { id: prev.activeId ?? undefined, form, promptCustomLocked, selectedVariant });
+      const { store } = upsertDraft(prev, {
+        id: prev.activeId ?? undefined,
+        form,
+        promptCustomLocked,
+        selectedVariant,
+        selectedSkillIds,
+      });
       saveDrafts(store);
       return store;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, draftDecided, promptCustomLocked, selectedVariant]);
+  }, [form, draftDecided, promptCustomLocked, selectedVariant, selectedSkillIds]);
 
   // Heuristic: when user changes the type after editing a meaningful draft,
   // offer to fork into a new draft (one per type).
@@ -431,12 +493,19 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
             // Re-anchor active draft to the previous type by reverting its stored type
             const previous = prev.drafts.find((d) => d.id === activeId);
             const restoredPrev = previous
-              ? { ...prev, drafts: prev.drafts.map((d) => d.id === activeId ? { ...d, form: { ...d.form, type: prevType } } : d) }
+              ? {
+                  ...prev,
+                  drafts: prev.drafts.map((d) =>
+                    d.id === activeId ? { ...d, form: { ...d.form, type: prevType } } : d,
+                  ),
+                }
               : prev;
             // Create a fresh draft with the current form (new type)
             const { store } = upsertDraft({ ...restoredPrev, activeId: null }, { form });
             saveDrafts(store);
-            toast.success('Novo rascunho criado', { description: `Anterior preservado como ${TYPE_LABEL[prevType]}.` });
+            toast.success('Novo rascunho criado', {
+              description: `Anterior preservado como ${TYPE_LABEL[prevType]}.`,
+            });
             return store;
           });
         },
@@ -454,23 +523,29 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     // completar conscientemente cada um. No modo "completo" restauramos
     // exatamente o estado salvo, incluindo campos vazios do rascunho.
     const summary = summarizeForm(target.form);
-    const formToApply: typeof target.form = mode === 'partial'
-      ? {
-          ...form, // base = estado atual (defaults)
-          ...(summary.hasIdentity ? {
-            name: target.form.name,
-            mission: target.form.mission,
-            description: target.form.description,
-          } : {}),
-          ...(summary.hasType ? { type: target.form.type } : {}),
-          ...(summary.hasModel ? { model: target.form.model } : {}),
-          ...(summary.hasPrompt ? { prompt: target.form.prompt } : {}),
-        }
-      : target.form;
+    const formToApply: typeof target.form =
+      mode === 'partial'
+        ? {
+            ...form, // base = estado atual (defaults)
+            ...(summary.hasIdentity
+              ? {
+                  name: target.form.name,
+                  mission: target.form.mission,
+                  description: target.form.description,
+                }
+              : {}),
+            ...(summary.hasType ? { type: target.form.type } : {}),
+            ...(summary.hasModel ? { model: target.form.model } : {}),
+            ...(summary.hasPrompt ? { prompt: target.form.prompt } : {}),
+          }
+        : target.form;
 
     setForm(formToApply);
     setPromptCustomLocked(target.promptCustomLocked === true && mode === 'full');
     setSelectedVariant(mode === 'full' ? (target.selectedVariant ?? null) : null);
+    // Restauração parcial recupera só identidade: manter skills seria incoerente
+    // com o prompt/tipo descartados, então zeramos a seleção nesse modo.
+    setSelectedSkillIds(mode === 'full' ? (target.selectedSkillIds ?? []) : []);
     lastTypeForLockRef.current = formToApply.type;
     lastTypeRef.current = formToApply.type as QuickAgentType;
     const resume = computeResumeTarget(formToApply, STEPS);
@@ -496,16 +571,24 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     setPendingDrafts([]);
     setDraftDecided(true);
     if (target.promptCustomLocked === true && mode === 'full') {
-      pushLockEvent('locked-manual-edit', `rascunho "${target.form.name?.trim() || 'sem nome'}" restaurado já travado`);
+      pushLockEvent(
+        'locked-manual-edit',
+        `rascunho "${target.form.name?.trim() || 'sem nome'}" restaurado já travado`,
+      );
     } else {
-      pushLockEvent('unlocked-draft-restore', `rascunho "${target.form.name?.trim() || 'sem nome'}" (${mode === 'partial' ? 'parcial' : 'completo'})`);
+      pushLockEvent(
+        'unlocked-draft-restore',
+        `rascunho "${target.form.name?.trim() || 'sem nome'}" (${mode === 'partial' ? 'parcial' : 'completo'})`,
+      );
     }
     // Mini-notificação rica via Sonner — confirma de qual rascunho veio,
     // o passo de retomada e o primeiro campo inválido com tipo de erro,
     // dando ao usuário uma checagem visual de que a restauração aplicou
     // exatamente o que ele esperava.
     const draftDisplayName = target.form.name?.trim() || 'sem nome';
-    const fieldLabel = resume.field ? (FIELD_LABEL[resume.field] ?? String(resume.field)) : undefined;
+    const fieldLabel = resume.field
+      ? (FIELD_LABEL[resume.field] ?? String(resume.field))
+      : undefined;
     const stepLabel = STEPS[resume.stepIdx]?.label;
     const jumpToField = () => {
       if (resume.field) {
@@ -514,23 +597,26 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       }
     };
     const tone = mode === 'partial' ? 'success' : !check.canRestore ? 'warning' : 'success';
-    toast.custom((t) => (
-      <div className="nexus-card bg-card border-border/60 shadow-nexus-lg w-[min(420px,calc(100vw-2rem))] p-3">
-        <DraftRestoredNotification
-          draftName={draftDisplayName}
-          mode={mode}
-          stepLabel={stepLabel}
-          fieldLabel={fieldLabel}
-          errorType={resume.errorType}
-          onJumpToField={resume.field ? jumpToField : undefined}
-          onDismiss={() => toast.dismiss(t)}
-        />
-      </div>
-    ), {
-      duration: 7000,
-      // Garante semântica correta para leitores de tela mesmo com conteúdo custom.
-      className: tone === 'warning' ? 'border-warning/30' : undefined,
-    });
+    toast.custom(
+      (t) => (
+        <div className="nexus-card bg-card border-border/60 shadow-nexus-lg w-[min(420px,calc(100vw-2rem))] p-3">
+          <DraftRestoredNotification
+            draftName={draftDisplayName}
+            mode={mode}
+            stepLabel={stepLabel}
+            fieldLabel={fieldLabel}
+            errorType={resume.errorType}
+            onJumpToField={resume.field ? jumpToField : undefined}
+            onDismiss={() => toast.dismiss(t)}
+          />
+        </div>
+      ),
+      {
+        duration: 7000,
+        // Garante semântica correta para leitores de tela mesmo com conteúdo custom.
+        className: tone === 'warning' ? 'border-warning/30' : undefined,
+      },
+    );
   };
 
   const handleRenameDraft = (id: string, newName: string) => {
@@ -591,7 +677,10 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
    *   prompt was already locked, releases it and emits `unlocked-checklist`.
    *   Otherwise, behaves like a regular manual edit.
    */
-  const updatePromptManual = (next: string, source: 'manual' | 'paste' | 'checklist' = 'manual') => {
+  const updatePromptManual = (
+    next: string,
+    source: 'manual' | 'paste' | 'checklist' = 'manual',
+  ) => {
     setForm((prev) => ({ ...prev, prompt: next }));
     setErrors((prev) => ({ ...prev, prompt: undefined }));
     if (highlightField === 'prompt') setHighlightField(null);
@@ -659,7 +748,10 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     const t = QUICK_AGENT_TEMPLATES[form.type as QuickAgentType];
     update('prompt', t.systemPrompt);
     if (promptCustomLocked) {
-      pushLockEvent('unlocked-restore-template', `template do tipo ${TYPE_LABEL[form.type as QuickAgentType] ?? form.type}`);
+      pushLockEvent(
+        'unlocked-restore-template',
+        `template do tipo ${TYPE_LABEL[form.type as QuickAgentType] ?? form.type}`,
+      );
     }
     setPromptCustomLocked(false);
     setSelectedVariant(null);
@@ -681,7 +773,10 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       emoji: t.emoji,
     }));
     if (promptCustomLocked) {
-      pushLockEvent('unlocked-safe-reset', `tipo ${TYPE_LABEL[form.type as QuickAgentType] ?? form.type}`);
+      pushLockEvent(
+        'unlocked-safe-reset',
+        `tipo ${TYPE_LABEL[form.type as QuickAgentType] ?? form.type}`,
+      );
     }
     setPromptCustomLocked(false);
     setSelectedVariant(null);
@@ -692,7 +787,9 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     });
   };
 
-  const doApplyPromptVariant = (variantId: import('@/data/quickAgentTemplates').PromptVariantId) => {
+  const doApplyPromptVariant = (
+    variantId: import('@/data/quickAgentTemplates').PromptVariantId,
+  ) => {
     const t = QUICK_AGENT_TEMPLATES[form.type as QuickAgentType];
     const variant = t.promptVariants[variantId];
     update('prompt', variant.prompt);
@@ -712,7 +809,10 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     if (form.prompt.trim() === nextPrompt.trim()) {
       toast.info(`Já está usando "${t.promptVariants[variantId].label}"`);
       if (promptCustomLocked) {
-        pushLockEvent('unlocked-variant', `variação "${t.promptVariants[variantId].label}" (sem alterações no texto)`);
+        pushLockEvent(
+          'unlocked-variant',
+          `variação "${t.promptVariants[variantId].label}" (sem alterações no texto)`,
+        );
       }
       setSelectedVariant(variantId);
       setPromptCustomLocked(false);
@@ -727,7 +827,9 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     if (result.success) {
       setErrors((prev) => {
         const next = { ...prev };
-        def.fields.forEach((f) => { delete next[f as keyof QuickAgentForm]; });
+        def.fields.forEach((f) => {
+          delete next[f as keyof QuickAgentForm];
+        });
         return next;
       });
       return true;
@@ -837,15 +939,57 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
       return;
     }
     const insertedId = (inserted as { id?: string } | null)?.id;
-    // Instala skills selecionadas em bulk (não bloqueia navegação em caso de erro)
+    // Instala skills selecionadas em bulk (idempotente; não bloqueia navegação em caso de erro).
+    // Guarda de teto: um agente novo começa com 0 slots, mas uma seleção grande
+    // (recomendadas + herdadas + manuais) pode nascer já acima do limite do
+    // compilador — nesse caso instalamos só o que cabe e registramos a perda.
     if (insertedId && selectedSkillIds.length > 0) {
       try {
-        await bulkInstallSkills(insertedId, selectedSkillIds);
+        let idsParaInstalar = selectedSkillIds;
+        const definicoes = await getSkillsByIds(selectedSkillIds).catch(() => []);
+        if (definicoes.length > 0) {
+          const porId = new Map(definicoes.map((s) => [s.id, s]));
+          const selecionadas: NamedSkillRef[] = selectedSkillIds
+            .map((id) => porId.get(id))
+            .filter((s): s is (typeof definicoes)[number] => Boolean(s))
+            .map((s) => ({ id: s.id, name: s.name }));
+
+          const guard = evaluateInstallImpact({ installed: [], selected: selecionadas });
+          if (guard.additionalDropped > 0) {
+            const cabem = trimSelectionToCap({ installed: [], selected: selecionadas });
+            idsParaInstalar = cabem.map((s) => s.id);
+            toast.warning('Seleção acima do teto de skills', {
+              description: guard.message,
+            });
+            void audit.skillInstallOverCap(
+              buildInstallCapRecord({
+                agentId: insertedId,
+                agentName: form.name.trim(),
+                installed: [],
+                selected: selecionadas,
+                guard,
+                acknowledged: false,
+              }),
+            );
+          } else if (classifyInstallCap(guard) === 'proximo_do_teto' && guard.effectiveAdds > 0) {
+            toast.info('Agente perto do teto de skills', { description: guard.message });
+          }
+        }
+
+        if (idsParaInstalar.length > 0) {
+          const result = await bulkInstallSkills(insertedId, idsParaInstalar);
+          if (result.skipped.length > 0) {
+            toast.info(`${result.installed.length} skill(s) instalada(s)`, {
+              description: `${result.skipped.length} já estavam instaladas e foram ignoradas.`,
+            });
+          }
+        }
       } catch (skillErr) {
         const msg = skillErr instanceof Error ? skillErr.message : 'Falha ao instalar skills';
         toast.warning('Agente criado, mas falhou ao instalar skills', { description: msg });
       }
     }
+
     // If the user opted to bypass contradiction warnings, log a high-signal
     // audit entry so admins can review the rationale later.
     if (override) {
@@ -887,8 +1031,14 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
       const isTyping = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA';
-      if (e.key === 'Escape' && !isTyping) { e.preventDefault(); goPrev(); }
-      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && isLast) { e.preventDefault(); requestCreate(); }
+      if (e.key === 'Escape' && !isTyping) {
+        e.preventDefault();
+        goPrev();
+      }
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && isLast) {
+        e.preventDefault();
+        requestCreate();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -907,34 +1057,101 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         ? { errorType: restoreFeedback.errorType, errorMessage: restoreFeedback.errorMessage }
         : null;
     switch (step) {
-      case 0: return <StepQuickIdentity form={form} errors={errors} update={update} highlightField={hfFor(['name', 'emoji', 'mission', 'description'])} highlightHint={hintFor(['name', 'emoji', 'mission', 'description'])} />;
-      case 1: return <StepQuickType form={form} errors={errors} update={update} applyTemplate={applyTemplate} highlightField={hfFor(['type'])} />;
-      case 2: return <StepQuickModel form={form} errors={errors} update={update} highlightField={hfFor(['model'])} />;
-      case 3: {
+      case 0:
+        return (
+          <StepQuickIdentity
+            form={form}
+            errors={errors}
+            update={update}
+            highlightField={hfFor(['name', 'emoji', 'mission', 'description'])}
+            highlightHint={hintFor(['name', 'emoji', 'mission', 'description'])}
+          />
+        );
+      case 1:
+        return (
+          <StepQuickType
+            form={form}
+            errors={errors}
+            update={update}
+            applyTemplate={applyTemplate}
+            highlightField={hfFor(['type'])}
+          />
+        );
+      case 2:
+        return (
+          <StepQuickModel
+            form={form}
+            errors={errors}
+            update={update}
+            highlightField={hfFor(['model'])}
+          />
+        );
+      case 3:
+        return (
+          <StepQuickSkills
+            mission={form.mission}
+            role={form.type}
+            selectedIds={selectedSkillIds}
+            onChange={setSelectedSkillIds}
+          />
+        );
+      case 4: {
         const detected = detectPromptVariant(form.type as QuickAgentType, form.prompt);
         const activeVariant = promptCustomLocked ? null : (selectedVariant ?? detected);
-        return <StepQuickPrompt form={form} errors={errors} onPromptManualEdit={updatePromptManual} onRestore={restorePromptFromType} onSafeReset={safeResetPromptAndPreview} onApplyVariant={applyPromptVariant} customLocked={promptCustomLocked} onUnlockCustom={() => { if (promptCustomLocked) pushLockEvent('unlocked-manual', 'botão "Destravar" no editor'); setPromptCustomLocked(false); setSelectedVariant(null); }} activeVariant={activeVariant} lockEvents={lockEvents} highlightField={hfFor(['prompt'])} checklistAutoUnlock={checklistAutoUnlock} onToggleChecklistAutoUnlock={setChecklistAutoUnlock} />;
+        return (
+          <StepQuickPrompt
+            form={form}
+            errors={errors}
+            onPromptManualEdit={updatePromptManual}
+            onRestore={restorePromptFromType}
+            onSafeReset={safeResetPromptAndPreview}
+            onApplyVariant={applyPromptVariant}
+            customLocked={promptCustomLocked}
+            onUnlockCustom={() => {
+              if (promptCustomLocked)
+                pushLockEvent('unlocked-manual', 'botão "Destravar" no editor');
+              setPromptCustomLocked(false);
+              setSelectedVariant(null);
+            }}
+            activeVariant={activeVariant}
+            lockEvents={lockEvents}
+            highlightField={hfFor(['prompt'])}
+            checklistAutoUnlock={checklistAutoUnlock}
+            onToggleChecklistAutoUnlock={setChecklistAutoUnlock}
+            skillIds={selectedSkillIds}
+          />
+        );
       }
-      case 4: return <StepQuickSkills mission={form.mission} role={form.type} selectedIds={selectedSkillIds} onChange={setSelectedSkillIds} />;
-      default: return null;
+      default:
+        return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, form, errors, highlightField, restoreFeedback, promptCustomLocked, selectedVariant, selectedSkillIds]);
+  }, [
+    step,
+    form,
+    errors,
+    highlightField,
+    restoreFeedback,
+    promptCustomLocked,
+    selectedVariant,
+    selectedSkillIds,
+  ]);
 
   const bannerEntries: DraftBannerEntry[] = useMemo(
-    () => pendingDrafts.map((d) => {
-      const check = checkDraftRestorable(d.form);
-      return {
-        id: d.id,
-        savedAt: d.savedAt,
-        summary: summarizeForm(d.form),
-        typeLabel: TYPE_LABEL[d.form.type as QuickAgentType] ?? String(d.form.type),
-        restorable: check.canRestore,
-        restoreBlockedReason: check.canRestore
-          ? undefined
-          : `${check.reason ?? 'Incompleto'} — ${check.nextStep ?? ''}`.trim(),
-      };
-    }),
+    () =>
+      pendingDrafts.map((d) => {
+        const check = checkDraftRestorable(d.form);
+        return {
+          id: d.id,
+          savedAt: d.savedAt,
+          summary: summarizeForm(d.form),
+          typeLabel: TYPE_LABEL[d.form.type as QuickAgentType] ?? String(d.form.type),
+          restorable: check.canRestore,
+          restoreBlockedReason: check.canRestore
+            ? undefined
+            : `${check.reason ?? 'Incompleto'} — ${check.nextStep ?? ''}`.trim(),
+        };
+      }),
     [pendingDrafts],
   );
 
@@ -977,16 +1194,28 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         />
       )}
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={goPrev} className="text-muted-foreground" aria-label="Voltar">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={goPrev}
+          className="text-muted-foreground"
+          aria-label="Voltar"
+        >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
           <h1 className="text-xl font-heading font-bold text-foreground">Criação rápida ⚡</h1>
-          <p className="text-body-sm text-muted-foreground">Passo {step + 1} de {STEPS.length}</p>
+          <p className="text-body-sm text-muted-foreground">
+            Passo {step + 1} de {STEPS.length}
+          </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-1 overflow-x-auto pb-2" role="tablist" aria-label="Etapas">
+      <div
+        className="flex items-center gap-1 overflow-x-auto pb-2"
+        role="tablist"
+        aria-label="Etapas"
+      >
         {STEPS.map((s, i) => {
           const isActive = i === step;
           const isDone = i < step;
@@ -1000,8 +1229,8 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
                 isActive
                   ? 'bg-primary/15 text-primary'
                   : isDone
-                  ? 'bg-secondary/60 text-foreground hover:bg-secondary'
-                  : 'text-muted-foreground'
+                    ? 'bg-secondary/60 text-foreground hover:bg-secondary'
+                    : 'text-muted-foreground'
               }`}
             >
               <div
@@ -1009,28 +1238,40 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
                   isDone
                     ? 'bg-primary text-primary-foreground'
                     : isActive
-                    ? 'bg-primary/20 text-primary border border-primary/40'
-                    : 'bg-secondary text-muted-foreground'
+                      ? 'bg-primary/20 text-primary border border-primary/40'
+                      : 'bg-secondary text-muted-foreground'
                 }`}
               >
                 {isDone ? <Check className="h-3 w-3" /> : i + 1}
               </div>
               <span className="hidden sm:inline">{s.label}</span>
-              {i < STEPS.length - 1 && <ChevronRight className="h-3 w-3 text-muted-foreground/40 ml-1" />}
+              {i < STEPS.length - 1 && (
+                <ChevronRight className="h-3 w-3 text-muted-foreground/40 ml-1" />
+              )}
             </button>
           );
         })}
       </div>
 
-      <div key={step} className="animate-page-enter">{stepNode}</div>
+      <div key={step} className="animate-page-enter">
+        {stepNode}
+      </div>
 
       {/* Profundidade mínima do prompt — toggle persistente. Bloqueia "Criar
           agente" se o prompt atual não atingir o nível selecionado. */}
       <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2">
         <div className="flex flex-col">
-          <span className="text-meta font-medium text-foreground">Profundidade mínima do prompt</span>
+          <span className="text-meta font-medium text-foreground">
+            Profundidade mínima do prompt
+          </span>
           <span className="text-meta text-muted-foreground">
-            Atual: <span className={`font-mono tabular-nums ${meetsDepth ? 'text-nexus-emerald' : 'text-nexus-amber'}`}>{promptWordCount}</span> palavra{promptWordCount === 1 ? '' : 's'}
+            Atual:{' '}
+            <span
+              className={`font-mono tabular-nums ${meetsDepth ? 'text-nexus-emerald' : 'text-nexus-amber'}`}
+            >
+              {promptWordCount}
+            </span>{' '}
+            palavra{promptWordCount === 1 ? '' : 's'}
             {' · '}mínimo exigido: <span className="font-mono tabular-nums">{minPromptDepth}</span>
           </span>
         </div>
@@ -1049,9 +1290,11 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
                 aria-checked={active}
                 onClick={() => setMinPromptDepth(opt)}
                 title={
-                  opt === 5 ? 'Permissivo — aceita prompts curtos'
-                    : opt === 8 ? 'Equilibrado — recomendado'
-                    : 'Rigoroso — exige descrição mais detalhada'
+                  opt === 5
+                    ? 'Permissivo — aceita prompts curtos'
+                    : opt === 8
+                      ? 'Equilibrado — recomendado'
+                      : 'Rigoroso — exige descrição mais detalhada'
                 }
                 className={`text-meta font-medium px-3 py-1 rounded transition-colors ${
                   active
@@ -1096,21 +1339,20 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
             const title = conflictBlocked
               ? `Resolva os ${conflictCount} conflito(s) entre regras antes de criar.`
               : sectionsBlocked
-              ? sectionTitle
-              : depthBlocked
-              ? `Prompt com ${promptWordCount}/${minPromptDepth} palavras — adicione mais detalhes ou reduza o nível mínimo.`
-              : undefined;
-            const sectionShort =
-              sectionStatus.missingKeys.length + sectionStatus.thinKeys.length;
+                ? sectionTitle
+                : depthBlocked
+                  ? `Prompt com ${promptWordCount}/${minPromptDepth} palavras — adicione mais detalhes ou reduza o nível mínimo.`
+                  : undefined;
+            const sectionShort = sectionStatus.missingKeys.length + sectionStatus.thinKeys.length;
             const label = saving
               ? 'Criando…'
               : conflictBlocked
-              ? `Resolver ${conflictCount} conflito(s)`
-              : sectionsBlocked
-              ? `Completar ${sectionShort} seção(ões)`
-              : depthBlocked
-              ? `Faltam ${Math.max(minPromptDepth - promptWordCount, 0)} palavra(s)`
-              : 'Criar agente';
+                ? `Resolver ${conflictCount} conflito(s)`
+                : sectionsBlocked
+                  ? `Completar ${sectionShort} seção(ões)`
+                  : depthBlocked
+                    ? `Faltam ${Math.max(minPromptDepth - promptWordCount, 0)} palavra(s)`
+                    : 'Criar agente';
             return (
               <div className="flex items-center gap-2">
                 {conflictBlocked && !depthBlocked && !sectionsBlocked && (
@@ -1119,14 +1361,14 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
                     description={
                       <>
                         <p>
-                          Detectamos <strong>{conflictCount} conflito(s)</strong> entre as regras do prompt.
-                          Esta ação cria o agente sem resolvê-los — use apenas se a contradição é{' '}
-                          <strong>intencional</strong> (ex.: política exige duas regras que se sobrepõem
-                          contextualmente).
+                          Detectamos <strong>{conflictCount} conflito(s)</strong> entre as regras do
+                          prompt. Esta ação cria o agente sem resolvê-los — use apenas se a
+                          contradição é <strong>intencional</strong> (ex.: política exige duas
+                          regras que se sobrepõem contextualmente).
                         </p>
                         <p>
-                          O motivo abaixo será registrado no <strong>log de auditoria</strong> junto com a
-                          contagem de conflitos para revisão posterior.
+                          O motivo abaixo será registrado no <strong>log de auditoria</strong> junto
+                          com a contagem de conflitos para revisão posterior.
                         </p>
                       </>
                     }
@@ -1153,8 +1395,17 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
                     }
                   />
                 )}
-                <Button onClick={requestCreate} disabled={saving || blocked} className="gap-2" title={title}>
-                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
+                <Button
+                  onClick={requestCreate}
+                  disabled={saving || blocked}
+                  className="gap-2"
+                  title={title}
+                >
+                  {saving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Rocket className="h-4 w-4" />
+                  )}
                   {label}
                 </Button>
               </div>
@@ -1163,14 +1414,20 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         )}
       </div>
 
-      <Dialog open={confirmOpen} onOpenChange={(o) => { if (!saving) setConfirmOpen(o); }}>
+      <Dialog
+        open={confirmOpen}
+        onOpenChange={(o) => {
+          if (!saving) setConfirmOpen(o);
+        }}
+      >
         <DialogContent className="max-w-xl">
           <DialogHeader>
             <DialogTitle>
               Criar {form.name.trim() ? `"${form.name.trim()}"` : 'agente'}?
             </DialogTitle>
             <DialogDescription>
-              Revise o resumo abaixo. Após confirmar, o agente será salvo como rascunho na sua biblioteca.
+              Revise o resumo abaixo. Após confirmar, o agente será salvo como rascunho na sua
+              biblioteca.
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-[60vh] overflow-y-auto -mx-1 px-1">
@@ -1197,24 +1454,32 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
               const title = conflictBlocked
                 ? `Resolva os ${conflictCount} conflito(s) entre regras antes de criar.`
                 : sectionsBlocked
-                ? sectionTitle
-                : depthBlocked
-                ? `Prompt com ${promptWordCount}/${minPromptDepth} palavras — adicione mais detalhes ou reduza o nível mínimo.`
-                : undefined;
-              const sectionShort =
-                sectionStatus.missingKeys.length + sectionStatus.thinKeys.length;
+                  ? sectionTitle
+                  : depthBlocked
+                    ? `Prompt com ${promptWordCount}/${minPromptDepth} palavras — adicione mais detalhes ou reduza o nível mínimo.`
+                    : undefined;
+              const sectionShort = sectionStatus.missingKeys.length + sectionStatus.thinKeys.length;
               const label = saving
                 ? 'Criando…'
                 : conflictBlocked
-                ? `Resolver ${conflictCount} conflito(s)`
-                : sectionsBlocked
-                ? `Completar ${sectionShort} seção(ões)`
-                : depthBlocked
-                ? `Faltam ${Math.max(minPromptDepth - promptWordCount, 0)} palavra(s)`
-                : 'Confirmar e criar';
+                  ? `Resolver ${conflictCount} conflito(s)`
+                  : sectionsBlocked
+                    ? `Completar ${sectionShort} seção(ões)`
+                    : depthBlocked
+                      ? `Faltam ${Math.max(minPromptDepth - promptWordCount, 0)} palavra(s)`
+                      : 'Confirmar e criar';
               return (
-                <Button onClick={() => saveAgent()} disabled={saving || blocked} className="gap-2" title={title}>
-                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
+                <Button
+                  onClick={() => saveAgent()}
+                  disabled={saving || blocked}
+                  className="gap-2"
+                  title={title}
+                >
+                  {saving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Rocket className="h-4 w-4" />
+                  )}
                   {label}
                 </Button>
               );
@@ -1223,31 +1488,32 @@ export function QuickCreateWizard({ onBack, initialData }: QuickCreateWizardProp
         </DialogContent>
       </Dialog>
 
-      {pendingVariant && (() => {
-        const t = TEMPLATES_FOR_DIALOG[form.type as QuickAgentType];
-        const variant = t.promptVariants[pendingVariant];
-        const nextLabel = VARIANT_META_FOR_DIALOG[pendingVariant].label;
-        const currentLabel = promptCustomLocked
-          ? 'Customizado'
-          : selectedVariant
-          ? VARIANT_META_FOR_DIALOG[selectedVariant].label
-          : 'Atual';
-        return (
-          <PromptVariantDiffDialog
-            open={!!pendingVariant}
-            onOpenChange={(o) => !o && setPendingVariant(null)}
-            currentPrompt={form.prompt}
-            currentLabel={currentLabel}
-            nextPrompt={variant.prompt}
-            nextLabel={nextLabel}
-            customLocked={promptCustomLocked}
-            onConfirm={() => {
-              if (pendingVariant) doApplyPromptVariant(pendingVariant);
-              setPendingVariant(null);
-            }}
-          />
-        );
-      })()}
+      {pendingVariant &&
+        (() => {
+          const t = TEMPLATES_FOR_DIALOG[form.type as QuickAgentType];
+          const variant = t.promptVariants[pendingVariant];
+          const nextLabel = VARIANT_META_FOR_DIALOG[pendingVariant].label;
+          const currentLabel = promptCustomLocked
+            ? 'Customizado'
+            : selectedVariant
+              ? VARIANT_META_FOR_DIALOG[selectedVariant].label
+              : 'Atual';
+          return (
+            <PromptVariantDiffDialog
+              open={!!pendingVariant}
+              onOpenChange={(o) => !o && setPendingVariant(null)}
+              currentPrompt={form.prompt}
+              currentLabel={currentLabel}
+              nextPrompt={variant.prompt}
+              nextLabel={nextLabel}
+              customLocked={promptCustomLocked}
+              onConfirm={() => {
+                if (pendingVariant) doApplyPromptVariant(pendingVariant);
+                setPendingVariant(null);
+              }}
+            />
+          );
+        })()}
     </div>
   );
 }

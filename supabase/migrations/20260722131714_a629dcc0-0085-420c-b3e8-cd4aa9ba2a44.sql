@@ -56,15 +56,27 @@ $$;
 REVOKE EXECUTE ON FUNCTION public.detect_slow_queries_and_alert() FROM PUBLIC, anon, authenticated;
 
 -- 2. Cron: detecta a cada 15 min
-SELECT cron.schedule(
-  'detect-slow-queries-every-15min',
-  '*/15 * * * *',
-  $$ SELECT public.detect_slow_queries_and_alert(); $$
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    PERFORM cron.schedule(
+      'detect-slow-queries-every-15min',
+      '*/15 * * * *',
+      'SELECT public.detect_slow_queries_and_alert();'
+    );
+  END IF;
+END;
+$$;
 
 -- 3. Cron semanal: reset pg_stat_statements (domingo 04:00 UTC) para evitar crescimento infinito
-SELECT cron.schedule(
-  'reset-pg-stat-statements-weekly',
-  '0 4 * * 0',
-  $$ SELECT extensions.pg_stat_statements_reset(); $$
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    PERFORM cron.schedule(
+      'reset-pg-stat-statements-weekly',
+      '0 4 * * 0',
+      'SELECT extensions.pg_stat_statements_reset();'
+    );
+  END IF;
+END;
+$$;

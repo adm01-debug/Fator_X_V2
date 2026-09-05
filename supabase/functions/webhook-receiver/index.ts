@@ -1,23 +1,27 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { 
-  handleCorsPreflight, 
-  getCorsHeaders, 
-  checkRateLimit, 
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import {
+  handleCorsPreflight,
+  getCorsHeaders,
+  checkRateLimit,
+  getRateLimitIdentifier,
+  createRateLimitResponse,
+  RATE_LIMITS,
   createAdminClient,
   jsonResponse,
   errorResponse,
-  parseBody
-} from "../_shared/mod.ts";
-import { WebhookReceiverContracts } from "../_shared/contracts.ts";
-import { verifyHmac } from "../_shared/webhookSignature.ts";
-
+  parseBody,
+  constantTimeEqual,
+} from '../_shared/mod.ts';
+import { WebhookReceiverContracts } from '../_shared/contracts.ts';
+import { verifyHmac } from '../_shared/webhookSignature.ts';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
-  const _corsHeaders = getCorsHeaders(req);
+  const corsHeaders = getCorsHeaders(req);
 
-  const rateLimitResult = await checkRateLimit(req, { preset: "standard" });
-  if (rateLimitResult) return rateLimitResult;
+  const identifier = getRateLimitIdentifier(req);
+  const rateLimit = await checkRateLimit(identifier, RATE_LIMITS.standard);
+  if (!rateLimit.allowed) return createRateLimitResponse(rateLimit, corsHeaders);
 
   try {
     const url = new URL(req.url);
@@ -47,29 +51,47 @@ serve(async (req) => {
     }
 
     // Parse body with versioned contract validation
-    const { data: body, error: validationError, rawBody, _version } = await parseBody(req, WebhookReceiverContracts, { 
+    const {
+      data: body,
+      error: validationError,
+      rawBody,
+      _version,
+    } = await parseBody(req, WebhookReceiverContracts, {
       returnRawBody: true,
-      defaultVersion: 'v1' 
+      defaultVersion: 'v1',
     });
 
     if (validationError) {
       return validationError;
     }
 
-
     // Parse query params
     const queryParams: Record<string, string> = {};
-    url.searchParams.forEach((v, k) => { if (k !== 'path') queryParams[k] = v; });
+    url.searchParams.forEach((v, k) => {
+      if (k !== 'path') queryParams[k] = v;
+    });
 
     // Get headers
     const headers: Record<string, string> = {};
-    req.headers.forEach((v, k) => { headers[k] = v; });
+    req.headers.forEach((v, k) => {
+      headers[k] = v;
+    });
 
     // IP check
     const sourceIp = headers['x-forwarded-for']?.split(',')[0] || headers['x-real-ip'] || 'unknown';
     if (webhook.ip_whitelist && webhook.ip_whitelist.length > 0) {
       if (!webhook.ip_whitelist.includes(sourceIp)) {
-        await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 403);
+        await logEvent(
+          supabase,
+          webhook.id,
+          req.method,
+          headers,
+          queryParams,
+          body,
+          sourceIp,
+          'rejected',
+          403,
+        );
         return errorResponse(req, 'IP not whitelisted', 403);
       }
     }
@@ -78,31 +100,81 @@ serve(async (req) => {
     if (webhook.auth_type === 'hmac_sha256') {
       const signature = headers['x-hub-signature-256'] || headers['x-signature'] || '';
       if (!signature || !webhook.secret) {
-        await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
+        await logEvent(
+          supabase,
+          webhook.id,
+          req.method,
+          headers,
+          queryParams,
+          body,
+          sourceIp,
+          'rejected',
+          401,
+        );
         return errorResponse(req, 'Missing signature or secret', 401);
       }
       const valid = await verifyHmac(webhook.secret, rawBody, signature);
       if (!valid) {
-        await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
+        await logEvent(
+          supabase,
+          webhook.id,
+          req.method,
+          headers,
+          queryParams,
+          body,
+          sourceIp,
+          'rejected',
+          401,
+        );
         return errorResponse(req, 'Invalid signature', 401);
       }
     } else if (webhook.auth_type === 'bearer') {
       const authHeader = headers['authorization'] || '';
       const token = authHeader.replace('Bearer ', '');
-      if (!token || token !== webhook.secret) {
-        await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
+      if (!token || !webhook.secret || !constantTimeEqual(token, webhook.secret)) {
+        await logEvent(
+          supabase,
+          webhook.id,
+          req.method,
+          headers,
+          queryParams,
+          body,
+          sourceIp,
+          'rejected',
+          401,
+        );
         return errorResponse(req, 'Invalid bearer token', 401);
       }
     } else if (webhook.auth_type === 'api_key') {
       const apiKey = headers['x-api-key'] || url.searchParams.get('api_key') || '';
-      if (!apiKey || apiKey !== webhook.secret) {
-        await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
+      if (!apiKey || !webhook.secret || !constantTimeEqual(apiKey, webhook.secret)) {
+        await logEvent(
+          supabase,
+          webhook.id,
+          req.method,
+          headers,
+          queryParams,
+          body,
+          sourceIp,
+          'rejected',
+          401,
+        );
         return errorResponse(req, 'Invalid API key', 401);
       }
     } else {
       // For 10/10 security, reject any webhook without auth_type if not public
       if (!webhook.is_public) {
-        await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'rejected', 401);
+        await logEvent(
+          supabase,
+          webhook.id,
+          req.method,
+          headers,
+          queryParams,
+          body,
+          sourceIp,
+          'rejected',
+          401,
+        );
         return errorResponse(req, 'Authentication required', 401);
       }
     }
@@ -113,24 +185,32 @@ serve(async (req) => {
       headers['x-event-id'] ||
       headers['x-request-id'] ||
       headers['x-idempotency-key'] ||
-      (typeof body === 'object' && body !== null ? (body as Record<string, unknown>).id as string | undefined : undefined) ||
+      (typeof body === 'object' && body !== null
+        ? ((body as Record<string, unknown>).id as string | undefined)
+        : undefined) ||
       null;
 
-    if (externalEventId) {
-      const { data: existing } = await supabase
-        .from('webhook_events')
-        .select('id')
-        .eq('webhook_id', webhook.id)
-        .eq('external_event_id', externalEventId)
-        .maybeSingle();
-      if (existing) {
+    // Log event (atomic dedup via INSERT + ON CONFLICT to avoid race condition)
+    const startTime = Date.now();
+    const { error: insertError } = await supabase.from('webhook_events').insert({
+      webhook_id: webhook.id,
+      method: req.method,
+      headers,
+      query_params: queryParams,
+      body,
+      source_ip: sourceIp,
+      status: 'processed',
+      response_code: 200,
+      external_event_id: externalEventId,
+    });
+
+    if (insertError) {
+      // Postgres unique_violation (23505) = duplicate event → return deduped
+      if ((insertError as { code?: string }).code === '23505') {
         return jsonResponse(req, { success: true, deduped: true, webhook_id: webhook.id });
       }
+      throw new Error(insertError.message);
     }
-
-    // Log event
-    const startTime = Date.now();
-    await logEvent(supabase, webhook.id, req.method, headers, queryParams, body, sourceIp, 'processed', 200, externalEventId);
 
     // Update counter
     await supabase.rpc('increment_webhook_counter', { webhook_uuid: webhook.id });
@@ -143,8 +223,6 @@ serve(async (req) => {
       processing_time_ms: processingTime,
       target: { type: webhook.target_type, id: webhook.target_id },
     });
-
-
   } catch (error) {
     return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
   }
@@ -153,15 +231,25 @@ serve(async (req) => {
 async function logEvent(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   supabase: any,
-  webhookId: string, method: string, headers: Record<string, string>,
-  queryParams: Record<string, string>, body: Record<string, unknown>,
-  sourceIp: string, status: string, responseCode: number,
+  webhookId: string,
+  method: string,
+  headers: Record<string, string>,
+  queryParams: Record<string, string>,
+  body: Record<string, unknown>,
+  sourceIp: string,
+  status: string,
+  responseCode: number,
   externalEventId: string | null = null,
 ) {
   await supabase.from('webhook_events').insert({
-    webhook_id: webhookId, method, headers, query_params: queryParams,
-    body, source_ip: sourceIp, status, response_code: responseCode,
+    webhook_id: webhookId,
+    method,
+    headers,
+    query_params: queryParams,
+    body,
+    source_ip: sourceIp,
+    status,
+    response_code: responseCode,
     external_event_id: externalEventId,
   });
 }
-

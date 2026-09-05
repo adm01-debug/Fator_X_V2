@@ -1,22 +1,22 @@
-import { useState, useEffect, useCallback } from "react";
-import { ShieldAlert, ShieldCheck, CheckCircle, Loader2, Bell, Clock, Filter } from "lucide-react";
-import { supabaseExternal } from "@/integrations/supabase/externalClient";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
-import { logger } from "@/lib/logger";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { logger } from "@/lib/logger";
+import { useState, useEffect } from 'react';
+import { ShieldAlert, ShieldCheck, CheckCircle, Loader2, Bell, Clock, Filter } from 'lucide-react';
+import { supabaseExternal } from '@/integrations/supabase/externalClient';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import type { DbRow } from '@/types/dbRow';
 
 interface SecurityAlert {
   id: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   category: string;
   message: string;
-  metadata: Record<string, unknown>;
+  metadata: Record<string, unknown> | null;
   is_resolved: boolean;
   created_at: string;
 }
@@ -28,7 +28,11 @@ interface RealtimePayload<T> {
 }
 
 interface RealtimeChannelLike {
-  on: (event: string, filter: { event: string; table: string }, cb: (payload: RealtimePayload<SecurityAlert>) => void) => RealtimeChannelLike;
+  on: (
+    event: string,
+    filter: { event: string; table: string },
+    cb: (payload: RealtimePayload<SecurityAlert>) => void,
+  ) => RealtimeChannelLike;
   subscribe: () => RealtimeChannelLike;
 }
 
@@ -37,7 +41,30 @@ export function SecurityMonitoringPanel() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unresolved'>('unresolved');
 
-  const loadAlerts = useCallback(async () => {
+  useEffect(() => {
+    loadAlerts();
+
+    // Subscribe to new alerts
+    const client = supabaseExternal as unknown as {
+      channel: (name: string) => RealtimeChannelLike;
+    };
+    const channel = client
+      .channel('security_alerts_changes')
+      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload) => {
+        setAlerts((prev) => [payload.new, ...prev]);
+        toast.error(`Alerta de Segurança: ${payload.new.message}`);
+      })
+      .subscribe();
+
+    return () => {
+      (
+        supabaseExternal as unknown as { removeChannel: (c: RealtimeChannelLike) => void }
+      ).removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependências intencionalmente estáveis / efeito de montagem
+  }, []);
+
+  async function loadAlerts() {
     setLoading(true);
     try {
       let query = supabaseExternal
@@ -57,32 +84,7 @@ export function SecurityMonitoringPanel() {
     } finally {
       setLoading(false);
     }
-  }, [filter]);
-
-  useEffect(() => {
-    loadAlerts();
-
-    // Subscribe to new alerts
-    const channel = (supabaseExternal as unknown as {
-      channel: (name: string) => {
-        on: (
-          event: string,
-          filter: { event: string; table: string },
-          cb: (payload: { new: SecurityAlert }) => void,
-        ) => { subscribe: () => unknown };
-      };
-    })
-      .channel('security_alerts_changes')
-      .on('postgres_changes', { event: 'INSERT', table: 'security_alerts' }, (payload) => {
-        setAlerts(prev => [payload.new, ...prev]);
-        toast.error(`Alerta de Segurança: ${payload.new.message}`);
-      })
-      .subscribe();
-
-    return () => {
-      supabaseExternal.removeChannel(channel as Parameters<typeof supabaseExternal.removeChannel>[0]);
-    };
-  }, [loadAlerts]);
+  }
 
   async function resolveAlert(id: string) {
     try {
@@ -90,21 +92,29 @@ export function SecurityMonitoringPanel() {
         .from('security_alerts')
         .update({ is_resolved: true, resolved_at: new Date().toISOString() })
         .eq('id', id);
-      
+
       if (error) throw error;
-      setAlerts(prev => prev.filter(a => a.id !== id));
+      setAlerts((prev) => prev.filter((a) => a.id !== id));
       toast.success('Alerta resolvido');
-    } catch {
+    } catch (err) {
+      logger.error('Failed to resolve security alert', {
+        alert_id: id,
+        error: err instanceof Error ? err.message : String(err),
+      });
       toast.error('Falha ao resolver alerta');
     }
   }
 
   const getSeverityColor = (sev: string) => {
     switch (sev) {
-      case 'critical': return 'bg-destructive/20 text-destructive border-destructive/30';
-      case 'high': return 'bg-nexus-orange/20 text-nexus-orange border-nexus-orange/30';
-      case 'medium': return 'bg-nexus-yellow/20 text-nexus-yellow border-nexus-yellow/30';
-      default: return 'bg-nexus-blue/20 text-nexus-blue border-nexus-blue/30';
+      case 'critical':
+        return 'bg-destructive/20 text-destructive border-destructive/30';
+      case 'high':
+        return 'bg-nexus-orange/20 text-nexus-orange border-nexus-orange/30';
+      case 'medium':
+        return 'bg-nexus-yellow/20 text-nexus-yellow border-nexus-yellow/30';
+      default:
+        return 'bg-nexus-blue/20 text-nexus-blue border-nexus-blue/30';
     }
   };
 
@@ -119,10 +129,21 @@ export function SecurityMonitoringPanel() {
             <CardDescription>Alertas em tempo real sobre RLS e RBAC</CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Tabs value={filter} onValueChange={(v) => { setFilter(v as 'all' | 'unresolved'); loadAlerts(); }} className="w-auto">
+            <Tabs
+              value={filter}
+              onValueChange={(v) => {
+                setFilter(v as 'all' | 'unresolved');
+                loadAlerts();
+              }}
+              className="w-auto"
+            >
               <TabsList className="h-8 p-1 bg-secondary/50">
-                <TabsTrigger value="unresolved" className="text-meta px-3 h-6">Pendentes</TabsTrigger>
-                <TabsTrigger value="all" className="text-meta px-3 h-6">Todos</TabsTrigger>
+                <TabsTrigger value="unresolved" className="text-meta px-3 h-6">
+                  Pendentes
+                </TabsTrigger>
+                <TabsTrigger value="all" className="text-meta px-3 h-6">
+                  Todos
+                </TabsTrigger>
               </TabsList>
             </Tabs>
             <Button size="icon" variant="ghost" className="h-8 w-8" onClick={loadAlerts}>
@@ -135,7 +156,9 @@ export function SecurityMonitoringPanel() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Loader2 className="h-10 w-10 animate-spin text-primary/20" />
-            <p className="text-body-sm font-medium text-muted-foreground animate-pulse">Sincronizando...</p>
+            <p className="text-body-sm font-medium text-muted-foreground animate-pulse">
+              Sincronizando...
+            </p>
           </div>
         ) : alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center px-6">
@@ -150,17 +173,24 @@ export function SecurityMonitoringPanel() {
         ) : (
           <div className="divide-y divide-border/30">
             {alerts.map((alert) => (
-              <div key={alert.id} className={cn(
-                "p-5 flex items-start gap-4 hover:bg-muted/30 transition-colors group",
-                alert.category === 'partition_automation_failure' && "bg-destructive/5 border-l-4 border-l-destructive"
-              )}>
-                <div className={cn("p-2 rounded-xl border", getSeverityColor(alert.severity))}>
+              <div
+                key={alert.id}
+                className={cn(
+                  'p-5 flex items-start gap-4 hover:bg-muted/30 transition-colors group',
+                  alert.category === 'partition_automation_failure' &&
+                    'bg-destructive/5 border-l-4 border-l-destructive',
+                )}
+              >
+                <div className={cn('p-2 rounded-xl border', getSeverityColor(alert.severity))}>
                   <ShieldAlert className="h-5 w-5" />
                 </div>
                 <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-[9px] uppercase tracking-widest font-black py-0 px-1.5 h-4">
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] uppercase tracking-widest font-black py-0 px-1.5 h-4"
+                      >
                         {alert.category}
                       </Badge>
                       <span className="text-meta text-muted-foreground flex items-center gap-1 font-medium">
@@ -169,9 +199,9 @@ export function SecurityMonitoringPanel() {
                       </span>
                     </div>
                     {!alert.is_resolved && (
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         className="opacity-0 group-hover:opacity-100 h-7 text-meta px-2 rounded-lg hover:bg-nexus-emerald/10 hover:text-nexus-emerald"
                         onClick={() => resolveAlert(alert.id)}
                       >
@@ -179,7 +209,9 @@ export function SecurityMonitoringPanel() {
                       </Button>
                     )}
                   </div>
-                  <h4 className="text-body-sm font-bold text-foreground leading-snug">{alert.message}</h4>
+                  <h4 className="text-body-sm font-bold text-foreground leading-snug">
+                    {alert.message}
+                  </h4>
                   {alert.metadata && Object.keys(alert.metadata).length > 0 && (
                     <div className="bg-secondary/20 p-2 rounded-lg border border-border/20 mt-2">
                       <pre className="text-meta font-mono text-muted-foreground overflow-auto">
@@ -197,6 +229,6 @@ export function SecurityMonitoringPanel() {
   );
 }
 
-function cn(...inputs: unknown[]) {
+function cn(...inputs: DbRow[]) {
   return inputs.filter(Boolean).join(' ');
 }

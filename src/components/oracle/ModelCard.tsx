@@ -30,14 +30,22 @@ export function ModelCard({ response, rank, showThinking }: ModelCardProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-meta font-mono">{shortName}</Badge>
+          <Badge variant="outline" className="text-meta font-mono">
+            {shortName}
+          </Badge>
           {rank && (
-            <Badge variant="default" className="text-meta bg-primary/20 text-primary border-primary/30">
+            <Badge
+              variant="default"
+              className="text-meta bg-primary/20 text-primary border-primary/30"
+            >
               #{rank}
             </Badge>
           )}
-          {(response as ModelResponse & { failover?: boolean }).failover && (
-            <Badge variant="outline" className="text-[10px] bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30 animate-pulse">
+          {(response as { failover?: boolean }).failover && (
+            <Badge
+              variant="outline"
+              className="text-meta bg-nexus-amber/10 text-nexus-amber border-nexus-amber/30 animate-pulse"
+            >
               FAILOVER
             </Badge>
           )}
@@ -60,15 +68,12 @@ export function ModelCard({ response, rank, showThinking }: ModelCardProps) {
             💭 {expanded ? 'Ocultar raciocínio' : 'Ver raciocínio'}
           </button>
           {expanded && (
-              <div
-                className="overflow-hidden"
-              >
-                <div className="mt-2 p-2.5 rounded-md bg-secondary/40 border border-border/30 text-meta text-muted-foreground whitespace-pre-wrap max-h-[200px] overflow-y-auto">
-                  {thinking}
-                </div>
+            <div className="overflow-hidden">
+              <div className="mt-2 p-2.5 rounded-md bg-secondary/40 border border-border/30 text-meta text-muted-foreground whitespace-pre-wrap max-h-[200px] overflow-y-auto">
+                {thinking}
               </div>
-            )}
-          
+            </div>
+          )}
         </div>
       )}
 

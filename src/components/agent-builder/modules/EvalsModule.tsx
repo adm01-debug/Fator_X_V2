@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ComponentProps } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,23 +6,29 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Loader2, Play, Plus, Trash2, CheckCircle2, XCircle, Eye } from 'lucide-react';
 import { AuditReportDialog } from '@/components/evaluations/AuditReportDialog';
 import {
   useEvalDatasets,
   useEvalRuns,
+  type EvalRun,
   useEvalResults,
   useCreateEvalDataset,
   useDeleteEvalDataset,
   useRunEval,
   type EvalItem,
-  type EvalRun,
 } from '@/hooks/useAgentEvals';
 import { useWorkspaceId } from '@/hooks/use-data';
 import { toast } from 'sonner';
-import type { DbRow } from '@/types/dbRow';
 
 export function EvalsModule() {
   const { id: agentId } = useParams();
@@ -65,7 +71,9 @@ export function EvalsModule() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold flex items-center gap-2">🧪 Avaliação de Qualidade</h2>
+        <h2 className="text-2xl font-semibold flex items-center gap-2">
+          🧪 Avaliação de Qualidade
+        </h2>
         <p className="text-body-sm text-muted-foreground mt-1">
           Crie datasets de teste e meça accuracy, latência e custo do seu agente automaticamente.
         </p>
@@ -81,7 +89,9 @@ export function EvalsModule() {
           <div className="flex justify-end">
             <Dialog open={openCreate} onOpenChange={setOpenCreate}>
               <DialogTrigger asChild>
-                <Button><Plus className="h-4 w-4 mr-2" /> Novo Dataset</Button>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" /> Novo Dataset
+                </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
@@ -90,11 +100,19 @@ export function EvalsModule() {
                 <div className="space-y-4">
                   <div>
                     <Label>Nome</Label>
-                    <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Suporte básico" />
+                    <Input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Ex: Suporte básico"
+                    />
                   </div>
                   <div>
                     <Label>Descrição</Label>
-                    <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Opcional" />
+                    <Input
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Opcional"
+                    />
                   </div>
                   <div className="space-y-3">
                     <Label>Casos de teste</Label>
@@ -102,9 +120,15 @@ export function EvalsModule() {
                       <Card key={i}>
                         <CardContent className="pt-4 space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-meta font-semibold text-muted-foreground">Caso #{i + 1}</span>
+                            <span className="text-meta font-semibold text-muted-foreground">
+                              Caso #{i + 1}
+                            </span>
                             {items.length > 1 && (
-                              <Button variant="ghost" size="sm" onClick={() => setItems(items.filter((_, idx) => idx !== i))}>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setItems(items.filter((_, idx) => idx !== i))}
+                              >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
                             )}
@@ -132,13 +156,19 @@ export function EvalsModule() {
                         </CardContent>
                       </Card>
                     ))}
-                    <Button variant="outline" size="sm" onClick={() => setItems([...items, { input: '', expected_output: '' }])}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setItems([...items, { input: '', expected_output: '' }])}
+                    >
                       <Plus className="h-4 w-4 mr-2" /> Adicionar caso
                     </Button>
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setOpenCreate(false)}>Cancelar</Button>
+                  <Button variant="outline" onClick={() => setOpenCreate(false)}>
+                    Cancelar
+                  </Button>
                   <Button onClick={handleCreate} disabled={createDs.isPending}>
                     {createDs.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                     Criar
@@ -149,7 +179,9 @@ export function EvalsModule() {
           </div>
 
           {loadingDs ? (
-            <div className="flex justify-center py-12"><Loader2 className="animate-spin" /></div>
+            <div className="flex justify-center py-12">
+              <Loader2 className="animate-spin" />
+            </div>
           ) : datasets.length === 0 ? (
             <Card>
               <CardContent className="pt-12 pb-12 text-center text-muted-foreground">
@@ -164,11 +196,21 @@ export function EvalsModule() {
                   <CardContent className="pt-4 flex items-center justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="font-medium">{ds.name}</div>
-                      {ds.description && <div className="text-meta text-muted-foreground truncate">{ds.description}</div>}
-                      <div className="text-meta text-muted-foreground mt-1">{ds.items?.length ?? 0} casos de teste</div>
+                      {ds.description && (
+                        <div className="text-meta text-muted-foreground truncate">
+                          {ds.description}
+                        </div>
+                      )}
+                      <div className="text-meta text-muted-foreground mt-1">
+                        {ds.items?.length ?? 0} casos de teste
+                      </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" onClick={() => handleRun(ds.id)} disabled={runEval.isPending}>
+                      <Button
+                        size="sm"
+                        onClick={() => handleRun(ds.id)}
+                        disabled={runEval.isPending}
+                      >
                         <Play className="h-3 w-3 mr-1" /> Rodar
                       </Button>
                       <Button variant="ghost" size="sm" onClick={() => deleteDs.mutate(ds.id)}>
@@ -184,9 +226,15 @@ export function EvalsModule() {
 
         <TabsContent value="runs" className="space-y-4">
           {loadingRuns ? (
-            <div className="flex justify-center py-12"><Loader2 className="animate-spin" /></div>
+            <div className="flex justify-center py-12">
+              <Loader2 className="animate-spin" />
+            </div>
           ) : runs.length === 0 ? (
-            <Card><CardContent className="pt-12 pb-12 text-center text-muted-foreground">Nenhuma avaliação ainda.</CardContent></Card>
+            <Card>
+              <CardContent className="pt-12 pb-12 text-center text-muted-foreground">
+                Nenhuma avaliação ainda.
+              </CardContent>
+            </Card>
           ) : (
             <div className="grid gap-3">
               {runs.map((run) => {
@@ -197,7 +245,15 @@ export function EvalsModule() {
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <Badge variant={run.status === 'completed' ? 'default' : run.status === 'failed' ? 'destructive' : 'secondary'}>
+                            <Badge
+                              variant={
+                                run.status === 'completed'
+                                  ? 'default'
+                                  : run.status === 'failed'
+                                    ? 'destructive'
+                                    : 'secondary'
+                              }
+                            >
                               {run.status}
                             </Badge>
                             <span className="text-meta text-muted-foreground">
@@ -207,25 +263,37 @@ export function EvalsModule() {
                           <div className="grid grid-cols-4 gap-3 mt-3 text-meta">
                             <div>
                               <div className="text-muted-foreground">Pass rate</div>
-                              <div className={`font-semibold text-title-sm ${passRate >= 70 ? 'text-nexus-emerald' : passRate >= 40 ? 'text-nexus-amber' : 'text-destructive'}`}>
+                              <div
+                                className={`font-semibold text-title-sm ${passRate >= 70 ? 'text-nexus-emerald' : passRate >= 40 ? 'text-nexus-amber' : 'text-destructive'}`}
+                              >
                                 {passRate.toFixed(0)}%
                               </div>
                             </div>
                             <div>
                               <div className="text-muted-foreground">Score médio</div>
-                              <div className="font-semibold text-title-sm">{Number(run.avg_score ?? 0).toFixed(2)}</div>
+                              <div className="font-semibold text-title-sm">
+                                {Number(run.avg_score ?? 0).toFixed(2)}
+                              </div>
                             </div>
                             <div>
                               <div className="text-muted-foreground">Latência</div>
-                              <div className="font-semibold text-title-sm">{run.avg_latency_ms}ms</div>
+                              <div className="font-semibold text-title-sm">
+                                {run.avg_latency_ms}ms
+                              </div>
                             </div>
                             <div>
                               <div className="text-muted-foreground">Custo</div>
-                              <div className="font-semibold text-title-sm">${Number(run.total_cost_usd ?? 0).toFixed(4)}</div>
+                              <div className="font-semibold text-title-sm">
+                                ${Number(run.total_cost_usd ?? 0).toFixed(4)}
+                              </div>
                             </div>
                           </div>
                         </div>
-                        <Button variant="outline" size="sm" onClick={() => setSelectedRunId(run.id)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedRunId(run.id)}
+                        >
                           <Eye className="h-3 w-3 mr-1" /> Detalhes
                         </Button>
                       </div>
@@ -265,7 +333,13 @@ function AuditReportView({ runId, runs }: { runId: string | null; runs: EvalRun[
   const { data: results = [] } = useEvalResults(runId);
   const run = (runs as Array<{ id?: string }>).find((r) => r?.id === runId);
   if (!run) return null;
-  return <AuditReportDialog run={run as Record<string, unknown>} results={results as unknown as Record<string, unknown>[]} />;
+  type AuditProps = ComponentProps<typeof AuditReportDialog>;
+  return (
+    <AuditReportDialog
+      run={run as unknown as AuditProps['run']}
+      results={results as unknown as AuditProps['results']}
+    />
+  );
 }
 
 function RunDetails({ runId }: { runId: string | null }) {
@@ -278,30 +352,84 @@ function RunDetails({ runId }: { runId: string | null }) {
     return results;
   }, [results, filter]);
 
-  if (isLoading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin" /></div>;
-  if (results.length === 0) return <div className="text-center py-8 text-muted-foreground">Nenhum resultado ainda. Atualize em alguns segundos.</div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
+  if (results.length === 0)
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        Nenhum resultado ainda. Atualize em alguns segundos.
+      </div>
+    );
 
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
-        <Button size="sm" variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>Todos ({results.length})</Button>
-        <Button size="sm" variant={filter === 'pass' ? 'default' : 'outline'} onClick={() => setFilter('pass')}>Pass ({results.filter((r) => r.passed).length})</Button>
-        <Button size="sm" variant={filter === 'fail' ? 'default' : 'outline'} onClick={() => setFilter('fail')}>Fail ({results.filter((r) => !r.passed).length})</Button>
+        <Button
+          size="sm"
+          variant={filter === 'all' ? 'default' : 'outline'}
+          onClick={() => setFilter('all')}
+        >
+          Todos ({results.length})
+        </Button>
+        <Button
+          size="sm"
+          variant={filter === 'pass' ? 'default' : 'outline'}
+          onClick={() => setFilter('pass')}
+        >
+          Pass ({results.filter((r) => r.passed).length})
+        </Button>
+        <Button
+          size="sm"
+          variant={filter === 'fail' ? 'default' : 'outline'}
+          onClick={() => setFilter('fail')}
+        >
+          Fail ({results.filter((r) => !r.passed).length})
+        </Button>
       </div>
       {filtered.map((r) => (
         <Card key={r.id}>
           <CardHeader className="pb-2">
             <CardTitle className="text-body-sm flex items-center gap-2">
-              {r.passed ? <CheckCircle2 className="h-4 w-4 text-nexus-emerald" /> : <XCircle className="h-4 w-4 text-destructive" />}
+              {r.passed ? (
+                <CheckCircle2 className="h-4 w-4 text-nexus-emerald" />
+              ) : (
+                <XCircle className="h-4 w-4 text-destructive" />
+              )}
               Caso #{r.item_index + 1} — score {Number(r.score).toFixed(2)} · {r.latency_ms}ms
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-meta">
-            <div><span className="font-semibold">Input:</span> <div className="text-muted-foreground mt-1">{r.input}</div></div>
-            {r.expected && <div><span className="font-semibold">Esperado:</span> <div className="text-muted-foreground mt-1">{r.expected}</div></div>}
-            {r.actual && <div><span className="font-semibold">Real:</span> <div className="text-muted-foreground mt-1">{r.actual}</div></div>}
-            {r.judge_reasoning && <div className="border-l-2 border-primary/40 pl-2"><span className="font-semibold">Juiz:</span> <span className="text-muted-foreground">{r.judge_reasoning}</span></div>}
-            {r.error && <div className="text-destructive"><span className="font-semibold">Erro:</span> {r.error}</div>}
+            <div>
+              <span className="font-semibold">Input:</span>{' '}
+              <div className="text-muted-foreground mt-1">{r.input}</div>
+            </div>
+            {r.expected && (
+              <div>
+                <span className="font-semibold">Esperado:</span>{' '}
+                <div className="text-muted-foreground mt-1">{r.expected}</div>
+              </div>
+            )}
+            {r.actual && (
+              <div>
+                <span className="font-semibold">Real:</span>{' '}
+                <div className="text-muted-foreground mt-1">{r.actual}</div>
+              </div>
+            )}
+            {r.judge_reasoning && (
+              <div className="border-l-2 border-primary/40 pl-2">
+                <span className="font-semibold">Juiz:</span>{' '}
+                <span className="text-muted-foreground">{r.judge_reasoning}</span>
+              </div>
+            )}
+            {r.error && (
+              <div className="text-destructive">
+                <span className="font-semibold">Erro:</span> {r.error}
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}

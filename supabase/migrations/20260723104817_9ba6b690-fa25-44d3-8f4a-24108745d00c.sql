@@ -1,5 +1,5 @@
 
-CREATE TABLE public.notebook_note_templates (
+CREATE TABLE IF NOT EXISTS public.notebook_note_templates (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL,
   collection_id UUID NULL REFERENCES public.collections(id) ON DELETE CASCADE,
@@ -14,8 +14,8 @@ CREATE TABLE public.notebook_note_templates (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX idx_note_templates_ws ON public.notebook_note_templates(workspace_id);
-CREATE INDEX idx_note_templates_col ON public.notebook_note_templates(collection_id);
+CREATE INDEX IF NOT EXISTS idx_note_templates_ws ON public.notebook_note_templates(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_note_templates_col ON public.notebook_note_templates(collection_id);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.notebook_note_templates TO authenticated;
 GRANT ALL ON public.notebook_note_templates TO service_role;
@@ -48,7 +48,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_notes_daily_per_notebook
   ON public.notebook_notes(collection_id, note_date)
   WHERE is_daily = TRUE AND note_date IS NOT NULL;
 
-CREATE TABLE public.notebook_note_versions (
+CREATE TABLE IF NOT EXISTS public.notebook_note_versions (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   note_id UUID NOT NULL REFERENCES public.notebook_notes(id) ON DELETE CASCADE,
   workspace_id UUID NOT NULL,
@@ -60,8 +60,8 @@ CREATE TABLE public.notebook_note_versions (
   created_by UUID NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX idx_note_versions_note ON public.notebook_note_versions(note_id, version_number DESC);
-CREATE INDEX idx_note_versions_ws ON public.notebook_note_versions(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_note_versions_note ON public.notebook_note_versions(note_id, version_number DESC);
+CREATE INDEX IF NOT EXISTS idx_note_versions_ws ON public.notebook_note_versions(workspace_id);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.notebook_note_versions TO authenticated;
 GRANT ALL ON public.notebook_note_versions TO service_role;

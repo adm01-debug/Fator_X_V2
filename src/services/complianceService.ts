@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 
 export type ComplianceFramework = {
   id: string;
@@ -6,6 +6,7 @@ export type ComplianceFramework = {
   name: string;
   description: string | null;
   version: string | null;
+  created_at: string;
 };
 
 export type ComplianceControl = {
@@ -50,39 +51,36 @@ export type ComplianceEvidence = {
 
 export const complianceService = {
   async listFrameworks(): Promise<ComplianceFramework[]> {
-    const { data, error } = await supabase
-      .from("compliance_frameworks")
-      .select("*")
-      .order("code");
+    const { data, error } = await supabase.from('compliance_frameworks').select('*').order('code');
     if (error) throw error;
     return (data ?? []) as ComplianceFramework[];
   },
 
   async listControls(frameworkId: string): Promise<ComplianceControl[]> {
     const { data, error } = await supabase
-      .from("compliance_controls")
-      .select("*")
-      .eq("framework_id", frameworkId)
-      .order("code");
+      .from('compliance_controls')
+      .select('*')
+      .eq('framework_id', frameworkId)
+      .order('code');
     if (error) throw error;
     return (data ?? []) as ComplianceControl[];
   },
 
   async listReports(workspaceId: string): Promise<ComplianceReport[]> {
     const { data, error } = await supabase
-      .from("compliance_reports")
-      .select("*")
-      .eq("workspace_id", workspaceId)
-      .order("created_at", { ascending: false });
+      .from('compliance_reports')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+      .order('created_at', { ascending: false });
     if (error) throw error;
     return (data ?? []) as ComplianceReport[];
   },
 
   async getReport(id: string): Promise<ComplianceReport | null> {
     const { data, error } = await supabase
-      .from("compliance_reports")
-      .select("*")
-      .eq("id", id)
+      .from('compliance_reports')
+      .select('*')
+      .eq('id', id)
       .maybeSingle();
     if (error) throw error;
     return data as ComplianceReport | null;
@@ -90,10 +88,10 @@ export const complianceService = {
 
   async listEvidence(reportId: string): Promise<ComplianceEvidence[]> {
     const { data, error } = await supabase
-      .from("compliance_evidence")
-      .select("*")
-      .eq("report_id", reportId)
-      .order("collected_at");
+      .from('compliance_evidence')
+      .select('*')
+      .eq('report_id', reportId)
+      .order('collected_at');
     if (error) throw error;
     return (data ?? []) as ComplianceEvidence[];
   },
@@ -105,7 +103,7 @@ export const complianceService = {
     periodStart: string;
     periodEnd: string;
   }): Promise<string> {
-    const { data, error } = await supabase.rpc("generate_compliance_report", {
+    const { data, error } = await supabase.rpc('generate_compliance_report', {
       _workspace_id: params.workspaceId,
       _framework_code: params.frameworkCode,
       _name: params.name,
@@ -117,14 +115,14 @@ export const complianceService = {
   },
 
   async publishReport(id: string): Promise<void> {
-    const { error } = await supabase.rpc("publish_compliance_report", {
+    const { error } = await supabase.rpc('publish_compliance_report', {
       _report_id: id,
     });
     if (error) throw error;
   },
 
   async deleteReport(id: string): Promise<void> {
-    const { error } = await supabase.from("compliance_reports").delete().eq("id", id);
+    const { error } = await supabase.from('compliance_reports').delete().eq('id', id);
     if (error) throw error;
   },
 };

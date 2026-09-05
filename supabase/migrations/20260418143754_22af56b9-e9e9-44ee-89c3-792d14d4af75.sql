@@ -5,7 +5,7 @@ CREATE TYPE public.change_status AS ENUM ('draft', 'pending_approval', 'approved
 CREATE TYPE public.change_decision AS ENUM ('approve', 'reject', 'request_changes');
 
 -- change_requests
-CREATE TABLE public.change_requests (
+CREATE TABLE IF NOT EXISTS public.change_requests (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
@@ -31,7 +31,7 @@ CREATE INDEX idx_change_requests_status ON public.change_requests(status);
 CREATE INDEX idx_change_requests_scheduled ON public.change_requests(scheduled_for);
 
 -- change_approvals
-CREATE TABLE public.change_approvals (
+CREATE TABLE IF NOT EXISTS public.change_approvals (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   change_id UUID NOT NULL REFERENCES public.change_requests(id) ON DELETE CASCADE,
   approver_id UUID NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE public.change_approvals (
 CREATE INDEX idx_change_approvals_change ON public.change_approvals(change_id);
 
 -- freeze_windows
-CREATE TABLE public.freeze_windows (
+CREATE TABLE IF NOT EXISTS public.freeze_windows (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,

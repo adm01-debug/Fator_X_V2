@@ -5,17 +5,25 @@
  * pinga o target, mede latência, insere `synthetic_results` e atualiza
  * `consecutive_failures`. Pode também rodar 1 check on-demand via POST { check_id }.
  */
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
-import { z } from "https://esm.sh/zod@3.23.8";
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
+import { z } from 'https://esm.sh/zod@3.23.8';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+} from '../_shared/mod.ts';
 
-import { getCorsHeaders } from "../_shared/cors.ts";
-const SyntheticBodySchema = z.object({
-  check_id: z.string().uuid().optional(),
-}).passthrough();
+import { getCorsHeaders } from '../_shared/cors.ts';
+const SyntheticBodySchema = z
+  .object({
+    check_id: z.string().uuid().optional(),
+  })
+  .passthrough();
 
-const SUPABASE_URL = requireEnv("SUPABASE_URL");
-const SERVICE_ROLE = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+const SUPABASE_URL = requireEnv('SUPABASE_URL');
+const SERVICE_ROLE = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
 
 interface Check {
   id: string;
@@ -27,32 +35,52 @@ interface Check {
   last_run_at: string | null;
 }
 
-async function pingTarget(target: string): Promise<{ success: boolean; latency_ms: number; status_code: number | null; error: string | null }> {
+async function pingTarget(
+  target: string,
+): Promise<{
+  success: boolean;
+  latency_ms: number;
+  status_code: number | null;
+  error: string | null;
+}> {
   const start = performance.now();
   try {
     let url: string;
     let init: RequestInit = {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${SERVICE_ROLE}`,
         apikey: SERVICE_ROLE,
-        "x-synthetic-probe": "1",
+        'x-synthetic-probe': '1',
       },
       signal: AbortSignal.timeout(15_000),
     };
 
-    if (target === "health") {
+    if (target === 'health') {
       url = `${SUPABASE_URL}/rest/v1/`;
-      init = { method: "GET", headers: { apikey: SERVICE_ROLE }, signal: AbortSignal.timeout(15_000) };
-    } else if (target === "llm-gateway") {
+      init = {
+        method: 'GET',
+        headers: { apikey: SERVICE_ROLE },
+        signal: AbortSignal.timeout(15_000),
+      };
+    } else if (target === 'llm-gateway') {
       url = `${SUPABASE_URL}/functions/v1/llm-gateway`;
-      init.body = JSON.stringify({ synthetic: true, messages: [{ role: "user", content: "ping" }], model: "google/gemini-2.5-flash-lite" });
-    } else if (target === "agent-workflow-runner") {
+      init.body = JSON.stringify({
+        synthetic: true,
+        messages: [{ role: 'user', content: 'ping' }],
+        model: 'google/gemini-2.5-flash-lite',
+      });
+    } else if (target === 'agent-workflow-runner') {
       url = `${SUPABASE_URL}/functions/v1/agent-workflow-runner`;
       init.body = JSON.stringify({ synthetic: true });
     } else {
-      return { success: false, latency_ms: 0, status_code: null, error: `unknown target: ${target}` };
+      return {
+        success: false,
+        latency_ms: 0,
+        status_code: null,
+        error: `unknown target: ${target}`,
+      };
     }
 
     const resp = await fetch(url, init);
@@ -77,11 +105,11 @@ async function pingTarget(target: string): Promise<{ success: boolean; latency_m
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+  if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
@@ -89,19 +117,25 @@ Deno.serve(async (req) => {
     let checks: Check[] = [];
 
     // On-demand mode: { check_id }
-    if (req.method === "POST") {
+    if (req.method === 'POST') {
       const rawBody = await req.json().catch(() => ({}));
       const parsedBody = SyntheticBodySchema.safeParse(rawBody);
       if (!parsedBody.success) {
-        return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({
+            error: 'Payload inválido',
+            details: parsedBody.error.flatten().fieldErrors,
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
       }
       const body = parsedBody.data;
       if (body.check_id) {
         const { data } = await admin
-          .from("synthetic_checks")
-          .select("*")
-          .eq("id", body.check_id)
-          .eq("enabled", true)
+          .from('synthetic_checks')
+          .select('*')
+          .eq('id', body.check_id)
+          .eq('enabled', true)
           .maybeSingle();
         if (data) checks = [data as Check];
       }
@@ -110,9 +144,9 @@ Deno.serve(async (req) => {
     // Cron mode: pick all due checks
     if (checks.length === 0) {
       const { data } = await admin
-        .from("synthetic_checks")
-        .select("*")
-        .eq("enabled", true)
+        .from('synthetic_checks')
+        .select('*')
+        .eq('enabled', true)
         .limit(50);
       const now = Date.now();
       checks = (data ?? []).filter((c: Check) => {
@@ -128,9 +162,11 @@ Deno.serve(async (req) => {
       const ping = await pingTarget(check.target);
       const latencyOk = ping.latency_ms <= check.expected_status_max_ms;
       const finalSuccess = ping.success && latencyOk;
-      const errorMsg = ping.error ?? (latencyOk ? null : `latency ${ping.latency_ms}ms > ${check.expected_status_max_ms}ms`);
+      const errorMsg =
+        ping.error ??
+        (latencyOk ? null : `latency ${ping.latency_ms}ms > ${check.expected_status_max_ms}ms`);
 
-      await admin.from("synthetic_results").insert({
+      await admin.from('synthetic_results').insert({
         check_id: check.id,
         success: finalSuccess,
         latency_ms: ping.latency_ms,
@@ -140,24 +176,24 @@ Deno.serve(async (req) => {
 
       const newFailures = finalSuccess ? 0 : check.consecutive_failures + 1;
       await admin
-        .from("synthetic_checks")
+        .from('synthetic_checks')
         .update({
           last_run_at: new Date().toISOString(),
           consecutive_failures: newFailures,
         })
-        .eq("id", check.id);
+        .eq('id', check.id);
 
       results.push({ check_id: check.id, success: finalSuccess, latency_ms: ping.latency_ms });
     }
 
     return new Response(JSON.stringify({ ran: results.length, results }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    console.error("synthetic-runner error", e);
+    console.error('synthetic-runner error', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });

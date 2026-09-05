@@ -1,5 +1,5 @@
 -- ============ RISK REGISTER ============
-CREATE TABLE public.risk_register (
+CREATE TABLE IF NOT EXISTS public.risk_register (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
@@ -40,7 +40,7 @@ CREATE TRIGGER trg_risk_register_updated BEFORE UPDATE ON public.risk_register
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- ============ RISK REVIEW EVENTS ============
-CREATE TABLE public.risk_review_events (
+CREATE TABLE IF NOT EXISTS public.risk_review_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   risk_id UUID NOT NULL REFERENCES public.risk_register(id) ON DELETE CASCADE,
   reviewed_by UUID NOT NULL,

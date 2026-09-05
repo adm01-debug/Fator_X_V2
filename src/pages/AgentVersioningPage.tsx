@@ -1,35 +1,41 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Loader2, Plus, GitCompare, Eye, GitBranch, Link2, Check } from "lucide-react";
-import { PageHeader } from "@/components/shared/PageHeader";
-import { toast } from "sonner";
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Loader2, Plus, GitCompare, Eye, GitBranch, Link2, Check } from 'lucide-react';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { toast } from 'sonner';
 import {
   getAgentById,
   getAgentVersions,
   restoreAgentVersion,
   type AgentVersion,
   type RestoreOptions,
-} from "@/services/agentsService";
-import { VersionTimeline } from "@/components/agents/versioning/VersionTimeline";
-import { ShareTimelineState } from "@/components/agents/versioning/ShareTimelineState";
-import { VersionDetailPanel } from "@/components/agents/versioning/VersionDetailPanel";
-import { VersionComparePanel } from "@/components/agents/versioning/VersionComparePanel";
-import { NewVersionDialog } from "@/components/agents/versioning/NewVersionDialog";
-import { TimelinePresetBar } from "@/components/agents/versioning/TimelinePresetBar";
-import { TIMELINE_PRESETS, getPresetById, matchesPreset, getVersionTags, type TimelineTag } from "@/components/agents/versioning/timelineFilters";
-import { EventTypeFilter } from "@/components/agents/versioning/EventTypeFilter";
+} from '@/services/agentsService';
+import { VersionTimeline } from '@/components/agents/versioning/VersionTimeline';
+import { ShareTimelineState } from '@/components/agents/versioning/ShareTimelineState';
+import { VersionDetailPanel } from '@/components/agents/versioning/VersionDetailPanel';
+import { VersionComparePanel } from '@/components/agents/versioning/VersionComparePanel';
+import { NewVersionDialog } from '@/components/agents/versioning/NewVersionDialog';
+import { TimelinePresetBar } from '@/components/agents/versioning/TimelinePresetBar';
+import {
+  TIMELINE_PRESETS,
+  getPresetById,
+  matchesPreset,
+  getVersionTags,
+  type TimelineTag,
+} from '@/components/agents/versioning/timelineFilters';
+import { EventTypeFilter } from '@/components/agents/versioning/EventTypeFilter';
 import {
   TimelineRangeFilter,
   filterByRange,
   parseRange,
   serializeRange,
   type TimelineRange,
-} from "@/components/agents/versioning/TimelineRangeFilter";
-import { loadTimelinePrefs, saveTimelinePrefs } from "@/components/agents/versioning/timelinePrefs";
-import { RunFilter } from "@/components/agents/versioning/RunFilter";
-import { FilteredEmptyState } from "@/components/agents/versioning/FilteredEmptyState";
+} from '@/components/agents/versioning/TimelineRangeFilter';
+import { loadTimelinePrefs, saveTimelinePrefs } from '@/components/agents/versioning/timelinePrefs';
+import { RunFilter } from '@/components/agents/versioning/RunFilter';
+import { FilteredEmptyState } from '@/components/agents/versioning/FilteredEmptyState';
 
 export default function AgentVersioningPage() {
   const { id, versionId: pathVersionId } = useParams();
@@ -60,15 +66,42 @@ export default function AgentVersioningPage() {
     setSearchParams(next, { replace: opts?.replace ?? false });
   };
   const setSelectedId = (vid: string | null) =>
-    updateParams((p) => { if (vid) { p.set('sel', vid); } else { p.delete('sel'); } });
+    updateParams((p) => {
+      if (vid) {
+        p.set('sel', vid);
+      } else {
+        p.delete('sel');
+      }
+    });
   const setAId = (vid: string | null) =>
-    updateParams((p) => { if (vid) { p.set('a', vid); } else { p.delete('a'); } });
+    updateParams((p) => {
+      if (vid) {
+        p.set('a', vid);
+      } else {
+        p.delete('a');
+      }
+    });
   const setBId = (vid: string | null) =>
-    updateParams((p) => { if (vid) { p.set('b', vid); } else { p.delete('b'); } });
+    updateParams((p) => {
+      if (vid) {
+        p.set('b', vid);
+      } else {
+        p.delete('b');
+      }
+    });
   const setMode = (m: 'detail' | 'compare') =>
-    updateParams((p) => { if (m === 'compare') { p.set('mode', 'compare'); } else { p.delete('mode'); } });
+    updateParams((p) => {
+      if (m === 'compare') {
+        p.set('mode', 'compare');
+      } else {
+        p.delete('mode');
+      }
+    });
   const setPreset = (pid: string) =>
-    updateParams((p) => { if (pid && pid !== 'all') { p.set('preset', pid); } else { p.delete('preset'); } });
+    updateParams((p) => {
+      if (pid && pid !== 'all') p.set('preset', pid);
+      else p.delete('preset');
+    });
 
   // Filtro multi-tag por tipo de evento — persiste na URL como `types=a,b,c`
   // e aplica AND com o preset ativo (preset filtra "modo de uso", types
@@ -77,20 +110,26 @@ export default function AgentVersioningPage() {
   const activeTypes = useMemo<Set<TimelineTag>>(() => {
     if (!typesParam) return new Set();
     return new Set(
-      typesParam.split(',').filter((t): t is TimelineTag =>
-        ['prompt', 'tools', 'model', 'guardrails', 'rag', 'rollback', 'failure'].includes(t),
-      ),
+      typesParam
+        .split(',')
+        .filter((t): t is TimelineTag =>
+          ['prompt', 'tools', 'model', 'guardrails', 'rag', 'rollback', 'failure'].includes(t),
+        ),
     );
   }, [typesParam]);
   const toggleType = (tag: TimelineTag) => {
     const next = new Set(activeTypes);
-    if (next.has(tag)) { next.delete(tag); } else { next.add(tag); }
+    if (next.has(tag)) next.delete(tag);
+    else next.add(tag);
     updateParams((p) => {
-      if (next.size > 0) { p.set('types', Array.from(next).join(',')); } else { p.delete('types'); }
+      if (next.size > 0) p.set('types', Array.from(next).join(','));
+      else p.delete('types');
     });
   };
   const clearTypes = () =>
-    updateParams((p) => { p.delete('types'); });
+    updateParams((p) => {
+      p.delete('types');
+    });
 
   // Intervalo (versão ou tempo) também persiste na URL via `range=` para
   // manter o link compartilhável com a mesma "fatia" da timeline.
@@ -98,7 +137,8 @@ export default function AgentVersioningPage() {
   const setRange = (r: TimelineRange) =>
     updateParams((p) => {
       const s = serializeRange(r);
-      if (s) { p.set('range', s); } else { p.delete('range'); }
+      if (s) p.set('range', s);
+      else p.delete('range');
     });
   // Execução (sessão) escolhida — persistida como ?run=<session_id> além do
   // range absoluto. Isso torna o link autoexplicativo ("estou olhando a run X")
@@ -107,8 +147,10 @@ export default function AgentVersioningPage() {
   const setRunAndRange = (r: TimelineRange, rid: string | null) =>
     updateParams((p) => {
       const s = serializeRange(r);
-      if (s) { p.set('range', s); } else { p.delete('range'); }
-      if (rid) { p.set('run', rid); } else { p.delete('run'); }
+      if (s) p.set('range', s);
+      else p.delete('range');
+      if (rid) p.set('run', rid);
+      else p.delete('run');
     });
 
   const { data: agent } = useQuery({
@@ -134,11 +176,14 @@ export default function AgentVersioningPage() {
     if (hasUrlFilters) return;
     const prefs = loadTimelinePrefs(id);
     if (!prefs) return;
-    updateParams((p) => {
-      if (prefs.preset && prefs.preset !== 'all') p.set('preset', prefs.preset);
-      if (prefs.range) p.set('range', prefs.range);
-      if (prefs.mode === 'compare') p.set('mode', 'compare');
-    }, { replace: true });
+    updateParams(
+      (p) => {
+        if (prefs.preset && prefs.preset !== 'all') p.set('preset', prefs.preset);
+        if (prefs.range) p.set('range', prefs.range);
+        if (prefs.mode === 'compare') p.set('mode', 'compare');
+      },
+      { replace: true },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -152,8 +197,7 @@ export default function AgentVersioningPage() {
       range: serializeRange(range) ?? undefined,
       mode,
     });
-    // `range` é derivado de `searchParams` (já listado); evitamos recomputo do objeto nas deps.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [id, presetId, mode, searchParams]);
 
   // Inicialização da URL: roda APENAS na primeira chegada das versões (ou quando
@@ -163,17 +207,20 @@ export default function AgentVersioningPage() {
   useEffect(() => {
     if (versions.length === 0) return;
     // Prioridade 1: foco vindo via path (/v/:id) ou query (?focus=).
-    if (focusId && versions.some(v => v.id === focusId)) {
+    if (focusId && versions.some((v) => v.id === focusId)) {
       if (pathVersionId) {
         const next = new URLSearchParams(searchParams);
         next.set('sel', focusId);
         const qs = next.toString();
         navigate(`/agents/${id}/versions${qs ? `?${qs}` : ''}`, { replace: true });
       } else {
-        updateParams((p) => {
-          p.set('sel', focusId);
-          p.delete('focus');
-        }, { replace: true });
+        updateParams(
+          (p) => {
+            p.set('sel', focusId);
+            p.delete('focus');
+          },
+          { replace: true },
+        );
       }
       setHighlightId(focusId);
       const t = setTimeout(() => setHighlightId(null), 2800);
@@ -184,7 +231,12 @@ export default function AgentVersioningPage() {
     // explicitamente em "comparar" (efeito abaixo). Isso evita que recarregar a
     // lista mude valores que o usuário já consolidou.
     if (!selectedId) {
-      updateParams((p) => { p.set('sel', versions[0].id); }, { replace: true });
+      updateParams(
+        (p) => {
+          p.set('sel', versions[0].id);
+        },
+        { replace: true },
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [versions.length, focusId]);
@@ -195,10 +247,13 @@ export default function AgentVersioningPage() {
     if (mode !== 'compare') return;
     if (versions.length < 2) return;
     if (aId && bId) return;
-    updateParams((p) => {
-      if (!aId) p.set('a', versions[1].id);
-      if (!bId) p.set('b', versions[0].id);
-    }, { replace: true });
+    updateParams(
+      (p) => {
+        if (!aId) p.set('a', versions[1].id);
+        if (!bId) p.set('b', versions[0].id);
+      },
+      { replace: true },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, versions.length]);
 
@@ -218,14 +273,17 @@ export default function AgentVersioningPage() {
     if (selInvalid) stale.push('seleção');
     if (aInvalid) stale.push('A');
     if (bInvalid) stale.push('B');
-    updateParams((p) => {
-      if (selInvalid) p.set('sel', versions[0].id);
-      if (aInvalid) p.delete('a');
-      if (bInvalid) p.delete('b');
-      // Se estávamos comparando e A ou B ficou inválido, compare deixa de ter
-      // sentido — volta para detalhe até o usuário escolher novo par.
-      if ((aInvalid || bInvalid) && mode === 'compare') p.delete('mode');
-    }, { replace: true });
+    updateParams(
+      (p) => {
+        if (selInvalid) p.set('sel', versions[0].id);
+        if (aInvalid) p.delete('a');
+        if (bInvalid) p.delete('b');
+        // Se estávamos comparando e A ou B ficou inválido, compare deixa de ter
+        // sentido — volta para detalhe até o usuário escolher novo par.
+        if ((aInvalid || bInvalid) && mode === 'compare') p.delete('mode');
+      },
+      { replace: true },
+    );
     toast.info(
       `Link ajustado — ${stale.join(', ')} apontava${stale.length > 1 ? 'm' : ''} para versões indisponíveis`,
       { duration: 4000 },
@@ -237,11 +295,12 @@ export default function AgentVersioningPage() {
   // mudar preset/intervalo nunca "perde" o que está selecionado. Só caímos no
   // fallback `versions[0]` se realmente não houver `selectedId` na URL.
   const selected = useMemo(
-    () => (selectedId ? versions.find(v => v.id === selectedId) ?? null : versions[0] ?? null),
+    () =>
+      selectedId ? (versions.find((v) => v.id === selectedId) ?? null) : (versions[0] ?? null),
     [versions, selectedId],
   );
-  const versionA = useMemo(() => versions.find(v => v.id === aId) ?? null, [versions, aId]);
-  const versionB = useMemo(() => versions.find(v => v.id === bId) ?? null, [versions, bId]);
+  const versionA = useMemo(() => versions.find((v) => v.id === aId) ?? null, [versions, aId]);
+  const versionB = useMemo(() => versions.find((v) => v.id === bId) ?? null, [versions, bId]);
   const canCompare = !!versionA && !!versionB && versionA.id !== versionB.id;
 
   // Aplica o preset de filtro à timeline. Sempre garantimos que a versão
@@ -256,7 +315,9 @@ export default function AgentVersioningPage() {
     if (range.mode !== 'off') {
       list = filterByRange(list, range);
       // Mantém pinned (current/sel/A/B) para não quebrar a navegação ativa.
-      const pinned = versions.filter((v) => pinnedIds.has(v.id) && !list.some((x) => x.id === v.id));
+      const pinned = versions.filter(
+        (v) => pinnedIds.has(v.id) && !list.some((x) => x.id === v.id),
+      );
       list = [...list, ...pinned].sort((a, b) => b.version - a.version);
     }
     if (activePreset.id !== 'all') {
@@ -287,9 +348,10 @@ export default function AgentVersioningPage() {
   const presetCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const preset of TIMELINE_PRESETS) {
-      counts[preset.id] = preset.id === 'all'
-        ? versions.length
-        : versions.filter((v) => matchesPreset(v, preset)).length;
+      counts[preset.id] =
+        preset.id === 'all'
+          ? versions.length
+          : versions.filter((v) => matchesPreset(v, preset)).length;
     }
     return counts;
   }, [versions]);
@@ -314,10 +376,16 @@ export default function AgentVersioningPage() {
 
   const handleDuplicateAsDraft = (v: AgentVersion) => {
     try {
-      sessionStorage.setItem(`agent-draft:${id}`, JSON.stringify({
-        model: v.model, persona: v.persona, mission: v.mission, config: v.config,
-        from_version: v.version,
-      }));
+      sessionStorage.setItem(
+        `agent-draft:${id}`,
+        JSON.stringify({
+          model: v.model,
+          persona: v.persona,
+          mission: v.mission,
+          config: v.config,
+          from_version: v.version,
+        }),
+      );
     } catch (err) {
       // sessionStorage can fail in private mode — non-fatal
       void err;
@@ -327,14 +395,20 @@ export default function AgentVersioningPage() {
   };
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-[60vh]"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>;
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
   if (!agent) {
     return (
       <div className="p-10 text-center">
         <p className="text-body-sm text-muted-foreground">Agente não encontrado.</p>
-        <Button onClick={() => navigate('/agents')} className="mt-4">Voltar</Button>
+        <Button onClick={() => navigate('/agents')} className="mt-4">
+          Voltar
+        </Button>
       </div>
     );
   }
@@ -373,9 +447,7 @@ export default function AgentVersioningPage() {
         >
           <div className="flex items-center gap-2 flex-wrap min-w-0">
             <Link2 className="h-3.5 w-3.5 text-primary shrink-0" aria-hidden />
-            <span className="text-foreground/90 font-medium">
-              Contexto restaurado do link
-            </span>
+            <span className="text-foreground/90 font-medium">Contexto restaurado do link</span>
             <div className="flex items-center gap-1.5 flex-wrap">
               {runId && (
                 <span className="font-mono text-meta px-1.5 py-0.5 rounded bg-nexus-cyan/10 text-nexus-cyan border border-nexus-cyan/20">
@@ -403,13 +475,16 @@ export default function AgentVersioningPage() {
               // Remove todos os params de "contexto restaurado" e o highlight
               // visual. Mantém preset/range/types/mode pois esses são filtros
               // operacionais, não restauração de contexto.
-              updateParams((p) => {
-                p.delete('run');
-                p.delete('focus');
-                p.delete('sel');
-                p.delete('a');
-                p.delete('b');
-              }, { replace: true });
+              updateParams(
+                (p) => {
+                  p.delete('run');
+                  p.delete('focus');
+                  p.delete('sel');
+                  p.delete('a');
+                  p.delete('b');
+                },
+                { replace: true },
+              );
               setHighlightId(null);
               // Se a URL atual tem path-segment /v/:versionId, volta para a base.
               if (pathVersionId) {
@@ -428,8 +503,12 @@ export default function AgentVersioningPage() {
       {versions.length === 0 ? (
         <div className="nexus-card flex flex-col items-center justify-center py-16 text-center">
           <GitBranch className="h-10 w-10 text-muted-foreground/30 mb-3" aria-hidden />
-          <h3 className="text-body-sm font-semibold text-foreground mb-1">Nenhuma versão registrada</h3>
-          <p className="text-meta text-muted-foreground mb-4">Crie a primeira versão para começar o histórico.</p>
+          <h3 className="text-body-sm font-semibold text-foreground mb-1">
+            Nenhuma versão registrada
+          </h3>
+          <p className="text-meta text-muted-foreground mb-4">
+            Crie a primeira versão para começar o histórico.
+          </p>
         </div>
       ) : (
         <div className="grid lg:grid-cols-3 gap-6">
@@ -454,18 +533,25 @@ export default function AgentVersioningPage() {
               <TimelineRangeFilter range={range} onChange={setRange} versions={versions} />
               {/* Filtro por execução: aplica a janela temporal (min/max
                   created_at dos traces) da sessão escolhida ao range geral. */}
-              <RunFilter agentId={id!} currentRange={range} activeRunId={runId} onApply={setRunAndRange} />
-              {(versionA && versionB) && range.mode !== 'version' && (
+              <RunFilter
+                agentId={id!}
+                currentRange={range}
+                activeRunId={runId}
+                onApply={setRunAndRange}
+              />
+              {versionA && versionB && range.mode !== 'version' && (
                 <Button
                   type="button"
                   size="sm"
                   variant="ghost"
                   className="h-6 px-2 text-meta text-muted-foreground hover:text-foreground"
-                  onClick={() => setRange({
-                    mode: 'version',
-                    vMin: Math.min(versionA.version, versionB.version),
-                    vMax: Math.max(versionA.version, versionB.version),
-                  })}
+                  onClick={() =>
+                    setRange({
+                      mode: 'version',
+                      vMin: Math.min(versionA.version, versionB.version),
+                      vMax: Math.max(versionA.version, versionB.version),
+                    })
+                  }
                   title="Filtrar timeline para o intervalo entre A e B"
                 >
                   entre A↔B
@@ -500,22 +586,30 @@ export default function AgentVersioningPage() {
                 selectedId={selectedId}
                 selectedAId={aId}
                 selectedBId={bId}
-                onSelect={(vid) => { setSelectedId(vid); }}
-                onPickA={(vid) => { setAId(vid); }}
-                onPickB={(vid) => { setBId(vid); }}
+                onSelect={(vid) => {
+                  setSelectedId(vid);
+                }}
+                onPickA={(vid) => {
+                  setAId(vid);
+                }}
+                onPickB={(vid) => {
+                  setBId(vid);
+                }}
                 highlightId={highlightId}
                 agentId={id!}
               />
             )}
-            {(activePreset.id !== 'all' || range.mode !== 'off' || activeTypes.size > 0) && filteredVersions.length > 0 && filteredVersions.length < versions.length && (
-              <p className="text-meta text-muted-foreground mt-2 px-1">
-                Mostrando {filteredVersions.length} de {versions.length} versões
-                {activePreset.id !== 'all' && <> · preset "{activePreset.label}"</>}
-                {range.mode !== 'off' && <> · intervalo ativo</>}
-                {runId && <> · run …{runId.slice(-6)}</>}
-                {activeTypes.size > 0 && <> · tipos: {Array.from(activeTypes).join(', ')}</>}.
-              </p>
-            )}
+            {(activePreset.id !== 'all' || range.mode !== 'off' || activeTypes.size > 0) &&
+              filteredVersions.length > 0 &&
+              filteredVersions.length < versions.length && (
+                <p className="text-meta text-muted-foreground mt-2 px-1">
+                  Mostrando {filteredVersions.length} de {versions.length} versões
+                  {activePreset.id !== 'all' && <> · preset "{activePreset.label}"</>}
+                  {range.mode !== 'off' && <> · intervalo ativo</>}
+                  {runId && <> · run …{runId.slice(-6)}</>}
+                  {activeTypes.size > 0 && <> · tipos: {Array.from(activeTypes).join(', ')}</>}.
+                </p>
+              )}
             {/* Compartilhamento — resumo do estado (sel/A/B/modo/preset) +
                 link absoluto + bloco markdown copiável para colar em mensagens. */}
             <div className="mt-4">
@@ -532,10 +626,10 @@ export default function AgentVersioningPage() {
                   range.mode === 'version' && (range.vMin !== undefined || range.vMax !== undefined)
                     ? `v${range.vMin ?? '…'}–v${range.vMax ?? '…'}`
                     : range.mode === 'time' && range.lastMinutes
-                    ? `últimos ${range.lastMinutes}min`
-                    : range.mode === 'time' && (range.fromIso || range.toIso)
-                    ? 'período custom'
-                    : undefined
+                      ? `últimos ${range.lastMinutes}min`
+                      : range.mode === 'time' && (range.fromIso || range.toIso)
+                        ? 'período custom'
+                        : undefined
                 }
               />
             </div>
@@ -544,18 +638,22 @@ export default function AgentVersioningPage() {
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-1.5 p-1 bg-secondary/40 rounded-lg w-fit">
               <Button
-                size="sm" variant={mode === 'detail' ? 'default' : 'ghost'}
+                size="sm"
+                variant={mode === 'detail' ? 'default' : 'ghost'}
                 className="h-7 text-meta gap-1.5"
                 onClick={() => setMode('detail')}
               >
                 <Eye className="h-3 w-3" /> Detalhe {selected ? `v${selected.version}` : ''}
               </Button>
               <Button
-                size="sm" variant={mode === 'compare' ? 'default' : 'ghost'}
+                size="sm"
+                variant={mode === 'compare' ? 'default' : 'ghost'}
                 className="h-7 text-meta gap-1.5"
                 disabled={!canCompare}
                 onClick={() => setMode('compare')}
-                title={!canCompare ? 'Selecione duas versões diferentes (A e B) na timeline' : undefined}
+                title={
+                  !canCompare ? 'Selecione duas versões diferentes (A e B) na timeline' : undefined
+                }
               >
                 <GitCompare className="h-3 w-3" />
                 Comparar {versionA && versionB ? `v${versionA.version} ↔ v${versionB.version}` : ''}

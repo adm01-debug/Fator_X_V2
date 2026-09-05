@@ -35,10 +35,12 @@ BEGIN
     EXECUTE format('GRANT SELECT, INSERT ON public.%I TO authenticated', p);
     EXECUTE format('GRANT ALL ON public.%I TO service_role', p);
     EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', p);
+    EXECUTE format('DROP POLICY IF EXISTS "Users can see their own traces" ON public.%I', p);
     EXECUTE format($f$
       CREATE POLICY "Users can see their own traces" ON public.%I FOR SELECT
       USING (user_id = (SELECT auth.uid()))
     $f$, p);
+    EXECUTE format('DROP POLICY IF EXISTS "Admins only" ON public.%I', p);
     EXECUTE format($f$
       CREATE POLICY "Admins only" ON public.%I FOR ALL TO authenticated
       USING (EXISTS (SELECT 1 FROM public.agents a

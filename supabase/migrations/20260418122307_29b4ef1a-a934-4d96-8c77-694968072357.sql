@@ -1,5 +1,5 @@
 -- Postmortems table
-CREATE TABLE public.postmortems (
+CREATE TABLE IF NOT EXISTS public.postmortems (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
@@ -58,7 +58,7 @@ CREATE TRIGGER trg_postmortems_updated_at
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Action items
-CREATE TABLE public.postmortem_action_items (
+CREATE TABLE IF NOT EXISTS public.postmortem_action_items (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   postmortem_id UUID NOT NULL REFERENCES public.postmortems(id) ON DELETE CASCADE,
   description TEXT NOT NULL,

@@ -1,17 +1,39 @@
-import { fetchWithTimeout } from "../_shared/retry.ts";
-import { z } from "https://esm.sh/zod@3.23.8";
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { fetchWithTimeout } from '../_shared/retry.ts';
+import { z } from 'https://esm.sh/zod@3.23.8';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+} from '../_shared/mod.ts';
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
+import { appendSkillsToPrompt, countInjectedSkills } from '../_shared/skills.ts';
 const BodySchema = z.object({
   system_prompt: z.string().min(10).max(20_000),
   user_message: z.string().min(1).max(4000),
   model: z.string().min(2).max(120).default('gpt-4o'),
+  /**
+   * Skills instaladas enviadas pelo cliente (já filtradas por RLS na leitura).
+   * São re-sanitizadas no servidor antes de entrar no prompt.
+   */
+  skills: z
+    .array(
+      z.object({
+        id: z.string().max(64).optional(),
+        name: z.string().min(1).max(200),
+        description: z.string().max(1000).optional(),
+        category: z.string().max(64).optional(),
+      }),
+    )
+    .max(100)
+    .optional(),
 });
 // Quick Agent Test — runs a single LLM call against Lovable AI Gateway
 // for the wizard's "test before save" feature.
 
-function jsonResponse(body: unknown, status = 200) {
+function jsonResponse(body: unknown, status = 200, corsHeaders: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -32,15 +54,16 @@ function mapModel(model: string): string {
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
+  const json = (body: unknown, status = 200) => jsonResponse(body, status, corsHeaders);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+  if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
   try {
     if (req.method !== 'POST') {
-      return jsonResponse({ error: 'Method not allowed' }, 405);
+      return json({ error: 'Method not allowed' }, 405);
     }
 
     const apiKey = requireEnv('LOVABLE_API_KEY');
@@ -48,10 +71,18 @@ Deno.serve(async (req) => {
     const raw = await req.json().catch(() => null);
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
-      return jsonResponse({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
+      return json({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
     }
-    const { system_prompt: systemPrompt, user_message: userMessage, model } = parsed.data;
-
+    const {
+      system_prompt: rawSystemPrompt,
+      user_message: userMessage,
+      model,
+      skills,
+    } = parsed.data;
+    // Mesma seção determinística do preview/runtime — sem duplicar se já existir.
+    const systemPrompt = appendSkillsToPrompt(rawSystemPrompt, skills);
+    // Fonte da verdade para a UI: quantas skills realmente entraram no prompt.
+    const skillsInjectedCount = countInjectedSkills(skills);
 
     const mapped = mapModel(model);
     const startedAt = Date.now();
@@ -75,28 +106,30 @@ Deno.serve(async (req) => {
     const latencyMs = Date.now() - startedAt;
 
     if (upstream.status === 429) {
-      return jsonResponse(
+      return json(
         { error: 'Limite de requisições atingido. Aguarde alguns segundos e tente novamente.' },
         429,
       );
     }
     if (upstream.status === 402) {
-      return jsonResponse(
-        { error: 'Sem créditos disponíveis. Adicione créditos em Configurações > Workspace > Uso.' },
+      return json(
+        {
+          error: 'Sem créditos disponíveis. Adicione créditos em Configurações > Workspace > Uso.',
+        },
         402,
       );
     }
     if (!upstream.ok) {
       const text = await upstream.text();
       console.error('AI gateway error', upstream.status, text);
-      return jsonResponse({ error: `Erro do gateway (${upstream.status})` }, 502);
+      return json({ error: `Erro do gateway (${upstream.status})` }, 502);
     }
 
     const data = await upstream.json();
     const content = data?.choices?.[0]?.message?.content ?? '';
     const usage = data?.usage ?? {};
 
-    return jsonResponse({
+    return json({
       response: typeof content === 'string' ? content : JSON.stringify(content),
       latency_ms: latencyMs,
       input_tokens: Number(usage.prompt_tokens ?? 0),
@@ -104,12 +137,10 @@ Deno.serve(async (req) => {
       total_tokens: Number(usage.total_tokens ?? 0),
       model_used: mapped,
       requested_model: model,
+      skills_injected_count: skillsInjectedCount,
     });
   } catch (e) {
     console.error('quick-agent-test error', e);
-    return jsonResponse(
-      { error: e instanceof Error ? e.message : 'Erro inesperado' },
-      500,
-    );
+    return json({ error: e instanceof Error ? e.message : 'Erro inesperado' }, 500);
   }
 });

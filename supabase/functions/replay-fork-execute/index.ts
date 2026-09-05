@@ -1,10 +1,16 @@
 // Replay Fork Executor — replays an execution from a chosen step,
 // optionally with overridden input and a deterministic seed.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-import { z } from "https://esm.sh/zod@3.23.8";
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import { z } from 'https://esm.sh/zod@3.23.8';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+} from '../_shared/mod.ts';
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
 const ForkRequestSchema = z.object({
   fork_id: z.string().uuid(),
 });
@@ -30,7 +36,7 @@ async function runForkedExecution(
 ): Promise<{ steps: Snapshot[]; cost_usd: number; duration_ms: number }> {
   const start = Date.now();
   const steps: Snapshot[] = [];
-  let prevHash = baseSnapshots[baseSnapshots.length - 1]?.chain_hash ?? "0".repeat(64);
+  let prevHash = baseSnapshots[baseSnapshots.length - 1]?.chain_hash ?? '0'.repeat(64);
 
   // Re-execute remaining steps deterministically using the seed
   const remainingCount = Math.max(1, Math.min(8, 10 - baseSnapshots.length));
@@ -41,7 +47,7 @@ async function runForkedExecution(
     const chainHash = await sha256(`${prevHash}${inputHash}${outputHash}`);
     steps.push({
       step_index: stepIndex,
-      decision_type: i === remainingCount - 1 ? "complete" : "tool_call",
+      decision_type: i === remainingCount - 1 ? 'complete' : 'tool_call',
       decision_rationale: `Forked execution step ${stepIndex} (seed=${seed.slice(0, 8)})`,
       state_before: { forked: true, prev_hash: prevHash.slice(0, 16) },
       state_after: { forked: true, output: outputHash.slice(0, 16) },
@@ -60,67 +66,79 @@ async function runForkedExecution(
 }
 
 async function sha256(input: string): Promise<string> {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, corsHeaders);
+  if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
   try {
-    const authHeader = req.headers.get("Authorization");
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Missing Authorization header" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const supabase = createClient(
-      requireEnv("SUPABASE_URL"),
-      requireEnv("SUPABASE_ANON_KEY"),
-      { global: { headers: { Authorization: authHeader } } }
-    );
+    const supabase = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_ANON_KEY'), {
+      global: { headers: { Authorization: authHeader } },
+    });
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
-      return new Response(JSON.stringify({ error: "Invalid token" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ error: 'Invalid token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = ForkRequestSchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return new Response(JSON.stringify({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({
+          error: 'Payload inválido',
+          details: parsedBody.error.flatten().fieldErrors,
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
     }
     const body: ForkRequest = parsedBody.data;
     if (!body.fork_id) {
-      return new Response(JSON.stringify({ error: "fork_id required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ error: 'fork_id required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // Load the fork record
     const { data: fork, error: forkErr } = await supabase
-      .from("replay_forks")
-      .select("*")
-      .eq("id", body.fork_id)
-      .eq("user_id", user.id)
+      .from('replay_forks')
+      .select('*')
+      .eq('id', body.fork_id)
+      .eq('user_id', user.id)
       .maybeSingle();
 
     if (forkErr || !fork) {
-      return new Response(JSON.stringify({ error: "Fork not found" }), {
-        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ error: 'Fork not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // Mark running
-    await supabase.from("replay_forks").update({ status: "running" }).eq("id", fork.id);
+    await supabase.from('replay_forks').update({ status: 'running' }).eq('id', fork.id);
 
     const baseSnapshot = (fork.state_snapshot as Snapshot[]) ?? [];
     const seed = fork.deterministic_seed ?? crypto.randomUUID();
@@ -129,27 +147,37 @@ Deno.serve(async (req) => {
 
     const newExecutionId = `fork-${fork.id.slice(0, 8)}-${Date.now()}`;
 
-    await supabase.from("replay_forks").update({
-      status: "completed",
-      new_execution_id: newExecutionId,
-      total_steps: baseSnapshot.length + result.steps.length,
-      duration_ms: result.duration_ms,
-      cost_usd: result.cost_usd,
-      result: { steps: result.steps, summary: `${result.steps.length} new steps` },
-      completed_at: new Date().toISOString(),
-    }).eq("id", fork.id);
+    await supabase
+      .from('replay_forks')
+      .update({
+        status: 'completed',
+        new_execution_id: newExecutionId,
+        total_steps: baseSnapshot.length + result.steps.length,
+        duration_ms: result.duration_ms,
+        cost_usd: result.cost_usd,
+        result: { steps: result.steps, summary: `${result.steps.length} new steps` },
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', fork.id);
 
-    return new Response(JSON.stringify({
-      success: true,
-      new_execution_id: newExecutionId,
-      total_steps: baseSnapshot.length + result.steps.length,
-      cost_usd: result.cost_usd,
-      duration_ms: result.duration_ms,
-    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        new_execution_id: newExecutionId,
+        total_steps: baseSnapshot.length + result.steps.length,
+        cost_usd: result.cost_usd,
+        duration_ms: result.duration_ms,
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
   } catch (err) {
-    console.error("[replay-fork-execute]", err);
-    return new Response(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.error('[replay-fork-execute]', err);
+    return new Response(
+      JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      },
+    );
   }
 });

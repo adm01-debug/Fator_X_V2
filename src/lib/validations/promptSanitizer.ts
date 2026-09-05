@@ -14,7 +14,7 @@ export const PROMPT_LIMITS = {
 } as const;
 
 // Caracteres de controle perigosos (preserva \t \n \r)
-// eslint-disable-next-line no-control-regex -- sanitizer precisa detectar control chars literais
+// eslint-disable-next-line no-control-regex -- intentional: strip dangerous control chars
 const CONTROL_CHARS_RE = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g;
 // Zero-width e BOM (comuns em colagem do Word/Notion)
 const ZERO_WIDTH_RE = /[\u200B-\u200D\uFEFF\u2060]/g;
@@ -39,7 +39,10 @@ export interface SanitizeResult {
  * @param text   texto a sanitizar
  * @param budget caracteres ainda disponíveis (default = MAX_TOTAL)
  */
-export function sanitizePromptInput(text: string, budget: number = PROMPT_LIMITS.MAX_TOTAL): SanitizeResult {
+export function sanitizePromptInput(
+  text: string,
+  budget: number = PROMPT_LIMITS.MAX_TOTAL,
+): SanitizeResult {
   let clean = text ?? '';
   const warnings: string[] = [];
 
@@ -68,7 +71,9 @@ export function sanitizePromptInput(text: string, budget: number = PROMPT_LIMITS
   if (clean.length > budget) {
     truncated = clean.length - budget;
     clean = clean.slice(0, Math.max(0, budget));
-    warnings.push(`Texto colado foi truncado: ${truncated.toLocaleString('pt-BR')} caracteres descartados.`);
+    warnings.push(
+      `Texto colado foi truncado: ${truncated.toLocaleString('pt-BR')} caracteres descartados.`,
+    );
   }
 
   return { clean, warnings, removedControl, removedZeroWidth, removedTags, truncated };
@@ -234,8 +239,14 @@ function buildSample(
   let context = lineText.slice(ctxStart, ctxEnd);
   // Escape invisibles inside the rendered context so they're visible.
   context = context
-    .replace(CONTROL_CHARS_RE, (c) => `\\x${c.charCodeAt(0).toString(16).padStart(2, '0').toUpperCase()}`)
-    .replace(ZERO_WIDTH_RE, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0').toUpperCase()}`);
+    .replace(
+      CONTROL_CHARS_RE,
+      (c) => `\\x${c.charCodeAt(0).toString(16).padStart(2, '0').toUpperCase()}`,
+    )
+    .replace(
+      ZERO_WIDTH_RE,
+      (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0').toUpperCase()}`,
+    );
   const prefix = ctxStart > 0 ? '…' : '';
   const suffix = ctxEnd < lineText.length ? '…' : '';
   const matchStartInCtx = prefix.length + (localCol - ctxStart);
@@ -253,7 +264,8 @@ function buildSample(
 
 function escapeChar(c: string): string {
   const code = c.charCodeAt(0);
-  if (code <= 0x1f || code === 0x7f) return `\\x${code.toString(16).padStart(2, '0').toUpperCase()}`;
+  if (code <= 0x1f || code === 0x7f)
+    return `\\x${code.toString(16).padStart(2, '0').toUpperCase()}`;
   if ((code >= 0x200b && code <= 0x200d) || code === 0xfeff || code === 0x2060)
     return `\\u${code.toString(16).padStart(4, '0').toUpperCase()}`;
   return c;
@@ -300,7 +312,10 @@ export function diagnosePrompt(prompt: string): PromptDiagnosticIssue[] {
         'Bytes de controle (ex.: \\x07, \\x1B) podem corromper a renderização do prompt no LLM e indicam colagem de fontes binárias.',
       rulePattern: '/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/',
       occurrences: ctrlMatches.length,
-      affectedLines: uniqueLines(text, ctrlMatches.map((m) => m.index)),
+      affectedLines: uniqueLines(
+        text,
+        ctrlMatches.map((m) => m.index),
+      ),
       sample: buildSample(text, first.index, first.match.length, escapeChar(first.match)),
       fixerId: 'invisible',
     });
@@ -318,7 +333,10 @@ export function diagnosePrompt(prompt: string): PromptDiagnosticIssue[] {
         'Comuns ao colar do Word, Notion ou Google Docs. Não aparecem na tela mas contam no orçamento de tokens e podem confundir o modelo.',
       rulePattern: '/[\\u200B-\\u200D\\uFEFF\\u2060]/',
       occurrences: zwMatches.length,
-      affectedLines: uniqueLines(text, zwMatches.map((m) => m.index)),
+      affectedLines: uniqueLines(
+        text,
+        zwMatches.map((m) => m.index),
+      ),
       sample: buildSample(text, first.index, first.match.length, escapeChar(first.match)),
       fixerId: 'invisible',
     });
@@ -336,7 +354,10 @@ export function diagnosePrompt(prompt: string): PromptDiagnosticIssue[] {
         'Tags como <script>, <iframe>, <object> ou <style> não devem aparecer em system prompts — risco de prompt injection ou renderização indesejada.',
       rulePattern: '<\\/?\\s*(script|iframe|object|embed|style|link|meta)\\b[^>]*>',
       occurrences: tagMatches.length,
-      affectedLines: uniqueLines(text, tagMatches.map((m) => m.index)),
+      affectedLines: uniqueLines(
+        text,
+        tagMatches.map((m) => m.index),
+      ),
       sample: buildSample(text, first.index, first.match.length),
       fixerId: 'invisible',
     });
@@ -350,10 +371,14 @@ export function diagnosePrompt(prompt: string): PromptDiagnosticIssue[] {
       id: 'js_uri',
       level: 'error',
       title: 'URIs javascript:',
-      description: 'URIs com esquema javascript: são vetor clássico de injection — removidos automaticamente.',
+      description:
+        'URIs com esquema javascript: são vetor clássico de injection — removidos automaticamente.',
       rulePattern: '/javascript\\s*:/i',
       occurrences: jsMatches.length,
-      affectedLines: uniqueLines(text, jsMatches.map((m) => m.index)),
+      affectedLines: uniqueLines(
+        text,
+        jsMatches.map((m) => m.index),
+      ),
       sample: buildSample(text, first.index, first.match.length),
       fixerId: 'invisible',
     });
@@ -420,7 +445,7 @@ export function diagnosePrompt(prompt: string): PromptDiagnosticIssue[] {
       fixerId: 'empty',
     });
   }
-  
+
   // 6. Rule Contradictions (Polarity, Numeric, Language)
   const conflicts = detectPromptContradictions(text);
   if (conflicts.length > 0) {
@@ -432,8 +457,17 @@ export function diagnosePrompt(prompt: string): PromptDiagnosticIssue[] {
       description: `Foram detectados conflitos lógicos no prompt. Exemplo: ${first.reason}`,
       rulePattern: 'logical_consistency',
       occurrences: conflicts.length,
-      affectedLines: Array.from(new Set(conflicts.flatMap(c => [c.lineA, c.lineB]))).sort((a, b) => a - b).slice(0, 5),
-      sample: buildSample(text, text.split('\n').slice(0, first.lineA - 1).reduce((acc, l) => acc + l.length + 1, 0), 10),
+      affectedLines: Array.from(new Set(conflicts.flatMap((c) => [c.lineA, c.lineB])))
+        .sort((a, b) => a - b)
+        .slice(0, 5),
+      sample: buildSample(
+        text,
+        text
+          .split('\n')
+          .slice(0, first.lineA - 1)
+          .reduce((acc, l) => acc + l.length + 1, 0),
+        10,
+      ),
     });
   }
 

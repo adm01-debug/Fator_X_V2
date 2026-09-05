@@ -3,18 +3,29 @@
  * Lista todos os templates de `agentTemplates.ts`, agrupados por categoria,
  * com busca, filtro e ação direta de criar agente a partir do template.
  */
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { ArrowLeft, Search, Sparkles, Wand2, Cpu, Wrench, Check, Rocket, Loader2, LayoutTemplate } from "lucide-react";
+import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import {
+  ArrowLeft,
+  Search,
+  Sparkles,
+  Wand2,
+  Cpu,
+  Wrench,
+  Check,
+  Rocket,
+  Loader2,
+  LayoutTemplate,
+  Puzzle,
+} from 'lucide-react';
 
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import {
   Dialog,
   DialogContent,
@@ -22,14 +33,19 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { AGENT_TEMPLATES, type AgentTemplate } from "@/data/agentTemplates";
-import { saveAgent } from "@/lib/agentService";
-import type { AgentConfig } from "@/types/agentTypes";
-import { useAuth } from "@/contexts/AuthContext";
-import { logger } from "@/lib/logger";
+} from '@/components/ui/dialog';
+import { AGENT_TEMPLATES, type AgentTemplate } from '@/data/agentTemplates';
+import { TemplateRecommenderCard } from '@/components/agents/TemplateRecommenderCard';
+import { TemplateLinkedSkillsPanel } from '@/components/agents/TemplateLinkedSkillsPanel';
+import { fetchTemplateLinkCounts } from '@/services/templateSkillLinkService';
+import { bulkInstallSkills } from '@/services/skillsRegistryService';
 
-const ALL = "all";
+import { saveAgent } from '@/lib/agentService';
+import type { AgentConfig } from '@/types/agentTypes';
+import { useAuth } from '@/contexts/AuthContext';
+import { logger } from '@/lib/logger';
+
+const ALL = 'all';
 
 function buildAgentFromTemplate(t: AgentTemplate): AgentConfig {
   return {
@@ -39,7 +55,7 @@ function buildAgentFromTemplate(t: AgentTemplate): AgentConfig {
     model: t.config.model,
     avatar_emoji: t.emoji,
     reasoning: null,
-    status: "draft",
+    status: 'draft',
     version: 1,
     tags: t.tags ?? [],
     config: {
@@ -57,9 +73,20 @@ export default function AgentTemplatesPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string>(ALL);
-  const [selectedTemplateForDetail, setSelectedTemplateForDetail] = useState<AgentTemplate | null>(null);
+  const [selectedTemplateForDetail, setSelectedTemplateForDetail] = useState<AgentTemplate | null>(
+    null,
+  );
+  const [linkedSkillIds, setLinkedSkillIds] = useState<string[]>([]);
+
+  // Contagem de skills vinculadas por template (persistida em template_skill_links).
+  const { data: linkCounts } = useQuery({
+    queryKey: ['template_skill_link_counts'],
+    queryFn: fetchTemplateLinkCounts,
+    staleTime: 5 * 60_000,
+    retry: false,
+  });
 
   const categories = useMemo(() => {
     const counts: Record<string, number> = { [ALL]: AGENT_TEMPLATES.length };
@@ -76,26 +103,49 @@ export default function AgentTemplatesPage() {
     return AGENT_TEMPLATES.filter((t) => {
       if (category !== ALL && t.category !== category) return false;
       if (!q) return true;
-      const hay = `${t.name} ${t.description} ${t.tags.join(" ")}`.toLowerCase();
+      const hay = `${t.name} ${t.description} ${t.tags.join(' ')}`.toLowerCase();
       return hay.includes(q);
     });
   }, [search, category]);
 
   const forkMutation = useMutation({
     mutationFn: async (t: AgentTemplate) => {
-      if (!user) throw new Error("Faça login para criar agentes");
+      if (!user) throw new Error('Faça login para criar agentes');
       const agent = buildAgentFromTemplate(t);
       // Inclui a flag isDraft para salvar rascunho versionado automaticamente
-      return saveAgent(agent);
+      const saved = await saveAgent(agent);
+      // Instala as skills do Registry vinculadas ao template (best-effort e
+      // idempotente: falha na instalação não deve impedir a criação do agente).
+      let installed = 0;
+      let skipped = 0;
+      let skillsFailed = false;
+      if (saved.id && linkedSkillIds.length > 0) {
+        try {
+          const result = await bulkInstallSkills(saved.id, linkedSkillIds);
+          installed = result.installed.length;
+          skipped = result.skipped.length;
+        } catch (err) {
+          skillsFailed = true;
+          logger.warn('bulk install linked skills failed', { err });
+        }
+      }
+      return { agent: saved, installed, skipped, skillsFailed };
     },
-    onSuccess: (agent, t) => {
-      toast.success(`Agente "${t.name}" criado!`, { description: "Abrindo no builder…" });
-      queryClient.invalidateQueries({ queryKey: ["agents"] });
+    onSuccess: ({ agent, installed, skipped, skillsFailed }, t) => {
+      const description = skillsFailed
+        ? 'Agente criado, mas falhou ao instalar as skills vinculadas.'
+        : installed + skipped > 0
+          ? `${installed} skill(s) instalada(s)${skipped > 0 ? ` · ${skipped} já existente(s)` : ''}. Abrindo no builder…`
+          : 'Abrindo no builder…';
+      if (skillsFailed) toast.warning(`Agente "${t.name}" criado`, { description });
+      else toast.success(`Agente "${t.name}" criado!`, { description });
+      queryClient.invalidateQueries({ queryKey: ['agents'] });
       if (agent.id) navigate(`/builder/${agent.id}`);
     },
+
     onError: (err) => {
-      logger.error("fork template failed", err);
-      toast.error(err instanceof Error ? err.message : "Falha ao criar agente");
+      logger.error('fork template failed', err);
+      toast.error(err instanceof Error ? err.message : 'Falha ao criar agente');
     },
   });
 
@@ -109,15 +159,29 @@ export default function AgentTemplatesPage() {
               <LayoutTemplate className="h-9 w-9 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-heading font-extrabold text-foreground tracking-tight">Galeria de Blueprints</h1>
-              <p className="text-body-sm text-muted-foreground max-w-md">Estruturas pré-validadas para acelerar o deploy da sua frota digital</p>
+              <h1 className="text-3xl font-heading font-extrabold text-foreground tracking-tight">
+                Galeria de Blueprints
+              </h1>
+              <p className="text-body-sm text-muted-foreground max-w-md">
+                Estruturas pré-validadas para acelerar o deploy da sua frota digital
+              </p>
             </div>
           </div>
-          <Button variant="outline" size="sm" className="gap-1.5 h-10 rounded-xl" onClick={() => navigate("/agents")}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5 h-10 rounded-xl"
+            onClick={() => navigate('/agents')}
+          >
             <ArrowLeft className="h-4 w-4" /> Voltar aos Agentes
           </Button>
         </div>
       </div>
+
+      <TemplateRecommenderCard
+        onUseTemplate={(t) => forkMutation.mutate(t)}
+        isBusy={forkMutation.isPending}
+      />
 
       <div className="flex flex-col md:flex-row md:items-center gap-4">
         <div className="relative flex-1">
@@ -130,7 +194,10 @@ export default function AgentTemplatesPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="gap-1.5 h-11 px-4 rounded-xl bg-primary/10 text-primary border-primary/20 text-meta font-bold uppercase tracking-wider">
+          <Badge
+            variant="secondary"
+            className="gap-1.5 h-11 px-4 rounded-xl bg-primary/10 text-primary border-primary/20 text-meta font-bold uppercase tracking-wider"
+          >
             <Sparkles className="h-4 w-4" />
             {filtered.length} Blueprints
           </Badge>
@@ -143,19 +210,19 @@ export default function AgentTemplatesPage() {
             <Button
               key={cat}
               size="sm"
-              variant={cat === category ? "default" : "outline"}
+              variant={cat === category ? 'default' : 'outline'}
               onClick={() => setCategory(cat)}
               className={`gap-1.5 shrink-0 h-9 px-4 rounded-full transition-all ${
-                cat === category 
-                  ? "shadow-nexus-lg shadow-primary/20" 
-                  : "bg-card hover:border-primary/40"
+                cat === category
+                  ? 'shadow-nexus-lg shadow-primary/20'
+                  : 'bg-card hover:border-primary/40'
               }`}
             >
-              {cat === ALL ? "Todos os Setores" : cat}
+              {cat === ALL ? 'Todos os Setores' : cat}
               <Badge
                 variant="secondary"
                 className={`ml-0.5 h-5 px-1.5 text-meta font-bold tabular-nums rounded-full ${
-                  cat === category ? "bg-primary-foreground/20 text-primary-foreground" : ""
+                  cat === category ? 'bg-primary-foreground/20 text-primary-foreground' : ''
                 }`}
               >
                 {count}
@@ -188,7 +255,9 @@ export default function AgentTemplatesPage() {
                     {t.emoji}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-bold text-foreground text-title-sm group-hover:text-primary transition-colors truncate">{t.name}</h3>
+                    <h3 className="font-bold text-foreground text-title-sm group-hover:text-primary transition-colors truncate">
+                      {t.name}
+                    </h3>
                     <div className="flex items-center gap-1.5 text-meta text-muted-foreground font-bold uppercase tracking-wider">
                       <span>{t.category}</span>
                       <span>•</span>
@@ -198,9 +267,14 @@ export default function AgentTemplatesPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-meta font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded flex items-center gap-1">
-                  <Sparkles className="h-2.5 w-2.5" /> {(Math.random() * 5 + 1).toFixed(1)}k
-                </div>
+                {(linkCounts?.[t.id] ?? 0) > 0 && (
+                  <div
+                    className="text-meta font-mono text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded flex items-center gap-1 shrink-0"
+                    title="Skills do Registry vinculadas a este template"
+                  >
+                    <Puzzle className="h-2.5 w-2.5 text-nexus-purple" /> {linkCounts?.[t.id]} skills
+                  </div>
+                )}
               </div>
 
               <p className="text-body-sm text-muted-foreground line-clamp-3 mb-6 leading-relaxed flex-1 italic">
@@ -209,20 +283,24 @@ export default function AgentTemplatesPage() {
 
               <div className="grid grid-cols-2 gap-3 mb-6 p-3 bg-secondary/30 rounded-xl border border-border/40">
                 <div className="space-y-1">
-                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Base Model</p>
+                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Base Model
+                  </p>
                   <div className="flex items-center gap-1.5 text-meta font-mono text-foreground font-semibold">
                     <Cpu className="h-3 w-3 text-primary" />
                     <span className="truncate">{t.config.model}</span>
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Capabilities</p>
+                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Capabilities
+                  </p>
                   <div className="flex items-center gap-1.5 text-meta text-foreground font-semibold">
                     <Wrench className="h-3 w-3 text-primary" />
                     <span className="truncate">
                       {t.config.tools.length > 0
                         ? `${t.config.tools.length} Ferramentas`
-                        : "No Tools"}
+                        : 'No Tools'}
                     </span>
                   </div>
                 </div>
@@ -240,7 +318,10 @@ export default function AgentTemplatesPage() {
                     </Badge>
                   ))}
                   {t.tags.length > 3 && (
-                    <Badge variant="outline" className="text-[9px] px-2 py-0 h-5 border-border/60 text-muted-foreground font-bold">
+                    <Badge
+                      variant="outline"
+                      className="text-[9px] px-2 py-0 h-5 border-border/60 text-muted-foreground font-bold"
+                    >
                       +{t.tags.length - 3}
                     </Badge>
                   )}
@@ -264,7 +345,10 @@ export default function AgentTemplatesPage() {
         </div>
       )}
 
-      <Dialog open={!!selectedTemplateForDetail} onOpenChange={(open) => !open && setSelectedTemplateForDetail(null)}>
+      <Dialog
+        open={!!selectedTemplateForDetail}
+        onOpenChange={(open) => !open && setSelectedTemplateForDetail(null)}
+      >
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           {selectedTemplateForDetail && (
             <>
@@ -274,10 +358,16 @@ export default function AgentTemplatesPage() {
                     {selectedTemplateForDetail.emoji}
                   </div>
                   <div className="text-left">
-                    <DialogTitle className="text-2xl font-bold">{selectedTemplateForDetail.name}</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold">
+                      {selectedTemplateForDetail.name}
+                    </DialogTitle>
                     <DialogDescription className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-meta font-bold uppercase">{selectedTemplateForDetail.category}</Badge>
-                      <span className="text-meta text-muted-foreground">• {selectedTemplateForDetail.config.model}</span>
+                      <Badge variant="outline" className="text-meta font-bold uppercase">
+                        {selectedTemplateForDetail.category}
+                      </Badge>
+                      <span className="text-meta text-muted-foreground">
+                        • {selectedTemplateForDetail.config.model}
+                      </span>
                     </DialogDescription>
                   </div>
                 </div>
@@ -292,19 +382,29 @@ export default function AgentTemplatesPage() {
                     </h4>
                     <div className="bg-secondary/30 rounded-xl p-4 border border-border/50 space-y-4">
                       <div>
-                        <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">Prompt do Sistema</p>
+                        <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">
+                          Prompt do Sistema
+                        </p>
                         <p className="text-meta text-muted-foreground line-clamp-4 italic bg-background/50 p-2 rounded border border-border/30">
                           {selectedTemplateForDetail.config.system_prompt}
                         </p>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">Temperatura</p>
-                          <p className="text-body-sm font-mono font-bold text-primary">{selectedTemplateForDetail.config.temperature}</p>
+                          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">
+                            Temperatura
+                          </p>
+                          <p className="text-body-sm font-mono font-bold text-primary">
+                            {selectedTemplateForDetail.config.temperature}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">Ferramentas</p>
-                          <p className="text-body-sm font-bold text-foreground">{selectedTemplateForDetail.config.tools.length}</p>
+                          <p className="text-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">
+                            Ferramentas
+                          </p>
+                          <p className="text-body-sm font-bold text-foreground">
+                            {selectedTemplateForDetail.config.tools.length}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -318,7 +418,8 @@ export default function AgentTemplatesPage() {
                     <ul className="space-y-2">
                       <li className="text-meta text-muted-foreground flex items-start gap-2">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                        Ideal para fluxos de {selectedTemplateForDetail.category.toLowerCase()} com alto volume.
+                        Ideal para fluxos de {selectedTemplateForDetail.category.toLowerCase()} com
+                        alto volume.
                       </li>
                       <li className="text-meta text-muted-foreground flex items-start gap-2">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
@@ -340,27 +441,61 @@ export default function AgentTemplatesPage() {
                     </h4>
                     <div className="grid grid-cols-1 gap-3">
                       <div className="p-3 bg-nexus-emerald/5 border border-nexus-emerald/10 rounded-xl">
-                        <p className="text-meta font-bold text-nexus-emerald uppercase mb-1">Produtividade</p>
-                        <p className="text-title-sm font-bold text-foreground">+45% <span className="text-meta font-normal text-muted-foreground">de eficiência operacional</span></p>
+                        <p className="text-meta font-bold text-nexus-emerald uppercase mb-1">
+                          Produtividade
+                        </p>
+                        <p className="text-title-sm font-bold text-foreground">
+                          +45%{' '}
+                          <span className="text-meta font-normal text-muted-foreground">
+                            de eficiência operacional
+                          </span>
+                        </p>
                       </div>
                       <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl">
-                        <p className="text-meta font-bold text-primary uppercase mb-1">Tempo de Resposta</p>
-                        <p className="text-title-sm font-bold text-foreground">-60% <span className="text-meta font-normal text-muted-foreground">de latência média</span></p>
+                        <p className="text-meta font-bold text-primary uppercase mb-1">
+                          Tempo de Resposta
+                        </p>
+                        <p className="text-title-sm font-bold text-foreground">
+                          -60%{' '}
+                          <span className="text-meta font-normal text-muted-foreground">
+                            de latência média
+                          </span>
+                        </p>
                       </div>
                       <div className="p-3 bg-nexus-amber/5 border border-nexus-amber/10 rounded-xl">
-                        <p className="text-meta font-bold text-nexus-amber uppercase mb-1">Custo-Benefício</p>
-                        <p className="text-title-sm font-bold text-foreground">Excelente <span className="text-meta font-normal text-muted-foreground">em modelos {selectedTemplateForDetail.config.model.includes('4') ? 'Large' : 'Small'}</span></p>
+                        <p className="text-meta font-bold text-nexus-amber uppercase mb-1">
+                          Custo-Benefício
+                        </p>
+                        <p className="text-title-sm font-bold text-foreground">
+                          Excelente{' '}
+                          <span className="text-meta font-normal text-muted-foreground">
+                            em modelos{' '}
+                            {selectedTemplateForDetail.config.model.includes('4')
+                              ? 'Large'
+                              : 'Small'}
+                          </span>
+                        </p>
                       </div>
                     </div>
                   </div>
+
+                  <TemplateLinkedSkillsPanel
+                    template={selectedTemplateForDetail}
+                    selectedIds={linkedSkillIds}
+                    onChange={setLinkedSkillIds}
+                  />
                 </div>
               </div>
 
               <DialogFooter className="flex-col sm:flex-row gap-3">
-                <Button variant="outline" onClick={() => setSelectedTemplateForDetail(null)} className="flex-1 h-12 rounded-xl">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedTemplateForDetail(null)}
+                  className="flex-1 h-12 rounded-xl"
+                >
                   Cancelar
                 </Button>
-                <Button 
+                <Button
                   onClick={() => {
                     forkMutation.mutate(selectedTemplateForDetail);
                     setSelectedTemplateForDetail(null);
@@ -368,7 +503,11 @@ export default function AgentTemplatesPage() {
                   disabled={forkMutation.isPending}
                   className="flex-[2] h-12 nexus-gradient-bg text-primary-foreground gap-2 rounded-xl shadow-nexus-xl shadow-primary/20 font-bold"
                 >
-                  {forkMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
+                  {forkMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Rocket className="h-4 w-4" />
+                  )}
                   Ativar e Criar Rascunho
                 </Button>
               </DialogFooter>

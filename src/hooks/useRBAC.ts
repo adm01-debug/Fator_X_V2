@@ -78,7 +78,7 @@ export function useRBAC() {
         }
       } catch (err) {
         if (!cancelled) {
-          setState(prev => ({
+          setState((prev) => ({
             ...prev,
             loading: false,
             error: err instanceof Error ? err.message : 'Failed to load permissions',
@@ -88,8 +88,10 @@ export function useRBAC() {
     }
 
     loadPermissions();
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run on user id change; full user object ref churn (session refresh) would cause redundant reloads
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   }, [user?.id]);
 
   /**
@@ -103,7 +105,7 @@ export function useRBAC() {
       if (state.role === 'workspace_admin') return true;
       return hasPermission(state.permissions, required, mode);
     },
-    [state.role, state.permissions]
+    [state.role, state.permissions],
   );
 
   /**
@@ -121,7 +123,7 @@ export function useRBAC() {
       if (!state.role) return false;
       return (levels[state.role] ?? 0) >= (levels[requiredRole] ?? 0);
     },
-    [state.role]
+    [state.role],
   );
 
   const isAdmin = useMemo(() => state.role === 'workspace_admin', [state.role]);

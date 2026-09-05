@@ -5,7 +5,7 @@
  */
 import { logger } from '@/lib/logger';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
-import type { DbRow } from '@/types/dbRow';
+import type { Json } from '@/integrations/supabase/types';
 
 export interface AgentDetail {
   id: string;
@@ -142,7 +142,10 @@ export interface FailureRecord {
 }
 
 /** Junta alerts + traces de erro/aviso para a tabela de falhas no Agent Details. */
-export async function getAgentFailures(agentId: string, perSourceLimit = 200): Promise<FailureRecord[]> {
+export async function getAgentFailures(
+  agentId: string,
+  perSourceLimit = 200,
+): Promise<FailureRecord[]> {
   const [alertsRes, tracesRes] = await Promise.all([
     supabaseExternal
       .from('alerts')
@@ -159,8 +162,10 @@ export async function getAgentFailures(agentId: string, perSourceLimit = 200): P
       .limit(perSourceLimit),
   ]);
 
-  if (alertsRes.error) logger.error('Failed to fetch failure alerts', { agentId, error: alertsRes.error.message });
-  if (tracesRes.error) logger.error('Failed to fetch failure traces', { agentId, error: tracesRes.error.message });
+  if (alertsRes.error)
+    logger.error('Failed to fetch failure alerts', { agentId, error: alertsRes.error.message });
+  if (tracesRes.error)
+    logger.error('Failed to fetch failure traces', { agentId, error: tracesRes.error.message });
 
   const fromAlerts: FailureRecord[] = (alertsRes.data ?? []).map((a) => ({
     id: `alert-${a.id}`,
@@ -173,9 +178,12 @@ export async function getAgentFailures(agentId: string, perSourceLimit = 200): P
 
   const fromTraces: FailureRecord[] = (tracesRes.data ?? []).map((t) => {
     const meta = (t.metadata ?? {}) as Record<string, unknown>;
-    const errMsg = typeof meta.error === 'string' ? meta.error
-      : typeof meta.message === 'string' ? meta.message
-      : null;
+    const errMsg =
+      typeof meta.error === 'string'
+        ? meta.error
+        : typeof meta.message === 'string'
+          ? meta.message
+          : null;
     return {
       id: `trace-${t.id}`,
       source: 'trace' as const,
@@ -214,7 +222,10 @@ export async function createAgentVersion(input: CreateAgentVersionInput): Promis
     .limit(1)
     .maybeSingle();
   if (latestErr) {
-    logger.error('Failed to fetch latest version', { agentId: input.agentId, error: latestErr.message });
+    logger.error('Failed to fetch latest version', {
+      agentId: input.agentId,
+      error: latestErr.message,
+    });
     throw latestErr;
   }
   const nextVersion = (latest?.version ?? 0) + 1;
@@ -228,7 +239,7 @@ export async function createAgentVersion(input: CreateAgentVersionInput): Promis
       persona: input.persona,
       mission: input.mission,
       name: input.name ?? null,
-      config: input.config as Record<string, unknown>,
+      config: input.config as Json,
       change_summary: input.change_summary,
     })
     .select('*')
@@ -246,7 +257,7 @@ export async function createAgentVersion(input: CreateAgentVersionInput): Promis
       model: input.model,
       persona: input.persona,
       mission: input.mission,
-      config: input.config as Record<string, unknown>,
+      config: input.config as Json,
     })
     .eq('id', input.agentId);
   if (syncErr) {
@@ -277,7 +288,7 @@ export interface RestoreOptions {
     temperature: number | null;
     max_tokens: number | null;
     reasoning: string | null;
-    tools: DbRow[] | null;
+    tools: Record<string, unknown>[] | null;
   }>;
   modelOverride?: string | null;
 }
@@ -323,9 +334,10 @@ export async function restoreAgentVersion(
     parts.push('modelo');
   }
 
-  const autoSummary = parts.length > 0
-    ? `Restaurado de v${sourceVersion.version} (${parts.join(' + ')})`
-    : `Restaurado de v${sourceVersion.version} (sem alterações)`;
+  const autoSummary =
+    parts.length > 0
+      ? `Restaurado de v${sourceVersion.version} (${parts.join(' + ')})`
+      : `Restaurado de v${sourceVersion.version} (sem alterações)`;
   const change_summary = options.customSummary?.trim() || autoSummary;
 
   // Aplica overrides das correções rápidas — `null` apaga o campo,
@@ -395,15 +407,21 @@ export async function getAgentVersions(agentId: string, limit = 20): Promise<Age
 }
 
 /** Lightweight (id, name) summaries — used by selectors and orchestration UIs. */
-export interface AgentSummary { id: string; name: string }
+export interface AgentSummary {
+  id: string;
+  name: string;
+}
 
-export async function listAgentSummaries(limit?: number, offset = 0): Promise<{ agents: AgentSummary[], total: number }> {
+export async function listAgentSummaries(
+  limit?: number,
+  offset = 0,
+): Promise<{ agents: AgentSummary[]; total: number }> {
   const query = supabaseExternal
     .from('agents')
     .select('id, name', { count: 'exact' })
     .order('updated_at', { ascending: false })
     .range(offset, offset + (limit || 50) - 1);
-  
+
   const { data, error, count } = await query;
   if (error) {
     logger.error('Failed to list agent summaries', { error: error.message });
@@ -411,6 +429,6 @@ export async function listAgentSummaries(limit?: number, offset = 0): Promise<{ 
   }
   return {
     agents: (data ?? []) as AgentSummary[],
-    total: count ?? 0
+    total: count ?? 0,
   };
 }

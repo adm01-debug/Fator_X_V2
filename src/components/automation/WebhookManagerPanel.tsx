@@ -2,17 +2,33 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Webhook, Loader2, Send, Clipboard, PlayCircle, History, RotateCcw, CheckCircle2, XCircle } from 'lucide-react';
+import {
+  Webhook,
+  Loader2,
+  Send,
+  Clipboard,
+  PlayCircle,
+  History,
+  RotateCcw,
+  CheckCircle2,
+  XCircle,
+} from 'lucide-react';
 import {
   listWebhooks,
-  triggerWebhookViaEF,
   getWebhookEvents,
+  triggerWebhookViaEF,
   WEBHOOK_TEMPLATES,
   type WebhookEndpoint,
   type WebhookEvent,
 } from '@/services/webhookTriggerService';
 import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -20,8 +36,12 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 const AUTH_LABELS: Record<string, string> = {
-  none: 'Sem Auth', header: 'Header', hmac_sha256: 'HMAC SHA-256',
-  basic: 'Basic', bearer: 'Bearer', api_key: 'API Key',
+  none: 'Sem Auth',
+  header: 'Header',
+  hmac_sha256: 'HMAC SHA-256',
+  basic: 'Basic',
+  bearer: 'Bearer',
+  api_key: 'API Key',
 };
 
 export function WebhookManagerPanel() {
@@ -30,7 +50,9 @@ export function WebhookManagerPanel() {
   const [testingId, setTestingId] = useState<string | null>(null);
   const [testDialogOpen, setTestDialogOpen] = useState(false);
   const [selectedWebhook, setSelectedWebhook] = useState<WebhookEndpoint | null>(null);
-  const [testPayload, setTestPayload] = useState('{\n  "test": true,\n  "source": "nexus-studio",\n  "event": "manual_trigger"\n}');
+  const [testPayload, setTestPayload] = useState(
+    '{\n  "test": true,\n  "source": "nexus-studio",\n  "event": "manual_trigger"\n}',
+  );
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyWebhook, setHistoryWebhook] = useState<WebhookEndpoint | null>(null);
   const [historyEvents, setHistoryEvents] = useState<WebhookEvent[]>([]);
@@ -43,7 +65,8 @@ export function WebhookManagerPanel() {
       .then(setWebhooks)
       .catch(() => toast({ title: 'Erro ao carregar webhooks', variant: 'destructive' }))
       .finally(() => setLoading(false));
-  }, [toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
+  }, []);
 
   const handleTest = async () => {
     if (!selectedWebhook) return;
@@ -84,17 +107,71 @@ export function WebhookManagerPanel() {
     setTestDialogOpen(true);
   };
 
+  /** Abre o drawer de histórico e carrega os últimos eventos do webhook. */
+  const openHistory = async (w: WebhookEndpoint) => {
+    setHistoryWebhook(w);
+    setHistoryOpen(true);
+    setHistoryLoading(true);
+    try {
+      setHistoryEvents(await getWebhookEvents(w.id, 100));
+    } catch (e) {
+      setHistoryEvents([]);
+      toast({
+        title: 'Falha ao carregar histórico',
+        description: e instanceof Error ? e.message : 'Erro desconhecido',
+        variant: 'destructive',
+      });
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  /** Reenvia o payload original de um evento para o mesmo webhook. */
+  const handleReplay = async (ev: WebhookEvent) => {
+    if (!historyWebhook) return;
+    setReplayingId(ev.id);
+    try {
+      const result = await triggerWebhookViaEF({
+        path: historyWebhook.path,
+        payload: { ...(ev.body ?? {}), __replay_of: ev.id },
+      });
+      toast({
+        title: 'Evento reenviado',
+        description: `${historyWebhook.name} — status ${result.status}`,
+      });
+      setHistoryEvents(await getWebhookEvents(historyWebhook.id, 100));
+    } catch (e) {
+      toast({
+        title: 'Falha no replay',
+        description: e instanceof Error ? e.message : 'Erro desconhecido',
+        variant: 'destructive',
+      });
+    } finally {
+      setReplayingId(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
           { label: 'Total Webhooks', value: webhooks.length, color: 'hsl(var(--nexus-purple))' },
-          { label: 'Ativos', value: webhooks.filter(w => w.status === 'active').length, color: 'hsl(var(--nexus-emerald))' },
-          { label: 'Requests Total', value: webhooks.reduce((s, w) => s + w.request_count, 0), color: 'hsl(var(--nexus-blue))' },
+          {
+            label: 'Ativos',
+            value: webhooks.filter((w) => w.status === 'active').length,
+            color: 'hsl(var(--nexus-emerald))',
+          },
+          {
+            label: 'Requests Total',
+            value: webhooks.reduce((s, w) => s + w.request_count, 0),
+            color: 'hsl(var(--nexus-blue))',
+          },
         ].map((s, i) => (
           <Card key={i} className="bg-card border-border">
             <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+              <p className="text-2xl font-bold" style={{ color: s.color }}>
+                {s.value}
+              </p>
               <p className="text-meta text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
@@ -102,14 +179,21 @@ export function WebhookManagerPanel() {
       </div>
 
       <Card className="bg-card border-border">
-        <CardHeader className="pb-3"><CardTitle className="text-body-sm text-muted-foreground">Templates Prontos</CardTitle></CardHeader>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-body-sm text-muted-foreground">Templates Prontos</CardTitle>
+        </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {Object.entries(WEBHOOK_TEMPLATES).map(([key, tpl]) => (
-              <div key={key} className="p-3 rounded-lg bg-background border border-border hover:border-nexus-purple/50 cursor-pointer">
+              <div
+                key={key}
+                className="p-3 rounded-lg bg-background border border-border hover:border-nexus-purple/50 cursor-pointer"
+              >
                 <p className="font-medium text-body-sm">{tpl.name}</p>
                 <p className="text-meta text-muted-foreground mt-1">{tpl.description}</p>
-                <Badge variant="outline" className="mt-2 text-meta border-border">{tpl.auth_type ? AUTH_LABELS[tpl.auth_type] ?? tpl.auth_type : 'N/A'}</Badge>
+                <Badge variant="outline" className="mt-2 text-meta border-border">
+                  {tpl.auth_type ? (AUTH_LABELS[tpl.auth_type] ?? tpl.auth_type) : 'N/A'}
+                </Badge>
               </div>
             ))}
           </div>
@@ -135,12 +219,26 @@ export function WebhookManagerPanel() {
                     <p className="font-medium">{w.name}</p>
                     <code className="text-meta text-muted-foreground font-mono">{w.path}</code>
                     <div className="flex gap-2 mt-1 flex-wrap">
-                      {w.methods.map(m => <Badge key={m} variant="outline" className="text-meta border-border">{m}</Badge>)}
-                      <Badge variant="outline" className="text-meta border-border">{AUTH_LABELS[w.auth_type] ?? w.auth_type}</Badge>
+                      {w.methods.map((m) => (
+                        <Badge key={m} variant="outline" className="text-meta border-border">
+                          {m}
+                        </Badge>
+                      ))}
+                      <Badge variant="outline" className="text-meta border-border">
+                        {AUTH_LABELS[w.auth_type] ?? w.auth_type}
+                      </Badge>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2 shrink-0">
-                    <Badge className={w.status === 'active' ? 'bg-nexus-emerald/20 text-nexus-emerald' : 'bg-destructive/20 text-destructive'}>{w.status}</Badge>
+                    <Badge
+                      className={
+                        w.status === 'active'
+                          ? 'bg-nexus-emerald/20 text-nexus-emerald'
+                          : 'bg-destructive/20 text-destructive'
+                      }
+                    >
+                      {w.status}
+                    </Badge>
                     <p className="text-meta text-muted-foreground">{w.request_count} requests</p>
                     <div className="flex items-center gap-2">
                       <Button
@@ -182,7 +280,9 @@ export function WebhookManagerPanel() {
           </DialogHeader>
           <div className="space-y-6 mt-4">
             <div className="space-y-2">
-              <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">Webhook Alvo</Label>
+              <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">
+                Webhook Alvo
+              </Label>
               <div className="p-3 rounded-xl bg-secondary/30 border border-border/20">
                 <p className="text-body-sm font-bold text-foreground">{selectedWebhook?.name}</p>
                 <code className="text-meta text-muted-foreground">{selectedWebhook?.path}</code>
@@ -191,27 +291,43 @@ export function WebhookManagerPanel() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">JSON Payload</Label>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Label className="text-meta font-black uppercase text-muted-foreground tracking-widest">
+                  JSON Payload
+                </Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="h-6 text-meta gap-1"
                   onClick={() => navigator.clipboard.writeText(testPayload)}
                 >
                   <Clipboard className="h-3 w-3" /> Copiar
                 </Button>
               </div>
-              <Textarea 
-                value={testPayload} 
-                onChange={(e) => setTestPayload(e.target.value)} 
+              <Textarea
+                value={testPayload}
+                onChange={(e) => setTestPayload(e.target.value)}
                 className="font-mono text-meta min-h-[160px] rounded-xl bg-secondary/20"
               />
             </div>
 
             <DialogFooter className="pt-4">
-              <Button variant="outline" onClick={() => setTestDialogOpen(false)} className="h-12 rounded-xl px-6">Cancelar</Button>
-              <Button onClick={handleTest} disabled={!!testingId} className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-lg shadow-primary/20">
-                {testingId ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+              <Button
+                variant="outline"
+                onClick={() => setTestDialogOpen(false)}
+                className="h-12 rounded-xl px-6"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleTest}
+                disabled={!!testingId}
+                className="h-12 px-8 rounded-xl nexus-gradient-bg text-primary-foreground font-bold shadow-nexus-lg shadow-primary/20"
+              >
+                {testingId ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
                 <span className="ml-2">Disparar Agora</span>
               </Button>
             </DialogFooter>
@@ -265,10 +381,16 @@ export function WebhookManagerPanel() {
                                     : 'bg-destructive/20 text-destructive text-meta gap-1'
                                 }
                               >
-                                {ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+                                {ok ? (
+                                  <CheckCircle2 className="h-3 w-3" />
+                                ) : (
+                                  <XCircle className="h-3 w-3" />
+                                )}
                                 {ev.status}
                               </Badge>
-                              <span className="text-meta text-muted-foreground">HTTP {ev.response_code}</span>
+                              <span className="text-meta text-muted-foreground">
+                                HTTP {ev.response_code}
+                              </span>
                               {ev.processing_time_ms != null && (
                                 <span className="text-meta text-muted-foreground">
                                   {ev.processing_time_ms}ms

@@ -4,7 +4,7 @@
 -- ============================================================================
 
 -- 1) vendors
-CREATE TABLE public.vendors (
+CREATE TABLE IF NOT EXISTS public.vendors (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -34,7 +34,7 @@ CREATE INDEX idx_vendors_criticality ON public.vendors(workspace_id, criticality
 CREATE INDEX idx_vendors_review_due ON public.vendors(next_review_due) WHERE status != 'offboarded';
 
 -- 2) vendor_assessments
-CREATE TABLE public.vendor_assessments (
+CREATE TABLE IF NOT EXISTS public.vendor_assessments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES public.vendors(id) ON DELETE CASCADE,
   assessed_by UUID NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE public.vendor_assessments (
 CREATE INDEX idx_vendor_assessments_vendor ON public.vendor_assessments(vendor_id, assessed_at DESC);
 
 -- 3) vendor_documents
-CREATE TABLE public.vendor_documents (
+CREATE TABLE IF NOT EXISTS public.vendor_documents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   vendor_id UUID NOT NULL REFERENCES public.vendors(id) ON DELETE CASCADE,
   doc_type TEXT NOT NULL CHECK (doc_type IN ('dpa','soc2','iso27001','pentest_report','questionnaire','contract','other')),

@@ -1,4 +1,4 @@
-CREATE TABLE public.compliance_frameworks (
+CREATE TABLE IF NOT EXISTS public.compliance_frameworks (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   code TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE public.compliance_frameworks (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.compliance_controls (
+CREATE TABLE IF NOT EXISTS public.compliance_controls (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   framework_id UUID NOT NULL REFERENCES public.compliance_frameworks(id) ON DELETE CASCADE,
   code TEXT NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE public.compliance_controls (
   UNIQUE(framework_id, code)
 );
 
-CREATE TABLE public.compliance_reports (
+CREATE TABLE IF NOT EXISTS public.compliance_reports (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   workspace_id UUID NOT NULL REFERENCES public.workspaces(id) ON DELETE CASCADE,
   framework_id UUID NOT NULL REFERENCES public.compliance_frameworks(id),
@@ -40,7 +40,7 @@ CREATE TABLE public.compliance_reports (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.compliance_evidence (
+CREATE TABLE IF NOT EXISTS public.compliance_evidence (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   report_id UUID NOT NULL REFERENCES public.compliance_reports(id) ON DELETE CASCADE,
   control_id UUID NOT NULL REFERENCES public.compliance_controls(id),

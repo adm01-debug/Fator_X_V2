@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Loader2, Play, Copy, RotateCw, Zap, Wallet, Hash, AlertCircle, CheckCircle2 } from 'lucide-react';
+import {
+  Loader2,
+  Play,
+  Copy,
+  RotateCw,
+  Zap,
+  Wallet,
+  Hash,
+  AlertCircle,
+  CheckCircle2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,9 +27,12 @@ import { getModelPrice, USD_TO_BRL } from '@/lib/llmPricing';
 import { quickPromptSchema, type QuickAgentForm } from '@/lib/validations/quickAgentSchema';
 import { QUICK_AGENT_MOCK_INPUTS, type QuickAgentType } from '@/data/quickAgentTemplates';
 import { cn } from '@/lib/utils';
+import { getSkillsByIds } from '@/services/skillsRegistryService';
 
 interface Props {
   form: QuickAgentForm;
+  /** IDs das skills selecionadas no wizard — injetadas no prompt de teste. */
+  skillIds?: string[];
 }
 
 interface TestResult {
@@ -31,6 +44,8 @@ interface TestResult {
   model_used: string;
   cost_usd: number;
   cost_brl: number;
+  /** Quantas skills foram efetivamente enviadas para injeção no prompt. */
+  skills_injected: number;
 }
 
 function formatBrl(brl: number): string {
@@ -46,7 +61,7 @@ function formatLatency(ms: number): string {
   return `${(ms / 1000).toFixed(2)}s`;
 }
 
-export function QuickAgentTestPanel({ form }: Props) {
+export function QuickAgentTestPanel({ form, skillIds = [] }: Props) {
   const type = form.type as QuickAgentType;
   const mocks = QUICK_AGENT_MOCK_INPUTS[type] ?? [{ label: 'Mensagem', input: 'Olá!' }];
 
@@ -63,7 +78,10 @@ export function QuickAgentTestPanel({ form }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
-  const promptValidation = useMemo(() => quickPromptSchema.safeParse({ prompt: form.prompt }), [form.prompt]);
+  const promptValidation = useMemo(
+    () => quickPromptSchema.safeParse({ prompt: form.prompt }),
+    [form.prompt],
+  );
   const promptValid = promptValidation.success;
 
   const estimate = useCostEstimate({
@@ -75,11 +93,33 @@ export function QuickAgentTestPanel({ form }: Props) {
 
   const canRun = promptValid && userInput.trim().length > 0 && !loading;
 
+  /**
+   * Resolve metadados das skills selecionadas. Falha suave: um erro aqui
+   * nunca deve impedir o teste do prompt.
+   */
+  const resolveSkills = async (): Promise<
+    Array<{ id: string; name: string; description?: string; category?: string }>
+  > => {
+    if (skillIds.length === 0) return [];
+    try {
+      const rows = await getSkillsByIds(skillIds);
+      return rows.slice(0, 100).map((s) => ({
+        id: s.id,
+        name: s.name,
+        description: s.description ?? undefined,
+        category: s.category ?? undefined,
+      }));
+    } catch {
+      return [];
+    }
+  };
+
   const runTest = async () => {
     if (!canRun) return;
     setLoading(true);
     setError(null);
     setResult(null);
+    const resolvedSkills = await resolveSkills();
     try {
       const { data, error: invokeError } = await supabaseExternal.functions.invoke(
         'quick-agent-test',
@@ -88,6 +128,7 @@ export function QuickAgentTestPanel({ form }: Props) {
             system_prompt: form.prompt,
             user_message: userInput.trim(),
             model: form.model,
+            skills: resolvedSkills,
           },
         },
       );
@@ -111,9 +152,17 @@ export function QuickAgentTestPanel({ form }: Props) {
         model_used: String(payload.model_used ?? form.model),
         cost_usd: costUsd,
         cost_brl: costUsd * USD_TO_BRL,
+        // O servidor é a fonte da verdade (dedupe/sanitização/limite de 25).
+        // Fallback para o total enviado apenas se o campo não vier na resposta.
+        skills_injected:
+          typeof payload.skills_injected_count === 'number'
+            ? payload.skills_injected_count
+            : resolvedSkills.length,
       };
       setResult(r);
-      toast.success('Teste executado', { description: `${formatLatency(r.latency_ms)} · ${formatBrl(r.cost_brl)}` });
+      toast.success('Teste executado', {
+        description: `${formatLatency(r.latency_ms)} · ${formatBrl(r.cost_brl)}`,
+      });
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Erro inesperado';
       setError(msg);
@@ -187,7 +236,9 @@ export function QuickAgentTestPanel({ form }: Props) {
       {!promptValid && (
         <div className="flex items-start gap-2 text-meta text-nexus-amber bg-nexus-amber/5 border border-nexus-amber/30 rounded-md p-2">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-          <span>Complete o system prompt (incluindo as 4 seções obrigatórias) antes de testar.</span>
+          <span>
+            Complete o system prompt (incluindo as 4 seções obrigatórias) antes de testar.
+          </span>
         </div>
       )}
 
@@ -258,6 +309,15 @@ export function QuickAgentTestPanel({ form }: Props) {
             <div className="flex items-center justify-between gap-2">
               <p className="text-meta uppercase tracking-wider text-nexus-emerald font-semibold flex items-center gap-1.5">
                 <CheckCircle2 className="h-3 w-3" /> Resposta do agente
+                {result.skills_injected > 0 && (
+                  <span
+                    title="Skills instaladas injetadas no system prompt desta execução"
+                    className="ml-1 rounded-full border border-primary/30 bg-primary/10 px-1.5 py-px text-meta font-mono text-primary normal-case tracking-normal"
+                  >
+                    {result.skills_injected} skill{result.skills_injected > 1 ? 's' : ''} injetada
+                    {result.skills_injected > 1 ? 's' : ''}
+                  </span>
+                )}
               </p>
               <Button
                 type="button"
@@ -270,7 +330,9 @@ export function QuickAgentTestPanel({ form }: Props) {
               </Button>
             </div>
             <pre className="whitespace-pre-wrap break-words text-meta text-foreground font-sans leading-relaxed max-h-64 overflow-y-auto">
-              {result.response || <span className="text-muted-foreground italic">(resposta vazia)</span>}
+              {result.response || (
+                <span className="text-muted-foreground italic">(resposta vazia)</span>
+              )}
             </pre>
             <p className="text-meta font-mono text-muted-foreground/70 pt-1 border-t border-nexus-emerald/15">
               servido por: {result.model_used}
@@ -295,8 +357,8 @@ function MetricCard({ icon, label, value, hint, tone }: MetricCardProps) {
     tone === 'primary'
       ? 'border-primary/30 bg-primary/5 text-primary'
       : tone === 'emerald'
-      ? 'border-nexus-emerald/30 bg-nexus-emerald/5 text-nexus-emerald'
-      : 'border-border bg-secondary/40 text-foreground';
+        ? 'border-nexus-emerald/30 bg-nexus-emerald/5 text-nexus-emerald'
+        : 'border-border bg-secondary/40 text-foreground';
   return (
     <div className={cn('rounded-lg border p-2.5', toneClass)}>
       <div className="flex items-center gap-1.5 text-meta uppercase tracking-wider opacity-80">

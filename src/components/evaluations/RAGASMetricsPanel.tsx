@@ -8,18 +8,48 @@ import { Badge } from '@/components/ui/badge';
 // Input removed — unused
 import { Textarea } from '@/components/ui/textarea';
 import { FlaskConical, Loader2, TrendingUp, AlertTriangle } from 'lucide-react';
-import { runRAGASEvaluation, type RAGASResult, type EvalTestCase } from '@/services/evalEngineService';
+import {
+  runRAGASEvaluation,
+  type RAGASResult,
+  type EvalTestCase,
+} from '@/services/evalEngineService';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 
 const METRIC_META: Record<string, { label: string; description: string; color: string }> = {
-  faithfulness: { label: 'Factualidade', description: 'Resposta baseada nos contextos?', color: 'text-nexus-blue' },
-  answer_relevancy: { label: 'Relevância', description: 'Resposta relevante à pergunta?', color: 'text-nexus-emerald' },
-  context_precision: { label: 'Precisão de Contexto', description: 'Contextos relevantes no topo?', color: 'text-nexus-purple' },
-  context_recall: { label: 'Recall de Contexto', description: 'Informação necessária coberta?', color: 'text-nexus-amber' },
-  answer_correctness: { label: 'Corretude', description: 'Resposta factualmente correta?', color: 'text-primary' },
+  faithfulness: {
+    label: 'Factualidade',
+    description: 'Resposta baseada nos contextos?',
+    color: 'text-nexus-blue',
+  },
+  answer_relevancy: {
+    label: 'Relevância',
+    description: 'Resposta relevante à pergunta?',
+    color: 'text-nexus-emerald',
+  },
+  context_precision: {
+    label: 'Precisão de Contexto',
+    description: 'Contextos relevantes no topo?',
+    color: 'text-nexus-purple',
+  },
+  context_recall: {
+    label: 'Recall de Contexto',
+    description: 'Informação necessária coberta?',
+    color: 'text-nexus-amber',
+  },
+  answer_correctness: {
+    label: 'Corretude',
+    description: 'Resposta factualmente correta?',
+    color: 'text-primary',
+  },
 };
 
 function MetricBar({ value, label, color }: { value: number; label: string; color: string }) {
@@ -68,13 +98,19 @@ export function RAGASMetricsPanel() {
       return;
     }
     const wsId = workspaces[0]?.id;
-    if (!wsId) { toast.error('Workspace não encontrado'); return; }
+    if (!wsId) {
+      toast.error('Workspace não encontrado');
+      return;
+    }
 
-    const testCases: EvalTestCase[] = testInput.split('\n').filter(Boolean).map(line => ({
-      query: line.trim(),
-      answer: '',
-      contexts: [],
-    }));
+    const testCases: EvalTestCase[] = testInput
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => ({
+        query: line.trim(),
+        answer: '',
+        contexts: [],
+      }));
 
     setRunning(true);
     try {
@@ -96,47 +132,74 @@ export function RAGASMetricsPanel() {
         </div>
         <div>
           <h3 className="text-body-sm font-bold text-foreground">Métricas RAGAS</h3>
-          <p className="text-meta text-muted-foreground">Avaliação de qualidade RAG (Faithfulness, Relevancy, Precision, Recall)</p>
+          <p className="text-meta text-muted-foreground">
+            Avaliação de qualidade RAG (Faithfulness, Relevancy, Precision, Recall)
+          </p>
         </div>
-        <Badge variant="outline" className="ml-auto text-meta">eval-engine-v2</Badge>
+        <Badge variant="outline" className="ml-auto text-meta">
+          eval-engine-v2
+        </Badge>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-2">
-          <label htmlFor="ragas-agent" className="text-[11px] font-medium text-muted-foreground">Agente</label>
+          <label htmlFor="ragas-agent" className="text-meta font-medium text-muted-foreground">
+            Agente
+          </label>
           <Select value={agentId} onValueChange={setAgentId}>
-            <SelectTrigger id="ragas-agent" className="h-8 text-xs"><SelectValue placeholder="Selecionar agente" /></SelectTrigger>
+            <SelectTrigger id="ragas-agent" className="h-8 text-meta">
+              <SelectValue placeholder="Selecionar agente" />
+            </SelectTrigger>
             <SelectContent>
-              {agents.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
+              {agents.map((a) => (
+                <SelectItem key={a.id} value={a.id}>
+                  {a.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
-          <label htmlFor="ragas-test-input" className="text-[11px] font-medium text-muted-foreground">Perguntas de teste (1 por linha)</label>
+          <label htmlFor="ragas-test-input" className="text-meta font-medium text-muted-foreground">
+            Perguntas de teste (1 por linha)
+          </label>
           <Textarea
             id="ragas-test-input"
             placeholder="Qual o horário de funcionamento?\nComo fazer uma troca?"
             value={testInput}
-            onChange={e => setTestInput(e.target.value)}
+            onChange={(e) => setTestInput(e.target.value)}
             className="text-meta min-h-[60px]"
           />
         </div>
       </div>
 
-      <Button size="sm" className="gap-1.5 text-meta" onClick={handleRunRAGAS} disabled={running || !agentId}>
-        {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <TrendingUp className="h-3.5 w-3.5" />}
+      <Button
+        size="sm"
+        className="gap-1.5 text-meta"
+        onClick={handleRunRAGAS}
+        disabled={running || !agentId}
+      >
+        {running ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : (
+          <TrendingUp className="h-3.5 w-3.5" />
+        )}
         Executar RAGAS
       </Button>
 
       {result && (
         <div className="space-y-4 animate-fade-in">
           <div className="flex items-center gap-3">
-            <div className={`text-2xl font-black ${result.overall_score >= 0.7 ? 'text-nexus-emerald' : result.overall_score >= 0.4 ? 'text-nexus-amber' : 'text-destructive'}`}>
+            <div
+              className={`text-2xl font-black ${result.overall_score >= 0.7 ? 'text-nexus-emerald' : result.overall_score >= 0.4 ? 'text-nexus-amber' : 'text-destructive'}`}
+            >
               {(result.overall_score * 100).toFixed(0)}%
             </div>
             <div>
               <p className="text-meta font-semibold">Score Geral</p>
-              <p className="text-meta text-muted-foreground">{result.sample_count} amostra(s) avaliada(s)</p>
+              <p className="text-meta text-muted-foreground">
+                {result.sample_count} amostra(s) avaliada(s)
+              </p>
             </div>
             {result.overall_score < 0.5 && (
               <Badge variant="destructive" className="text-meta gap-1 ml-auto">
@@ -149,7 +212,7 @@ export function RAGASMetricsPanel() {
             {Object.entries(METRIC_META).map(([key, meta]) => (
               <MetricBar
                 key={key}
-                value={result[key as keyof RAGASResult] as number ?? 0}
+                value={(result[key as keyof RAGASResult] as number) ?? 0}
                 label={meta.label}
                 color={meta.color}
               />

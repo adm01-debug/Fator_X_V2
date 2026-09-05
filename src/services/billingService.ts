@@ -49,33 +49,38 @@ export interface ModelPricingRow {
   input_cost_per_1k: number;
   output_cost_per_1k: number;
 }
-import { fromTable } from '@/lib/supabaseExtended';
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
-import type { DbRow } from '@/types/dbRow';
 
 // ═══ Usage ═══
 
-export async function getUsageSummary(period: 'day' | 'week' | 'month' = 'week'): Promise<UsageSummary> {
+export async function getUsageSummary(
+  period: 'day' | 'week' | 'month' = 'week',
+): Promise<UsageSummary> {
   const now = new Date();
   const periodMs = period === 'day' ? 86400000 : period === 'week' ? 604800000 : 2592000000;
   const since = new Date(now.getTime() - periodMs).toISOString();
 
-  const { data, error } = await fromTable('usage_records')
+  // Usa o client EXTERNO — `usage_records` vive no banco de dados externo, o
+  // mesmo lido por `getUsageRecords`. Ler pelo client local devolvia zero
+  // consumo, o que fazia `checkBudgetStatus` reportar "ok" com o orçamento
+  // estourado (o budget vem do externo, o consumo vinha do local).
+  const { data, error } = await supabaseExternal
+    .from('usage_records')
     .select('cost_usd, record_type, tokens, created_at')
     .gte('created_at', since)
     .order('created_at', { ascending: true });
 
   if (error) throw error;
 
-  interface UsageSummaryRow {
+  type UsageRow = {
     cost_usd: number | null;
     record_type: string | null;
     tokens: number | null;
-    created_at: string | null;
-  }
-  const records = (data ?? []) as UsageSummaryRow[];
-  const totalCost = records.reduce((s: number, r) => s + Number(r.cost_usd || 0), 0);
-  const totalTokens = records.reduce((s: number, r) => s + Number(r.tokens || 0), 0);
+    created_at: string;
+  };
+  const records = (data || []) as UsageRow[];
+  const totalCost = records.reduce((s, r) => s + Number(r.cost_usd || 0), 0);
+  const totalTokens = records.reduce((s, r) => s + Number(r.tokens || 0), 0);
 
   const byType: Record<string, number> = {};
   records.forEach((r) => {

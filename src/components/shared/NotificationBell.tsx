@@ -6,11 +6,9 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bell, Check, CheckCheck, Loader2 } from 'lucide-react';
-import {
-  Popover, PopoverContent, PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { handleKeyboardClick } from "@/lib/a11y";
+import { handleKeyboardClick } from '@/lib/a11y';
 
 export function NotificationBell() {
   const { notifications, unreadCount, loading, markOneRead, markAllAsRead } = useNotifications();
@@ -33,11 +31,18 @@ export function NotificationBell() {
             <Bell className="h-4 w-4 text-muted-foreground" />
             <span className="text-body-sm font-semibold">Notificações</span>
             {unreadCount > 0 && (
-              <Badge variant="secondary" className="text-meta h-4 px-1.5">{unreadCount}</Badge>
+              <Badge variant="secondary" className="text-meta h-4 px-1.5">
+                {unreadCount}
+              </Badge>
             )}
           </div>
           {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" className="text-meta h-6 gap-1" onClick={markAllAsRead}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-meta h-6 gap-1"
+              onClick={markAllAsRead}
+            >
               <CheckCheck className="h-3 w-3" /> Marcar todas
             </Button>
           )}
@@ -58,28 +63,34 @@ export function NotificationBell() {
               {notifications.slice(0, 20).map((n) => {
                 const isUnread = n.status === 'sent' || n.status === 'delivered';
                 return (
-                  <div role="button" tabIndex={0} onKeyDown={handleKeyboardClick}
-                    key={n.id}
+                  <div
                     role="button"
                     tabIndex={0}
+                    onKeyDown={handleKeyboardClick}
+                    key={n.id}
                     className={`px-4 py-3 hover:bg-muted/30 cursor-pointer transition-colors ${isUnread ? 'bg-primary/5' : ''}`}
                     onClick={() => isUnread && markOneRead(n.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        if (isUnread) markOneRead(n.id);
-                      }
-                    }}
                   >
                     <div className="flex items-start gap-2">
-                      {isUnread && <span className="h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />}
+                      {isUnread && (
+                        <span className="h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />
+                      )}
                       <div className="flex-1 min-w-0">
-                        <p className={`text-meta ${isUnread ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
+                        <p
+                          className={`text-meta ${isUnread ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}
+                        >
                           {n.subject || n.channel}
                         </p>
                         <p className="text-meta text-muted-foreground truncate">{n.body}</p>
                         <p className="text-meta text-muted-foreground/60 mt-0.5">
-                          {n.created_at ? new Date(n.created_at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}
+                          {n.created_at
+                            ? new Date(n.created_at).toLocaleString('pt-BR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })
+                            : ''}
                         </p>
                       </div>
                       {isUnread && (

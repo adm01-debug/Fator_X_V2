@@ -1,30 +1,58 @@
-import { fetchWithTimeout } from "../_shared/retry.ts";
+import { fetchWithTimeout } from '../_shared/retry.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 import { startEdgeTrace } from '../_shared/otel.ts';
 import { _maybeInjectFault, _applyFault } from '../_shared/chaos.ts';
 import { parseBody, z } from '../_shared/validation.ts';
-import { checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS, requireEnv } from "../_shared/mod.ts";
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+  requireEnv,
+} from '../_shared/mod.ts';
 
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
+import { appendSkillsToPrompt, loadAgentSkills } from '../_shared/skills.ts';
 const WorkflowRunSchema = z.object({
   workflow_id: z.string().uuid(),
-  input: z.union([z.record(z.unknown()), z.string(), z.number(), z.boolean(), z.null(), z.array(z.unknown())]).optional(),
+  input: z
+    .union([
+      z.record(z.unknown()),
+      z.string(),
+      z.number(),
+      z.boolean(),
+      z.null(),
+      z.array(z.unknown()),
+    ])
+    .optional(),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
-interface WFNode { id: string; type: string; data: Record<string, any> }
-interface WFEdge { source: string; target: string }
+interface WFNode {
+  id: string;
+  type: string;
+  data: Record<string, any>;
+}
+interface WFEdge {
+  source: string;
+  target: string;
+}
 
 function topoSort(nodes: WFNode[], edges: WFEdge[]): WFNode[] {
   const indeg = new Map<string, number>();
   const adj = new Map<string, string[]>();
-  nodes.forEach((n) => { indeg.set(n.id, 0); adj.set(n.id, []); });
+  nodes.forEach((n) => {
+    indeg.set(n.id, 0);
+    adj.set(n.id, []);
+  });
   edges.forEach((e) => {
     adj.get(e.source)?.push(e.target);
     indeg.set(e.target, (indeg.get(e.target) || 0) + 1);
   });
   const queue: string[] = [];
-  indeg.forEach((d, id) => { if (d === 0) queue.push(id); });
+  indeg.forEach((d, id) => {
+    if (d === 0) queue.push(id);
+  });
   const order: string[] = [];
   while (queue.length) {
     const id = queue.shift()!;
@@ -39,7 +67,12 @@ function topoSort(nodes: WFNode[], edges: WFEdge[]): WFNode[] {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
-async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lovableKey: string): Promise<any> {
+async function executeNode(
+  node: WFNode,
+  ctx: Record<string, any>,
+  supa: any,
+  lovableKey: string,
+): Promise<any> {
   switch (node.type) {
     case 'trigger':
       return ctx.__input;
@@ -48,10 +81,19 @@ async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lo
       if (!agentId) return { error: 'agent_id ausente' };
       const { data: agent } = await supa.from('agents').select('*').eq('id', agentId).single();
       if (!agent) return { error: 'agent não encontrado' };
-      const lastInput = Object.values(ctx).filter((v) => v !== undefined).pop() ?? ctx.__input;
+      const lastInput =
+        Object.values(ctx)
+          .filter((v) => v !== undefined)
+          .pop() ?? ctx.__input;
+      // Skills instaladas entram no system prompt de runtime (mesma seção do preview).
+      const agentSkills = await loadAgentSkills(supa, agentId);
+      const baseSystem = agent.config?.system_prompt || `Você é ${agent.name}.`;
       const messages = [
-        { role: 'system', content: agent.config?.system_prompt || `Você é ${agent.name}.` },
-        { role: 'user', content: typeof lastInput === 'string' ? lastInput : JSON.stringify(lastInput) },
+        { role: 'system', content: appendSkillsToPrompt(baseSystem, agentSkills) },
+        {
+          role: 'user',
+          content: typeof lastInput === 'string' ? lastInput : JSON.stringify(lastInput),
+        },
       ];
       const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
@@ -65,16 +107,21 @@ async function executeNode(node: WFNode, ctx: Record<string, any>, supa: any, lo
       return { tool: node.data?.tool_name, params: node.data?.params, executed: true };
     case 'condition': {
       const expr = node.data?.expression || 'true';
-      try { return { branch: !!new Function('ctx', `return (${expr})`)(ctx) }; }
-      catch { return { branch: false }; }
+      try {
+        return { branch: !!new Function('ctx', `return (${expr})`)(ctx) };
+      } catch {
+        return { branch: false };
+      }
     }
     case 'transform': {
       const code = node.data?.code || 'return input;';
       try {
         const lastInput = Object.values(ctx).pop();
         return new Function('input', 'ctx', code)(lastInput, ctx);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
-      } catch (e: any) { return { error: e.message }; }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
+      } catch (e: any) {
+        return { error: e.message };
+      }
     }
     case 'output':
       return Object.values(ctx).pop();
@@ -89,7 +136,7 @@ Deno.serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
-  if (!rate.success) return createRateLimitResponse(rate.remaining, rate.reset, getCorsHeaders(req));
+  if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
   const isStream = req.headers.get('accept') === 'text/event-stream';
   const trace = startEdgeTrace(req, { rootName: 'agent-workflow-runner.handle' });
@@ -103,19 +150,32 @@ Deno.serve(async (req) => {
     const userClient = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_ANON_KEY'), {
       global: { headers: { Authorization: auth } },
     });
-    
-    const { data: { user } } = await userClient.auth.getUser();
+
+    const {
+      data: { user },
+    } = await userClient.auth.getUser();
     if (!user) throw new Error('Unauthorized');
 
     const parsed = await parseBody(req, WorkflowRunSchema);
     if (parsed.error) return parsed.error;
     const { workflow_id, input } = parsed.data;
-    const { data: wf } = await supa.from('agent_workflows').select('*').eq('id', workflow_id).single();
+    const { data: wf } = await supa
+      .from('agent_workflows')
+      .select('*')
+      .eq('id', workflow_id)
+      .single();
     if (!wf) throw new Error('Workflow não encontrado');
 
-    const { data: run } = await supa.from('agent_workflow_runs').insert({
-      workflow_id, status: 'running', input, created_by: user.id,
-    }).select().single();
+    const { data: run } = await supa
+      .from('agent_workflow_runs')
+      .insert({
+        workflow_id,
+        status: 'running',
+        input,
+        created_by: user.id,
+      })
+      .select()
+      .single();
 
     if (isStream) {
       const { readable, writable } = new TransformStream();
@@ -143,22 +203,33 @@ Deno.serve(async (req) => {
             const t0 = Date.now();
             const out = await executeNode(node, ctx, supa, lovableKey);
             const latency = Date.now() - t0;
-            
+
             ctx[node.id] = out;
-            const stepResult = { node_id: node.id, type: node.type, output: out, latency_ms: latency };
+            const stepResult = {
+              node_id: node.id,
+              type: node.type,
+              output: out,
+              latency_ms: latency,
+            };
             runTrace.push(stepResult);
-            
+
             await send('node_completed', stepResult);
           }
 
           const finalOutput = ordered.length ? ctx[ordered[ordered.length - 1].id] : null;
-          await supa.from('agent_workflow_runs').update({
-            status: 'completed', output: finalOutput, trace: runTrace, completed_at: new Date().toISOString(),
-          }).eq('id', run.id);
+          await supa
+            .from('agent_workflow_runs')
+            .update({
+              status: 'completed',
+              output: finalOutput,
+              trace: runTrace,
+              completed_at: new Date().toISOString(),
+            })
+            .eq('id', run.id);
 
           await send('run_completed', { run_id: run.id, output: finalOutput });
           await writer.close();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         } catch (err: any) {
           await send('error', { message: err.message });
           await writer.close();
@@ -166,15 +237,24 @@ Deno.serve(async (req) => {
       })();
 
       return new Response(readable, {
-        headers: { ...corsHeaders, 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+        },
       });
     }
 
     // Sync fallback
-    return new Response(JSON.stringify({ run_id: run.id, status: 'queued' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ run_id: run.id, status: 'queued' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: e.message }), {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
 });

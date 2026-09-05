@@ -2,19 +2,30 @@
  * RoutingConfigPage — Nexus Agents Studio (sprint #4)
  * Unified cross-source view of agent_routing_config.
  */
-import { useState, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  Network, Search, Power, PowerOff, Trash2, Loader2,
-  Building2, MessageCircle, Mail, Slack as SlackIcon, Globe,
-  CheckCircle2, XCircle, AlertCircle,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner";
-import { useI18n } from "@/hooks/useI18n";
+  Network,
+  Search,
+  Power,
+  PowerOff,
+  Trash2,
+  Loader2,
+  Building2,
+  MessageCircle,
+  Mail,
+  Slack as SlackIcon,
+  Globe,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
+import { useI18n } from '@/hooks/useI18n';
 import {
   listAllRoutes,
   summarizeRoutes,
@@ -22,10 +33,10 @@ import {
   toggleRoute,
   deleteRoute,
   getSourceLabel,
-} from "@/services/agentRoutingService";
-import { listAgents } from "@/lib/agentService";
-import { RoutingEventsMonitor } from "@/components/routing/RoutingEventsMonitor";
-import { handleKeyboardClick } from "@/lib/a11y";
+} from '@/services/agentRoutingService';
+import { listAgents } from '@/lib/agentService';
+import { RoutingEventsMonitor } from '@/components/routing/RoutingEventsMonitor';
+import { handleKeyboardClick } from '@/lib/a11y';
 
 const SOURCE_ICONS: Record<string, typeof Building2> = {
   bitrix24: Building2,
@@ -37,16 +48,16 @@ const SOURCE_ICONS: Record<string, typeof Building2> = {
 export function RoutingConfigPage() {
   const { t } = useI18n();
   const queryClient = useQueryClient();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [filterSource, setFilterSource] = useState<string | null>(null);
 
   const { data: routes = [], isLoading } = useQuery({
-    queryKey: ["agent_routing_all"],
+    queryKey: ['agent_routing_all'],
     queryFn: listAllRoutes,
   });
 
   const { data: agents = [] } = useQuery({
-    queryKey: ["agents_for_routing_unified"],
+    queryKey: ['agents_for_routing_unified'],
     queryFn: () => listAgents(),
   });
 
@@ -59,10 +70,15 @@ export function RoutingConfigPage() {
     }
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      filtered = filtered.filter((r) =>
-        r.source.toLowerCase().includes(q) ||
-        r.event_type.toLowerCase().includes(q) ||
-        (agents.find((a) => a.id === r.agent_id)?.name?.toLowerCase().includes(q) ?? false)
+      filtered = filtered.filter(
+        (r) =>
+          r.source.toLowerCase().includes(q) ||
+          r.event_type.toLowerCase().includes(q) ||
+          (agents
+            .find((a) => a.id === r.agent_id)
+            ?.name?.toLowerCase()
+            .includes(q) ??
+            false),
       );
     }
     return filtered;
@@ -71,29 +87,31 @@ export function RoutingConfigPage() {
   const handleToggle = async (id: string, current: boolean) => {
     try {
       await toggleRoute(id, !current);
-      queryClient.invalidateQueries({ queryKey: ["agent_routing_all"] });
+      queryClient.invalidateQueries({ queryKey: ['agent_routing_all'] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erro");
+      toast.error(e instanceof Error ? e.message : 'Erro');
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteRoute(id);
-      toast.success(t("routing.route_removed"));
-      queryClient.invalidateQueries({ queryKey: ["agent_routing_all"] });
+      toast.success(t('routing.route_removed'));
+      queryClient.invalidateQueries({ queryKey: ['agent_routing_all'] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erro");
+      toast.error(e instanceof Error ? e.message : 'Erro');
     }
   };
 
   const handleBulkToggle = async (source: string, enabled: boolean) => {
     try {
       const count = await bulkToggleSource(source, enabled);
-      toast.success(`${count} rota${count === 1 ? '' : 's'} ${enabled ? 'ativada' : 'desativada'}${count === 1 ? '' : 's'}`);
-      queryClient.invalidateQueries({ queryKey: ["agent_routing_all"] });
+      toast.success(
+        `${count} rota${count === 1 ? '' : 's'} ${enabled ? 'ativada' : 'desativada'}${count === 1 ? '' : 's'}`,
+      );
+      queryClient.invalidateQueries({ queryKey: ['agent_routing_all'] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erro");
+      toast.error(e instanceof Error ? e.message : 'Erro');
     }
   };
 
@@ -107,18 +125,25 @@ export function RoutingConfigPage() {
         <div className="flex items-center gap-3">
           <Network className="h-6 w-6 text-primary" />
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">{t("routing.title")}</h1>
-            <p className="text-body-sm text-muted-foreground mt-0.5">{t("routing.subtitle")}</p>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {t('routing.title')}
+            </h1>
+            <p className="text-body-sm text-muted-foreground mt-0.5">{t('routing.subtitle')}</p>
           </div>
         </div>
         <div className="flex gap-2">
-          <Badge variant="outline" className="text-meta">{routes.length} {t("routing.total_routes")}</Badge>
+          <Badge variant="outline" className="text-meta">
+            {routes.length} {t('routing.total_routes')}
+          </Badge>
           <Badge variant="outline" className="text-meta border-nexus-emerald/50 text-nexus-emerald">
-            {totalEnabled} {t("routing.active")}
+            {totalEnabled} {t('routing.active')}
           </Badge>
           {orphanRoutes > 0 && (
-            <Badge variant="outline" className="text-meta border-nexus-amber/50 text-nexus-amber gap-1">
-              <AlertCircle className="h-2.5 w-2.5" /> {orphanRoutes} {t("routing.orphans")}
+            <Badge
+              variant="outline"
+              className="text-meta border-nexus-amber/50 text-nexus-amber gap-1"
+            >
+              <AlertCircle className="h-2.5 w-2.5" /> {orphanRoutes} {t('routing.orphans')}
             </Badge>
           )}
         </div>
@@ -138,39 +163,59 @@ export function RoutingConfigPage() {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Icon className="h-4 w-4 text-primary" />
-                  <h3 className="text-body-sm font-semibold text-foreground">{getSourceLabel(s.source)}</h3>
+                  <h3 className="text-body-sm font-semibold text-foreground">
+                    {getSourceLabel(s.source)}
+                  </h3>
                 </div>
-                <Badge variant="outline" className="text-[9px]">{s.total}</Badge>
+                <Badge variant="outline" className="text-[9px]">
+                  {s.total}
+                </Badge>
               </div>
               <div className="grid grid-cols-2 gap-2 text-meta">
                 <div className="flex items-center gap-1">
                   <CheckCircle2 className="h-3 w-3 text-nexus-emerald" />
-                  <span className="text-foreground">{s.enabled} {t("routing.active")}</span>
+                  <span className="text-foreground">
+                    {s.enabled} {t('routing.active')}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <XCircle className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-muted-foreground">{s.disabled} {t("routing.off")}</span>
+                  <span className="text-muted-foreground">
+                    {s.disabled} {t('routing.off')}
+                  </span>
                 </div>
                 <div className="col-span-2 text-meta text-muted-foreground">
-                  {s.unique_agents} {t("routing.unique_agents")}
+                  {s.unique_agents} {t('routing.unique_agents')}
                 </div>
               </div>
-              <div role="presentation" className="flex gap-1 mt-3 pt-3 border-t border-border/30" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+              <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={handleKeyboardClick}
+                className="flex gap-1 mt-3 pt-3 border-t border-border/30"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={(e) => { e.stopPropagation(); handleBulkToggle(s.source, true); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBulkToggle(s.source, true);
+                  }}
                   className="h-6 text-meta gap-1 text-nexus-emerald flex-1"
                 >
-                  <Power className="h-2.5 w-2.5" /> {t("routing.enable_all")}
+                  <Power className="h-2.5 w-2.5" /> {t('routing.enable_all')}
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={(e) => { e.stopPropagation(); handleBulkToggle(s.source, false); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBulkToggle(s.source, false);
+                  }}
                   className="h-6 text-meta gap-1 text-destructive flex-1"
                 >
-                  <PowerOff className="h-2.5 w-2.5" /> {t("routing.pause_all")}
+                  <PowerOff className="h-2.5 w-2.5" /> {t('routing.pause_all')}
                 </Button>
               </div>
             </button>
@@ -187,13 +232,18 @@ export function RoutingConfigPage() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("routing.search_placeholder")}
+            placeholder={t('routing.search_placeholder')}
             className="pl-8 h-9 text-meta"
           />
         </div>
         {filterSource && (
-          <Button variant="outline" size="sm" onClick={() => setFilterSource(null)} className="h-9 text-meta">
-            {t("routing.clear_filter")}: {getSourceLabel(filterSource)}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setFilterSource(null)}
+            className="h-9 text-meta"
+          >
+            {t('routing.clear_filter')}: {getSourceLabel(filterSource)}
           </Button>
         )}
       </div>
@@ -202,28 +252,40 @@ export function RoutingConfigPage() {
       <div className="nexus-card overflow-hidden p-0">
         <div className="px-4 py-2 border-b border-border/40 bg-secondary/30 flex items-center justify-between">
           <h4 className="text-meta uppercase tracking-wider text-muted-foreground">
-            {t("routing.all_routes")} {filterSource ? `· ${getSourceLabel(filterSource)}` : ''}
+            {t('routing.all_routes')} {filterSource ? `· ${getSourceLabel(filterSource)}` : ''}
           </h4>
           <Badge variant="outline" className="text-[9px]">
-            {filteredRoutes.length} {t("routing.results")}
+            {filteredRoutes.length} {t('routing.results')}
           </Badge>
         </div>
         {isLoading ? (
-          <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
         ) : filteredRoutes.length === 0 ? (
           <div className="py-12 text-center text-meta text-muted-foreground">
-            {routes.length === 0 ? t("routing.no_routes") : t("routing.no_results")}
+            {routes.length === 0 ? t('routing.no_routes') : t('routing.no_results')}
           </div>
         ) : (
           <div className="max-h-[600px] overflow-y-auto">
             <table className="w-full text-meta">
               <thead className="border-b border-border/30 sticky top-0 bg-card z-10">
                 <tr>
-                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">{t("routing.source")}</th>
-                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">{t("routing.event")}</th>
-                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">{t("routing.agent")}</th>
-                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">{t("routing.updated")}</th>
-                  <th className="text-center px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">{t("routing.enabled")}</th>
+                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">
+                    {t('routing.source')}
+                  </th>
+                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">
+                    {t('routing.event')}
+                  </th>
+                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">
+                    {t('routing.agent')}
+                  </th>
+                  <th className="text-left px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">
+                    {t('routing.updated')}
+                  </th>
+                  <th className="text-center px-3 py-2 font-medium text-meta uppercase tracking-wider text-muted-foreground">
+                    {t('routing.enabled')}
+                  </th>
                   <th className="px-2 py-2 w-10" />
                 </tr>
               </thead>
@@ -243,13 +305,25 @@ export function RoutingConfigPage() {
                         <code className="text-meta font-mono text-foreground">{r.event_type}</code>
                       </td>
                       <td className="px-3 py-2 text-foreground">
-                        {agent?.name ?? <span className="text-nexus-amber italic text-meta">{t("routing.orphan_label")}</span>}
+                        {agent?.name ?? (
+                          <span className="text-nexus-amber italic text-meta">
+                            {t('routing.orphan_label')}
+                          </span>
+                        )}
                       </td>
                       <td className="px-3 py-2 text-meta text-muted-foreground">
-                        {new Date(r.updated_at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                        {new Date(r.updated_at).toLocaleString('pt-BR', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                       </td>
                       <td className="px-3 py-2 text-center">
-                        <Switch checked={r.is_enabled} onCheckedChange={() => handleToggle(r.id, r.is_enabled)} />
+                        <Switch
+                          checked={r.is_enabled}
+                          onCheckedChange={() => handleToggle(r.id, r.is_enabled)}
+                        />
                       </td>
                       <td className="px-2 py-2">
                         <Button
@@ -257,7 +331,7 @@ export function RoutingConfigPage() {
                           size="sm"
                           className="h-7 w-7 p-0"
                           onClick={() => handleDelete(r.id)}
-                          aria-label={t("routing.delete")}
+                          aria-label={t('routing.delete')}
                         >
                           <Trash2 className="h-3 w-3 text-destructive" />
                         </Button>
