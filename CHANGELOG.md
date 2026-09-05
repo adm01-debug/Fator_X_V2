@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.6.0] - 2026-09-05
+
+### Security (Ondas 0–2 da auditoria técnica exaustiva)
+- **RLS 100%**: 216/216 tabelas com Row Level Security (eram 39/215) e 760+ policies workspace/user-scoped. Autopromoção de role impossível (`user_roles`: escrita apenas para admin do workspace).
+- **Escalação fechada**: REVOKE de INSERT/UPDATE/DELETE/TRUNCATE para `anon` em todas as tabelas (eram 229 objetos com grants, incluindo `user_roles`) + `ALTER DEFAULT PRIVILEGES` para que tabelas novas não nasçam com escrita anon.
+- **Rate-limit distribuído materializado**: `rate_limit_entries` + `check_rate_limit()` + `cleanup_rate_limit_entries()` — a migration 20260410000001 estava registrada sem nunca ter executado.
+- Helpers de segurança: `get_user_workspace_ids()` e `is_workspace_admin(uuid, uuid)` (overload por workspace, alinhado ao repo).
+- 5 migrations órfãs aplicadas e registradas (audit_trigger_fn v2, colunas de agent_versions/agent_usage, drop do overload legado de hybrid_search).
+- `pg_cron` reativado: jobs `rate-limit-cleanup-hourly` e `auth-attempts-cleanup-daily`.
+
+### CI/CD
+- **Branch protection em `main`**: checks obrigatórios (Security Audit, DB Drift Check, Lint & Typecheck, Unit Tests, Build), enforce admins, histórico linear, force-push bloqueado.
+- **Novo job `DB Drift Check`** (`scripts/db-drift-check.mjs`): valida banco×repo (migrations sincronizadas, RLS 100%, zero escrita anon) em todo push/PR — impede que o padrão "migration registrada sem executar" se repita.
+- `notify-failure` tolerante à ausência de `SLACK_WEBHOOK_URL` (warning explícito em vez de job vermelho).
+- Fix ERESOLVE TipTap: `@tiptap/extension-placeholder` revertido para `^2.27.3` (bump dependabot #49 tinha quebrado `npm ci` em todos os jobs).
+
+### Docs
+- Índice de ADRs atualizado (ADR-006 incluído).
+
 ## [1.5.0] - 2026-07-22
 
 ### Added
