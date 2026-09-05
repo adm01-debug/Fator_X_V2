@@ -5,6 +5,18 @@
 -- All statements use CONCURRENTLY + IF NOT EXISTS to be zero-downtime safe.
 -- NOTE: CONCURRENTLY cannot run inside an explicit transaction, so this file
 --   must NOT be wrapped in BEGIN/COMMIT.
+--
+-- RECONCILIAÇÃO 2026-09-05 (best-effort aplicado em produção):
+--   16 índices criados agora (colunas existentes no schema atual).
+--   11 ADIADOS (colunas ainda inexistentes nos stubs do Lovable):
+--     workflow_step_runs(workflow_run_id, workflow_step_id, status, [run,status]),
+--     prompt_ab_tests(variant_a_prompt_id, variant_b_prompt_id),
+--     bitrix24/whatsapp_webhook_events(routed_agent_id),
+--     skill_harvest_candidates(promoted_skill_id),
+--     connector_instances(connector_id), sessions(status), documents(status).
+--   Como todo statement é IF NOT EXISTS, este arquivo é re-executável:
+--   quando as migrations de schema completo criarem essas colunas
+--   (supabase db push), rodar este arquivo novamente cria os 11 pendentes.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ─── TIER 1 — High-traffic tables ────────────────────────────────────────────
