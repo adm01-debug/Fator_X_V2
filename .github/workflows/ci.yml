@@ -272,9 +272,17 @@ jobs:
     name: Notify Slack on Failure
     runs-on: ubuntu-latest
     needs: [security-audit, lint-and-typecheck, unit-tests, e2e-tests, edge-contracts, build, lighthouse, load-test]
+    # Gate: sem SLACK_WEBHOOK_URL configurado o job era skip-implícito-falhando
+    # ("Specify secrets.SLACK_WEBHOOK_URL" → job vermelho em todo push com falha,
+    # poluindo o sinal de CI). Agora: sem secret → warning explícito, job verde.
     if: failure() && github.event_name == 'push'
     steps:
+      - name: Warn on missing Slack secret
+        if: env.SLACK_WEBHOOK_URL == ''
+        run: |
+          echo "::warning::SLACK_WEBHOOK_URL não configurado nos secrets do repositório — notificação de falha do CI não será enviada. Configure o secret para ativar o alerta."
       - name: Slack Notification
+        if: env.SLACK_WEBHOOK_URL != ''
         uses: 8398a7/action-slack@v3
         with:
           status: failure
