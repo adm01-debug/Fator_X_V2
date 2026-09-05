@@ -44,10 +44,9 @@ export function OracleHistory({ onClose }: OracleHistoryProps) {
     setLoading(false);
   }, [filters]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: run-on-mount/derived deps; adding unstable deps would loop
   useEffect(() => {
     load();
-  }, [filters]);
+  }, [filters, load]);
 
   const handleDelete = async (id: string) => {
     if (await deleteOracleHistory(id)) {

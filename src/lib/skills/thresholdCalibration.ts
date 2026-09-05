@@ -80,8 +80,8 @@ export const OVERRIDE_REASON_MAX = 280;
  */
 export function normalizeOverrideReason(value: unknown): string | null {
   if (typeof value !== 'string') return null;
-  // eslint-disable-next-line no-control-regex
   const limpo = value
+    // eslint-disable-next-line no-control-regex
     .replace(/[\u0000-\u001f\u007f]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
