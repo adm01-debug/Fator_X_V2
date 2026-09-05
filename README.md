@@ -54,8 +54,8 @@ React 18 + TypeScript + Tailwind CSS + Shadcn/UI + Supabase + Zustand
 ## Quick Start
 
 ```bash
-git clone https://github.com/adm01-debug/fator-x-super-agentes-de-ia.git
-cd fator-x-super-agentes-de-ia
+git clone https://github.com/adm01-debug/Fator_X_V2.git
+cd Fator_X_V2
 npm install
 npm run dev
 ```

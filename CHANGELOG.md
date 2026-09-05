@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.6.1] - 2026-09-05
+
+### Security (Onda 2.5 — Hotfix da validação red-team)
+- **[CRÍTICO] `exec_sql` fechado para o mundo**: `SECURITY DEFINER` com `EXECUTE` para `anon`/PUBLIC permitia SQL arbitrário como owner a qualquer portador da publishable key (pública no bundle). Agora service_role-only.
+- **IDOR fechado**: as 6 `get_*_summary(p_workspace_id)` agora validam membership (`get_user_workspace_ids`) antes de agregar; `get_db_health_snapshot` e 4 métricas globais (WAL, rollback rate, SLO, drill validation) service_role-only; `apply_workspace_rls`, `cleanup_old_auth_attempts`, `check_rate_limit`, `cleanup_rate_limit_entries` service_role-only (anti-forense fechado).
+- **Helpers com PUBLIC revogado** (`get_user_workspace_ids`, `is_workspace_admin` ×2): não vazam mais membership de usuários para `anon`.
+- **3 policies legadas `USING(true)`** corrigidas para deny/service-only (`skill_reclassification_reviews_old` tinha `ALL` aberto).
+- **`audit_trigger_fn`** com `search_path` explícito (higiene SECURITY DEFINER).
+- **174 policies `member_insert` tolerantes**: rows legadas sem `workspace_id` ficam vinculadas ao próprio usuário (`user_id = auth.uid()`) — desbloqueia services legados sem abrir visibilidade para terceiros.
+- Mantidos (por design): `check_auth_security`, `is_user_locked_out`, `record_auth_attempt` executáveis por `anon` (fluxo de login pré-JWT, com rate-limit interno por IP); funções de trigger mantêm PUBLIC (executam como o role do DML).
+
+### CI/CD
+- **"DB Drift Check" promovido a required check** da branch protection de `main` (5 checks obrigatórios).
+
+### Docs/Housekeeping
+- `MIGRATION-COLAR-NO-SUPABASE.sql` removido (apontava para o projeto `tifbqkyumdxzmxyyoqlu` — armadilha operacional).
+- `docs/api/openapi.yaml`: server URL corrigido para o projeto atual.
+- README: URL de clone corrigida (`adm01-debug/Fator_X_V2`).
+
 ## [1.6.0] - 2026-09-05
 
 ### Security (Ondas 0–2 da auditoria técnica exaustiva)
