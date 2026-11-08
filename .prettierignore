@@ -6,3 +6,9 @@ coverage
 *.lock
 src/integrations/supabase/types.ts
 src/integrations/supabase/client.ts
+
+# Automações portadas do Zapp Web V2: mantidas byte a byte para diff/sync entre os repos.
+scripts/ai-context
+scripts/supabase_snapshot
+scripts/regras_negocio
+docs/contexto
