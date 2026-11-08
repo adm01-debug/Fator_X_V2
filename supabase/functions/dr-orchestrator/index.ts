@@ -181,7 +181,8 @@ Deno.serve(async (req) => {
     });
 
     if (completeResp.error) {
-      return new Response(JSON.stringify({ error: completeResp.error.message }), {
+      console.error('dr-orchestrator complete_dr_drill error:', completeResp.error);
+      return new Response(JSON.stringify({ error: 'Internal server error' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });

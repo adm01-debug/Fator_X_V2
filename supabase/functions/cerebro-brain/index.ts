@@ -708,8 +708,9 @@ serve(async (req) => {
       headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   } catch (error: unknown) {
+    console.error('cerebro-brain error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Internal error' }),
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
     );
   }

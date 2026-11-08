@@ -156,8 +156,9 @@ serve(async (req) => {
     );
 
   } catch (error) {
+    console.error('cron-executor error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Internal error' }),
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

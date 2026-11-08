@@ -316,6 +316,7 @@ ${ragBlock || '(vazio — nenhuma fonte disponível)'}`;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errorResponse(error.message, 500, req);
+    console.error('cerebro-query error:', error);
+    return errorResponse('Internal server error', 500, req);
   }
 });

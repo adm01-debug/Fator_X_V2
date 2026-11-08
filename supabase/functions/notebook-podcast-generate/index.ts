@@ -196,7 +196,8 @@ Deno.serve(async (req) => {
     .single();
 
   if (insertErr || !row) {
-    return new Response(JSON.stringify({ error: insertErr?.message ?? 'Falha ao criar podcast' }), {
+    console.error('notebook-podcast-generate insert error:', insertErr);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
