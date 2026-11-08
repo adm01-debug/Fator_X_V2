@@ -3,6 +3,10 @@
 Ler quando for confirmar um deploy, mexer em env var do front, domínio ou subir edge function.
 Resumo no `AGENTS.md`. Tudo abaixo foi medido em 2026-11-08 pelos MCPs de Vercel e GitHub.
 
+**Decisão do dono (2026-11-08): a Vercel é o caminho oficial de deploy do front.** O Lovable continua
+documentado no RUNBOOK como alternativa histórica, mas não é para onde este arquivo aponta o agente por
+padrão — reative a Vercel antes de considerar o Lovable.
+
 ## Dois caminhos de publicação
 
 | Caminho                                         | Como                                                                           | Estado medido                                                                                                                                                                           |
@@ -15,16 +19,29 @@ correspondente** na Vercel, e o projeto está com `live: false`. Ou seja: **merg
 publicando produção pela Vercel.** Por que parou é **NÃO VERIFICADO** (não abri a configuração de Git do
 projeto no painel).
 
-**O que está medido é o bloqueio do preview de PR:** os deploys dos commits `47dee06` e `cac651b` (PR #69)
-voltaram com `state: BLOCKED` — a Vercel não buildou — e o `vercel[bot]` explicou por quê:
+**O que está medido é o bloqueio do preview de PR:** os deploys dos commits `47dee06`, `cac651b` e `297d4fc`
+(PR #69) voltaram com `state: BLOCKED` — a Vercel não buildou — e o `vercel[bot]` explicou por quê:
 _"GitHub couldn't verify an account for commit ... Vercel blocks this deployment before it can verify the
-account's access to the team"_ (marcador `vercel-commit-author-required`). Tradução: **commit cujo e-mail de
-autor não está ligado a uma conta Vercel com acesso ao time `juca` não é deployado** — nem preview. Agente
-que commita com e-mail não verificado vai ver o check `Vercel` vermelho em toda PR. Esse check **não** é
-obrigatório na `main`, então não bloqueia merge.
+account's access to the team"_ (marcador `vercel-commit-author-required`).
+
+**Causa isolada (medida via MCP Vercel):** o time `juca1` **já tem** a conta GitHub `adm01-debug` como
+membro (`list_team_members` → `adm01-5665`, role `OWNER`, `github.login: "adm01-debug"`). O time está
+corretamente ligado — não é isso que falta. O que falta é mais específico: os commits bloqueados têm autor
+`adm01-debug <comercial@aquarellaprint.com.br>`, e o GitHub não consegue confirmar esse **e-mail** como
+verificado na conta `adm01-debug` (distinto do e-mail `adm01@promobrindes.com.br` que a Vercel reconhece).
+Sem essa verificação, o vínculo commit → conta GitHub → acesso ao time falha, mesmo com o time certo.
+
+**Ação do dono para destravar (não executável por este agente — é configuração de conta pessoal):**
+
+1. Entrar em `github.com/settings/emails` logado como `adm01-debug`.
+2. Adicionar `comercial@aquarellaprint.com.br` e confirmar o e-mail de verificação.
+3. O próximo commit de agente com esse e-mail de autor passa a deployar (preview e produção).
+   Alternativa, se não quiser verificar esse e-mail: trocar o e-mail de commit do agente para
+   `adm01@promobrindes.com.br` (já verificado) nas próximas sessões.
 
 Fato separado, não confundir com o acima: o check `Vercel Agent Review` (review por IA, não deploy) sai
-`NEUTRAL` com _"Review skipped because usage billing is not enabled for this team"_.
+`NEUTRAL` com _"Review skipped because usage billing is not enabled for this team"_ — isso é sobre o review
+por IA da Vercel, não sobre o deploy em si.
 
 Antes de dizer "está no ar", confirme o deploy — `list_deployments` com `target=production` e `state=READY`,
 conferindo o `githubCommitSha` — e, se não houver, diga que o merge ficou sem deploy.
