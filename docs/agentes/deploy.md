@@ -12,9 +12,16 @@ Resumo no `AGENTS.md`. Tudo abaixo foi medido em 2026-11-08 pelos MCPs de Vercel
 
 **Consequência prática:** os merges na `main` de outubro/novembro de 2026 (PRs #56, #57, #60) **não têm deploy
 de produção correspondente** na Vercel, e o projeto está com `live: false`. Ou seja: **merge em `main` não
-está, hoje, publicando produção pela Vercel.** Por que o auto-deploy parou é **NÃO VERIFICADO** (não abri a
-configuração de Git do projeto no painel). Antes de dizer "está no ar", confirme o deploy — `list_deployments`
-com `target=production` — e, se não houver, diga que o merge ficou sem deploy.
+está, hoje, publicando produção pela Vercel.**
+
+**A causa está no lado da Vercel, não no repo:** o deploy do commit `47dee06` (PR #69) voltou com
+`state: BLOCKED` — a Vercel nem buildou — e o check `Vercel Agent Review` do mesmo commit diz
+"Review skipped because usage billing is not enabled for this team". Enquanto isso não for resolvido no
+painel do time `juca1`, o check `Vercel` fica vermelho em **toda** PR (ele **não** é check obrigatório da
+`main`, então não bloqueia merge) e nenhum merge publica produção.
+
+Antes de dizer "está no ar", confirme o deploy — `list_deployments` com `target=production` e `state=READY`,
+conferindo o `githubCommitSha` — e, se não houver, diga que o merge ficou sem deploy.
 
 Domínios da Vercel: `fator-x-v2.vercel.app`, `fator-x-v2-juca1.vercel.app`,
 `fator-x-v2-git-main-juca1.vercel.app`. **SSO protection ligado** (`all_except_custom_domains`): abrir essas
