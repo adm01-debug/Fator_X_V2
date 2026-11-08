@@ -44,3 +44,6 @@ test-results/
 playwright-report/
 tsconfig.app.tsbuildinfo
 tsconfig.node.tsbuildinfo
+
+# Grafo de codigo (graphify): gerado por clone, ~100 MB — ver scripts/graphify/setup.sh
+graphify-out/

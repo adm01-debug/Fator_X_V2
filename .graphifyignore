@@ -1,0 +1,25 @@
+# .graphifyignore — Fator X V2 / Nexus Agents Studio
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*-baseline.json
+*.baseline.json
+bundle-budget.json
+node_modules/
+dist/
+coverage/
+build/
+playwright-report/
+test-results/
+e2e/__screenshots__/
+graphify-out/graph.json
+graphify-out/graph.html
+
+# Tipos gerados pelo Supabase (~14k linhas): poluem a busca do grafo
+src/integrations/supabase/types.ts
+
+# Historico de sessoes e relatorios: milhares de nos de texto que abafam o codigo
+docs/auditoria-estado-2026-08/
+.lovable/
