@@ -10,15 +10,21 @@ Resumo no `AGENTS.md`. Tudo abaixo foi medido em 2026-11-08 pelos MCPs de Vercel
 | **Vercel** — projeto `fator-x-v2`, time `juca1` | Git integration no repo; framework `vite`, Node **24.x**                       | Último deploy de **produção**: `main` em **2026-09-05 18:27 UTC** (commit da PR #54). Último deploy de qualquer tipo: **preview** da branch `fix/security-audit-main-29-10`, 2026-10-29 |
 | **Lovable** — `docs/RUNBOOK.md`                 | edição no Lovable Chat → preview → botão **Publish**; rollback por **History** | Caminho documentado como oficial no RUNBOOK; `lovable-tagger` e `@lovable.dev/cloud-auth-js` estão no `package.json`                                                                    |
 
-**Consequência prática:** os merges na `main` de outubro/novembro de 2026 (PRs #56, #57, #60) **não têm deploy
-de produção correspondente** na Vercel, e o projeto está com `live: false`. Ou seja: **merge em `main` não
-está, hoje, publicando produção pela Vercel.**
+**Consequência prática:** os merges na `main` posteriores a 2026-09-05 **não têm deploy de produção
+correspondente** na Vercel, e o projeto está com `live: false`. Ou seja: **merge em `main` não está, hoje,
+publicando produção pela Vercel.** Por que parou é **NÃO VERIFICADO** (não abri a configuração de Git do
+projeto no painel).
 
-**A causa está no lado da Vercel, não no repo:** o deploy do commit `47dee06` (PR #69) voltou com
-`state: BLOCKED` — a Vercel nem buildou — e o check `Vercel Agent Review` do mesmo commit diz
-"Review skipped because usage billing is not enabled for this team". Enquanto isso não for resolvido no
-painel do time `juca1`, o check `Vercel` fica vermelho em **toda** PR (ele **não** é check obrigatório da
-`main`, então não bloqueia merge) e nenhum merge publica produção.
+**O que está medido é o bloqueio do preview de PR:** os deploys dos commits `47dee06` e `cac651b` (PR #69)
+voltaram com `state: BLOCKED` — a Vercel não buildou — e o `vercel[bot]` explicou por quê:
+_"GitHub couldn't verify an account for commit ... Vercel blocks this deployment before it can verify the
+account's access to the team"_ (marcador `vercel-commit-author-required`). Tradução: **commit cujo e-mail de
+autor não está ligado a uma conta Vercel com acesso ao time `juca` não é deployado** — nem preview. Agente
+que commita com e-mail não verificado vai ver o check `Vercel` vermelho em toda PR. Esse check **não** é
+obrigatório na `main`, então não bloqueia merge.
+
+Fato separado, não confundir com o acima: o check `Vercel Agent Review` (review por IA, não deploy) sai
+`NEUTRAL` com _"Review skipped because usage billing is not enabled for this team"_.
 
 Antes de dizer "está no ar", confirme o deploy — `list_deployments` com `target=production` e `state=READY`,
 conferindo o `githubCommitSha` — e, se não houver, diga que o merge ficou sem deploy.
