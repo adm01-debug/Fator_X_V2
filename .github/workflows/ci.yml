@@ -81,6 +81,11 @@ jobs:
             }
             console.log('✅ Nenhuma nova violação de nexus-design ou no-explicit-any.');
           "
+      - name: Integridade das instruções de agentes (AGENTS.md + docs/agentes)
+        # Falha se outra sessão apagar/esvaziar AGENTS.md, CLAUDE.md ou docs/agentes/*.md.
+        run: |
+          git fetch --no-tags --depth=1 origin main
+          AGENTS_MD_BASE=FETCH_HEAD node scripts/check-agents-md-integrity.mjs
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
