@@ -31,12 +31,14 @@ corretamente ligado — não é isso que falta. O que falta é mais específico:
 verificado na conta `adm01-debug` (distinto do e-mail `adm01@promobrindes.com.br` que a Vercel reconhece).
 Sem essa verificação, o vínculo commit → conta GitHub → acesso ao time falha, mesmo com o time certo.
 
-**Resolvido em 2026-11-08 (~22:37 UTC):** o commit `e2c8afa` (mesmo e-mail de autor
-`comercial@aquarellaprint.com.br`, PR #69) gerou preview `READY`
-(`dpl_4MSZWArGX12g58AZ9G7HzWNVkq5y`, confirmado via `list_deployments`). O bloqueio dos 3 commits
-anteriores (`47dee06`, `cac651b`, `297d4fc`) não se repetiu — o dono resolveu a verificação de conta entre
-esses commits e este. Preview de PR voltou a funcionar com este e-mail de commit; **produção ainda não foi
-reconfirmada** (nenhum merge em `main` desde a reativação até a última medição).
+**Correção (22:39 UTC): não está resolvido, é intermitente.** O commit `e2c8afa`
+(PR #69) gerou preview `READY` (`dpl_4MSZWArGX12g58AZ9G7HzWNVkq5y`), mas o commit seguinte `33bd6e9` — mesmo
+e-mail de autor `comercial@aquarellaprint.com.br`, mesma branch — voltou a vir `BLOCKED` com o mesmo
+`vercel-commit-author-required`. Os dois commits usam o mesmo e-mail; a causa não é (só) o e-mail não
+verificado — é algo intermitente do lado da Vercel (cache da verificação de conta? checagem por commit, não
+por branch?). **NÃO VERIFICADO** o que diferencia os dois casos. Trate o check `Vercel` como instável até
+novo padrão aparecer: confirme sempre pelo `state` do deploy (`list_deployments`), nunca pela PR anterior
+ter passado.
 
 Fato separado, não confundir com o acima: o check `Vercel Agent Review` (review por IA, não deploy) sai
 `NEUTRAL` com _"Review skipped because usage billing is not enabled for this team"_ — isso é sobre o review
