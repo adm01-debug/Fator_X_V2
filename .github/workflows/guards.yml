@@ -1,7 +1,7 @@
 # docs:
 #   gatilho: PR e push em main que toque src/, supabase/functions/, scripts/ ou os workflows
 #   prova: ratchets (lint, typecheck, implicit-any, a11y) sem dívida nova; bundle sem service_role;
-#          matriz edge x tabela em dia; achados herdados publicados como relatório
+#          matriz edge x tabela e manifesto de edges em dia; achados herdados como relatório
 #   falha: job `ratchets` ou `segredos` vermelho = regressão introduzida pelo PR
 #   avisa: ninguém (o resumo do run é a prova)
 # nao-e-bug:
@@ -57,8 +57,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '20'
-      - name: node --test em scripts/ci/*.unit.mjs
-        run: node --test scripts/ci/*.unit.mjs
+      - name: node --test em scripts/ci e scripts/edge-deploy
+        run: node --test scripts/ci/*.unit.mjs scripts/edge-deploy/*.unit.mjs
 
   ratchets:
     name: Ratchets (lint, typecheck, implicit-any, a11y)
@@ -105,8 +105,8 @@ jobs:
       - name: Workflow de E2E não publica report junto das credenciais
         run: node scripts/ci/check-e2e-artifact-secrets.mjs
 
-  matriz-edge-tabela:
-    name: Matriz edge function x tabela em dia
+  artefatos-gerados:
+    name: Artefatos gerados em dia (matriz e manifesto de edges)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -118,6 +118,8 @@ jobs:
           node-version: '20'
       - name: docs/migration/MATRIZ_EDGE_TABELA.md bate com o código
         run: node scripts/ci/gerar-matriz-edge-tabela.mjs --check
+      - name: supabase/deployment-manifest.json bate com supabase/functions/
+        run: node scripts/edge-deploy/generate-manifest.mjs --check
 
   achados-herdados:
     name: Achados herdados (informativo)

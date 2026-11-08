@@ -1,0 +1,2582 @@
+{
+  "schema_version": 1,
+  "project_ref": "qdlnzopxrlsoljcrcmzv",
+  "legacy_unmanaged_functions": [],
+  "config": {
+    "path": "supabase/config.toml",
+    "sha256": "7093263aecb706056eebcee39eae3f25d4f08e96595f66959d5541d7a8895422"
+  },
+  "summary": {
+    "function_count": 87,
+    "source_file_count": 124,
+    "verify_jwt_true": 82,
+    "verify_jwt_false": 5
+  },
+  "source_files": [
+    {
+      "path": "supabase/functions/_shared/alternation.ts",
+      "bytes": 2542,
+      "sha256": "cc3cfbb460df5fdc59d4c176886b19271f269fd478d11b4f683aed6dd1366c00"
+    },
+    {
+      "path": "supabase/functions/_shared/auth.ts",
+      "bytes": 6686,
+      "sha256": "93b9fca3c5b5a29734ef469557496e99810a7e8190f65cddcecfeb5cebf61461"
+    },
+    {
+      "path": "supabase/functions/_shared/breakerEvents.ts",
+      "bytes": 2401,
+      "sha256": "eafdb73dde191b3bc22ec79de58983a618c1a746028608fb132de4c1f24ba136"
+    },
+    {
+      "path": "supabase/functions/_shared/chaos.ts",
+      "bytes": 2827,
+      "sha256": "c5e032dac548af6bf5e1f20610acf3d9fb7a80d7b22b5e7c82c10a772f28f302"
+    },
+    {
+      "path": "supabase/functions/_shared/chunker.ts",
+      "bytes": 2972,
+      "sha256": "80b0cfd527aa037e0d01d569dcab3114cea91a568bfb070bda24f14d458455ee"
+    },
+    {
+      "path": "supabase/functions/_shared/circuitBreaker.ts",
+      "bytes": 3361,
+      "sha256": "3f8e3f3de5411e91fd8a59b43d33ea680a6e1117432e212e8bcd722084b1e393"
+    },
+    {
+      "path": "supabase/functions/_shared/contracts.ts",
+      "bytes": 7175,
+      "sha256": "867d20ca2e088eb2269e3ce8202ab247a1c82fc7bdd6a71d1ab490bb99756ebe"
+    },
+    {
+      "path": "supabase/functions/_shared/cors.ts",
+      "bytes": 3021,
+      "sha256": "f1487e267dd22117017794089dafdbfbabdcdfdd62a0f7cc09b6284230833763"
+    },
+    {
+      "path": "supabase/functions/_shared/crmNormalize.ts",
+      "bytes": 7987,
+      "sha256": "ca821fc36a78996b7e50126a9ce997517bf68ef2bfb798967995893fa33abf43"
+    },
+    {
+      "path": "supabase/functions/_shared/idempotency.ts",
+      "bytes": 9653,
+      "sha256": "b5eb39703cfe5f1d84e11fb20364b92a02be9c6e495a2cce205b7b327f60f8db"
+    },
+    {
+      "path": "supabase/functions/_shared/json.ts",
+      "bytes": 2333,
+      "sha256": "fe3ece94a3abf11e8f0d196661fe19f681f0dc714c061a68eb7722b111a03356"
+    },
+    {
+      "path": "supabase/functions/_shared/mod.ts",
+      "bytes": 3130,
+      "sha256": "d5a60806993cc836c2fec22f027d9953386e6c6fd8910be7f5cb416a72748604"
+    },
+    {
+      "path": "supabase/functions/_shared/otel-edge.ts",
+      "bytes": 7869,
+      "sha256": "102b987d419c89acdd6dccc05fcd39342e002de7cdd273b1a4125b59d3cfeadc"
+    },
+    {
+      "path": "supabase/functions/_shared/otel.ts",
+      "bytes": 12079,
+      "sha256": "07a0573237e642fe5abcbe336a18616b240ad6b11f3de5c1ee5d49bdd211c728"
+    },
+    {
+      "path": "supabase/functions/_shared/rate-limiter.ts",
+      "bytes": 5936,
+      "sha256": "9eece27d2d517c46480a57b35d0efadaf5880a8689bf20f9710f92108f42d0c4"
+    },
+    {
+      "path": "supabase/functions/_shared/requireEnv.ts",
+      "bytes": 5925,
+      "sha256": "01ee050ca0928cdd378c205e40200d7019f7e048fd05a9811674a6555213ce19"
+    },
+    {
+      "path": "supabase/functions/_shared/retry.ts",
+      "bytes": 4635,
+      "sha256": "f92e6ed6b04852807fbf0b7a539eb890d5f99322883c09b1a6bc9f17fdb907c0"
+    },
+    {
+      "path": "supabase/functions/_shared/runtimeAlerts.ts",
+      "bytes": 5862,
+      "sha256": "62c69fa721efc3699e9b1a2979831c781c0b3a91061d648b4c1e718e8d6a609b"
+    },
+    {
+      "path": "supabase/functions/_shared/security.ts",
+      "bytes": 4766,
+      "sha256": "eb729b0847a73fbcd13eea44f0d2694adc9137e84d788497f2894b4c18b56621"
+    },
+    {
+      "path": "supabase/functions/_shared/skills.ts",
+      "bytes": 4542,
+      "sha256": "5d3732efc7cd52e7aba5f4b51840005fc4d733f04a1365d420501ee4783d3208"
+    },
+    {
+      "path": "supabase/functions/_shared/slack.ts",
+      "bytes": 7586,
+      "sha256": "1d4cfe1fee03bf0eef5381aa431e7e65c08ffe37421dff3f645dd2c0379a0f76"
+    },
+    {
+      "path": "supabase/functions/_shared/validation.ts",
+      "bytes": 6440,
+      "sha256": "e3eea34b39aef4b8bc0f48a4ee6636421ea04f7f7de2f22390ad7611709979f1"
+    },
+    {
+      "path": "supabase/functions/_shared/webhookSender.ts",
+      "bytes": 6337,
+      "sha256": "4dfe8abd2a6a442b09c3b3e9fdc29a3c82fa2803db91c682be7f09899f196bca"
+    },
+    {
+      "path": "supabase/functions/_shared/webhookSignature.ts",
+      "bytes": 2066,
+      "sha256": "473acd046f8ed1ad94144cd5a2a7025c48916992514136db4539e40f7ae6ac65"
+    },
+    {
+      "path": "supabase/functions/a2a-server/index.ts",
+      "bytes": 10358,
+      "sha256": "eaa2d169d902b46d2d645331d14a25264f1ff8833f1b811ccf473c1ff4af8a6f"
+    },
+    {
+      "path": "supabase/functions/agent-conversational-builder/index.ts",
+      "bytes": 5397,
+      "sha256": "87f66f2392452e4f2a30adbdff649fe2ac930717ce89756842e9e32b22ee39b9"
+    },
+    {
+      "path": "supabase/functions/agent-eval-runner/index.ts",
+      "bytes": 9881,
+      "sha256": "9a9691e365258dc5e6a8067dc60ff2bd05d77fd6d141cf4b550407dd0d208eec"
+    },
+    {
+      "path": "supabase/functions/agent-workflow-runner/index.ts",
+      "bytes": 9586,
+      "sha256": "d1b53924d69b381bab581444ed46f0db6b03b989283c045d2d9a150372241c89"
+    },
+    {
+      "path": "supabase/functions/audio-transcribe/index.ts",
+      "bytes": 3455,
+      "sha256": "8a85f7bcaf5f1f5cdc3c218b05fda47a0176e1aa8810df2979b09bcf4df1b40b"
+    },
+    {
+      "path": "supabase/functions/automation-pipeline/index.ts",
+      "bytes": 4717,
+      "sha256": "32d44d407efe4baf1bd29cc7bdc25556b229167b8e3ea2b4df0f1f64a166d169"
+    },
+    {
+      "path": "supabase/functions/bitrix24-api/index.ts",
+      "bytes": 2384,
+      "sha256": "51abda0ea7e50149b303145f3c9e426de9b9d4b88290b17909e299769964382f"
+    },
+    {
+      "path": "supabase/functions/bitrix24-oauth/index.ts",
+      "bytes": 4271,
+      "sha256": "fa0ed6b7c6728024f21cd914433f3de583dffb9eca0970a69c1ce01c46596fc3"
+    },
+    {
+      "path": "supabase/functions/bitrix24-webhook/index.ts",
+      "bytes": 14324,
+      "sha256": "1cc8e11c72b85a5714df7b2b31667d2aa86987b9d08db3f78915758c268030ce"
+    },
+    {
+      "path": "supabase/functions/browser-agent-run/index.ts",
+      "bytes": 12892,
+      "sha256": "6198e3cfd81c35c2875e0c4051a0621a2d0f1105b622a112fb1d6068aa445b3a"
+    },
+    {
+      "path": "supabase/functions/browser-session-cancel/index.ts",
+      "bytes": 2443,
+      "sha256": "ed0d88cdb6b0bb707e02d03fdaa5171558e796b68a996f34e7825495303c8bca"
+    },
+    {
+      "path": "supabase/functions/cerebro-brain/index.ts",
+      "bytes": 25680,
+      "sha256": "997a563dcae677127a8f26a59b03ce60e1ae40b63d844b1845a02e8cb2e35122"
+    },
+    {
+      "path": "supabase/functions/cerebro-query/index.ts",
+      "bytes": 11083,
+      "sha256": "7b97017f5a0cfd276679e4ecac91d55f2c180ffc25e87658302a67a92db209a1"
+    },
+    {
+      "path": "supabase/functions/code-interpreter-execute/index.ts",
+      "bytes": 13718,
+      "sha256": "bc7c8b205e304b67346be75393db4fde41c7cda01791ac9fdc90dbefd759e644"
+    },
+    {
+      "path": "supabase/functions/computer-use-execute/index.ts",
+      "bytes": 5564,
+      "sha256": "bedddeabf62da97ff97995be933d5f3350c813255a0e6c1ba01bac0c9819d82c"
+    },
+    {
+      "path": "supabase/functions/cost-calculator/index.ts",
+      "bytes": 2765,
+      "sha256": "b0f8c80160e54e1dbf8d24d1766c88f3fd8b0d713d641d6ad01ab88b1bd6a6f0"
+    },
+    {
+      "path": "supabase/functions/crm-bitrix-sync/index.ts",
+      "bytes": 6756,
+      "sha256": "4607814201264087072ac673ee80c94548d49ced4caabb0177d7306445c46431"
+    },
+    {
+      "path": "supabase/functions/crm-cadence-runner/index.ts",
+      "bytes": 18817,
+      "sha256": "8c440054df3615d0070b0b50ad5c17a33e83092cdced3aec9538846f792b7ea8"
+    },
+    {
+      "path": "supabase/functions/crm-enrich/index.ts",
+      "bytes": 13269,
+      "sha256": "fca6e7f4402541baa7d11645beaab3a45face6dfa985aa7ef9b7b0d67b41dc13"
+    },
+    {
+      "path": "supabase/functions/cron-executor/index.ts",
+      "bytes": 7875,
+      "sha256": "aef1569a4d877ef3f67522947566e3711d9cee3a07fb34f8659296a00f983d71"
+    },
+    {
+      "path": "supabase/functions/datahub-mcp-server/index.ts",
+      "bytes": 12758,
+      "sha256": "d34111d06dcc614c48f46f7ef59a2cee8701fdb5822471ee13cea67a66bc6410"
+    },
+    {
+      "path": "supabase/functions/datahub-query/index.ts",
+      "bytes": 52743,
+      "sha256": "1771748df10eb9ebf25bff4d9df95a90ed00dc72df67f54ef97e35d74dfdb613"
+    },
+    {
+      "path": "supabase/functions/doc-ocr/index.ts",
+      "bytes": 4107,
+      "sha256": "f0312afd5ace377e3b01e2558e78e0dad9f5893839a331fd832ad2acff62389e"
+    },
+    {
+      "path": "supabase/functions/doc-parse/index.ts",
+      "bytes": 23037,
+      "sha256": "f66dc26c0d780480356ceab0a8c255f4a2aebd06e5171165da0cd4ef41337bd8"
+    },
+    {
+      "path": "supabase/functions/doc-rechunk/index.ts",
+      "bytes": 8123,
+      "sha256": "85995de380b7bea64533099ec8704cdb0f5d8266b2f5752c719d0a4888c81f99"
+    },
+    {
+      "path": "supabase/functions/dr-orchestrator/index.ts",
+      "bytes": 6923,
+      "sha256": "6e784cebf6d662b5bf2b75c09ba91fffaff7b6a3d72b1ef8c787b00378635bcc"
+    },
+    {
+      "path": "supabase/functions/eval-engine-v2/index.ts",
+      "bytes": 9065,
+      "sha256": "4b625efcc77bd8134729770e877a322ea77500df55632a0e05cdca3aba7e34c3"
+    },
+    {
+      "path": "supabase/functions/eval-judge/index.ts",
+      "bytes": 12855,
+      "sha256": "1a1b138ed8535d3831e3b5a2fcb24c3cef87369c7daeab6858803db6947b5e2e"
+    },
+    {
+      "path": "supabase/functions/global-search/index.ts",
+      "bytes": 13769,
+      "sha256": "6014ac845dfa2fa1ad5a0ab83341c34877f626defe5aa8a84083fe4ceb62989b"
+    },
+    {
+      "path": "supabase/functions/graph-execute/index.ts",
+      "bytes": 9907,
+      "sha256": "50f74803720a65e7862abbddb8f479738684d511109357e2db37cd532884dca0"
+    },
+    {
+      "path": "supabase/functions/guardrails-engine/index.ts",
+      "bytes": 6153,
+      "sha256": "b9cea96461a6b0c6b03ed8edb9eda750e80bc54babc80e89f102a1de9a4bc09b"
+    },
+    {
+      "path": "supabase/functions/guardrails-ml/index.ts",
+      "bytes": 6716,
+      "sha256": "efec1347085ec676a3462fd9da65bbe286a507c979664261e04f9dc8cd551e01"
+    },
+    {
+      "path": "supabase/functions/health-check/index.ts",
+      "bytes": 2132,
+      "sha256": "177ff78afab5e65206f6db6b200ef751e3859f0cfe819ca1234dda997acd8032"
+    },
+    {
+      "path": "supabase/functions/hf-autotrain/index.ts",
+      "bytes": 15531,
+      "sha256": "1f36bc44be0ae45e1540886bc7728d989b1b444e4329b7a3894bf051e40f4e86"
+    },
+    {
+      "path": "supabase/functions/image-analysis/index.ts",
+      "bytes": 3934,
+      "sha256": "794267aa55019a4f556be0b7806eb35cda8e7254cc77287c32784c1c7b70c8e6"
+    },
+    {
+      "path": "supabase/functions/incident-orchestrator/index.ts",
+      "bytes": 5584,
+      "sha256": "e436f0828c8f9af9430a3b4d5748d6a43e59b46e86f2e74fb599f3f67d1e2529"
+    },
+    {
+      "path": "supabase/functions/kb-analyze-gaps/index.ts",
+      "bytes": 5054,
+      "sha256": "06244dbe4cc82bb785a71cea3020836d5629d12b7e19f057ab8515a6ebf29a27"
+    },
+    {
+      "path": "supabase/functions/kb-translate-article/index.ts",
+      "bytes": 4708,
+      "sha256": "47c8fa0d0dffb09d87d958028d8f087bf08ad633bb3d96dd74f1cd267b7e051d"
+    },
+    {
+      "path": "supabase/functions/lgpd-manager/index.ts",
+      "bytes": 6123,
+      "sha256": "bdb3c8c3b3e92b9520aa23edebe5935e1db257db222ca8daa250b7376d2d652e"
+    },
+    {
+      "path": "supabase/functions/llm-gateway/index.ts",
+      "bytes": 61515,
+      "sha256": "e17d8fcf6ee262c165ca5503338ed2799a1555998ed95db97313fe17db3536a0"
+    },
+    {
+      "path": "supabase/functions/llm-gateway/providers.ts",
+      "bytes": 522,
+      "sha256": "bfe07af7a1267eb5b711e5505d1fc44a5cbcd2e3158e547aafe1e8073d297b17"
+    },
+    {
+      "path": "supabase/functions/llm-gateway/providers/anthropic.ts",
+      "bytes": 1379,
+      "sha256": "9795e6d7514dee2933c620987bf165a9caa791a0c3c75e5c048519f22fca2cd6"
+    },
+    {
+      "path": "supabase/functions/llm-gateway/providers/huggingface.ts",
+      "bytes": 5150,
+      "sha256": "9bb4e3535960d30b756aeb01013ab6cc47f8590c638d2e49ddfca9729d0ea631"
+    },
+    {
+      "path": "supabase/functions/llm-gateway/providers/lovable.ts",
+      "bytes": 1430,
+      "sha256": "c01b4aadbfb08580992a6b8ba008c095b59159ef0549e20100672f6755c1642c"
+    },
+    {
+      "path": "supabase/functions/llm-gateway/providers/openai.ts",
+      "bytes": 1095,
+      "sha256": "c35ab389c71dd476aa3358b69c4ca7aaf965143adb48ffcc29c74a11ab39e751"
+    },
+    {
+      "path": "supabase/functions/llm-gateway/providers/openrouter.ts",
+      "bytes": 986,
+      "sha256": "227fa1ead5bb2c6b3d28d0ca7a9b32c5db90915ab5a84b1d7da616e586e89436"
+    },
+    {
+      "path": "supabase/functions/llm-gateway/types.ts",
+      "bytes": 441,
+      "sha256": "0e45b26e934ca8caf37ac8819f1b92ff8f7a0a86e7ca942c889b4ff26f2efba4"
+    },
+    {
+      "path": "supabase/functions/llm-gateway/utils.ts",
+      "bytes": 983,
+      "sha256": "aedcd64d4fbc7f7dd3c8fc79b5ae1bc356117e5753556cd20610d9a7f71a26be"
+    },
+    {
+      "path": "supabase/functions/memory-manager/index.ts",
+      "bytes": 6063,
+      "sha256": "2f5c07bea1eaebc6b113807e6fadf9ef504a31d2901a52353fc91b813110c904"
+    },
+    {
+      "path": "supabase/functions/memory-tools/index.ts",
+      "bytes": 9203,
+      "sha256": "d329a69affac45d2d523c0f65a85964653111956280496bd69d6c7bf55263736"
+    },
+    {
+      "path": "supabase/functions/migrate-helper/index.ts",
+      "bytes": 1777,
+      "sha256": "cf7c40079d14638f06779b2dbbeadd933039d81d34b4c065a8a572d5ee6c8382"
+    },
+    {
+      "path": "supabase/functions/nlp-pipeline/index.ts",
+      "bytes": 9305,
+      "sha256": "548a206dfcbc1194147bb3f163ed44c29236e3cf2bf8665005e5d2e693927047"
+    },
+    {
+      "path": "supabase/functions/notebook-podcast-generate/index.ts",
+      "bytes": 11218,
+      "sha256": "e28106360c1805109d766099f8807f20fa926502d1cee07fceac7812c84d5a20"
+    },
+    {
+      "path": "supabase/functions/notification-sender/index.ts",
+      "bytes": 10224,
+      "sha256": "5611bb89f0323dc5d73611cafe46330ff50e65bb617087bfaab5d5e43aee0cc4"
+    },
+    {
+      "path": "supabase/functions/openclaw-proxy/index.ts",
+      "bytes": 9450,
+      "sha256": "921d9b0e46e5760c5ac37bf6fef543f373e52b49cb2130390d1e9136c1fff79c"
+    },
+    {
+      "path": "supabase/functions/openclaw-webhook/index.ts",
+      "bytes": 7120,
+      "sha256": "10a3b5f0aec9e2ec46425ce7bb82d91847963653b17a5f20e0f73bf42354e210"
+    },
+    {
+      "path": "supabase/functions/oracle-council/index.ts",
+      "bytes": 20498,
+      "sha256": "de9fa36c831849068dc864a30196b9f374f5f1e3c475618c6ba3664bd021f8b0"
+    },
+    {
+      "path": "supabase/functions/oracle-research/index.ts",
+      "bytes": 14999,
+      "sha256": "cf64e8d84774355f08137517a10209b80b096f80a2b14bb0c78e0396e40d47d7"
+    },
+    {
+      "path": "supabase/functions/pg-net-smoke-test/index.ts",
+      "bytes": 5122,
+      "sha256": "afb62969822a60a7e591140911a25cc1f51c3eb9afbd789d8ca8bd85fd22c6d8"
+    },
+    {
+      "path": "supabase/functions/product-mockup/index.ts",
+      "bytes": 10902,
+      "sha256": "304f639ed159916f94845b6ba67f63cc2259ade01f3d1fb5c08e39e7c2bf1bfb"
+    },
+    {
+      "path": "supabase/functions/queue-worker/index.ts",
+      "bytes": 7669,
+      "sha256": "5eb383f0d98aa4e7e96da768677a18255c2f06ca906c5492c78a8a2241c22f17"
+    },
+    {
+      "path": "supabase/functions/quick-agent-test/index.ts",
+      "bytes": 5178,
+      "sha256": "62b9bf2adb250f28569a4035da0ff3b10a733d176f74f911e7d978d1aea7532c"
+    },
+    {
+      "path": "supabase/functions/rag-embed-backfill/index.ts",
+      "bytes": 6468,
+      "sha256": "b88b6db51a58bb7096c21975db52b301b0da014ab5558c02bc992bbf27e0b475"
+    },
+    {
+      "path": "supabase/functions/rag-embed-v2/embedder.ts",
+      "bytes": 2248,
+      "sha256": "ae9ec937d7ea889cf7fda26e2e5f1ca180f4c7d70d3e8fe3992397b9f3fafc8e"
+    },
+    {
+      "path": "supabase/functions/rag-embed-v2/index.ts",
+      "bytes": 7645,
+      "sha256": "9908e84ff7647778785e91aec9c027701719875b4b9892af5474b2a99663b7c6"
+    },
+    {
+      "path": "supabase/functions/rag-ingest/index.ts",
+      "bytes": 6531,
+      "sha256": "0a5f01643fb4a9114cfddfd0267ba431062447ac9e7480275a87f95d4a7e80ba"
+    },
+    {
+      "path": "supabase/functions/rag-rerank-v2/index.ts",
+      "bytes": 8577,
+      "sha256": "5ce0139d07cb92658ed756a5ba319a54cfc2547aa5b36c8203bab4b54aac55bd"
+    },
+    {
+      "path": "supabase/functions/rag-rerank/index.ts",
+      "bytes": 5606,
+      "sha256": "7d7726b5f6fca7bb1c9029f30e1eed3b5898625e5d6880689c4338a19eaa99b2"
+    },
+    {
+      "path": "supabase/functions/replay-fork-execute/index.ts",
+      "bytes": 6279,
+      "sha256": "4669a8c930d67bb8b0935f495af73d4d6f2e50c5303240acbd89a70b8ae257f5"
+    },
+    {
+      "path": "supabase/functions/sbom-scanner/index.ts",
+      "bytes": 6701,
+      "sha256": "37ef5de95252181dd17642e104e2678f117da6ed3ca6a45183719db00f679581"
+    },
+    {
+      "path": "supabase/functions/semantic-search/index.ts",
+      "bytes": 10286,
+      "sha256": "69a68f9fdc9289c00bdc2e8655701c22232aba2822ca03743b6217f3e04cf0b2"
+    },
+    {
+      "path": "supabase/functions/skill-classify-llm/departments.ts",
+      "bytes": 2163,
+      "sha256": "d753b2dec0406262670df4fbba94f0fe2603fc01bbb7a301e7011f885528ab00"
+    },
+    {
+      "path": "supabase/functions/skill-classify-llm/index.ts",
+      "bytes": 9784,
+      "sha256": "80341c651ed4fe685f6f3ad6d174ae8abbeff196ec603695a5dd1511c77b1da3"
+    },
+    {
+      "path": "supabase/functions/skill-describe-llm/index.ts",
+      "bytes": 14283,
+      "sha256": "43f61d692e8a264815720db6adc46b9e94cf183da3e40cd0a8bc46f9e5ea9be9"
+    },
+    {
+      "path": "supabase/functions/skill-harvester/departments.ts",
+      "bytes": 10085,
+      "sha256": "c242324bdb97730e4a403bc35940abe2c27d0854b818e9115fde88f2ae350adb"
+    },
+    {
+      "path": "supabase/functions/skill-harvester/github.ts",
+      "bytes": 5344,
+      "sha256": "eb856f1595350d3d398130cc0f1c17ebfcdd9efe102723fe6710b6268f770c1e"
+    },
+    {
+      "path": "supabase/functions/skill-harvester/index.ts",
+      "bytes": 20370,
+      "sha256": "88f12a6a9d09b36fe3c8c6946e21b0d6f1fdd6d8ce8a2dde9acb094bbc5e57f8"
+    },
+    {
+      "path": "supabase/functions/skill-harvester/lib.ts",
+      "bytes": 22077,
+      "sha256": "76a26532f035c018b3d7a794efabd775b927d695d0dada11401a2f951f231d07"
+    },
+    {
+      "path": "supabase/functions/slack-agent-notify/index.ts",
+      "bytes": 4950,
+      "sha256": "846def175ececf6307c6482cea7cb1ab146e6f41188ab503e1f1e25f998a7ca1"
+    },
+    {
+      "path": "supabase/functions/slack-alert-dispatcher/index.ts",
+      "bytes": 5672,
+      "sha256": "b7f9e6e1e51bb71a17937b937331376aac4b3041dafd46f4114967ee2ce2e03d"
+    },
+    {
+      "path": "supabase/functions/slack-dlq-discard/index.ts",
+      "bytes": 2824,
+      "sha256": "af0ebb98c44710de39912c840bfe202217e91271788136bb592dc46d50bb093b"
+    },
+    {
+      "path": "supabase/functions/slack-dlq-retry/index.ts",
+      "bytes": 3651,
+      "sha256": "f6de623bda2a7f4f51f24243b6809599836a107230be230a13898f92505033f7"
+    },
+    {
+      "path": "supabase/functions/slack-events-webhook/index.ts",
+      "bytes": 6645,
+      "sha256": "f890268b76c40982aadf2eed679dc9154cdd78af022c1092717a5f0a6631a213"
+    },
+    {
+      "path": "supabase/functions/slack-rag-sync/index.ts",
+      "bytes": 7167,
+      "sha256": "725adf7d704e2acb595d343c40083c1a7f572f6a1ebbf69c49f6f7c197c4d4f3"
+    },
+    {
+      "path": "supabase/functions/slack-verify-connection/index.ts",
+      "bytes": 4012,
+      "sha256": "407c319f95ab2035127e3f95a406c0022e87b1014af8c29b75a4e37cc4913fec"
+    },
+    {
+      "path": "supabase/functions/smart-model-router/index.ts",
+      "bytes": 8704,
+      "sha256": "9c63c7cb8ab83dc1a64743e5583c86812cfaa151236abd8a0e2b89189663346a"
+    },
+    {
+      "path": "supabase/functions/smolagent-runtime/index.ts",
+      "bytes": 29777,
+      "sha256": "1204b99c71a9928749d27ef409d08aee707b9074329732d41b02458d0b454a36"
+    },
+    {
+      "path": "supabase/functions/synthetic-runner/index.ts",
+      "bytes": 6171,
+      "sha256": "caa78cbc5a50506d3b9f0dc5db89be74e252316d2772304c7e2bd96238baa12a"
+    },
+    {
+      "path": "supabase/functions/test-runner/index.ts",
+      "bytes": 3885,
+      "sha256": "463d8053b52f0fb74d768f7557e6d54bcbd1640305bd318667a68285cb9da42c"
+    },
+    {
+      "path": "supabase/functions/text-to-speech/index.ts",
+      "bytes": 2636,
+      "sha256": "ad6c6a52c309fc7ebca42bf289ae806e2fd080f7285bba1b6d9e39d496432ba6"
+    },
+    {
+      "path": "supabase/functions/validate-access/index.ts",
+      "bytes": 6762,
+      "sha256": "e837a523cc8bb004e4d4eaf1eb62c7c76fb178bf85e979945c15bf2567f6a70f"
+    },
+    {
+      "path": "supabase/functions/visual-search/index.ts",
+      "bytes": 6696,
+      "sha256": "f29b8dfcc99e16178fefb3d593388d281e2b2dbc4bfd3318324d755fdd2e333c"
+    },
+    {
+      "path": "supabase/functions/voice-session/index.ts",
+      "bytes": 4051,
+      "sha256": "c7f8535c5298c98935266596c8111a9fbe57d0172c63353dd48623aa3ee2ed6f"
+    },
+    {
+      "path": "supabase/functions/voice-synthesize/index.ts",
+      "bytes": 6195,
+      "sha256": "2fa7420e09e56900a362042680f2fc0eae8800ad08c6d2ac8d9b24fd135aeee5"
+    },
+    {
+      "path": "supabase/functions/voice-transcribe/index.ts",
+      "bytes": 5231,
+      "sha256": "b632cbb908e84b5f53ae06a7fe50350eaf3259edf9eecf41b8f72a50ce13dc35"
+    },
+    {
+      "path": "supabase/functions/webhook-receiver/index.ts",
+      "bytes": 7442,
+      "sha256": "6d4499b1e51962d5d751dd722ff7bd2df0b9cf11c18c452693ff4499bb1181e5"
+    },
+    {
+      "path": "supabase/functions/whatsapp-router/index.ts",
+      "bytes": 10112,
+      "sha256": "ac117d6fff4fcc08d241e51f126c23d329a3f3f0ebe33f2c108e0cb7affc69ca"
+    },
+    {
+      "path": "supabase/functions/whatsapp-webhook/index.ts",
+      "bytes": 20963,
+      "sha256": "f37cd46ae910fbdbb142495c02aede9f9c6c70942a66b0ddb74c384bd8f9e28c"
+    },
+    {
+      "path": "supabase/functions/widget-proxy/index.ts",
+      "bytes": 4337,
+      "sha256": "24cb24b498ed5dbe8c0cd3e4d461a199e8f5c01ce802280964d3307358702bb3"
+    },
+    {
+      "path": "supabase/functions/workflow-engine-v2/index.ts",
+      "bytes": 20364,
+      "sha256": "79b392084b224ae33e75e1594312e1cf06634df23de5c1b45a667aab56e7d292"
+    }
+  ],
+  "functions": [
+    {
+      "name": "a2a-server",
+      "entrypoint": "supabase/functions/a2a-server/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "04379448ba6b352459703f358640ca17b08ec9df32cdd22558be6eec519d6c60",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/a2a-server/index.ts"
+      ]
+    },
+    {
+      "name": "agent-conversational-builder",
+      "entrypoint": "supabase/functions/agent-conversational-builder/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "514eaf25322a89095052b0cef3fb54a9f86358295aec18a84c21f7b1d84b9be8",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/agent-conversational-builder/index.ts"
+      ]
+    },
+    {
+      "name": "agent-eval-runner",
+      "entrypoint": "supabase/functions/agent-eval-runner/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "76e8f8a8ade89cea903d71ddfd1f437e89182e629bd8c6719a96cedb836d1eb2",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/idempotency.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/agent-eval-runner/index.ts"
+      ]
+    },
+    {
+      "name": "agent-workflow-runner",
+      "entrypoint": "supabase/functions/agent-workflow-runner/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "298aa5f229b738ce65f35f524c391c170794ddcbee4143afe79c4593bd110c23",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/chaos.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/otel.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/skills.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/agent-workflow-runner/index.ts"
+      ]
+    },
+    {
+      "name": "audio-transcribe",
+      "entrypoint": "supabase/functions/audio-transcribe/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "102311877d7543a9810a186f276cb6be79f354a96933e3fba5f36a1b8951899b",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/audio-transcribe/index.ts"
+      ]
+    },
+    {
+      "name": "automation-pipeline",
+      "entrypoint": "supabase/functions/automation-pipeline/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "4263e766d9489e48d4a59c7061af75cc0c9d59c4466b37a3de7b320161a23d92",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/automation-pipeline/index.ts"
+      ]
+    },
+    {
+      "name": "bitrix24-api",
+      "entrypoint": "supabase/functions/bitrix24-api/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "fce0b22b3e1026c0faa521ccfeeaa6379faa4449fda584e02f59378ca28c3c71",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/bitrix24-api/index.ts"
+      ]
+    },
+    {
+      "name": "bitrix24-oauth",
+      "entrypoint": "supabase/functions/bitrix24-oauth/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "0d1185224ac805d661061115d6f95d815900dce8b8fc5775125cded6380a59cc",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/bitrix24-oauth/index.ts"
+      ]
+    },
+    {
+      "name": "bitrix24-webhook",
+      "entrypoint": "supabase/functions/bitrix24-webhook/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "f0bdaa43aa651c61dec6a7847cf79b044b84b8f50f0bdffc284377202c5bb4d3",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/crmNormalize.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/bitrix24-webhook/index.ts"
+      ]
+    },
+    {
+      "name": "browser-agent-run",
+      "entrypoint": "supabase/functions/browser-agent-run/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "fd58f071396de3786b883fc76d9597428d835dfde3f06089713043315e6cc204",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/browser-agent-run/index.ts"
+      ]
+    },
+    {
+      "name": "browser-session-cancel",
+      "entrypoint": "supabase/functions/browser-session-cancel/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "9dec31ced3b41aa3a0d75229e7d7b3d0fb99335c5934fcd3dd0bb2925429d77c",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/browser-session-cancel/index.ts"
+      ]
+    },
+    {
+      "name": "cerebro-brain",
+      "entrypoint": "supabase/functions/cerebro-brain/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "473a47cd886cda2b01681127386435166a2787afc62281dc4e6ec3008e0c1738",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/cerebro-brain/index.ts"
+      ]
+    },
+    {
+      "name": "cerebro-query",
+      "entrypoint": "supabase/functions/cerebro-query/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "5fbb5a6254968e0b693f10752200dd76b79d665e2d0f915c821981b2a5d4e9b5",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/cerebro-query/index.ts"
+      ]
+    },
+    {
+      "name": "code-interpreter-execute",
+      "entrypoint": "supabase/functions/code-interpreter-execute/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "c74c26de3a0ddd4ee3209d0f917423eb393d5844e5ddf86052e6a4f0d4cda7cf",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/idempotency.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/code-interpreter-execute/index.ts"
+      ]
+    },
+    {
+      "name": "computer-use-execute",
+      "entrypoint": "supabase/functions/computer-use-execute/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "38f592f44de9b5d84a75f960fb007293e1de6bd2d35a584409da30980dd7821e",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/computer-use-execute/index.ts"
+      ]
+    },
+    {
+      "name": "cost-calculator",
+      "entrypoint": "supabase/functions/cost-calculator/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "a7adbbd30cf8c8fbfa7865aafcda133cfc30e6c47d1579d6f2bc7fb06f0c5112",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/cost-calculator/index.ts"
+      ]
+    },
+    {
+      "name": "crm-bitrix-sync",
+      "entrypoint": "supabase/functions/crm-bitrix-sync/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "82a31126a55cb9a4ca82872e28d435ce6b616c815f6ca3d5cb02ea17e8634c93",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/crmNormalize.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/crm-bitrix-sync/index.ts"
+      ]
+    },
+    {
+      "name": "crm-cadence-runner",
+      "entrypoint": "supabase/functions/crm-cadence-runner/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "509330d343bfabf86801b2db680b09c5d6308c6bb1d8f0506a3457d492b83489",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/circuitBreaker.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/slack.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/crm-cadence-runner/index.ts"
+      ]
+    },
+    {
+      "name": "crm-enrich",
+      "entrypoint": "supabase/functions/crm-enrich/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "e1e6467e6be76d4556d42313ad282dc5b9eb5b80e4a17f04b50bce2e61c07664",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/crm-enrich/index.ts"
+      ]
+    },
+    {
+      "name": "cron-executor",
+      "entrypoint": "supabase/functions/cron-executor/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "47034f971c9c5baae70363c785f0f9b7a24ab89d059821008f3c67bc19a93361",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/cron-executor/index.ts"
+      ]
+    },
+    {
+      "name": "datahub-mcp-server",
+      "entrypoint": "supabase/functions/datahub-mcp-server/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "8f72224a59021f5208d10ae7df58b6719e89826d2cb96290b21cb9f94b6d3085",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/datahub-mcp-server/index.ts"
+      ]
+    },
+    {
+      "name": "datahub-query",
+      "entrypoint": "supabase/functions/datahub-query/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "9820e8bda5b9ce245c1ea87a2fe9b6204197049f5759dbc8c552524447074310",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/datahub-query/index.ts"
+      ]
+    },
+    {
+      "name": "doc-ocr",
+      "entrypoint": "supabase/functions/doc-ocr/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "c60eac12e17d371ca1553692c42f1da803c8e1548cfd82778349ba4242e03900",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/doc-ocr/index.ts"
+      ]
+    },
+    {
+      "name": "doc-parse",
+      "entrypoint": "supabase/functions/doc-parse/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "a5df8e3020e9ef76a26f96f95d512a0ab098cbf583aa10a2d643179917023a45",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/chunker.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/doc-parse/index.ts"
+      ]
+    },
+    {
+      "name": "doc-rechunk",
+      "entrypoint": "supabase/functions/doc-rechunk/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "5fb4a250693d22d7fcbc3719f40821c7e2b3baeea2f7e9c6dd66d81bbf3dcb18",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/chunker.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/doc-rechunk/index.ts"
+      ]
+    },
+    {
+      "name": "dr-orchestrator",
+      "entrypoint": "supabase/functions/dr-orchestrator/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "a4920066a230d8a6f62b297c4d68681ed00a45ead3389e396853ade61ca8a253",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/dr-orchestrator/index.ts"
+      ]
+    },
+    {
+      "name": "eval-engine-v2",
+      "entrypoint": "supabase/functions/eval-engine-v2/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "09d64e21327eb1dc465c0f4c36738cb7e182a1079218026e07cc61f5cdd3ef7a",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/eval-engine-v2/index.ts"
+      ]
+    },
+    {
+      "name": "eval-judge",
+      "entrypoint": "supabase/functions/eval-judge/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "4d4627a38b04c68168d3bedce26c4375b901cd5a0ef202ebe573a2273f556ecc",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/eval-judge/index.ts"
+      ]
+    },
+    {
+      "name": "global-search",
+      "entrypoint": "supabase/functions/global-search/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "55e3a67e5f7a2e2657a2266102e1475f54901f40f9e8f2f784fab44b4d541d54",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/global-search/index.ts"
+      ]
+    },
+    {
+      "name": "graph-execute",
+      "entrypoint": "supabase/functions/graph-execute/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "7a420d0ac2021831e2d1c2ac344ff342438176bede09e8e782a6dc67e34cffa1",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/idempotency.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/skills.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/graph-execute/index.ts"
+      ]
+    },
+    {
+      "name": "guardrails-engine",
+      "entrypoint": "supabase/functions/guardrails-engine/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "222f7d58b10a586b41111df23c2ccd00dcd86b6a0c48f3f7106f47466a7d12d9",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/guardrails-engine/index.ts"
+      ]
+    },
+    {
+      "name": "guardrails-ml",
+      "entrypoint": "supabase/functions/guardrails-ml/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "f75959f0b69c9f259b04285a6ae6fe636efd3f39d8baffc97a3c0eb524dbc66d",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/guardrails-ml/index.ts"
+      ]
+    },
+    {
+      "name": "health-check",
+      "entrypoint": "supabase/functions/health-check/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "9b32d1b4ac3d68a486db600ab773b9284a88402c57124fce188607ebf2bceed3",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/health-check/index.ts"
+      ]
+    },
+    {
+      "name": "hf-autotrain",
+      "entrypoint": "supabase/functions/hf-autotrain/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "269f8cf2b0e12faf037e22b627532085bf335c65d8d6bf4d393b474531e47f52",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/hf-autotrain/index.ts"
+      ]
+    },
+    {
+      "name": "image-analysis",
+      "entrypoint": "supabase/functions/image-analysis/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "784c31085837105c573489d39f09aaf50c4b0e7375efac7d2902742cbcc3747b",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/image-analysis/index.ts"
+      ]
+    },
+    {
+      "name": "incident-orchestrator",
+      "entrypoint": "supabase/functions/incident-orchestrator/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "d8a0091868fc24eda700c5519ac1ae563afecc14b7c1d837dfe8ef03e8813edc",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/incident-orchestrator/index.ts"
+      ]
+    },
+    {
+      "name": "kb-analyze-gaps",
+      "entrypoint": "supabase/functions/kb-analyze-gaps/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "60dc6d4ff59eb0497f0937d1b747a7fb859f6492030e0e44b3fc29601423bf99",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/kb-analyze-gaps/index.ts"
+      ]
+    },
+    {
+      "name": "kb-translate-article",
+      "entrypoint": "supabase/functions/kb-translate-article/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "fac6a8c427e48aba00018b98455467b2923992c79172057d09df96b79c5ef517",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/kb-translate-article/index.ts"
+      ]
+    },
+    {
+      "name": "lgpd-manager",
+      "entrypoint": "supabase/functions/lgpd-manager/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "4a994ad400f28c7114d95d690af16cc11e96fa76587c6862ceec635cc2379a82",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/lgpd-manager/index.ts"
+      ]
+    },
+    {
+      "name": "llm-gateway",
+      "entrypoint": "supabase/functions/llm-gateway/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "0335257b9282ef58cf7532dfae49485eb5e5f92ce84de5463c789f3d74296631",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/breakerEvents.ts",
+        "supabase/functions/_shared/chaos.ts",
+        "supabase/functions/_shared/circuitBreaker.ts",
+        "supabase/functions/_shared/contracts.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/otel.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/llm-gateway/index.ts",
+        "supabase/functions/llm-gateway/providers.ts",
+        "supabase/functions/llm-gateway/providers/anthropic.ts",
+        "supabase/functions/llm-gateway/providers/huggingface.ts",
+        "supabase/functions/llm-gateway/providers/lovable.ts",
+        "supabase/functions/llm-gateway/providers/openai.ts",
+        "supabase/functions/llm-gateway/providers/openrouter.ts",
+        "supabase/functions/llm-gateway/types.ts",
+        "supabase/functions/llm-gateway/utils.ts"
+      ]
+    },
+    {
+      "name": "memory-manager",
+      "entrypoint": "supabase/functions/memory-manager/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "a67f66e98f154b35cf666acff7b97fddbc62591919668da87212165ec0642a3e",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/memory-manager/index.ts"
+      ]
+    },
+    {
+      "name": "memory-tools",
+      "entrypoint": "supabase/functions/memory-tools/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "402ec27e50d8d7b6e510426e508ce23913f9f6bdc606384197e15a8ed1fdfa44",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/memory-tools/index.ts"
+      ]
+    },
+    {
+      "name": "migrate-helper",
+      "entrypoint": "supabase/functions/migrate-helper/index.ts",
+      "verify_jwt": false,
+      "source_sha256": "e15acbb16a71e08afb90d03ee34977ed0efade37fe183bf6417a1eaf6fd23466",
+      "source_files": [
+        "supabase/functions/migrate-helper/index.ts"
+      ]
+    },
+    {
+      "name": "nlp-pipeline",
+      "entrypoint": "supabase/functions/nlp-pipeline/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "57323865ffbdda5ecdcc78e24293de6ca31183f8e7c60737d3c43b45870ce049",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/nlp-pipeline/index.ts"
+      ]
+    },
+    {
+      "name": "notebook-podcast-generate",
+      "entrypoint": "supabase/functions/notebook-podcast-generate/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "bcb96b2938e70e72a1d75941ef413f9f82a7a069ba842b0233875c2cd85de07c",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/notebook-podcast-generate/index.ts"
+      ]
+    },
+    {
+      "name": "notification-sender",
+      "entrypoint": "supabase/functions/notification-sender/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "d062c9fa8ed8e1ca040c87e8569cc1d104b56251e34da37aa2948e74df548602",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/notification-sender/index.ts"
+      ]
+    },
+    {
+      "name": "openclaw-proxy",
+      "entrypoint": "supabase/functions/openclaw-proxy/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "839f672ee68a21abea15d90ebc500f851c15ca8ca15dc3a10e9c585ef7325a4a",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/circuitBreaker.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/idempotency.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/openclaw-proxy/index.ts"
+      ]
+    },
+    {
+      "name": "openclaw-webhook",
+      "entrypoint": "supabase/functions/openclaw-webhook/index.ts",
+      "verify_jwt": false,
+      "source_sha256": "ee53c215a1bf3bc2d9cbd2b67a369b19a08affc96a8ed09af761146ef5c0ff57",
+      "source_files": [
+        "supabase/functions/_shared/contracts.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/openclaw-webhook/index.ts"
+      ]
+    },
+    {
+      "name": "oracle-council",
+      "entrypoint": "supabase/functions/oracle-council/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "eca8aee88a295e9d0b4c0ecdcfb12945c5c439b1ec36abfa707b8936c970cde3",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/oracle-council/index.ts"
+      ]
+    },
+    {
+      "name": "oracle-research",
+      "entrypoint": "supabase/functions/oracle-research/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "b3f324584cbea0960656a5867dc0fdd286b382bc483cd320112b7863be7e14a2",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/oracle-research/index.ts"
+      ]
+    },
+    {
+      "name": "pg-net-smoke-test",
+      "entrypoint": "supabase/functions/pg-net-smoke-test/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "777bdea173da8b1de484dbf06f464494356a7534374d2cdfe414a29ea5e48dce",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/pg-net-smoke-test/index.ts"
+      ]
+    },
+    {
+      "name": "product-mockup",
+      "entrypoint": "supabase/functions/product-mockup/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "2e73e178792f52baca4bed1a8ae92ab7019b99058d647659acfc374eee352554",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/product-mockup/index.ts"
+      ]
+    },
+    {
+      "name": "queue-worker",
+      "entrypoint": "supabase/functions/queue-worker/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "5803f9d2ae177d92cc4cf18ea649691884938d488ca7230d7f9303e91d861dcb",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/queue-worker/index.ts"
+      ]
+    },
+    {
+      "name": "quick-agent-test",
+      "entrypoint": "supabase/functions/quick-agent-test/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "e4343fcd1f83dde00443e9e6acddcfe988c48ae012611853bf28ba0249c8ded1",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/skills.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/quick-agent-test/index.ts"
+      ]
+    },
+    {
+      "name": "rag-embed-backfill",
+      "entrypoint": "supabase/functions/rag-embed-backfill/index.ts",
+      "verify_jwt": false,
+      "source_sha256": "20c3c7b2d1b63a1c7612992f14408ab7ca70fee8d64ef08bb93c089c894eb7f8",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/rag-embed-backfill/index.ts"
+      ]
+    },
+    {
+      "name": "rag-embed-v2",
+      "entrypoint": "supabase/functions/rag-embed-v2/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "d9764190d7a40be9ff16739f746cd5f2d10b7f303b1c8afdfa1007a4fe0c93ba",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/rag-embed-v2/embedder.ts",
+        "supabase/functions/rag-embed-v2/index.ts"
+      ]
+    },
+    {
+      "name": "rag-ingest",
+      "entrypoint": "supabase/functions/rag-ingest/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "552ed2e8aadad08021ff507c4b26799436e5e65299d7b1038e0fa304a5120c3e",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/rag-ingest/index.ts"
+      ]
+    },
+    {
+      "name": "rag-rerank",
+      "entrypoint": "supabase/functions/rag-rerank/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "ea8295230a6196d6c025886156c76706d33792331d6d1e2bb9aaf9fa801ac61d",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/rag-rerank/index.ts"
+      ]
+    },
+    {
+      "name": "rag-rerank-v2",
+      "entrypoint": "supabase/functions/rag-rerank-v2/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "6c10684afabfe4ffd99f40e050ec3d8caf90677286c86e20d61f99662ebcb868",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/rag-rerank-v2/index.ts"
+      ]
+    },
+    {
+      "name": "replay-fork-execute",
+      "entrypoint": "supabase/functions/replay-fork-execute/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "4b9360abd74c053d97f348c0e49c98d13e6674bdd29146b3f63f0a49705fd789",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/replay-fork-execute/index.ts"
+      ]
+    },
+    {
+      "name": "sbom-scanner",
+      "entrypoint": "supabase/functions/sbom-scanner/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "029d34c42238767350fefe0df396f519532d404823e917cf75ba09d5162820c6",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/sbom-scanner/index.ts"
+      ]
+    },
+    {
+      "name": "semantic-search",
+      "entrypoint": "supabase/functions/semantic-search/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "4a095ec288b869c68763c77743b52bc9f25b67e5e97594d2039b6cd3036e5353",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/semantic-search/index.ts"
+      ]
+    },
+    {
+      "name": "skill-classify-llm",
+      "entrypoint": "supabase/functions/skill-classify-llm/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "e119ab73959898263aec5ae25920553174ff0a819a7e214d7147b8d6d6fc5177",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/skill-classify-llm/departments.ts",
+        "supabase/functions/skill-classify-llm/index.ts"
+      ]
+    },
+    {
+      "name": "skill-describe-llm",
+      "entrypoint": "supabase/functions/skill-describe-llm/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "ea510578515aecff6f4fa87c45ce2765557a2910f9b95dade27435107f9f3499",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/skill-describe-llm/index.ts"
+      ]
+    },
+    {
+      "name": "skill-harvester",
+      "entrypoint": "supabase/functions/skill-harvester/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "451c6a6d601ded2998d59402687c48a9b7844a2773cf13fb814d08e2b11707da",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/skill-harvester/departments.ts",
+        "supabase/functions/skill-harvester/github.ts",
+        "supabase/functions/skill-harvester/index.ts",
+        "supabase/functions/skill-harvester/lib.ts"
+      ]
+    },
+    {
+      "name": "slack-agent-notify",
+      "entrypoint": "supabase/functions/slack-agent-notify/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "ea76d36bb0042b3923ed4e0311d51bccf45a16a29f5441a85ceb5014b4d7a7ab",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/circuitBreaker.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/slack.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/slack-agent-notify/index.ts"
+      ]
+    },
+    {
+      "name": "slack-alert-dispatcher",
+      "entrypoint": "supabase/functions/slack-alert-dispatcher/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "153584c1b623c3ee1ccae10280345fd436bd3d5d3b94108fc66628875a4b7a6d",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/circuitBreaker.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/slack.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/slack-alert-dispatcher/index.ts"
+      ]
+    },
+    {
+      "name": "slack-dlq-discard",
+      "entrypoint": "supabase/functions/slack-dlq-discard/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "3d01c320e14764ebc5ee2ceb6f521c9ab2d1aa2e751567106baf9f95c1fe0c4c",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/slack-dlq-discard/index.ts"
+      ]
+    },
+    {
+      "name": "slack-dlq-retry",
+      "entrypoint": "supabase/functions/slack-dlq-retry/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "53f1ac011ad76c57177b1a35c4fa51129622bf4edd937191715e4c8c061f8c58",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/circuitBreaker.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/slack.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/slack-dlq-retry/index.ts"
+      ]
+    },
+    {
+      "name": "slack-events-webhook",
+      "entrypoint": "supabase/functions/slack-events-webhook/index.ts",
+      "verify_jwt": false,
+      "source_sha256": "22b77d115b1cd13fe20acf56eef40ce2b4c0a3f96bebbdd8ce9b0e5cd7f3fcdc",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/circuitBreaker.ts",
+        "supabase/functions/_shared/contracts.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/slack.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/slack-events-webhook/index.ts"
+      ]
+    },
+    {
+      "name": "slack-rag-sync",
+      "entrypoint": "supabase/functions/slack-rag-sync/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "ee344aa79e844cd978c55b31f8b454ca19e1dfe128417cc5f4623fbf51130148",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/circuitBreaker.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/slack.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/slack-rag-sync/index.ts"
+      ]
+    },
+    {
+      "name": "slack-verify-connection",
+      "entrypoint": "supabase/functions/slack-verify-connection/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "be249629486739dc6a524c52881a6ac659390bc1265920ddc862f1af50c6f90d",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/circuitBreaker.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/slack.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/slack-verify-connection/index.ts"
+      ]
+    },
+    {
+      "name": "smart-model-router",
+      "entrypoint": "supabase/functions/smart-model-router/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "d5c1921692e5bffd86cae4f38c615328f93a36e9f31d32690e43bc67b4ea588c",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/smart-model-router/index.ts"
+      ]
+    },
+    {
+      "name": "smolagent-runtime",
+      "entrypoint": "supabase/functions/smolagent-runtime/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "a1a77ebab58a2e3bb9d09581363cb3cce8395c5ff5d7626b74580834de19a46d",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/smolagent-runtime/index.ts"
+      ]
+    },
+    {
+      "name": "synthetic-runner",
+      "entrypoint": "supabase/functions/synthetic-runner/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "4eb5f817cd4da78b237bcecadddfc5b588b0bdfde0206bbf3cd91fd8a741aeb9",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/synthetic-runner/index.ts"
+      ]
+    },
+    {
+      "name": "test-runner",
+      "entrypoint": "supabase/functions/test-runner/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "cdef04e0582dc1712c3250abcc895abf563fbe14b1e19b2a87ff097c6a05d65d",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/test-runner/index.ts"
+      ]
+    },
+    {
+      "name": "text-to-speech",
+      "entrypoint": "supabase/functions/text-to-speech/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "ac9d9ccf110a8fc5e4ee8e23e88f29cb2622374a0b0330a73ad97f7947d9df00",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/text-to-speech/index.ts"
+      ]
+    },
+    {
+      "name": "validate-access",
+      "entrypoint": "supabase/functions/validate-access/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "f37ebbe46dab2b0219014c36eb9d13d56b694bacae5f95c3784c96469af3fb10",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/validate-access/index.ts"
+      ]
+    },
+    {
+      "name": "visual-search",
+      "entrypoint": "supabase/functions/visual-search/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "8ec1d711cf7532198141bb85f10059f2c726f0816dd3812c4bb4711449a01c75",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/visual-search/index.ts"
+      ]
+    },
+    {
+      "name": "voice-session",
+      "entrypoint": "supabase/functions/voice-session/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "1298f7a2f81bae5d46dd15e26dd90c6524ed475fb5ed3eef3ea0e70c08aae929",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/voice-session/index.ts"
+      ]
+    },
+    {
+      "name": "voice-synthesize",
+      "entrypoint": "supabase/functions/voice-synthesize/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "59bf84428cb6345881c13f0b7d4c614186138554e0bd048e46ac02bdeaa9df73",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/voice-synthesize/index.ts"
+      ]
+    },
+    {
+      "name": "voice-transcribe",
+      "entrypoint": "supabase/functions/voice-transcribe/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "355fa011e6236a31c479187d104b43754951eae776d5f5679c013e7f3402227d",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/voice-transcribe/index.ts"
+      ]
+    },
+    {
+      "name": "webhook-receiver",
+      "entrypoint": "supabase/functions/webhook-receiver/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "09aad98ddf6f1062410903e8f906f8bff3fb692fd223ed52f03f9333b133a21e",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/contracts.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/webhook-receiver/index.ts"
+      ]
+    },
+    {
+      "name": "whatsapp-router",
+      "entrypoint": "supabase/functions/whatsapp-router/index.ts",
+      "verify_jwt": false,
+      "source_sha256": "a5433f8125ab8a2943b2d5ab4fa479a272ca0573c087b955868beca768e6fcce",
+      "source_files": [
+        "supabase/functions/_shared/alternation.ts",
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/whatsapp-router/index.ts"
+      ]
+    },
+    {
+      "name": "whatsapp-webhook",
+      "entrypoint": "supabase/functions/whatsapp-webhook/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "99deaf7346adbcf401abb7e9c8248c99748d51e8234f9d7880e2a97b63ac53bf",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/contracts.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/whatsapp-webhook/index.ts"
+      ]
+    },
+    {
+      "name": "widget-proxy",
+      "entrypoint": "supabase/functions/widget-proxy/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "78377a43e7a6d40476aef35fd0cfaeabe025725c4ac656d55f7fe97a697b169a",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/widget-proxy/index.ts"
+      ]
+    },
+    {
+      "name": "workflow-engine-v2",
+      "entrypoint": "supabase/functions/workflow-engine-v2/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "5a0e8ec525288a0183d7e0f8a597add7561eaf6375157dc494a9bbcb9a230921",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/workflow-engine-v2/index.ts"
+      ]
+    }
+  ],
+  "manifest_sha256": "7c2668839c61b9a099ffc7b67be4aa1f2a0cf16244cccb73fd8ea1169fea2931"
+}

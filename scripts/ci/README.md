@@ -39,3 +39,14 @@ Quando o número de um deles chegar a zero, mova o passo para um job bloqueante.
 ## Inventário
 
 `inventario-*.unit.mjs` testam `scripts/inventario/` (ver `inventario/estado/README.md`).
+
+## Manifesto de edge functions
+
+`scripts/edge-deploy/generate-manifest.mjs` lê `supabase/config.toml` + `supabase/functions/` e
+grava `supabase/deployment-manifest.json` (87 funções, 124 arquivos, sha256 por função e do
+manifesto inteiro). `--check` falha se o commitado não bater com a árvore — é o que detecta edge
+alterada sem o manifesto atualizado. Rodado no job `artefatos-gerados`.
+
+Do pipeline de deploy do Zapp (`collect-remote`, `deploy-plan`, `verify-remote`, `stable-inventory`,
+`secrets-scope`, `health-check`, `smoke-functions`) só o manifesto foi portado: o resto exige
+`SUPABASE_ACCESS_TOKEN` e o workflow `deploy-functions.yml`, que este repo não tem.
