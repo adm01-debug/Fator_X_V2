@@ -148,6 +148,12 @@ function issueKey(issue) {
   // inválida, o código TS e o contexto da fonte permaneçam iguais. O número
   // é apenas formatação do diagnóstico; mantemos todo o restante da mensagem.
   const message = issue.message.replace(/\.\.\. \d+ more \.\.\./gu, "... <count> more ...");
+  // Mensagens com paths absolutos de módulos são env-dependentes: TypeScript trunca em pontos
+  // diferentes conforme o comprimento do path absoluto no ambiente (local vs CI). O triplete
+  // file+severity+code identifica o erro; contextHash desambigua múltiplas ocorrências.
+  if (/import\("\//u.test(message)) {
+    return JSON.stringify([issue.file, issue.severity, issue.code, "[module_path_dependent]"]);
+  }
   return JSON.stringify([issue.file, issue.severity, issue.code, message]);
 }
 
