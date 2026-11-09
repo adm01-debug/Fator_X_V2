@@ -14,17 +14,18 @@ código), 17 PARCIAL, 6 SUGERIDO, 6 MORTO. Antes de dizer "integrado", siga o fi
 
 `supabase/migrations/20260405225419_*.sql:82` executa
 `ALTER TABLE public.workspace_secrets DROP COLUMN IF EXISTS key_value;` — o banco vivo só tem
-`encrypted_value bytea` (`src/integrations/supabase/types.ts:13673`). Seis pontos de código ainda leem/escrevem
-`key_value`:
+`encrypted_value bytea` (`src/integrations/supabase/types.ts:13673`). Cinco pontos de código ainda
+leem/escrevem `key_value` (coluna inexistente); um sexto (`whatsappOutboundService`) já usa a coluna certa
+mas falha de outro jeito (lê o `bytea` encriptado sem decriptar):
 
-| Arquivo:linha                                             | Consequência                                                   |
-| --------------------------------------------------------- | -------------------------------------------------------------- |
-| `supabase/functions/bitrix24-oauth/index.ts:73,77`        | callback OAuth falha → token nunca é gravado                   |
-| `supabase/functions/bitrix24-api/index.ts:19`             | erro 42703 → "Bitrix24 não conectado"                          |
-| `supabase/functions/crm-bitrix-sync/index.ts:62`          | sync nunca roda                                                |
-| `supabase/functions/bitrix24-webhook/index.ts:115`        | workspace nunca resolve → `no_route`                           |
-| `supabase/functions/llm-gateway/index.ts:308,321,331,340` | BYO-key de OpenAI/Anthropic/Google/OpenRouter **sempre vazia** |
-| `src/services/whatsappOutboundService.ts:70,77`           | lê `bytea` encriptado como texto → credencial ilegível         |
+| Arquivo:linha                                                                 | Consequência                                                                                                        |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `supabase/functions/bitrix24-oauth/index.ts:74,78`                            | callback OAuth falha → token nunca é gravado                                                                        |
+| `supabase/functions/bitrix24-api/index.ts:19`                                 | erro 42703 → "Bitrix24 não conectado"                                                                               |
+| `supabase/functions/crm-bitrix-sync/index.ts:75,79`                           | sync nunca roda                                                                                                     |
+| `supabase/functions/bitrix24-webhook/index.ts:116`                            | workspace nunca resolve → `no_route`                                                                                |
+| `supabase/functions/llm-gateway/index.ts:516,520,522,547,551,553,568,572,576` | BYO-key de OpenAI/Anthropic/Google/OpenRouter **sempre vazia**                                                      |
+| `src/services/whatsappOutboundService.ts:70,77`                               | lê `encrypted_value` (coluna real, `bytea` pgp-encriptado) direto como string, sem decriptar — nunca lê `key_value` |
 
 **Efeito no `llm-gateway`:** a cadeia de fallback só monta 2 opções, as duas por env (`HF_API_TOKEN`,
 `LOVABLE_API_KEY`) → **Lovable AI Gateway é o único provedor LLM realmente ligado hoje**. Mexer em provedor de

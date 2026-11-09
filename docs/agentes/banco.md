@@ -45,9 +45,12 @@ Antes de rodar qualquer um desses scripts, **confira o `PROJECT_ID` no topo do a
   sem as duas variáveis cai em `https://placeholder.supabase.co` e `isSupabaseConfigured` fica `false`.
 - `src/integrations/supabase/externalClient.ts` — **todos os `from()` e RPC de dados**. URL/chave vêm de
   `VITE_EXTERNAL_SUPABASE_URL` / `VITE_EXTERNAL_SUPABASE_ANON_KEY`; faltando, cai no client de auth
-  (`VITE_SUPABASE_*`) e só avisa em DEV (`externalClient.ts:29-33`). ~142 arquivos de `src/` dependem dele.
-- RLS no client externo depende de `syncExternalAuth(session.access_token)` no `AuthContext` — mexer em auth
-  sem isso derruba a autorização de todo o caminho de dados.
+  (`VITE_SUPABASE_*`) e só avisa em DEV (`externalClient.ts:28,30-34`). ~142 arquivos de `src/` dependem dele.
+- RLS no client externo depende de `syncExternalAuth()` (sem argumento — lê a sessão internamente via
+  `supabase.auth.getSession()`, `externalClient.ts:53,55`) ser chamada no `AuthContext` (`AuthContext.tsx:38,47`)
+  a cada troca de sessão — mexer em auth sem isso derruba a autorização de todo o caminho de dados.
+  (O ADR 006 descreve a assinatura antiga `syncExternalAuth(session.access_token)` — está desatualizado,
+  não corrigido aqui por não ser arquivo deste padrão.)
 
 Consequência prática: **o mesmo código aponta para 1 ou 2 bancos dependendo do `.env`.** Antes de testar tela,
 confira as 4 variáveis; sem elas o dev server fala com o projeto que estiver em `VITE_SUPABASE_URL`.
@@ -75,7 +78,9 @@ confira as 4 variáveis; sem elas o dev server fala com o projeto que estiver em
 Leia antes de prometer qualquer hardening — e não "aproveite para corrigir" sem pedido:
 
 - `public.exec_sql(query text)` em produção, `SECURITY DEFINER`, com `EXECUTE` para `anon`: SQL arbitrário
-  ignorando RLS. **Não nasce de migration nenhuma** do repo (0 ocorrências) — veio de bootstrap externo.
+  ignorando RLS. **Nenhuma migration cria essa função** (a única ocorrência de `exec_sql` em
+  `supabase/migrations/` é um `REVOKE EXECUTE ... FROM anon` em `20260905140000_security_hotfix_validation.sql:19`,
+  não um `CREATE`) — a função em si veio de bootstrap externo.
 - `user_roles` (e `credential_vault`, `api_keys`, `roles`, `workspace_members`) sem RLS e com escrita para
   `anon` → escalação a `workspace_admin`, que `useRBAC` trata como "pode tudo".
 - 176 de 215 tabelas sem RLS, legíveis por `anon`. Hoje o impacto é baixo porque estão vazias.

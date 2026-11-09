@@ -51,6 +51,7 @@ código, vale o código.
 | `deploy-edge-functions.sh`, `set-secrets.sh`, `generate-types.sh` | Supabase CLI — ⚠️ `PROJECT_ID` hoje aponta para `tdprnylgyrogbbhgdoik`, confira antes de rodar |
 | `openclaw-remediation.sh`                                         | remediação do gateway OpenClaw                                                                 |
 | `db-explain-top-queries.sql`, `perf-regression.sql`               | diagnóstico de performance                                                                     |
+| `template-link-coverage.ts`                                       | harness determinístico de cobertura Template↔Skill (G1-G6); roda via `bun`                     |
 | `graphify/setup.sh`                                               | instala o graphify e gera o grafo                                                              |
 
 ## Comandos
