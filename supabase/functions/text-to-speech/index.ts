@@ -83,6 +83,7 @@ serve(async (req) => {
       clearTimeout(timeout);
     }
   } catch (error: unknown) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
+    console.error('text-to-speech error:', error);
+    return errorResponse(req, 'Internal server error', 500);
   }
 });

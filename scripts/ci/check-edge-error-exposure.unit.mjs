@@ -25,6 +25,41 @@ test(".message num 5xx é achado (o caso do alerta #13)", () => {
   assert.equal(achados[0].linha, 1);
 });
 
+test("R2-INF-018: errorResponse(req, err.message, 500) na ordem real do helper deste repo é achado", () => {
+  const achados = acharExposicoes("return errorResponse(req, err.message, 500);");
+  assert.equal(achados.length, 1);
+  assert.equal(achados[0].padrao, ".message em resposta 5xx");
+  assert.equal(achados[0].linha, 1);
+});
+
+test("errorResponse(req, err.message, 500) multi-linha e com details também é achado", () => {
+  const fonte = [
+    "return errorResponse(",
+    "  req,",
+    "  err.message,",
+    "  500,",
+    "  { extra: true },",
+    ");",
+  ].join("\n");
+  const achados = acharExposicoes(fonte);
+  assert.equal(achados.length, 1);
+  assert.equal(achados[0].padrao, ".message em resposta 5xx");
+});
+
+test("errorResponse(req, 'mensagem fixa', 500, { details: err.message }) vaza pelo details e é achado", () => {
+  const achados = acharExposicoes("return errorResponse(req, 'Failed to load rules', 500, { details: err.message });");
+  assert.equal(achados.length, 1);
+  assert.equal(achados[0].padrao, ".message em resposta 5xx");
+});
+
+test("errorResponse(req, mensagem genérica, 4xx) sem .message não é achado", () => {
+  assert.deepEqual(acharExposicoes("return errorResponse(req, 'Unauthorized', 401);"), []);
+});
+
+test("errorResponse(req, mensagem genérica, 500) sem .message não é achado (falso positivo)", () => {
+  assert.deepEqual(acharExposicoes("return errorResponse(req, 'Internal server error', 500);"), []);
+});
+
 test(".stack na resposta HTTP é achado em qualquer status", () => {
   const achados = acharExposicoes("return errorResponse(String(e.stack), 400, req);");
   assert.equal(achados.length, 1);

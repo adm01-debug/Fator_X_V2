@@ -51,7 +51,7 @@ for (const f of edges) {
   const e2e = rgFiles(q, ['e2e']);
   const ci = rgFiles(q, ['.github/workflows', 'supabase/config.toml']);
   inventario[f] = {
-    linhas: code.split('\n').length,
+    linhas: code.replace(/\n$/, '').split('\n').length,
     segredos_lidos: envs,
     chamada_em: { src: src.length, migrations: migrations.length, outras_edges: outrasEdges.length, e2e: e2e.length, ci_config: ci.length },
     sem_chamador: src.length + migrations.length + outrasEdges.length === 0,

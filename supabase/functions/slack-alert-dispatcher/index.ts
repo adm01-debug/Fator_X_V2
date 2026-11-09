@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
 
   if (routesErr) {
     console.error('[slack-alert-dispatcher] routes query failed', routesErr);
-    return errorResponse(req, 'Failed to load routes', 500, { details: routesErr.message });
+    return errorResponse(req, 'Failed to load routes', 500);
   }
 
   if (!routes || routes.length === 0) {

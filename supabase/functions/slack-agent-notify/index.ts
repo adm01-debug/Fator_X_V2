@@ -88,7 +88,8 @@ Deno.serve(async (req) => {
     .eq('enabled', true);
 
   if (rulesErr) {
-    return errorResponse(req, 'Failed to load rules', 500, { details: rulesErr.message });
+    console.error('slack-agent-notify rules query failed', rulesErr);
+    return errorResponse(req, 'Failed to load rules', 500);
   }
 
   if (!rules || rules.length === 0) {

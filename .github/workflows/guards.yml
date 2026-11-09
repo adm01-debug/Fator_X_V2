@@ -104,6 +104,8 @@ jobs:
         run: node scripts/ci/check-bundle-secrets.mjs
       - name: Workflow de E2E não publica report junto das credenciais
         run: node scripts/ci/check-e2e-artifact-secrets.mjs
+      - name: Nenhuma edge function vaza detalhe interno em resposta 5xx
+        run: node scripts/ci/check-edge-error-exposure.mjs
 
   artefatos-gerados:
     name: Artefatos gerados em dia (matriz e manifesto de edges)
@@ -126,8 +128,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     # Dívida que já existia na main antes destes guards. NÃO bloqueia: serve para o número
-    # ser visível e cair. Medido em 2026-11-08: 31 exposições de erro interno em edges,
-    # 10 leituras de VITE_SUPABASE_* em src/, 8 secrets privilegiados em workflow de PR.
+    # ser visível e cair. Medido em 2026-11-09: 52 leituras de VITE_SUPABASE_* em src/, 8
+    # secrets privilegiados em workflow de PR. A exposição de erro interno em edges saiu
+    # daqui: o check-edge-error-exposure virou bloqueante no job `segredos` (zerou em
+    # 09/11, depois de corrigir o próprio guard — ele não detectava
+    # errorResponse(req, msg, 5xx), a ordem real do helper deste repo).
     continue-on-error: true
     steps:
       - uses: actions/checkout@v7
@@ -136,10 +141,6 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '20'
-      - name: Exposição de detalhe interno em resposta de edge function
-        id: edges
-        continue-on-error: true
-        run: node scripts/ci/check-edge-error-exposure.mjs | tee relatorio-edges.txt
       - name: src/ lendo VITE_SUPABASE_URL/PUBLISHABLE_KEY direto do import.meta.env
         id: env
         continue-on-error: true
@@ -153,7 +154,7 @@ jobs:
         run: |
           {
             echo '### Achados herdados (não bloqueia)'
-            for f in relatorio-edges.txt relatorio-env.txt relatorio-secrets.txt; do
+            for f in relatorio-env.txt relatorio-secrets.txt; do
               [ -f "$f" ] || continue
               echo "<details><summary>$f</summary>"
               echo

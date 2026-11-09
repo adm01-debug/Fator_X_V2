@@ -269,6 +269,7 @@ serve(async (req) => {
       400,
     );
   } catch (error: unknown) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
+    console.error('memory-tools error:', error);
+    return errorResponse(req, 'Internal server error', 500);
   }
 });

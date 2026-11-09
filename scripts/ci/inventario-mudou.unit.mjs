@@ -31,14 +31,14 @@ test('arquivo novo ou apagado conta como mudanca', () => {
   assert.equal(mudou(['f'], ler({}), ler({})), false);
 });
 
-test('telemetria viva do cron/WhatsApp mudando sozinha nao abre PR (achado da revisao de hoje)', () => {
+test('telemetria viva do cron/canal de mensageria mudando sozinha nao abre PR (achado da revisao de hoje)', () => {
   const base = (taxa, execucoes24h) => JSON.stringify({
     cron: {
       jobs: [{ nome: 'x', agenda: '* * * * *', taxa_falha_7d_pct: taxa, execucoes_24h: execucoes24h, ultima_falha: '2026-11-01T00:00Z' }],
       horas_paradas_7d: [{ hora: '2026-10-31T04:00Z', execucoes: 1, falhas: 1 }],
       historico: { linhas: 100, bytes: 1, mais_antigo: '2026-10-01T00:00Z', mais_de_7_dias: 0 },
     },
-    whatsapp: { mensagens_7d: 4, conexoes: [{ instance_id: 'P', ultimo_health_check: '2026-11-01T00:00Z', atualizada_em: '2026-11-01T00:00Z' }] },
+    canal_mensageria: { mensagens_7d: 4, conexoes: [{ instance_id: 'P', ultimo_health_check: '2026-11-01T00:00Z', atualizada_em: '2026-11-01T00:00Z' }] },
   });
   const antes = { 'b.json': base(9.0, 1413) };
   const depois = { 'b.json': base(9.3, 1500) };
@@ -73,7 +73,7 @@ test('telemetria tambem some do TEXTO dos alertas cron_falhando/cron_parado (ach
     alertas: [
       { tipo: 'cron_falhando', detalhe: [`job-x (${pct}% em 7d)`, 'job-y (20% em 7d)'] },
       { tipo: 'cron_parado', detalhe: horas },
-      { tipo: 'whatsapp_desconectado', detalhe: ['PRINCIPAL: disconnected'] },
+      { tipo: 'canal_desconectado', detalhe: ['PRINCIPAL: disconnected'] },
     ],
   });
   assert.equal(

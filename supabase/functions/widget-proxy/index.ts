@@ -83,7 +83,8 @@ serve(async (req) => {
         session_id: session_id || crypto.randomUUID(),
       });
     } catch (error) {
-      return errorResponse(req, error instanceof Error ? error.message : 'Chat failed', 500);
+      console.error('widget-proxy error:', error);
+      return errorResponse(req, 'Chat failed', 500);
     }
   }
 

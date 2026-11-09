@@ -29,7 +29,14 @@ export const CAMINHOS_SENSIVEIS = ['playwright-report', 'test-results', 'e2e/.au
 /** Variaveis cujo uso ativo marca o workflow como "com credencial". */
 export const VARIAVEIS_CREDENCIAL = ['E2E_TEST_EMAIL', 'E2E_TEST_PASSWORD'];
 
-/** Script que redige o report; a excecao exige a invocacao dele antes do upload. */
+/**
+ * Script que redige o report; a excecao exige a invocacao dele antes do upload.
+ * AINDA NAO EXISTE neste repo (nao foi portado do Zapp Web V2, que e onde esta guarda
+ * nasceu) -- hoje nenhum workflow usa E2E_TEST_EMAIL/E2E_TEST_PASSWORD, entao a excecao
+ * nunca e exercitada; se um workflow passar a usar essas credenciais e publicar o
+ * report, redigeAntesDoUpload() sempre devolve false (sem redator, nao ha como a
+ * excecao abrir) e a violacao abaixo aparece.
+ */
 export const REDATOR = 'scripts/ci/redigir-relatorio.mjs';
 
 /** Remove comentarios de linha para nao confundir citacao em prosa com uso real. */
@@ -129,7 +136,8 @@ export function avaliarWorkflow(nome, fonte) {
         'antes. O report do Playwright embute o error-context com o valor do campo de ' +
         'senha. Ou tire as credenciais deste workflow, ou nao publique o report, ou ' +
         `redija-o antes com ${REDATOR} --segredo-env=E2E_TEST_EMAIL ` +
-        "--segredo-env=E2E_TEST_PASSWORD e condicione o upload ao sucesso dela.",
+        '--segredo-env=E2E_TEST_PASSWORD e condicione o upload ao sucesso dela ' +
+        `(${REDATOR} ainda nao existe neste repo -- porte-o do Zapp Web V2 ou escreva um redator equivalente).`,
     );
   }
   return violations;

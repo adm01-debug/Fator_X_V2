@@ -49,7 +49,13 @@ const PADROES = [
 // `message` de um `catch`. Qualquer outro corpo (objeto literal, template, ou
 // chamada a função fora dessa lista) com `.message`/`.stack` num 5xx é achado.
 // `errorResponse(msg, 5xx)` já é coberto pelos PADROES acima.
-const RESPOSTAS_MANUAIS = /\bnew\s+Response\s*\(|\bjsonResponse\s*\(/gu;
+// R2-INF-018 (porte para o Fator X): a assinatura real deste repo é
+// `errorResponse(req, message, status, details?)` (_shared/cors.ts) — req primeiro, não
+// `errorResponse(message, status, req)` como no repo de origem do PADROES acima. Chamada na
+// ordem certa deste repo (`errorResponse(req, err.message, 500)`) não batia em nenhum `PADRAO`
+// e ficava invisível — por isso `errorResponse` também entra na leitura de bloco balanceado
+// abaixo, com checagem de `.message`/`.stack` e `5xx` que não depende de posição de argumento.
+const RESPOSTAS_MANUAIS = /\bnew\s+Response\s*\(|\bjsonResponse\s*\(|\berrorResponse\s*\(/gu;
 
 // Construtores de envelope documentados aceitos como corpo do `jsonResponse`
 // (lista fechada, por nome de função — envelope novo precisa entrar aqui).
@@ -204,14 +210,20 @@ function exposicoesEmRespostasManuais(limpo) {
     const corpo = args[0] ?? "";
     // `jsonResponse(corpo, status, req)`: o status é o segundo argumento e o corpo
     // vindo de construtor de envelope documentado é a única exceção. No
-    // `new Response` o status está no inicializador (`{ status: 5xx }`).
+    // `new Response` o status está no inicializador (`{ status: 5xx }`). No
+    // `errorResponse(req, message, status, details?)` deste repo não há "o corpo":
+    // `.message`/`.stack` e o `5xx` podem estar em qualquer argumento — por isso a
+    // checagem de `errorResponse` varre todos os argumentos, sem assumir posição.
     const ehJsonResponse = chamada[0].startsWith("jsonResponse");
+    const ehErrorResponse = chamada[0].startsWith("errorResponse");
     if (ehJsonResponse && ENVELOPES_DOCUMENTADOS.test(corpo)) continue;
     const cincoXX = ehJsonResponse
       ? /^\s*5\d\d\b/u.test(args[1] ?? "")
-      : /status\s*:\s*5\d\d\b/u.test(args.slice(1).join(","));
-    const vazaStack = /\.stack\b/u.test(corpo);
-    const vazaMensagem = /\.message\b/u.test(corpo);
+      : ehErrorResponse
+        ? args.some((a) => /\b5\d\d\b/u.test(a))
+        : /status\s*:\s*5\d\d\b/u.test(args.slice(1).join(","));
+    const vazaStack = ehErrorResponse ? args.some((a) => /\.stack\b/u.test(a)) : /\.stack\b/u.test(corpo);
+    const vazaMensagem = ehErrorResponse ? args.some((a) => /\.message\b/u.test(a)) : /\.message\b/u.test(corpo);
     const padrao = vazaStack
       ? ".stack na resposta HTTP"
       : cincoXX && vazaMensagem
@@ -283,7 +295,8 @@ export function main(raiz = RAIZ_PADRAO, argv = process.argv.slice(2)) {
   }
   console.error(`FALHA: ${achados.length} exposicao(oes) de detalhe interno na resposta HTTP:`);
   for (const a of achados) console.error(`  ${a.arquivo}:${a.linha} [${a.padrao}] ${a.trecho}`);
-  console.error("Use internalErrorResponse(err, req) de _shared/validation.ts nos catch de 5xx.");
+  console.error("Em catch de 5xx, passe uma mensagem genérica (ex.: 'Internal server error') para");
+  console.error("errorResponse/jsonResponse/new Response e registre o detalhe real com console.error.");
   return 1;
 }
 

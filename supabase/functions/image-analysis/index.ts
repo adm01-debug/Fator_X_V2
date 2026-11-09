@@ -95,6 +95,7 @@ serve(async (req) => {
     return jsonResponse(req, { action, result, model_used: action });
 
   } catch (error: unknown) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
+    console.error('image-analysis error:', error);
+    return errorResponse(req, 'Internal server error', 500);
   }
 });

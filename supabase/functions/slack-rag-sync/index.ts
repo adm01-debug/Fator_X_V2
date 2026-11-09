@@ -104,7 +104,10 @@ Deno.serve(async (req) => {
   else if (body.workspace_id) query.eq('workspace_id', body.workspace_id);
 
   const { data: sources, error: srcErr } = await query;
-  if (srcErr) return errorResponse(req, 'Failed to load sources', 500, { details: srcErr.message });
+  if (srcErr) {
+    console.error('slack-rag-sync sources query failed', srcErr);
+    return errorResponse(req, 'Failed to load sources', 500);
+  }
   if (!sources || sources.length === 0) {
     return jsonResponse(req, { skipped: true, reason: 'no_sources' });
   }
