@@ -211,13 +211,15 @@
         "scripts/generate-openapi.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/generate-openapi.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-b39878160228b4f6",
@@ -286,13 +288,15 @@
         "scripts/template-link-coverage.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/template-link-coverage.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     }
   ],
   "ci": [

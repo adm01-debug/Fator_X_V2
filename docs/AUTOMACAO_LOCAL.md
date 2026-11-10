@@ -40,7 +40,7 @@ As suites usam fixtures descartáveis e não executam os scripts operacionais do
 
 ## Registro exato dos demais scripts
 
-Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores; não são incluídos automaticamente no novo pipeline. Referência literal indica onde o arquivo é citado, sem garantir que esse caminho rode nem autorização para executar operações contra serviços. Sem referência, o arquivo é mantido manual porque função, parâmetros e ambiente precisam de revisão antes de ativar qualquer gatilho. Scripts novos não cobertos por registro fazem `doctor --static` falhar; não existe registro genérico `scripts/**` para ocultá-los.
+Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores; não são incluídos automaticamente no novo pipeline. Para arquivos TypeScript de apoio sem runner comprovado, o comando listado só valida o inventário; os chamadores originais continuam sendo a referência de execução. Referência literal indica onde o arquivo é citado, sem garantir que esse caminho rode nem autorização para executar operações contra serviços. Sem referência, o arquivo é mantido manual porque função, parâmetros e ambiente precisam de revisão antes de ativar qualquer gatilho. Scripts novos não cobertos por registro fazem `doctor --static` falhar; não existe registro genérico `scripts/**` para ocultá-los.
 
 | Arquivo exato | Invocação manual de inventário | Chamadores literais / justificativa |
 |---|---|---|
@@ -49,12 +49,12 @@ Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores;
 | `scripts/db-drift-check.mjs` | `node scripts/db-drift-check.mjs` | .github/workflows/ci.yml |
 | `scripts/deploy-edge-functions.sh` | `sh scripts/deploy-edge-functions.sh` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/generate-audit-pdf.mjs` | `node scripts/generate-audit-pdf.mjs` | package.json:scripts |
-| `scripts/generate-openapi.ts` | `bun scripts/generate-openapi.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/generate-openapi.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/generate-types.sh` | `sh scripts/generate-types.sh` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/graphify/setup.sh` | `sh scripts/graphify/setup.sh` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/openclaw-remediation.sh` | `sh scripts/openclaw-remediation.sh` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/set-secrets.sh` | `sh scripts/set-secrets.sh` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/template-link-coverage.ts` | `bun scripts/template-link-coverage.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/template-link-coverage.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 
 ## Hooks e workflows anteriores
 
