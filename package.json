@@ -81,7 +81,7 @@
     "@tiptap/extension-task-item": "^2.10.0",
     "@tiptap/extension-task-list": "^2.10.0",
     "@tiptap/react": "^2.10.0",
-    "@tiptap/starter-kit": "^3.29.2",
+    "@tiptap/starter-kit": "2.27.3",
     "@types/dagre": "^0.7.54",
     "@types/diff": "^8.0.0",
     "class-variance-authority": "^0.7.1",
