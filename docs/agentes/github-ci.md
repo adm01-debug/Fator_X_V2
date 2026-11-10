@@ -61,7 +61,7 @@ Jobs do `ci.yml`, na ordem de dependência:
    `react-router` tem advisories HIGH sobrepostos sem versão que limpe os dois (comentário no próprio YAML).
 2. `DB Drift Check` — `node scripts/db-drift-check.mjs`; **opt-in** pela secret `DB_MCP_URL` (sem ela:
    warning + exit 0).
-3. `Lint & Typecheck` — `npx tsc --noEmit` + `npx eslint src/ --max-warnings 0 --format=json` (o formatter
+3. `Lint & Typecheck` — `npm run typecheck` (app e configuracao Node explicitamente) + `npx eslint src/ --max-warnings 0 --format=json` (o formatter
    `stylish` do ESLint 9.32 quebra; `json` é o estável) + gate de zero regressão em
    `@typescript-eslint/no-explicit-any` e `nexus-design/no-hardcoded-colors|no-adhoc-typography|no-adhoc-shadows`.
 4. `Unit Tests` — suíte inteira com cobertura e **orçamento de 300s** (passar de 300s falha o job).
