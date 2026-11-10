@@ -112,7 +112,7 @@ divergiu da realidade → corrija no mesmo PR do fix. Responda sempre em PT-BR.
   `node scripts/check-agents-md-integrity.mjs`; `node scripts/db-drift-check.mjs`.
 - Antes de qualquer tarefa: `ESTADO-ATUAL.md` (§1 veredito, §4 riscos, §13 mapa dos detalhes) e
   `docs/auditoria-estado-2026-08/` — é lá que está o que de fato está ligado e o que só finge estar.
-- Automação em `scripts/` (`.mjs`/`.sh`, sem subpasta exceto `scripts/graphify/`); nunca em `supabase/` nem `src/`.
+- Automação em `scripts/` (`.mjs`/`.sh`, sem subpasta exceto `scripts/graphify/` e o kit comum `scripts/maintenance/`); nunca em `supabase/` nem `src/`.
 
 ## Grafo de código (graphify)
 
