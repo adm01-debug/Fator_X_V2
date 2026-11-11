@@ -1,7 +1,7 @@
 /**
  * Nexus Agents Studio — External Supabase Client
  *
- * This client connects to the EXTERNAL Supabase database (tdprnylgyrogbbhgdoik)
+ * This client connects to the EXTERNAL Supabase database (qdlnzopxrlsoljcrcmzv)
  * where all application data lives.
  *
  * The original `supabase` client (client.ts) is used ONLY for authentication.

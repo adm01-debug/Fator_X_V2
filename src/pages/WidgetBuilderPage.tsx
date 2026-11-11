@@ -38,7 +38,7 @@ export default function WidgetBuilderPage() {
   const [buttonEmoji, setButtonEmoji] = useState('💬');
 
   const selectedAgent = useMemo(() => agents.find((a) => a.id === agentId), [agents, agentId]);
-  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'fqdohnmgmtaycfwsioik';
+  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'qdlnzopxrlsoljcrcmzv';
   const widgetUrl = `https://${projectId}.supabase.co/functions/v1/widget-proxy/widget/${agentId || 'AGENT_ID'}.js`;
 
   const embedCode = useMemo(
