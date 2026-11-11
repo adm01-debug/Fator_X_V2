@@ -41,18 +41,18 @@ código, vale o código.
 
 ## Automações (`scripts/`)
 
-| Script                                                            | Para quê                                                                                       |
-| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `db-drift-check.mjs`                                              | guard repo × banco (migrations, RLS 100%, zero escrita `anon`); precisa de `DB_MCP_URL`        |
-| `check-agents-md-integrity.mjs`                                   | garante que `AGENTS.md` + `docs/agentes/` não foram esvaziados                                 |
-| `check-bundle-size.mjs`                                           | orçamento de bundle (`bundle-budget.json`)                                                     |
-| `generate-audit-pdf.mjs`                                          | PDF da auditoria (roda no job `Build`)                                                         |
-| `generate-openapi.ts`                                             | `docs/api/openapi.yaml`                                                                        |
-| `deploy-edge-functions.sh`, `set-secrets.sh`, `generate-types.sh` | Supabase CLI — ⚠️ `PROJECT_ID` hoje aponta para `tdprnylgyrogbbhgdoik`, confira antes de rodar |
-| `openclaw-remediation.sh`                                         | remediação do gateway OpenClaw                                                                 |
-| `db-explain-top-queries.sql`, `perf-regression.sql`               | diagnóstico de performance                                                                     |
-| `template-link-coverage.ts`                                       | harness determinístico de cobertura Template↔Skill (G1-G6); roda via `bun`                     |
-| `graphify/setup.sh`                                               | instala o graphify e gera o grafo                                                              |
+| Script                                                            | Para quê                                                                                |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `db-drift-check.mjs`                                              | guard repo × banco (migrations, RLS 100%, zero escrita `anon`); precisa de `DB_MCP_URL` |
+| `check-agents-md-integrity.mjs`                                   | garante que `AGENTS.md` + `docs/agentes/` não foram esvaziados                          |
+| `check-bundle-size.mjs`                                           | orçamento de bundle (`bundle-budget.json`)                                              |
+| `generate-audit-pdf.mjs`                                          | PDF da auditoria (roda no job `Build`)                                                  |
+| `generate-openapi.ts`                                             | `docs/api/openapi.yaml`                                                                 |
+| `deploy-edge-functions.sh`, `set-secrets.sh`, `generate-types.sh` | Supabase CLI — `PROJECT_ID` = `qdlnzopxrlsoljcrcmzv`                                    |
+| `openclaw-remediation.sh`                                         | remediação do gateway OpenClaw                                                          |
+| `db-explain-top-queries.sql`, `perf-regression.sql`               | diagnóstico de performance                                                              |
+| `template-link-coverage.ts`                                       | harness determinístico de cobertura Template↔Skill (G1-G6); roda via `bun`              |
+| `graphify/setup.sh`                                               | instala o graphify e gera o grafo                                                       |
 
 ## Comandos
 

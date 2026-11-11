@@ -5,7 +5,7 @@
 # ═══════════════════════════════════════════════════════════
 set -euo pipefail
 
-PROJECT_ID="tdprnylgyrogbbhgdoik"
+PROJECT_ID="qdlnzopxrlsoljcrcmzv"
 TYPES_FILE="src/integrations/supabase/types.ts"
 
 echo "📝 Generating TypeScript types for project $PROJECT_ID..."

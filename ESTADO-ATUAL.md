@@ -166,7 +166,7 @@ Outras 16 functions usam `SERVICE_ROLE_KEY` sem checagem de identidade própria,
 | ID                     | Onde                                | Papel                           |
 | ---------------------- | ----------------------------------- | ------------------------------- |
 | `qdlnzopxrlsoljcrcmzv` | `config.toml:1`, `.env.example`     | **o real**                      |
-| `tdprnylgyrogbbhgdoik` | `externalClient.ts:4`               | "banco externo" abandonado      |
+| `tdprnylgyrogbbhgdoik` | removido do código (PR #80)         | "banco externo" abandonado      |
 | `tifbqkyumdxzmxyyoqlu` | `MIGRATION-COLAR-NO-SUPABASE.sql:4` | alvo de um SQL para colar à mão |
 | `fqdohnmgmtaycfwsioik` | 3 migrations de trigger             | destino de alertas e WhatsApp   |
 

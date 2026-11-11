@@ -58,10 +58,8 @@ URLs sem sessão Vercel dá tela de login — não confunda isso com app quebrad
 - Caminhos reais: `bash scripts/deploy-edge-functions.sh` (precisa de `SUPABASE_ACCESS_TOKEN`) ou o painel
   Supabase/Lovable Cloud. O RUNBOOK afirma "deployadas automaticamente ao salvar" — isso vale para a edição
   **dentro do Lovable**, não para merge no GitHub.
-- ⚠️ `scripts/deploy-edge-functions.sh:8`, `scripts/set-secrets.sh:8` e `scripts/generate-types.sh:8` fazem
-  `supabase link` em `tdprnylgyrogbbhgdoik`, que **não é** o projeto oficial (`qdlnzopxrlsoljcrcmzv`). Rodar
-  como está publica código e **grava segredos** no projeto errado. Corrija o `PROJECT_ID` (ou passe por
-  variável) antes de usar.
+- `scripts/deploy-edge-functions.sh:8`, `scripts/set-secrets.sh:8` e `scripts/generate-types.sh:8` fazem
+  `supabase link` no projeto oficial `qdlnzopxrlsoljcrcmzv` (corrigido na PR #80).
 - `verify_jwt = false` por função fica em `supabase/config.toml`. Mexer nisso é mudança de segurança: PR
   aberta e chamar o dono.
 - Logs: Lovable Cloud → Edge Function Logs, ou painel Supabase do projeto oficial.

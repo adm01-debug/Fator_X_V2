@@ -5,7 +5,7 @@
 # ═══════════════════════════════════════════════════════════
 set -euo pipefail
 
-PROJECT_ID="tdprnylgyrogbbhgdoik"
+PROJECT_ID="qdlnzopxrlsoljcrcmzv"
 
 echo "🔗 Linking project $PROJECT_ID..."
 npx supabase link --project-ref "$PROJECT_ID"

@@ -12,8 +12,8 @@
 import { logger } from '@/lib/logger';
 import { supabase } from '@/integrations/supabase/client';
 
-const PROJECT_REF = 'tdprnylgyrogbbhgdoik';
-const FUNCTIONS_BASE = `https://${PROJECT_REF}.functions.supabaseExternal.co/widget-proxy`;
+const PROJECT_REF = 'qdlnzopxrlsoljcrcmzv';
+const FUNCTIONS_BASE = `https://${PROJECT_REF}.supabase.co/functions/v1/widget-proxy`;
 
 export interface WidgetEmbedSnippet {
   scriptUrl: string;

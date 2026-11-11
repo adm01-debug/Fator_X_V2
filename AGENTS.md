@@ -83,9 +83,8 @@ divergiu da realidade → corrija no mesmo PR do fix. Responda sempre em PT-BR.
   Sem MCP do projeto, diga que não consegue ler o banco em vez de inferir.
 - Dois clients no front (ADR 006): `src/integrations/supabase/client.ts` só auth; `externalClient.ts` todos os
   `from()`/RPC, com URL de `VITE_EXTERNAL_SUPABASE_*` e fallback para `VITE_SUPABASE_*`.
-- IDs de outros projetos ainda no código — confira antes de rodar script de deploy/secrets/types:
-  `tdprnylgyrogbbhgdoik` (`src/config/env.ts:28`, `scripts/deploy-edge-functions.sh:8`, `set-secrets.sh:8`,
-  `generate-types.sh:8`) e `fqdohnmgmtaycfwsioik` (3 migrations de trigger, `src/pages/WidgetBuilderPage.tsx:41`).
+- Código, scripts e fallbacks apontam só para `qdlnzopxrlsoljcrcmzv` (PR #80). Resta `fqdohnmgmtaycfwsioik` em 3
+  migrations de trigger já aplicadas (histórico; banco sem referência ativa) — não reaplique em ambiente novo sem corrigir.
 - Diagnóstico = produção **só leitura**; teste de comportamento = Postgres descartável. Migration registrada
   ≠ aplicada (drift real, `ESTADO-ATUAL.md` §3); `node scripts/db-drift-check.mjs` é o guard (precisa de
   `DB_MCP_URL`). DDL só pelo fluxo de `banco.md`. Destrutivo, segredos e rotação: só com o dono.

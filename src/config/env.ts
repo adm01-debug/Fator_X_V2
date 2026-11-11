@@ -25,7 +25,7 @@ function validateEnv(): EnvConfig {
     return {
       SUPABASE_URL: getEnvVar('VITE_SUPABASE_URL'),
       SUPABASE_ANON_KEY: getEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY'),
-      SUPABASE_PROJECT_ID: getEnvVar('VITE_SUPABASE_PROJECT_ID', 'tdprnylgyrogbbhgdoik'),
+      SUPABASE_PROJECT_ID: getEnvVar('VITE_SUPABASE_PROJECT_ID', 'qdlnzopxrlsoljcrcmzv'),
     };
   } catch (error) {
     if (import.meta.env.DEV) {

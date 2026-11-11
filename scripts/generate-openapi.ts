@@ -15,7 +15,7 @@ info:
   description: API documentation for the 66 Edge Functions of the Nexus platform.
   version: 1.0.0
 servers:
-  - url: https://0ef3e2b6-577d-454f-881a-388fe5cf1ec6.functions.supabase.co
+  - url: https://qdlnzopxrlsoljcrcmzv.supabase.co/functions/v1
     description: Production Edge Functions
 paths:
 `;
