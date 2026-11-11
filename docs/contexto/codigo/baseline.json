@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "531aa687fe1581e76b662ad5c7b8bc5720636f40",
+  "commit": "e8510396088801323b03fe7ff86f79f044d06b7c",
   "branch": "main",
-  "data_commit": "2026-11-11T15:23:33-03:00",
+  "data_commit": "2026-11-11T19:24:19-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "e8510396",
+    "data": "2026-11-11",
+    "assunto": "fix(contexto): autentica o fetch da branch contexto em repo privado (#75)"
+   },
    {
     "sha": "531aa687",
     "data": "2026-11-11",
@@ -126,11 +131,6 @@
     "sha": "eecc9de3",
     "data": "2026-08-31",
     "assunto": "chore(deps)(deps): bump @sentry/react"
-   },
-   {
-    "sha": "e790ea07",
-    "data": "2026-08-28",
-    "assunto": "Visual edit in Lovable"
    }
   ],
   "arquivos_mudados_7d": 166,
@@ -149,6 +149,10 @@
    },
    {
     "pasta": ".agents/skills/fator-x-v2",
+    "mudancas": 2
+   },
+   {
+    "pasta": ".github/workflows/contexto.yml",
     "mudancas": 2
    },
    {
@@ -190,10 +194,6 @@
    {
     "pasta": ".codex/AGENTS.md",
     "mudancas": 1
-   },
-   {
-    "pasta": ".codex/agents/docs-researcher.toml",
-    "mudancas": 1
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -216,6 +216,10 @@
    {
     "arquivo": "CHANGELOG.md",
     "mudancas": 3
+   },
+   {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 2
    },
    {
     "arquivo": "ESTADO-ATUAL.md",
@@ -292,16 +296,12 @@
    {
     "arquivo": "supabase/functions/eval-judge/index.ts",
     "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/global-search/index.ts",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 6
+    "commits": 7
    },
    {
     "autor": "dependabot[bot]",

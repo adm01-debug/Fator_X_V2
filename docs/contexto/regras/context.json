@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "531aa687fe1581e76b662ad5c7b8bc5720636f40",
+  "sha": "e8510396088801323b03fe7ff86f79f044d06b7c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-11 18:26 UTC",
+  "generated_at": "2026-11-11 22:37 UTC",
   "files_total": 1972,
   "code_files": 1778,
   "code_lines": 344983
@@ -188702,10 +188702,19 @@
   }
  },
  "git": {
-  "sha": "531aa687fe1581e76b662ad5c7b8bc5720636f40",
+  "sha": "e8510396088801323b03fe7ff86f79f044d06b7c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "e851039",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix(contexto): autentica o fetch da branch contexto em repo privado (#75)",
+    "files": [
+     ".github/workflows/contexto.yml"
+    ]
+   },
    {
     "sha": "531aa68",
     "date": "2026-11-11",
@@ -189595,26 +189604,16 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "5a35bf1",
-    "date": "2026-08-17",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @testing-library/user-event",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    16
+    15
    ],
    [
     "package-lock.json",
-    15
+    14
    ],
    [
     ".github/workflows/ci.yml",
@@ -189631,6 +189630,10 @@
    [
     "CHANGELOG.md",
     3
+   ],
+   [
+    ".github/workflows/contexto.yml",
+    2
    ],
    [
     "scripts/automation.config.json",
@@ -189682,10 +189685,6 @@
    ],
    [
     "supabase/functions/eval-judge/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/global-search/index.ts",
     2
    ]
   ]

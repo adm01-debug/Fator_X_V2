@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(contexto): autentica o fetch da branch contexto em repo privado (#75)",
    "feat(automacao): porta os scripts autônomos de estado real do Zapp Web V2 (#71)",
    "ci(agentes): liga o guard de integridade do AGENTS.md no CI (#70)",
    "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#73)",
-   "fix(tipos): alinha TipTap e corrige auditoria do login (#74)",
-   "chore(deps)(deps): bump @supabase/supabase-js (#62)"
+   "fix(tipos): alinha TipTap e corrige auditoria do login (#74)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

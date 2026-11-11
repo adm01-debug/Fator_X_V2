@@ -1,7 +1,7 @@
 # Graph Report - Fator_X_V2  (2026-11-11)
 
 ## Corpus Check
-- 1911 files · ~1,330,714 words
+- 1911 files · ~1,330,722 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 26 file(s) not represented in the graph (top: (none) 10, .toml 5, .css 3)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `531aa687`
+- Built from commit: `e8510396`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
