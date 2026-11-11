@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "name": "Fator_X_V2",
+  "entrypoint": "scripts/automation.mjs",
+  "testSuites": [
+    "scripts/automation.unit.mjs",
+    "scripts/maintenance/maintenance.unit.mjs",
+    "scripts/graphify-local.unit.mjs"
+  ],
+  "motor": ["sh", "scripts/maintenance/run.sh"],
+  "motorConfig": "scripts/maintenance/config.json",
+  "motorSource": "scripts/maintenance/run.sh",
+  "graph": ["node", "scripts/graphify-local.mjs"],
+  "graphConfig": "graphify.local.json",
+  "aliases": {
+    "automation:doctor": "node scripts/automation.mjs doctor",
+    "automation:test": "node scripts/automation.mjs test",
+    "automation:check": "node scripts/automation.mjs check --ref HEAD",
+    "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+    "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+    "automation:graph": "node scripts/automation.mjs graph",
+    "automation:status": "node scripts/automation.mjs graph status",
+    "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+    "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks"
+  },
+  "registrations": [
+    {
+      "id": "core",
+      "kind": "tool",
+      "files": ["scripts/automation.mjs"],
+      "manual": ["node", "scripts/automation.mjs", "doctor"],
+      "triggers": ["manual", "precommit", "prepush", "PR", "pushmain", "nightly"]
+    },
+    {
+      "id": "automation-suites",
+      "kind": "test",
+      "files": [
+        "scripts/automation.unit.mjs",
+        "scripts/maintenance/maintenance.unit.mjs",
+        "scripts/graphify-local.unit.mjs"
+      ],
+      "manual": ["node", "scripts/automation.mjs", "test"],
+      "triggers": ["manual", "precommit", "prepush", "PR", "pushmain"]
+    },
+    {
+      "id": "motor-isolado",
+      "kind": "motor",
+      "files": [
+        "scripts/maintenance/run.sh",
+        "scripts/maintenance/run.mjs",
+        "scripts/maintenance/lib.mjs",
+        "scripts/maintenance/typecheck.mjs"
+      ],
+      "manual": ["node", "scripts/automation.mjs", "heal", "--ref", "origin/main"],
+      "triggers": ["manual", "nightly"]
+    },
+    {
+      "id": "graph-local",
+      "kind": "graph",
+      "files": ["scripts/graphify-local.mjs"],
+      "manual": ["node", "scripts/automation.mjs", "graph", "status"],
+      "triggers": ["manual", "precommit", "postcommit", "postmerge", "postcheckout", "nightly"]
+    },
+    {
+      "id": "hook-original-d2bc4bbf14ea",
+      "kind": "legacy",
+      "files": [".husky/pre-commit"],
+      "manual": ["sh", ".husky/pre-commit"],
+      "triggers": ["manual"],
+      "reason": "Hook original preservado; acionado pelo Git conforme hooksPath local. Registro manual limita apenas o dispatcher novo, que encadeia o original pela ponte."
+    },
+    {
+      "id": "legacy-624930cbdbc2bea3",
+      "kind": "legacy",
+      "files": ["scripts/check-agents-md-integrity.mjs"],
+      "manual": ["node", "scripts/check-agents-md-integrity.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-480db4ed32386e5a",
+      "kind": "legacy",
+      "files": ["scripts/check-bundle-size.mjs"],
+      "manual": ["node", "scripts/check-bundle-size.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-aa4007721aedcd66",
+      "kind": "legacy",
+      "files": ["scripts/db-drift-check.mjs"],
+      "manual": ["node", "scripts/db-drift-check.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/ci.yml. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-f3564e65b263d59d",
+      "kind": "legacy",
+      "files": ["scripts/deploy-edge-functions.sh"],
+      "manual": ["sh", "scripts/deploy-edge-functions.sh"],
+      "triggers": ["manual"],
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-72cfcfdea245838e",
+      "kind": "legacy",
+      "files": ["scripts/generate-audit-pdf.mjs"],
+      "manual": ["node", "scripts/generate-audit-pdf.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-2665b8f79214c0e2",
+      "kind": "legacy",
+      "files": ["scripts/generate-openapi.ts"],
+      "manual": ["node", "scripts/automation.mjs", "doctor", "--static"],
+      "triggers": ["manual"],
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
+    },
+    {
+      "id": "legacy-b39878160228b4f6",
+      "kind": "legacy",
+      "files": ["scripts/generate-types.sh"],
+      "manual": ["sh", "scripts/generate-types.sh"],
+      "triggers": ["manual"],
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-166d2b1258cd82b5",
+      "kind": "legacy",
+      "files": ["scripts/graphify/setup.sh"],
+      "manual": ["sh", "scripts/graphify/setup.sh"],
+      "triggers": ["manual"],
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-e19f4f48793743e9",
+      "kind": "legacy",
+      "files": ["scripts/openclaw-remediation.sh"],
+      "manual": ["sh", "scripts/openclaw-remediation.sh"],
+      "triggers": ["manual"],
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-63d6502f2cdc6d0d",
+      "kind": "legacy",
+      "files": ["scripts/set-secrets.sh"],
+      "manual": ["sh", "scripts/set-secrets.sh"],
+      "triggers": ["manual"],
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-5e6049bd86ec9080",
+      "kind": "legacy",
+      "files": ["scripts/template-link-coverage.ts"],
+      "manual": ["node", "scripts/automation.mjs", "doctor", "--static"],
+      "triggers": ["manual"],
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
+    }
+  ],
+  "ci": [
+    {
+      "file": ".github/workflows/automation-local.yml",
+      "events": ["PR", "pushmain"],
+      "command": "node scripts/automation.mjs test"
+    }
+  ],
+  "nightly": {
+    "command": ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"]
+  },
+  "timeoutMs": 900000,
+  "toolingPatterns": [
+    "scripts/**",
+    ".github/**",
+    ".husky/**",
+    "package.json",
+    "*lock*",
+    "graphify.local.json"
+  ],
+  "sourcePatterns": ["src/**", "tests/**", "e2e/**", "api/**", "shared/**", "supabase/functions/**"]
+}

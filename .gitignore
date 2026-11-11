@@ -47,3 +47,7 @@ tsconfig.node.tsbuildinfo
 
 # Grafo de codigo (graphify): gerado por clone, ~100 MB — ver scripts/graphify/setup.sh
 graphify-out/
+
+# Estado local privado dos novos adaptadores de automação
+/.tools/repo-automation/
+/.tools/graphify/local-state/

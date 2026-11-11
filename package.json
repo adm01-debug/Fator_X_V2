@@ -4,7 +4,10 @@
   "version": "1.6.1",
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
+    "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+    "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+    "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
+    "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
@@ -12,6 +15,7 @@
     "check:bundle": "node scripts/check-bundle-size.mjs",
     "docs:pdf": "node scripts/generate-audit-pdf.mjs",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -28,7 +32,16 @@
     "test:e2e:update": "playwright test --update-snapshots",
     "test:load": "k6 run tests/load/llm-gateway.k6.js",
     "test:load:smoke": "k6 run --vus 1 --duration 30s tests/load/llm-gateway.k6.js",
-    "prepare": "husky"
+    "prepare": "husky",
+    "automation:doctor": "node scripts/automation.mjs doctor",
+    "automation:test": "node scripts/automation.mjs test",
+    "automation:check": "node scripts/automation.mjs check --ref HEAD",
+    "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+    "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+    "automation:graph": "node scripts/automation.mjs graph",
+    "automation:status": "node scripts/automation.mjs graph status",
+    "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+    "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
