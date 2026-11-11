@@ -11,7 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Shield, Download, RefreshCw, AlertTriangle, CheckCircle2, Ban } from 'lucide-react';
+import {
+  Loader2,
+  Shield,
+  Download,
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle2,
+  Ban,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import {
   listAuditEntries,
@@ -42,20 +50,28 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 const STATUS_STYLES: Record<AuditStatus, { color: string; icon: typeof CheckCircle2 }> = {
-  success: { color: 'bg-nexus-emerald/20 text-nexus-emerald border-nexus-emerald/30', icon: CheckCircle2 },
-  failed: { color: 'bg-destructive/20 text-destructive border-destructive/30', icon: AlertTriangle },
+  success: {
+    color: 'bg-nexus-emerald/20 text-nexus-emerald border-nexus-emerald/30',
+    icon: CheckCircle2,
+  },
+  failed: {
+    color: 'bg-destructive/20 text-destructive border-destructive/30',
+    icon: AlertTriangle,
+  },
   denied: { color: 'bg-nexus-amber/20 text-nexus-amber border-nexus-amber/30', icon: Ban },
 };
 
 export function AuditTrailPanel() {
   const [actionFilter, setActionFilter] = useState<AuditAction | 'all'>('all');
 
-  const { data: entries = [], isLoading, refetch } = useQuery({
+  const {
+    data: entries = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ['audit-trail', actionFilter],
     queryFn: () =>
-      actionFilter === 'all'
-        ? listAuditEntries(200)
-        : listAuditEntriesByAction(actionFilter, 200),
+      actionFilter === 'all' ? listAuditEntries(200) : listAuditEntriesByAction(actionFilter, 200),
     refetchInterval: 60_000,
   });
 
@@ -80,7 +96,7 @@ export function AuditTrailPanel() {
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const rows = entries.map((e) =>
-      headers.map((h) => escape((e as unknown as Record<string, unknown>)[h])).join(',')
+      headers.map((h) => escape((e as unknown as Record<string, unknown>)[h])).join(','),
     );
     const csv = [headers.join(','), ...rows].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
@@ -112,7 +128,10 @@ export function AuditTrailPanel() {
             </Badge>
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Select value={actionFilter} onValueChange={(v) => setActionFilter(v as AuditAction | 'all')}>
+            <Select
+              value={actionFilter}
+              onValueChange={(v) => setActionFilter(v as AuditAction | 'all')}
+            >
               <SelectTrigger className="bg-background border-border h-8 text-meta w-[180px]">
                 <SelectValue />
               </SelectTrigger>
@@ -132,7 +151,11 @@ export function AuditTrailPanel() {
               className="h-8 border-border"
               disabled={isLoading}
             >
-              {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+              {isLoading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <RefreshCw className="h-3.5 w-3.5" />
+              )}
             </Button>
             <Button
               variant="outline"
@@ -174,7 +197,9 @@ export function AuditTrailPanel() {
           <div className="text-center py-12 text-muted-foreground">
             <Shield className="h-10 w-10 mx-auto mb-3 opacity-30" />
             <p className="text-body-sm">Nenhuma entrada de audit ainda.</p>
-            <p className="text-meta mt-1 opacity-70">Ações sensíveis serão registradas aqui automaticamente.</p>
+            <p className="text-meta mt-1 opacity-70">
+              Ações sensíveis serão registradas aqui automaticamente.
+            </p>
           </div>
         ) : (
           <div className="space-y-1 max-h-[600px] overflow-y-auto pr-1">
@@ -188,18 +213,30 @@ export function AuditTrailPanel() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <StatusIcon className={`h-3.5 w-3.5 shrink-0 ${
-                        e.status === 'success' ? 'text-nexus-emerald' :
-                        e.status === 'failed' ? 'text-destructive' :
-                        'text-nexus-amber'
-                      }`} />
-                      <Badge variant="outline" className="text-meta border-border font-mono shrink-0">
+                      <StatusIcon
+                        className={`h-3.5 w-3.5 shrink-0 ${
+                          e.status === 'success'
+                            ? 'text-nexus-emerald'
+                            : e.status === 'failed'
+                              ? 'text-destructive'
+                              : 'text-nexus-amber'
+                        }`}
+                      />
+                      <Badge
+                        variant="outline"
+                        className="text-meta border-border font-mono shrink-0"
+                      >
                         {ACTION_LABELS[e.action] ?? e.action}
                       </Badge>
                       <span className="text-meta text-foreground/80 truncate">
                         {e.resource_type}
                         {e.resource_name && (
-                          <>: <span className="font-mono text-muted-foreground">{e.resource_name}</span></>
+                          <>
+                            :{' '}
+                            <span className="font-mono text-muted-foreground">
+                              {e.resource_name}
+                            </span>
+                          </>
                         )}
                       </span>
                     </div>
