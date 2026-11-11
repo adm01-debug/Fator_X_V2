@@ -10,6 +10,7 @@ import {
   RATE_LIMITS,
   requireEnv,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 const InputSchema = z.object({
   article_id: z.string().uuid(),
   target_language: z.string().min(2).max(10),
@@ -51,7 +52,7 @@ Deno.serve(async (req) => {
       requireEnv('SUPABASE_URL'),
       requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
     );
-    const lovableKey = requireEnv('LOVABLE_API_KEY');
+    const lovableKey = requireEnv(AI_API_KEY_ENV);
 
     const { data: article } = await supabase
       .from('kb_articles')
@@ -81,11 +82,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const r = await fetchWithTimeout(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${lovableKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: aiModel('google/gemini-2.5-flash'),
         messages: [
           {
             role: 'system',

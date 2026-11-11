@@ -35,6 +35,7 @@ import {
   getRateLimitIdentifier,
   requireEnv,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 
 /**
  * Mesmo teto do `skill-classify-llm` e pela mesma razão: este endpoint existe
@@ -291,14 +292,14 @@ Deno.serve(async (req) => {
       '</skill>',
     ].join('\n');
 
-    const resposta = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resposta = await fetchWithTimeout(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${requireEnv('LOVABLE_API_KEY')}`,
+        Authorization: `Bearer ${requireEnv(AI_API_KEY_ENV)}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: MODEL,
+        model: aiModel(MODEL),
         temperature: 0.2,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },

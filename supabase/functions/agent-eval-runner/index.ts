@@ -12,11 +12,12 @@ import {
   getRateLimitIdentifier,
   RATE_LIMITS,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 validateRequiredEnv([
   'SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
   'SUPABASE_ANON_KEY',
-  'LOVABLE_API_KEY',
+  AI_API_KEY_ENV,
 ]);
 const EvalRunnerBodySchema = z
   .object({
@@ -33,7 +34,7 @@ interface EvalItem {
   criteria?: string[];
 }
 
-const LOVABLE_AI_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
+const LOVABLE_AI_URL = AI_CHAT_COMPLETIONS_URL;
 
 async function callAgent(systemPrompt: string, userInput: string, model: string, apiKey: string) {
   const t0 = Date.now();
@@ -41,7 +42,7 @@ async function callAgent(systemPrompt: string, userInput: string, model: string,
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model,
+      model: aiModel(model),
       messages: [
         ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
         { role: 'user', content: userInput },
@@ -80,7 +81,7 @@ Use score >= 0.7 para passed=true.`;
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-flash-lite',
+      model: aiModel('google/gemini-2.5-flash-lite'),
       messages: [{ role: 'user', content: judgePrompt }],
     }),
   });
@@ -126,7 +127,7 @@ Deno.serve(async (req) => {
   if (!rate.allowed) return createRateLimitResponse(rate, corsHeaders);
 
   try {
-    const apiKey = requireEnv('LOVABLE_API_KEY');
+    const apiKey = requireEnv(AI_API_KEY_ENV);
     const supabaseUrl = requireEnv('SUPABASE_URL');
     const serviceKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
     const anonKey = requireEnv('SUPABASE_ANON_KEY');

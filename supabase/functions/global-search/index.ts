@@ -19,6 +19,7 @@ import {
   requireEnv,
   getCorsHeaders,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 const InputSchema = z.object({
   query: z.string().max(500).default(''),
   limit: z.number().int().min(1).max(20).default(8),
@@ -265,7 +266,7 @@ Deno.serve(async (req) => {
     const topCandidates = candidates.slice(0, Math.min(20, candidates.length));
 
     // STAGE 2 — Semantic re-rank via Lovable AI
-    const LOVABLE_API_KEY = requireEnv('LOVABLE_API_KEY');
+    const LOVABLE_API_KEY = requireEnv(AI_API_KEY_ENV);
     let mode: string = 'lexical';
 
     if (semanticEnabled && LOVABLE_API_KEY && topCandidates.length > 1) {
@@ -274,14 +275,14 @@ Deno.serve(async (req) => {
           .map((c, i) => `${i}|${c.type}|${c.title}|${(c.snippet || '').slice(0, 120)}`)
           .join('\n');
 
-        const llmResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        const llmResp = await fetch(AI_CHAT_COMPLETIONS_URL, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${LOVABLE_API_KEY}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'google/gemini-2.5-flash-lite',
+            model: aiModel('google/gemini-2.5-flash-lite'),
             messages: [
               {
                 role: 'system',

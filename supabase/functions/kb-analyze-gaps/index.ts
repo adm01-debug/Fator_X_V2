@@ -10,6 +10,7 @@ import {
   RATE_LIMITS,
   requireEnv,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 const InputSchema = z.object({
   knowledge_base_id: z.string().uuid(),
 });
@@ -43,7 +44,7 @@ Deno.serve(async (req) => {
       requireEnv('SUPABASE_URL'),
       requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
     );
-    const lovableKey = requireEnv('LOVABLE_API_KEY');
+    const lovableKey = requireEnv(AI_API_KEY_ENV);
 
     // Pegar últimas 100 queries do oracle_history (proxy para queries dos usuários)
     const { data: history } = await supabase
@@ -84,11 +85,11 @@ Deno.serve(async (req) => {
     if (lovableKey && openGaps && openGaps.length > 0) {
       for (const gap of openGaps) {
         try {
-          const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          const r = await fetchWithTimeout(AI_CHAT_COMPLETIONS_URL, {
             method: 'POST',
             headers: { Authorization: `Bearer ${lovableKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              model: 'google/gemini-2.5-flash-lite',
+              model: aiModel('google/gemini-2.5-flash-lite'),
               messages: [
                 {
                   role: 'system',

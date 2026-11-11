@@ -10,6 +10,7 @@ import {
   RATE_LIMITS,
   requireEnv,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 const InputSchema = z.object({
   user_text: z.string().min(1).max(2048),
   session_id: z.string().uuid().optional(),
@@ -78,13 +79,13 @@ Deno.serve(async (req) => {
       }
     }
 
-    const LOVABLE_API_KEY = requireEnv('LOVABLE_API_KEY');
+    const LOVABLE_API_KEY = requireEnv(AI_API_KEY_ENV);
 
-    const aiResp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResp = await fetchWithTimeout(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: aiModel('google/gemini-2.5-flash'),
         messages: [
           { role: 'system', content: agentPersona },
           ...history,

@@ -3,6 +3,7 @@
 import type { LLMCallParams, LLMResult } from "../types.ts";
 import { normalizeOpenAIResponse } from "../utils.ts";
 import { fetchWithTimeout, withRetry } from "../../_shared/retry.ts";
+import { AI_CHAT_COMPLETIONS_URL } from "../../_shared/ai-provider.ts";
 
 export async function callOpenAICompatible(
   params: LLMCallParams,
@@ -12,7 +13,9 @@ export async function callOpenAICompatible(
   const url =
     provider === 'google'
       ? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
-      : 'https://api.openai.com/v1/chat/completions';
+      : provider === 'deepseek'
+        ? AI_CHAT_COMPLETIONS_URL
+        : 'https://api.openai.com/v1/chat/completions';
   const response = await withRetry(() => fetchWithTimeout(url, {
     method: 'POST',
     timeoutMs: 60_000,

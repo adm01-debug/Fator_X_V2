@@ -28,6 +28,7 @@ import {
   requireEnv,
 } from '../_shared/mod.ts';
 import { DEPARTMENT_HINT, isDepartment, SKILL_DEPARTMENTS } from './departments.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 
 /**
  * Teto próprio, mais alto que o preset `llm` (15/min).
@@ -173,14 +174,14 @@ Deno.serve(async (req) => {
       '</skill>',
     ].join('\n');
 
-    const resposta = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resposta = await fetchWithTimeout(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${requireEnv('LOVABLE_API_KEY')}`,
+        Authorization: `Bearer ${requireEnv(AI_API_KEY_ENV)}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-lite',
+        model: aiModel('google/gemini-2.5-flash-lite'),
         temperature: 0,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
