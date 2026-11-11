@@ -11,6 +11,7 @@
   "whatsapp-router"
  ],
  "shared": [
+  "supabase/functions/_shared/ai-provider.ts",
   "supabase/functions/_shared/alternation.test.ts",
   "supabase/functions/_shared/alternation.ts",
   "supabase/functions/_shared/auth.ts",
@@ -86,22 +87,19 @@
    "nome": "agent-conversational-builder",
    "entrada": "supabase/functions/agent-conversational-builder/index.ts",
    "arquivos": 1,
-   "linhas": 145,
+   "linhas": 146,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
    ],
    "tabelas": [],
    "rpcs": [],
-   "env": [
-    "LOVABLE_API_KEY"
-   ],
+   "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "mod.ts"
    ],
    "chamada_pelo_front": [
@@ -116,7 +114,7 @@
    "nome": "agent-eval-runner",
    "entrada": "supabase/functions/agent-eval-runner/index.ts",
    "arquivos": 1,
-   "linhas": 291,
+   "linhas": 293,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -131,10 +129,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "idempotency.ts",
     "mod.ts"
    ],
@@ -150,7 +147,7 @@
    "nome": "agent-workflow-runner",
    "entrada": "supabase/functions/agent-workflow-runner/index.ts",
    "arquivos": 1,
-   "linhas": 262,
+   "linhas": 263,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -164,10 +161,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "chaos.ts",
     "cors.ts",
     "mod.ts",
@@ -502,7 +498,7 @@
    "nome": "code-interpreter-execute",
    "entrada": "supabase/functions/code-interpreter-execute/index.ts",
    "arquivos": 1,
-   "linhas": 416,
+   "linhas": 417,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -512,16 +508,14 @@
    ],
    "rpcs": [],
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "idempotency.ts",
     "mod.ts"
    ],
@@ -677,7 +671,7 @@
    "nome": "crm-enrich",
    "entrada": "supabase/functions/crm-enrich/index.ts",
    "arquivos": 1,
-   "linhas": 444,
+   "linhas": 445,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -689,15 +683,12 @@
     "crm_contacts"
    ],
    "rpcs": [],
-   "env": [
-    "LOVABLE_API_KEY"
-   ],
+   "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "mod.ts"
    ],
    "chamada_pelo_front": [
@@ -1038,7 +1029,7 @@
    "nome": "global-search",
    "entrada": "supabase/functions/global-search/index.ts",
    "arquivos": 1,
-   "linhas": 374,
+   "linhas": 375,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1056,10 +1047,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "mod.ts"
    ],
    "chamada_pelo_front": [
@@ -1074,7 +1064,7 @@
    "nome": "graph-execute",
    "entrada": "supabase/functions/graph-execute/index.ts",
    "arquivos": 1,
-   "linhas": 268,
+   "linhas": 269,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1088,10 +1078,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "idempotency.ts",
     "mod.ts",
     "retry.ts",
@@ -1290,7 +1279,7 @@
    "nome": "kb-analyze-gaps",
    "entrada": "supabase/functions/kb-analyze-gaps/index.ts",
    "arquivos": 1,
-   "linhas": 145,
+   "linhas": 146,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1303,10 +1292,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "mod.ts",
     "retry.ts"
    ],
@@ -1322,7 +1310,7 @@
    "nome": "kb-translate-article",
    "entrada": "supabase/functions/kb-translate-article/index.ts",
    "arquivos": 1,
-   "linhas": 136,
+   "linhas": 137,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1335,10 +1323,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "mod.ts",
     "retry.ts"
    ],
@@ -1387,7 +1374,7 @@
    "nome": "llm-gateway",
    "entrada": "supabase/functions/llm-gateway/index.ts",
    "arquivos": 9,
-   "linhas": 1983,
+   "linhas": 1999,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1421,7 +1408,6 @@
     "ENABLE_PII_ML",
     "ENABLE_TOXICITY_CHECK",
     "HF_API_TOKEN",
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -1437,6 +1423,7 @@
     "router.huggingface.co"
    ],
    "usa_shared": [
+    "ai-provider.ts",
     "breakerEvents.ts",
     "chaos.ts",
     "circuitBreaker.ts",
@@ -1910,7 +1897,7 @@
    "nome": "quick-agent-test",
    "entrada": "supabase/functions/quick-agent-test/index.ts",
    "arquivos": 1,
-   "linhas": 147,
+   "linhas": 148,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -1921,10 +1908,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "cors.ts",
     "mod.ts",
     "retry.ts",
@@ -2219,7 +2205,7 @@
    "nome": "skill-classify-llm",
    "entrada": "supabase/functions/skill-classify-llm/index.ts",
    "arquivos": 2,
-   "linhas": 305,
+   "linhas": 306,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -2230,10 +2216,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "mod.ts"
    ],
    "chamada_pelo_front": [
@@ -2248,7 +2233,7 @@
    "nome": "skill-describe-llm",
    "entrada": "supabase/functions/skill-describe-llm/index.ts",
    "arquivos": 1,
-   "linhas": 393,
+   "linhas": 394,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -2259,10 +2244,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "mod.ts"
    ],
    "chamada_pelo_front": [
@@ -2809,7 +2793,7 @@
    "nome": "voice-synthesize",
    "entrada": "supabase/functions/voice-synthesize/index.ts",
    "arquivos": 1,
-   "linhas": 155,
+   "linhas": 156,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2822,10 +2806,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "cors.ts",
     "mod.ts",
     "retry.ts"

@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1389)",
+   "TypeScript (1390)",
    "SQL (332)",
    "Markdown (113)",
    "JavaScript (52)",
@@ -816,6 +816,8 @@
    "BITRIX24_CLIENT_SECRET",
    "BITRIX24_DOMAIN",
    "COHERE_API_KEY",
+   "DEEPSEEK_MODEL",
+   "DEEPSEEK_MODEL_PRO",
    "DENO_ENV",
    "ENABLE_AGENTIC_GUARDRAIL",
    "ENABLE_AUTO_CLASSIFY",
@@ -927,12 +929,12 @@
   ],
   "hosts_externos": [
    {
-    "host": "ai.gateway.lovable.dev",
-    "arquivos": 19
-   },
-   {
     "host": "router.huggingface.co",
     "arquivos": 17
+   },
+   {
+    "host": "ai.gateway.lovable.dev",
+    "arquivos": 6
    },
    {
     "host": "api.openai.com",
@@ -1017,6 +1019,10 @@
    {
     "host": "x.supabase.co",
     "arquivos": 2
+   },
+   {
+    "host": "api.deepseek.com",
+    "arquivos": 1
    },
    {
     "host": "api.duckduckgo.com",

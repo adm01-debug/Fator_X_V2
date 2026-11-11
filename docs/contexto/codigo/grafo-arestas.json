@@ -6866,13 +6866,16 @@
    "supabase/functions/_shared/retry.ts"
   ],
   "supabase/functions/agent-conversational-builder/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/agent-eval-runner/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/idempotency.ts",
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/agent-workflow-runner/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/chaos.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/mod.ts",
@@ -6921,6 +6924,7 @@
    "supabase/functions/_shared/retry.ts"
   ],
   "supabase/functions/code-interpreter-execute/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/idempotency.ts",
    "supabase/functions/_shared/mod.ts"
   ],
@@ -6939,6 +6943,7 @@
    "supabase/functions/_shared/slack.ts"
   ],
   "supabase/functions/crm-enrich/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/cron-executor/index.ts": [
@@ -6976,9 +6981,11 @@
    "supabase/functions/_shared/retry.ts"
   ],
   "supabase/functions/global-search/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/graph-execute/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/idempotency.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/retry.ts",
@@ -7006,10 +7013,12 @@
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/kb-analyze-gaps/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/retry.ts"
   ],
   "supabase/functions/kb-translate-article/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/retry.ts"
   ],
@@ -7017,6 +7026,7 @@
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/llm-gateway/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/breakerEvents.ts",
    "supabase/functions/_shared/chaos.ts",
    "supabase/functions/_shared/circuitBreaker.ts",
@@ -7047,6 +7057,7 @@
    "supabase/functions/llm-gateway/utils.ts"
   ],
   "supabase/functions/llm-gateway/providers/openai.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/retry.ts",
    "supabase/functions/llm-gateway/types.ts",
    "supabase/functions/llm-gateway/utils.ts"
@@ -7108,6 +7119,7 @@
    "supabase/functions/_shared/retry.ts"
   ],
   "supabase/functions/quick-agent-test/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/retry.ts",
@@ -7145,10 +7157,12 @@
    "supabase/functions/_shared/retry.ts"
   ],
   "supabase/functions/skill-classify-llm/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/skill-classify-llm/departments.ts"
   ],
   "supabase/functions/skill-describe-llm/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/skill-harvester/index.ts": [
@@ -7231,6 +7245,7 @@
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/voice-synthesize/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/retry.ts"

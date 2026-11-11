@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fd6c7ffc22` · branch `main` · 2026-11-11 23:35 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b8f1e8324b` · branch `main` · 2026-11-11 23:46 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2862,7 +2862,7 @@ _nenhum item encontrado_
   ```
 - **calculateCost(supabase: SupabaseClient, model: string, promptTokens: number, completionTokens: number,)** — `supabase/functions/llm-gateway/index.ts`
   ```
-  try { const { data: pricing } = await supabase .from('model_pricing') .select('model_pattern, input_cost_per_1k, output_cost_per_1k'); if (pricing) { // Sort by pattern length DESC so "gpt-4o-mini" matches before "gpt-4o" const sorted = [...pricing].sort( (a: Record<string, unknown>, b: Record<string, unknown>) => (b.model_pattern as string).length - (a.model_pattern as string).length, ); for (const p of sorted) { if (model.includes(p.model_pattern)) { return ( (promptTokens / 1000) * Number(p.i …
+  const deepseekCost = aiCostUsd(model, promptTokens, completionTokens); if (deepseekCost !== null) return deepseekCost; try { const { data: pricing } = await supabase .from('model_pricing') .select('model_pattern, input_cost_per_1k, output_cost_per_1k'); if (pricing) { // Sort by pattern length DESC so "gpt-4o-mini" matches before "gpt-4o" const sorted = [...pricing].sort( (a: Record<string, unknown>, b: Record<string, unknown>) => (b.model_pattern as string).length - (a.model_pattern as string). …
   ```
 - **rerankWithCohere(query: string, documents: Array<{ id: string; content: string }>, topK: number, cohereKey: string,)** — `supabase/functions/rag-rerank-v2/index.ts`
   ```

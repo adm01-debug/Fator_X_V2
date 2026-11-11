@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fd6c7ffc22ccf047ab788031c3c6d48450b9e620",
+  "commit": "b8f1e8324ba237838487e3f7f77260f18f76c1d4",
   "branch": "main",
-  "data_commit": "2026-11-11T20:31:11-03:00",
+  "data_commit": "2026-11-11T20:42:12-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "b8f1e832",
+    "data": "2026-11-11",
+    "assunto": "feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)"
+   },
    {
     "sha": "fd6c7ffc",
     "data": "2026-11-11",
@@ -126,14 +131,9 @@
     "sha": "7af45453",
     "data": "2026-09-05",
     "assunto": "Merge pull request #47 from adm01-debug/dependabot/npm_and_yarn/sentry-1899a56159"
-   },
-   {
-    "sha": "89161291",
-    "data": "2026-09-05",
-    "assunto": "Merge pull request #46 from adm01-debug/dependabot/npm_and_yarn/supabase-f2a27b35cd"
    }
   ],
-  "arquivos_mudados_7d": 184,
+  "arquivos_mudados_7d": 191,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "package.json",
@@ -180,6 +180,10 @@
     "mudancas": 2
    },
    {
+    "pasta": "docs/agentes/integracoes.md",
+    "mudancas": 2
+   },
+   {
     "pasta": "docs/agentes/mapa-repo.md",
     "mudancas": 2
    },
@@ -189,10 +193,6 @@
    },
    {
     "pasta": "scripts/automation.config.json",
-    "mudancas": 2
-   },
-   {
-    "pasta": "src/components/agent-builder",
     "mudancas": 2
    }
   ],
@@ -222,6 +222,38 @@
     "mudancas": 3
    },
    {
+    "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/code-interpreter-execute/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/crm-enrich/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/global-search/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/graph-execute/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/kb-analyze-gaps/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/kb-translate-article/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/voice-synthesize/index.ts",
+    "mudancas": 3
+   },
+   {
     "arquivo": ".github/workflows/contexto.yml",
     "mudancas": 2
    },
@@ -239,6 +271,10 @@
    },
    {
     "arquivo": "docs/agentes/github-ci.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "docs/agentes/integracoes.md",
     "mudancas": 2
    },
    {
@@ -260,48 +296,12 @@
    {
     "arquivo": "scripts/automation.config.json",
     "mudancas": 2
-   },
-   {
-    "arquivo": "src/pages/DeploymentsPage.tsx",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/browser-session-cancel/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/cerebro-brain/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/cerebro-query/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/code-interpreter-execute/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/crm-bitrix-sync/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/crm-cadence-runner/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/crm-enrich/index.ts",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 9
+    "commits": 10
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1967,
-  "arquivos_codigo": 1445,
-  "linhas_codigo": 316193,
+  "arquivos_total": 1968,
+  "arquivos_codigo": 1446,
+  "linhas_codigo": 316264,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -527,8 +527,8 @@
    "linhas": 530
   },
   "supabase/functions": {
-   "arquivos": 133,
-   "linhas": 31848
+   "arquivos": 134,
+   "linhas": 31919
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -578,7 +578,7 @@
   },
   {
    "arquivo": "supabase/functions/llm-gateway/index.ts",
-   "linhas": 1603
+   "linhas": 1616
   },
   {
    "arquivo": "src/App.tsx",

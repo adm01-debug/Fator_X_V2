@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fd6c7ffc22ccf047ab788031c3c6d48450b9e620",
+  "sha": "b8f1e8324ba237838487e3f7f77260f18f76c1d4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-11 23:35 UTC",
-  "files_total": 1972,
-  "code_files": 1778,
-  "code_lines": 345127
+  "generated_at": "2026-11-11 23:46 UTC",
+  "files_total": 1973,
+  "code_files": 1779,
+  "code_lines": 345198
  },
  "version": "1.3.2",
- "facts_hash": "506ab10e4c834004",
+ "facts_hash": "dae7e665d9e76f11",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -213,7 +213,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 699,
-   ".ts": 690,
+   ".ts": 691,
    ".sql": 332,
    ".mjs": 47,
    ".js": 5,
@@ -52728,16 +52728,12 @@
      "webhook_delivery_logs",
      "workspace_members"
     ],
-    "env": [
-     "LOVABLE_API_KEY"
-    ],
-    "external": [
-     "https://ai.gateway.lovable.dev/v1/chat/…"
-    ],
+    "env": [],
+    "external": [],
     "invokes": [],
     "doc": "Agent Conversational Builder — chat-to-agent via Lovable AI",
     "errors": [
-     "LOVABLE_API_KEY missing"
+     "DEEPSEEK_API_KEY missing"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -53096,18 +53092,15 @@
      "workspace_members"
     ],
     "env": [
-     "LOVABLE_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
-    "external": [
-     "https://ai.gateway.lovable.dev/v1/chat/…"
-    ],
+    "external": [],
     "invokes": [],
     "doc": "",
     "errors": [
      "AI gateway error ${response.status}: ${txt}",
-     "LOVABLE_API_KEY not configured"
+     "DEEPSEEK_API_KEY not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -53251,12 +53244,8 @@
      "webhook_delivery_logs",
      "workspace_members"
     ],
-    "env": [
-     "LOVABLE_API_KEY"
-    ],
-    "external": [
-     "https://ai.gateway.lovable.dev/v1/chat/…"
-    ],
+    "env": [],
+    "external": [],
     "invokes": [],
     "doc": "",
     "errors": [],
@@ -53551,9 +53540,7 @@
      "workspace_members"
     ],
     "env": [],
-    "external": [
-     "https://ai.gateway.lovable.dev/v1/chat/…"
-    ],
+    "external": [],
     "invokes": [],
     "doc": "Nexus — Global Search (Semantic Hybrid) Estratégia híbrida em 2 estágios: 1) Recall: ILIKE + fuzzy em múltiplas tabelas (rápido, escopado por RLS). 2) Re-rank: Lovable AI Gateway pontua semanticamente cada candidato vs query. Score final = 0.4 * lexical + 0.6 * semantic. Se o LLM falhar ou estiver i …",
     "errors": [],
@@ -53863,7 +53850,6 @@
      "ENABLE_PII_ML",
      "ENABLE_TOXICITY_CHECK",
      "HF_API_TOKEN",
-     "LOVABLE_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -58763,8 +58749,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 133,
-   "lines": 31848,
+   "files": 134,
+   "lines": 31919,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -58867,6 +58853,7 @@
     "workspaces"
    ],
    "exports": [
+    "ai-provider.ts: AI_CHAT_COMPLETIONS_URL, AI_API_KEY_ENV, aiModel, aiCostUsd",
     "alternation.ts: ChatRole, ChatTurn, RepairOptions, repairAlternation",
     "auth.ts: AuthResult, AuthError, AuthResponse, createSupabaseClients, createAdminClient, authenticateRequest",
     "breakerEvents.ts: drainBreakerTransition",
@@ -58908,12 +58895,12 @@
     "lib.ts: tokenize, stripUnsafe, shannonEntropy, scanContentRisks, MCP_HOST_ALLOWLIST, isMcpUrlAllowed"
    ],
    "docs": [
+    "ai-provider.ts: Provedor de IA (chat) das edge functions: DeepSeek, API compatível com OpenAI. Substitui o Lovable AI Gateway (LOVABLE_API_KEY), que não existe neste projeto. Secret obrigatório: DEEPSEEK_API_KEY. Opcionais: DEEPSEEK_MODEL (padrão deepseek-flash) e DEEPSEEK_MODEL_PRO (padrão deepseek-v4-pro).",
     "auth.ts: Nexus Agents Studio — Shared Auth Helper (HARDENED) FIX P2-01: x-workspace-id header support FIX P2-02: HMAC-based API key validation (constant-time)",
     "breakerEvents.ts: _shared/breakerEvents.ts — persistência de transições do circuit breaker. Grava eventos em public.openclaw_events (source='other', kind='breaker.<state>') para dar observabilidade sem criar nova tabela. Fire-and-forget: nunca bloqueia o caller nem lança exceção. Uso: const cb = getBreaker('openai'); …",
     "chaos.ts: Chaos Engineering — fault injection middleware for edge functions Reads active experiments from `chaos_experiments` table and probabilistically injects faults (latency, errors, timeouts) for resilience validation. Zero overhead when no experiment is active for the target.",
     "chunker.ts: Shared chunker for RAG ingestion. Strategies: - fixed: hard slice by character window with overlap. - paragraph: split by blank lines; pack paragraphs up to target size, then overlap trailing chars. - sentence: split by sentence terminators; pack sentences up to target size, then overlap trailing ch …",
-    "circuitBreaker.ts: Circuit Breaker — proteção contra provedores instáveis. Estados: closed (normal) → open (bloqueado) → half-open (teste). Uso: const cb = getBreaker('openai'); if (!cb.canRequest()) throw new Error('circuit_open'); try { const r = await call(); cb.recordSuccess(); return r; } catch (e) { cb.recordFai …",
-    "cors.ts: Nexus Agents Studio — Shared CORS (HARDENED) FIX P0-08: whitelist .lovable.app + x-workspace-id header + Vary: Origin"
+    "circuitBreaker.ts: Circuit Breaker — proteção contra provedores instáveis. Estados: closed (normal) → open (bloqueado) → half-open (teste). Uso: const cb = getBreaker('openai'); if (!cb.canRequest()) throw new Error('circuit_open'); try { const r = await call(); cb.recordSuccess(); return r; } catch (e) { cb.recordFai …"
    ],
    "deps": [
     "https:",
@@ -58922,6 +58909,7 @@
    ],
    "imports_modules": [],
    "file_list": [
+    "supabase/functions/_shared/ai-provider.ts",
     "supabase/functions/_shared/alternation.test.ts",
     "supabase/functions/_shared/alternation.ts",
     "supabase/functions/_shared/auth.ts",
@@ -59000,8 +58988,7 @@
     "supabase/functions/llm-gateway/providers/openai.ts",
     "supabase/functions/llm-gateway/providers/openrouter.ts",
     "supabase/functions/memory-manager/index.ts",
-    "supabase/functions/memory-tools/index.ts",
-    "supabase/functions/migrate-helper/index.ts"
+    "supabase/functions/memory-tools/index.ts"
    ]
   },
   {
@@ -62334,6 +62321,12 @@
    "DB_URL": [
     "scripts/ai-context/gerar.unit.mjs"
    ],
+   "DEEPSEEK_MODEL": [
+    "supabase/functions/_shared/ai-provider.ts"
+   ],
+   "DEEPSEEK_MODEL_PRO": [
+    "supabase/functions/_shared/ai-provider.ts"
+   ],
    "DENO_ENV": [
     "supabase/functions/_shared/cors.ts",
     "supabase/functions/_shared/otel-edge.ts"
@@ -62433,10 +62426,6 @@
     "scripts/inventario/gerar-banco.mjs"
    ],
    "LOVABLE_API_KEY": [
-    "supabase/functions/agent-conversational-builder/index.ts",
-    "supabase/functions/code-interpreter-execute/index.ts",
-    "supabase/functions/crm-enrich/index.ts",
-    "supabase/functions/llm-gateway/index.ts",
     "supabase/functions/skill-harvester/github.ts"
    ],
    "MAINTENANCE_TEST_": [
@@ -63403,10 +63392,6 @@
     "supabase/functions/crm-bitrix-sync/index.ts"
    ],
    "https://ai.gateway.lovable.dev": [
-    "supabase/functions/agent-conversational-builder/index.ts",
-    "supabase/functions/code-interpreter-execute/index.ts",
-    "supabase/functions/crm-enrich/index.ts",
-    "supabase/functions/global-search/index.ts",
     "supabase/functions/visual-search/index.ts"
    ],
    "https://api.cohere.ai": [
@@ -69980,7 +69965,7 @@
    },
    {
     "file": "supabase/functions/agent-conversational-builder/index.ts",
-    "msg": "LOVABLE_API_KEY missing"
+    "msg": "DEEPSEEK_API_KEY missing"
    },
    {
     "file": "supabase/functions/agent-eval-runner/index.ts",
@@ -70044,7 +70029,7 @@
    },
    {
     "file": "supabase/functions/code-interpreter-execute/index.ts",
-    "msg": "LOVABLE_API_KEY not configured"
+    "msg": "DEEPSEEK_API_KEY not configured"
    },
    {
     "file": "supabase/functions/crm-bitrix-sync/index.ts",
@@ -99068,7 +99053,7 @@
     "file": "supabase/functions/llm-gateway/index.ts",
     "name": "calculateCost",
     "params": "supabase: SupabaseClient, model: string, promptTokens: number, completionTokens: number,",
-    "body": "try { const { data: pricing } = await supabase .from('model_pricing') .select('model_pattern, input_cost_per_1k, output_cost_per_1k'); if (pricing) { // Sort by pattern length DESC so \"gpt-4o-mini\" matches before \"gpt-4o\" const sorted = [...pricing].sort( (a: Record<string, unknown>, b: Record<string, unknown>) => (b.model_pattern as string).length - (a.model_pattern as string).length, ); for (const p of sorted) { if (model.includes(p.model_pattern)) { return ( (promptTokens / 1000) * Number(p.i …"
+    "body": "const deepseekCost = aiCostUsd(model, promptTokens, completionTokens); if (deepseekCost !== null) return deepseekCost; try { const { data: pricing } = await supabase .from('model_pricing') .select('model_pattern, input_cost_per_1k, output_cost_per_1k'); if (pricing) { // Sort by pattern length DESC so \"gpt-4o-mini\" matches before \"gpt-4o\" const sorted = [...pricing].sort( (a: Record<string, unknown>, b: Record<string, unknown>) => (b.model_pattern as string).length - (a.model_pattern as string). …"
    },
    {
     "file": "supabase/functions/rag-rerank-v2/index.ts",
@@ -178005,6 +177990,21 @@
    ],
    "doc": "Types for tables created by Supabase MCP deployment (HF improvements M01-M42)"
   },
+  "supabase/functions/_shared/ai-provider.ts": {
+   "path": "supabase/functions/_shared/ai-provider.ts",
+   "lines": 41,
+   "exports": [
+    "const AI_CHAT_COMPLETIONS_URL",
+    "const AI_API_KEY_ENV",
+    "function aiModel",
+    "function aiCostUsd"
+   ],
+   "env": [
+    "DEEPSEEK_MODEL",
+    "DEEPSEEK_MODEL_PRO"
+   ],
+   "doc": "Provedor de IA (chat) das edge functions: DeepSeek, API compatível com OpenAI. Substitui o Lovable AI Gateway (LOVABLE_API_KEY), que não existe neste projeto. Secret obrigatório: DEEPSEEK_API_KEY. Opcionais: DEEPSEEK_MODEL (padrão deepseek-flash) e DEEPSEEK_MODEL_PRO (padrão deepseek-v4-pro)."
+  },
   "supabase/functions/_shared/alternation.test.ts": {
    "path": "supabase/functions/_shared/alternation.test.ts",
    "lines": 61,
@@ -179191,15 +179191,9 @@
   },
   "supabase/functions/agent-conversational-builder/index.ts": {
    "path": "supabase/functions/agent-conversational-builder/index.ts",
-   "lines": 145,
-   "external_urls": [
-    "https://ai.gateway.lovable.dev/v1/chat/…"
-   ],
-   "env": [
-    "LOVABLE_API_KEY"
-   ],
+   "lines": 146,
    "errors": [
-    "LOVABLE_API_KEY missing"
+    "DEEPSEEK_API_KEY missing"
    ],
    "zod": [
     {
@@ -179276,7 +179270,7 @@
   },
   "supabase/functions/agent-eval-runner/index.ts": {
    "path": "supabase/functions/agent-eval-runner/index.ts",
-   "lines": 291,
+   "lines": 293,
    "tables": [
     {
      "table": "agent_eval_datasets",
@@ -179375,7 +179369,7 @@
   },
   "supabase/functions/agent-workflow-runner/index.ts": {
    "path": "supabase/functions/agent-workflow-runner/index.ts",
-   "lines": 262,
+   "lines": 263,
    "tables": [
     {
      "table": "agents",
@@ -180439,7 +180433,7 @@
   },
   "supabase/functions/code-interpreter-execute/index.ts": {
    "path": "supabase/functions/code-interpreter-execute/index.ts",
-   "lines": 416,
+   "lines": 417,
    "tables": [
     {
      "table": "code_executions",
@@ -180454,17 +180448,13 @@
      "op": "insert,select"
     }
    ],
-   "external_urls": [
-    "https://ai.gateway.lovable.dev/v1/chat/…"
-   ],
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
     "AI gateway error ${response.status}: ${txt}",
-    "LOVABLE_API_KEY not configured"
+    "DEEPSEEK_API_KEY not configured"
    ],
    "zod": [
     {
@@ -180829,7 +180819,7 @@
   },
   "supabase/functions/crm-enrich/index.ts": {
    "path": "supabase/functions/crm-enrich/index.ts",
-   "lines": 444,
+   "lines": 445,
    "tables": [
     {
      "table": "crm_companies",
@@ -180867,12 +180857,6 @@
      "workspace_id"
     ]
    },
-   "external_urls": [
-    "https://ai.gateway.lovable.dev/v1/chat/…"
-   ],
-   "env": [
-    "LOVABLE_API_KEY"
-   ],
    "zod": [
     {
      "name": "EnrichInput",
@@ -181859,7 +181843,7 @@
   },
   "supabase/functions/global-search/index.ts": {
    "path": "supabase/functions/global-search/index.ts",
-   "lines": 374,
+   "lines": 375,
    "tables": [
     {
      "table": "agents",
@@ -181934,9 +181918,6 @@
      "title"
     ]
    },
-   "external_urls": [
-    "https://ai.gateway.lovable.dev/v1/chat/…"
-   ],
    "zod": [
     {
      "name": "InputSchema",
@@ -182055,7 +182036,7 @@
   },
   "supabase/functions/graph-execute/index.ts": {
    "path": "supabase/functions/graph-execute/index.ts",
-   "lines": 268,
+   "lines": 269,
    "tables": [
     {
      "table": "agent_graphs",
@@ -182432,7 +182413,7 @@
   },
   "supabase/functions/kb-analyze-gaps/index.ts": {
    "path": "supabase/functions/kb-analyze-gaps/index.ts",
-   "lines": 145,
+   "lines": 146,
    "tables": [
     {
      "table": "oracle_history",
@@ -182499,7 +182480,7 @@
   },
   "supabase/functions/kb-translate-article/index.ts": {
    "path": "supabase/functions/kb-translate-article/index.ts",
-   "lines": 136,
+   "lines": 137,
    "tables": [
     {
      "table": "kb_articles",
@@ -182665,7 +182646,7 @@
   },
   "supabase/functions/llm-gateway/index.ts": {
    "path": "supabase/functions/llm-gateway/index.ts",
-   "lines": 1603,
+   "lines": 1616,
    "tables": [
     {
      "table": "model_pricing",
@@ -182813,7 +182794,6 @@
     "ENABLE_PII_ML",
     "ENABLE_TOXICITY_CHECK",
     "HF_API_TOKEN",
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -182897,7 +182877,7 @@
     {
      "name": "calculateCost",
      "params": "supabase: SupabaseClient, model: string, promptTokens: number, completionTokens: number,",
-     "body": "try { const { data: pricing } = await supabase .from('model_pricing') .select('model_pattern, input_cost_per_1k, output_cost_per_1k'); if (pricing) { // Sort by pattern length DESC so \"gpt-4o-mini\" matches before \"gpt-4o\" const sorted = [...pricing].sort( (a: Record<string, unknown>, b: Record<string, unknown>) => (b.model_pattern as string).length - (a.model_pattern as string).length, ); for (const p of sorted) { if (model.includes(p.model_pattern)) { return ( (promptTokens / 1000) * Number(p.i …"
+     "body": "const deepseekCost = aiCostUsd(model, promptTokens, completionTokens); if (deepseekCost !== null) return deepseekCost; try { const { data: pricing } = await supabase .from('model_pricing') .select('model_pattern, input_cost_per_1k, output_cost_per_1k'); if (pricing) { // Sort by pattern length DESC so \"gpt-4o-mini\" matches before \"gpt-4o\" const sorted = [...pricing].sort( (a: Record<string, unknown>, b: Record<string, unknown>) => (b.model_pattern as string).length - (a.model_pattern as string). …"
     }
    ],
    "percents": [
@@ -182979,7 +182959,7 @@
   },
   "supabase/functions/llm-gateway/providers/openai.ts": {
    "path": "supabase/functions/llm-gateway/providers/openai.ts",
-   "lines": 33,
+   "lines": 36,
    "exports": [
     "function callOpenAICompatible"
    ],
@@ -183934,7 +183914,7 @@
   },
   "supabase/functions/quick-agent-test/index.ts": {
    "path": "supabase/functions/quick-agent-test/index.ts",
-   "lines": 147,
+   "lines": 148,
    "zod": [
     {
      "name": "BodySchema",
@@ -184497,7 +184477,7 @@
   },
   "supabase/functions/skill-classify-llm/index.ts": {
    "path": "supabase/functions/skill-classify-llm/index.ts",
-   "lines": 256,
+   "lines": 257,
    "zod": [
     {
      "name": "InputSchema",
@@ -184572,7 +184552,7 @@
   },
   "supabase/functions/skill-describe-llm/index.ts": {
    "path": "supabase/functions/skill-describe-llm/index.ts",
-   "lines": 393,
+   "lines": 394,
    "exports": [
     "const MIN_DESCRIPTION",
     "const MAX_DESCRIPTION",
@@ -186061,7 +186041,7 @@
   },
   "supabase/functions/voice-synthesize/index.ts": {
    "path": "supabase/functions/voice-synthesize/index.ts",
-   "lines": 155,
+   "lines": 156,
    "tables": [
     {
      "table": "agents",
@@ -188702,10 +188682,36 @@
   }
  },
  "git": {
-  "sha": "fd6c7ffc22ccf047ab788031c3c6d48450b9e620",
+  "sha": "b8f1e8324ba237838487e3f7f77260f18f76c1d4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "b8f1e83",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)",
+    "files": [
+     "docs/agentes/integracoes.md",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/_shared/ai-provider.ts",
+     "supabase/functions/agent-conversational-builder/index.ts",
+     "supabase/functions/agent-eval-runner/index.ts",
+     "supabase/functions/agent-workflow-runner/index.ts",
+     "supabase/functions/code-interpreter-execute/index.ts",
+     "supabase/functions/crm-enrich/index.ts",
+     "supabase/functions/global-search/index.ts",
+     "supabase/functions/graph-execute/index.ts",
+     "supabase/functions/kb-analyze-gaps/index.ts",
+     "supabase/functions/kb-translate-article/index.ts",
+     "supabase/functions/llm-gateway/index.ts",
+     "supabase/functions/llm-gateway/providers/openai.ts",
+     "supabase/functions/quick-agent-test/index.ts",
+     "supabase/functions/skill-classify-llm/index.ts",
+     "supabase/functions/skill-describe-llm/index.ts",
+     "supabase/functions/voice-synthesize/index.ts"
+    ]
+   },
    {
     "sha": "fd6c7ff",
     "date": "2026-11-11",
@@ -189613,15 +189619,6 @@
     "files": [
      ".hermes.md"
     ]
-   },
-   {
-    "sha": "e6714c5",
-    "date": "2026-08-18",
-    "author": "adm01-debug",
-    "subject": "chore(agents): adiciona AGENTS.md padrao (contexto multi-agente)",
-    "files": [
-     "AGENTS.md"
-    ]
    }
   ],
   "hot_files": [
@@ -189638,8 +189635,40 @@
     5
    ],
    [
+    "supabase/functions/agent-workflow-runner/index.ts",
+    3
+   ],
+   [
+    "supabase/functions/code-interpreter-execute/index.ts",
+    3
+   ],
+   [
+    "supabase/functions/crm-enrich/index.ts",
+    3
+   ],
+   [
+    "supabase/functions/global-search/index.ts",
+    3
+   ],
+   [
+    "supabase/functions/graph-execute/index.ts",
+    3
+   ],
+   [
+    "supabase/functions/kb-analyze-gaps/index.ts",
+    3
+   ],
+   [
+    "supabase/functions/kb-translate-article/index.ts",
+    3
+   ],
+   [
+    "supabase/functions/voice-synthesize/index.ts",
+    3
+   ],
+   [
     "AGENTS.md",
-    4
+    3
    ],
    [
     ".gitignore",
@@ -189650,59 +189679,27 @@
     3
    ],
    [
-    "docs/agentes/banco.md",
+    "docs/agentes/integracoes.md",
     2
    ],
    [
-    "docs/agentes/deploy.md",
+    "supabase/deployment-manifest.json",
     2
    ],
    [
-    "docs/agentes/mapa-repo.md",
+    "supabase/functions/agent-conversational-builder/index.ts",
     2
    ],
    [
-    "src/pages/DeploymentsPage.tsx",
+    "supabase/functions/agent-eval-runner/index.ts",
     2
    ],
    [
-    ".github/workflows/contexto.yml",
+    "supabase/functions/llm-gateway/index.ts",
     2
    ],
    [
-    "scripts/automation.config.json",
-    2
-   ],
-   [
-    "supabase/functions/agent-workflow-runner/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/browser-session-cancel/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/cerebro-brain/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/cerebro-query/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/code-interpreter-execute/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/crm-bitrix-sync/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/crm-cadence-runner/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/crm-enrich/index.ts",
+    "supabase/functions/quick-agent-test/index.ts",
     2
    ]
   ]

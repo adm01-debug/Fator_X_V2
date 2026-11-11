@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)",
    "style(manutencao): aplica correcoes locais verificadas (#77)",
    "fix(config): aponta todas as referências de projeto Supabase para qdlnzopxrlsoljcrcmzv (#80)",
    "fix(contexto): autentica o fetch da branch contexto em repo privado (#75)",
-   "feat(automacao): porta os scripts autônomos de estado real do Zapp Web V2 (#71)",
-   "ci(agentes): liga o guard de integridade do AGENTS.md no CI (#70)"
+   "feat(automacao): porta os scripts autônomos de estado real do Zapp Web V2 (#71)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
