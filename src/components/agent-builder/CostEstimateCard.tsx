@@ -10,15 +10,17 @@ interface CostEstimateCardProps {
 }
 
 export function CostEstimateCard({ estimate, compact = false, className }: CostEstimateCardProps) {
-  const formatUsd = (v: number) => v < 0.0001 ? '<$0.0001' : `$${v.toFixed(4)}`;
+  const formatUsd = (v: number) => (v < 0.0001 ? '<$0.0001' : `$${v.toFixed(4)}`);
   const formatBrl = (v: number) => `R$ ${v.toFixed(4).replace('.', ',')}`;
 
   if (compact) {
     return (
-      <div className={cn(
-        'flex items-center gap-3 px-3 py-2 rounded-lg bg-secondary/40 border border-border/50 text-meta',
-        className,
-      )}>
+      <div
+        className={cn(
+          'flex items-center gap-3 px-3 py-2 rounded-lg bg-secondary/40 border border-border/50 text-meta',
+          className,
+        )}
+      >
         <Badge variant="outline" className="h-5 text-meta gap-1">
           <DollarSign className="h-3 w-3" /> Estimativa
         </Badge>
@@ -45,27 +47,72 @@ export function CostEstimateCard({ estimate, compact = false, className }: CostE
           <DollarSign className="h-4 w-4 text-primary" />
           <h4 className="text-body-sm font-semibold">Estimativa de Custo</h4>
         </div>
-        <Badge variant="outline" className="text-meta">{estimate.pricing.label}</Badge>
+        <Badge variant="outline" className="text-meta">
+          {estimate.pricing.label}
+        </Badge>
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <Metric icon={<Hash className="h-3 w-3" />} label="Input tokens" value={`~${estimate.inputTokens}`} />
-        <Metric icon={<Hash className="h-3 w-3" />} label="Output tokens" value={`~${estimate.outputTokens}`} />
-        <Metric icon={<DollarSign className="h-3 w-3" />} label="Custo USD" value={formatUsd(estimate.costUsd)} accent />
-        <Metric icon={<DollarSign className="h-3 w-3" />} label="Custo BRL" value={formatBrl(estimate.costBrl)} />
-        <Metric icon={<Clock className="h-3 w-3" />} label="Latência" value={`~${(estimate.estLatencyMs / 1000).toFixed(1)}s`} />
-        <Metric icon={<Zap className="h-3 w-3" />} label="Janela" value={`${(estimate.pricing.context_window / 1000).toFixed(0)}K`} />
+        <Metric
+          icon={<Hash className="h-3 w-3" />}
+          label="Input tokens"
+          value={`~${estimate.inputTokens}`}
+        />
+        <Metric
+          icon={<Hash className="h-3 w-3" />}
+          label="Output tokens"
+          value={`~${estimate.outputTokens}`}
+        />
+        <Metric
+          icon={<DollarSign className="h-3 w-3" />}
+          label="Custo USD"
+          value={formatUsd(estimate.costUsd)}
+          accent
+        />
+        <Metric
+          icon={<DollarSign className="h-3 w-3" />}
+          label="Custo BRL"
+          value={formatBrl(estimate.costBrl)}
+        />
+        <Metric
+          icon={<Clock className="h-3 w-3" />}
+          label="Latência"
+          value={`~${(estimate.estLatencyMs / 1000).toFixed(1)}s`}
+        />
+        <Metric
+          icon={<Zap className="h-3 w-3" />}
+          label="Janela"
+          value={`${(estimate.pricing.context_window / 1000).toFixed(0)}K`}
+        />
       </div>
     </div>
   );
 }
 
-function Metric({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: string; accent?: boolean }) {
+function Metric({
+  icon,
+  label,
+  value,
+  accent,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-1 text-meta text-muted-foreground">
-        {icon}<span>{label}</span>
+        {icon}
+        <span>{label}</span>
       </div>
-      <p className={cn('text-body-sm font-mono font-semibold', accent ? 'text-primary' : 'text-foreground')}>{value}</p>
+      <p
+        className={cn(
+          'text-body-sm font-mono font-semibold',
+          accent ? 'text-primary' : 'text-foreground',
+        )}
+      >
+        {value}
+      </p>
     </div>
   );
 }

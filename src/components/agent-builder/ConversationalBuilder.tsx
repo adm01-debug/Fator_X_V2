@@ -3,7 +3,13 @@
  * Faz perguntas e auto-preenche o agente em tempo real.
  */
 import { useState, useRef, useEffect } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -36,7 +42,8 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
       setMessages([
         {
           role: 'assistant',
-          content: '👋 Oi! Vou te ajudar a montar seu agente em poucos minutos. **Qual é o objetivo principal dele?** (ex: atendimento ao cliente, análise de vendas, escrita criativa…)',
+          content:
+            '👋 Oi! Vou te ajudar a montar seu agente em poucos minutos. **Qual é o objetivo principal dele?** (ex: atendimento ao cliente, análise de vendas, escrita criativa…)',
         },
       ]);
     }
@@ -56,7 +63,9 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
     setMessages(newMessages);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/agent-conversational-builder`;
 
       const resp = await fetch(url, {
@@ -133,7 +142,7 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
             saveDraftVersion({
               agent: { ...agent, ...args.patch },
               label: `Snapshot IA - ${new Date().toLocaleTimeString('pt-BR')}`,
-              note: 'Atualização automática via IA Builder.'
+              note: 'Atualização automática via IA Builder.',
             });
             const fields = Object.keys(args.patch).join(', ');
             toast.success(`✨ Atualizado e Rascunho Salvo: ${fields}`);
@@ -205,11 +214,7 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
 
         <div className="px-5 py-3 border-t shrink-0 space-y-2 bg-background">
           {done && (
-            <Button
-              size="sm"
-              className="w-full"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button size="sm" className="w-full" onClick={() => onOpenChange(false)}>
               <Check className="h-3.5 w-3.5 mr-1.5" />
               Aplicar e fechar
             </Button>
@@ -218,17 +223,28 @@ export function ConversationalBuilder({ open, onOpenChange }: ConversationalBuil
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
+              onKeyDown={(e) =>
+                e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())
+              }
               placeholder="Sua resposta…"
               disabled={loading}
               className="text-body-sm"
             />
             <Button size="icon" onClick={handleSend} disabled={loading || !input.trim()}>
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </div>
           {messages.length > 1 && (
-            <Button variant="ghost" size="sm" onClick={handleReset} className="w-full text-meta h-7">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleReset}
+              className="w-full text-meta h-7"
+            >
               Recomeçar conversa
             </Button>
           )}

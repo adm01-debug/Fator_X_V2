@@ -1,9 +1,9 @@
-import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
-import { forwardRef, useCallback } from "react";
-import { cn } from "@/lib/utils";
-import { prefetchRoute } from "@/lib/routePrefetch";
+import { NavLink as RouterNavLink, NavLinkProps } from 'react-router-dom';
+import { forwardRef, useCallback } from 'react';
+import { cn } from '@/lib/utils';
+import { prefetchRoute } from '@/lib/routePrefetch';
 
-interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
+interface NavLinkCompatProps extends Omit<NavLinkProps, 'className'> {
   className?: string;
   activeClassName?: string;
   pendingClassName?: string;
@@ -12,7 +12,7 @@ interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
 const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
   ({ className, activeClassName, pendingClassName, to, ...props }, ref) => {
     const handleMouseEnter = useCallback(() => {
-      if (typeof to === "string") prefetchRoute(to);
+      if (typeof to === 'string') prefetchRoute(to);
     }, [to]);
 
     return (
@@ -29,6 +29,6 @@ const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
   },
 );
 
-NavLink.displayName = "NavLink";
+NavLink.displayName = 'NavLink';
 
 export { NavLink };

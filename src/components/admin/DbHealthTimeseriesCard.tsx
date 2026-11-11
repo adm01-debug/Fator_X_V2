@@ -3,15 +3,21 @@
  * Série temporal (últimas 24h por padrão) de WAL, % de conexões
  * e mean_ms da consulta mais lenta. Admin-only via RPC.
  */
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { LineChart, TrendingUp } from "lucide-react";
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { LineChart, TrendingUp } from 'lucide-react';
 import {
-  ResponsiveContainer, LineChart as RLineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid,
-} from "recharts";
+  ResponsiveContainer,
+  LineChart as RLineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from 'recharts';
 
 interface Sample {
   captured_at: string;
@@ -21,21 +27,25 @@ interface Sample {
 }
 
 const RANGES: Array<{ label: string; hours: number }> = [
-  { label: "1h", hours: 1 },
-  { label: "6h", hours: 6 },
-  { label: "24h", hours: 24 },
-  { label: "7d", hours: 168 },
+  { label: '1h', hours: 1 },
+  { label: '6h', hours: 6 },
+  { label: '24h', hours: 24 },
+  { label: '7d', hours: 168 },
 ];
 
 export function DbHealthTimeseriesCard() {
   const [hours, setHours] = useState<number>(24);
 
-  const { data = [], isLoading, error } = useQuery({
-    queryKey: ["db-health-timeseries", hours],
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['db-health-timeseries', hours],
     refetchInterval: 60_000,
     queryFn: async (): Promise<Sample[]> => {
       const { data, error } = await supabase.rpc(
-        "get_db_health_timeseries" as never,
+        'get_db_health_timeseries' as never,
         { _hours: hours } as never,
       );
       if (error) throw error;
@@ -44,7 +54,7 @@ export function DbHealthTimeseriesCard() {
   });
 
   const chartData = data.map((s) => ({
-    t: new Date(s.captured_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+    t: new Date(s.captured_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
     wal_mb: Math.round((s.wal_bytes / (1024 * 1024)) * 10) / 10,
     conn_pct: Number(s.connections_pct),
     mean_ms: Math.round(Number(s.top_slow_mean_ms)),
@@ -58,16 +68,14 @@ export function DbHealthTimeseriesCard() {
             <TrendingUp className="h-4 w-4 text-nexus-primary" />
             Série temporal de saúde
           </CardTitle>
-          <CardDescription>
-            Amostras a cada 5 min. Retenção de 30 dias.
-          </CardDescription>
+          <CardDescription>Amostras a cada 5 min. Retenção de 30 dias.</CardDescription>
         </div>
         <div className="flex gap-1">
           {RANGES.map((r) => (
             <Button
               key={r.hours}
               size="sm"
-              variant={r.hours === hours ? "default" : "outline"}
+              variant={r.hours === hours ? 'default' : 'outline'}
               onClick={() => setHours(r.hours)}
               className="h-7 px-2 text-meta"
             >
@@ -91,9 +99,24 @@ export function DbHealthTimeseriesCard() {
         )}
         {chartData.length > 0 && (
           <>
-            <ChartBlock title="WAL (MB)" dataKey="wal_mb" data={chartData} color="hsl(var(--nexus-primary))" />
-            <ChartBlock title="Conexões (%)" dataKey="conn_pct" data={chartData} color="hsl(var(--nexus-accent, 280 60% 60%))" />
-            <ChartBlock title="Query mais lenta (ms)" dataKey="mean_ms" data={chartData} color="hsl(var(--destructive))" />
+            <ChartBlock
+              title="WAL (MB)"
+              dataKey="wal_mb"
+              data={chartData}
+              color="hsl(var(--nexus-primary))"
+            />
+            <ChartBlock
+              title="Conexões (%)"
+              dataKey="conn_pct"
+              data={chartData}
+              color="hsl(var(--nexus-accent, 280 60% 60%))"
+            />
+            <ChartBlock
+              title="Query mais lenta (ms)"
+              dataKey="mean_ms"
+              data={chartData}
+              color="hsl(var(--destructive))"
+            />
           </>
         )}
       </CardContent>
@@ -102,7 +125,10 @@ export function DbHealthTimeseriesCard() {
 }
 
 function ChartBlock({
-  title, dataKey, data, color,
+  title,
+  dataKey,
+  data,
+  color,
 }: {
   title: string;
   dataKey: string;
@@ -117,10 +143,7 @@ function ChartBlock({
           <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
           <XAxis dataKey="t" tick={{ fontSize: 10 }} interval="preserveStartEnd" />
           <YAxis tick={{ fontSize: 10 }} width={40} />
-          <Tooltip
-            contentStyle={{ fontSize: 11, borderRadius: 6 }}
-            labelStyle={{ fontSize: 11 }}
-          />
+          <Tooltip contentStyle={{ fontSize: 11, borderRadius: 6 }} labelStyle={{ fontSize: 11 }} />
           <Line
             type="monotone"
             dataKey={dataKey}
