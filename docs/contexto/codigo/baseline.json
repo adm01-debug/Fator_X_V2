@@ -1,0 +1,922 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "git": {
+  "commit": "531aa687fe1581e76b662ad5c7b8bc5720636f40",
+  "branch": "main",
+  "data_commit": "2026-11-11T15:23:33-03:00",
+  "remote": "https://github.com/adm01-debug/Fator_X_V2",
+  "ultimos_commits": [
+   {
+    "sha": "531aa687",
+    "data": "2026-11-11",
+    "assunto": "feat(automacao): porta os scripts autônomos de estado real do Zapp Web V2 (#71)"
+   },
+   {
+    "sha": "b9162c98",
+    "data": "2026-11-11",
+    "assunto": "ci(agentes): liga o guard de integridade do AGENTS.md no CI (#70)"
+   },
+   {
+    "sha": "6ed5defd",
+    "data": "2026-11-11",
+    "assunto": "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#73)"
+   },
+   {
+    "sha": "c8b7ca62",
+    "data": "2026-11-11",
+    "assunto": "fix(tipos): alinha TipTap e corrige auditoria do login (#74)"
+   },
+   {
+    "sha": "44448e6f",
+    "data": "2026-11-09",
+    "assunto": "chore(deps)(deps): bump @supabase/supabase-js (#62)"
+   },
+   {
+    "sha": "c5f36893",
+    "data": "2026-11-09",
+    "assunto": "chore(deps)(deps): bump react-router-dom (#61)"
+   },
+   {
+    "sha": "04f626e1",
+    "data": "2026-11-08",
+    "assunto": "chore(agentes): adota o padrão AGENTS.md + docs/agentes do Zapp Web V2 (#69)"
+   },
+   {
+    "sha": "b0a3cb55",
+    "data": "2026-11-08",
+    "assunto": "fix(deps): Security Audit da main volta a passar (0 critical em prod) (#68)"
+   },
+   {
+    "sha": "e7a2c896",
+    "data": "2026-09-14",
+    "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 6 updates (#60)"
+   },
+   {
+    "sha": "43b3ceaf",
+    "data": "2026-09-14",
+    "assunto": "chore(deps)(deps): bump @sentry/react in the sentry group (#57)"
+   },
+   {
+    "sha": "133852ac",
+    "data": "2026-09-14",
+    "assunto": "chore(deps)(deps): bump @supabase/supabase-js in the supabase group (#56)"
+   },
+   {
+    "sha": "8e0b2996",
+    "data": "2026-09-14",
+    "assunto": "chore(deps)(deps): bump react-router-dom in the react group (#55)"
+   },
+   {
+    "sha": "4de77145",
+    "data": "2026-09-05",
+    "assunto": "fix(qa): corrigir bugs reais e estabilizar a suíte de testes [resolved] (#19)"
+   },
+   {
+    "sha": "2fa2e7b5",
+    "data": "2026-09-05",
+    "assunto": "security(db): Onda 2.5 — hotfix da validação red-team (exec_sql, IDOR, policies, grants) (#54)"
+   },
+   {
+    "sha": "0db06c7e",
+    "data": "2026-09-05",
+    "assunto": "feat(ci): Onda 2 — DB Drift Check no CI + DEFAULT PRIVILEGES sem escrita anon + docs/semver 1.6.0 (#53)"
+   },
+   {
+    "sha": "74e79f22",
+    "data": "2026-09-05",
+    "assunto": "feat(db): Onda 1 — RLS 100% (216/216), anti-escalação e rate-limit distribuído (#52)"
+   },
+   {
+    "sha": "c1931e17",
+    "data": "2026-09-05",
+    "assunto": "fix(deps): reverter @tiptap/extension-placeholder para v2.27.3 e destravar CI (#51)"
+   },
+   {
+    "sha": "43f8e5eb",
+    "data": "2026-09-05",
+    "assunto": "Merge pull request #50 from adm01-debug/dependabot/npm_and_yarn/recharts-3.10.1"
+   },
+   {
+    "sha": "8a508903",
+    "data": "2026-09-05",
+    "assunto": "Merge pull request #49 from adm01-debug/dependabot/npm_and_yarn/tiptap/extension-placeholder-3.30.1"
+   },
+   {
+    "sha": "670bc3cf",
+    "data": "2026-09-05",
+    "assunto": "Merge pull request #48 from adm01-debug/dependabot/npm_and_yarn/testing-library/user-event-14.6.4"
+   },
+   {
+    "sha": "7af45453",
+    "data": "2026-09-05",
+    "assunto": "Merge pull request #47 from adm01-debug/dependabot/npm_and_yarn/sentry-1899a56159"
+   },
+   {
+    "sha": "89161291",
+    "data": "2026-09-05",
+    "assunto": "Merge pull request #46 from adm01-debug/dependabot/npm_and_yarn/supabase-f2a27b35cd"
+   },
+   {
+    "sha": "66c5eedb",
+    "data": "2026-08-31",
+    "assunto": "chore(deps)(deps): bump @supabase/supabase-js"
+   },
+   {
+    "sha": "eecc9de3",
+    "data": "2026-08-31",
+    "assunto": "chore(deps)(deps): bump @sentry/react"
+   },
+   {
+    "sha": "e790ea07",
+    "data": "2026-08-28",
+    "assunto": "Visual edit in Lovable"
+   }
+  ],
+  "arquivos_mudados_7d": 166,
+  "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "package.json",
+    "mudancas": 5
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 4
+   },
+   {
+    "pasta": ".github/workflows/ci.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".agents/skills/fator-x-v2",
+    "mudancas": 2
+   },
+   {
+    "pasta": ".gitignore",
+    "mudancas": 2
+   },
+   {
+    "pasta": "AGENTS.md",
+    "mudancas": 2
+   },
+   {
+    "pasta": "docs/agentes/github-ci.md",
+    "mudancas": 2
+   },
+   {
+    "pasta": "docs/contexto/regras",
+    "mudancas": 2
+   },
+   {
+    "pasta": "scripts/automation.config.json",
+    "mudancas": 2
+   },
+   {
+    "pasta": ".claude/hooks/session-start.sh",
+    "mudancas": 1
+   },
+   {
+    "pasta": ".claude/identity.json",
+    "mudancas": 1
+   },
+   {
+    "pasta": ".claude/settings.json",
+    "mudancas": 1
+   },
+   {
+    "pasta": ".claude/skills/fator-x-v2",
+    "mudancas": 1
+   },
+   {
+    "pasta": ".codex/AGENTS.md",
+    "mudancas": 1
+   },
+   {
+    "pasta": ".codex/agents/docs-researcher.toml",
+    "mudancas": 1
+   }
+  ],
+  "arquivos_mais_mudados_90d": [
+   {
+    "arquivo": "package.json",
+    "mudancas": 17
+   },
+   {
+    "arquivo": "package-lock.json",
+    "mudancas": 16
+   },
+   {
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "AGENTS.md",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "CHANGELOG.md",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "ESTADO-ATUAL.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "docs/adr/README.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "docs/agentes/github-ci.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "docs/auditoria-estado-2026-08/02-services.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "docs/auditoria-estado-2026-08/03-edge-functions.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "docs/auditoria-estado-2026-08/10-testes-e-ci.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/automation.config.json",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/browser-session-cancel/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/cerebro-brain/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/cerebro-query/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/code-interpreter-execute/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/crm-bitrix-sync/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/crm-cadence-runner/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/crm-enrich/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/datahub-query/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/doc-rechunk/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/dr-orchestrator/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/eval-judge/index.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/functions/global-search/index.ts",
+    "mudancas": 2
+   }
+  ],
+  "autores_30d": [
+   {
+    "autor": "adm01-debug",
+    "commits": 6
+   },
+   {
+    "autor": "dependabot[bot]",
+    "commits": 2
+   }
+  ]
+ },
+ "contagens": {
+  "arquivos_total": 1967,
+  "arquivos_codigo": 1445,
+  "linhas_codigo": 316049,
+  "rotas": 151,
+  "rotas_http_backend": 12,
+  "vistas_por_id": 0,
+  "itens_menu": 121,
+  "modulos": 71,
+  "componentes": 661,
+  "hooks": 75,
+  "edge_functions": 87,
+  "tabelas": 327,
+  "migrations": 329,
+  "cron_jobs": 37,
+  "testes": 239,
+  "workflows": 7,
+  "scripts": 43,
+  "docs_md": 113
+ },
+ "por_pasta": {
+  "e2e/agent-builder.spec.ts": {
+   "arquivos": 1,
+   "linhas": 55
+  },
+  "e2e/auth-flows.spec.ts": {
+   "arquivos": 1,
+   "linhas": 110
+  },
+  "e2e/auth.spec.ts": {
+   "arquivos": 1,
+   "linhas": 66
+  },
+  "e2e/critical-flows.spec.ts": {
+   "arquivos": 1,
+   "linhas": 56
+  },
+  "e2e/helpers": {
+   "arquivos": 2,
+   "linhas": 167
+  },
+  "e2e/navigation.spec.ts": {
+   "arquivos": 1,
+   "linhas": 64
+  },
+  "e2e/security.spec.ts": {
+   "arquivos": 1,
+   "linhas": 52
+  },
+  "e2e/visual.spec.ts": {
+   "arquivos": 1,
+   "linhas": 64
+  },
+  "eslint-plugins/nexus-design.js": {
+   "arquivos": 1,
+   "linhas": 261
+  },
+  "eslint.config.js": {
+   "arquivos": 1,
+   "linhas": 99
+  },
+  "playwright-fixture.ts": {
+   "arquivos": 1,
+   "linhas": 3
+  },
+  "playwright.config.ts": {
+   "arquivos": 1,
+   "linhas": 37
+  },
+  "postcss.config.js": {
+   "arquivos": 1,
+   "linhas": 7
+  },
+  "public/sw.js": {
+   "arquivos": 1,
+   "linhas": 123
+  },
+  "scripts/ai-context": {
+   "arquivos": 3,
+   "linhas": 1458
+  },
+  "scripts/automation.mjs": {
+   "arquivos": 1,
+   "linhas": 992
+  },
+  "scripts/automation.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 603
+  },
+  "scripts/check-agents-md-integrity.mjs": {
+   "arquivos": 1,
+   "linhas": 121
+  },
+  "scripts/check-bundle-size.mjs": {
+   "arquivos": 1,
+   "linhas": 111
+  },
+  "scripts/ci": {
+   "arquivos": 25,
+   "linhas": 6217
+  },
+  "scripts/db-drift-check.mjs": {
+   "arquivos": 1,
+   "linhas": 128
+  },
+  "scripts/edge-deploy": {
+   "arquivos": 3,
+   "linhas": 688
+  },
+  "scripts/generate-audit-pdf.mjs": {
+   "arquivos": 1,
+   "linhas": 49
+  },
+  "scripts/generate-openapi.ts": {
+   "arquivos": 1,
+   "linhas": 48
+  },
+  "scripts/graphify-local.mjs": {
+   "arquivos": 1,
+   "linhas": 1076
+  },
+  "scripts/graphify-local.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 463
+  },
+  "scripts/inventario": {
+   "arquivos": 3,
+   "linhas": 464
+  },
+  "scripts/lib": {
+   "arquivos": 1,
+   "linhas": 101
+  },
+  "scripts/maintenance": {
+   "arquivos": 4,
+   "linhas": 2465
+  },
+  "scripts/regras_negocio": {
+   "arquivos": 3,
+   "linhas": 2539
+  },
+  "scripts/supabase_snapshot": {
+   "arquivos": 2,
+   "linhas": 2669
+  },
+  "scripts/template-link-coverage.ts": {
+   "arquivos": 1,
+   "linhas": 139
+  },
+  "src/App.tsx": {
+   "arquivos": 1,
+   "linhas": 1539
+  },
+  "src/components": {
+   "arquivos": 557,
+   "linhas": 103557
+  },
+  "src/config": {
+   "arquivos": 10,
+   "linhas": 1684
+  },
+  "src/contexts": {
+   "arquivos": 1,
+   "linhas": 154
+  },
+  "src/data": {
+   "arquivos": 5,
+   "linhas": 2882
+  },
+  "src/hooks": {
+   "arquivos": 44,
+   "linhas": 4424
+  },
+  "src/i18n": {
+   "arquivos": 2,
+   "linhas": 875
+  },
+  "src/integrations": {
+   "arquivos": 5,
+   "linhas": 15728
+  },
+  "src/lib": {
+   "arquivos": 92,
+   "linhas": 15487
+  },
+  "src/main.tsx": {
+   "arquivos": 1,
+   "linhas": 46
+  },
+  "src/pages": {
+   "arquivos": 141,
+   "linhas": 49621
+  },
+  "src/security.test.ts": {
+   "arquivos": 1,
+   "linhas": 43
+  },
+  "src/services": {
+   "arquivos": 166,
+   "linhas": 33152
+  },
+  "src/stores": {
+   "arquivos": 12,
+   "linhas": 1782
+  },
+  "src/test": {
+   "arquivos": 191,
+   "linhas": 28951
+  },
+  "src/tests": {
+   "arquivos": 2,
+   "linhas": 1524
+  },
+  "src/types": {
+   "arquivos": 4,
+   "linhas": 530
+  },
+  "supabase/functions": {
+   "arquivos": 133,
+   "linhas": 31848
+  },
+  "tailwind.config.ts": {
+   "arquivos": 1,
+   "linhas": 143
+  },
+  "tests/e2e": {
+   "arquivos": 1,
+   "linhas": 34
+  },
+  "tests/load": {
+   "arquivos": 1,
+   "linhas": 126
+  },
+  "tests/rls": {
+   "arquivos": 2,
+   "linhas": 269
+  },
+  "vite.config.ts": {
+   "arquivos": 1,
+   "linhas": 85
+  },
+  "vitest.config.ts": {
+   "arquivos": 1,
+   "linhas": 47
+  },
+  "vitest.rls.config.ts": {
+   "arquivos": 1,
+   "linhas": 23
+  }
+ },
+ "maiores_arquivos": [
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "linhas": 15454
+  },
+  {
+   "arquivo": "src/pages/SLODashboard.tsx",
+   "linhas": 2813
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linhas": 2138
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "linhas": 1791
+  },
+  {
+   "arquivo": "supabase/functions/llm-gateway/index.ts",
+   "linhas": 1603
+  },
+  {
+   "arquivo": "src/App.tsx",
+   "linhas": 1539
+  },
+  {
+   "arquivo": "src/components/agents/wizard/QuickCreateWizard.tsx",
+   "linhas": 1520
+  },
+  {
+   "arquivo": "src/services/templateSkillLinkService.ts",
+   "linhas": 1448
+  },
+  {
+   "arquivo": "supabase/functions/datahub-query/index.ts",
+   "linhas": 1359
+  },
+  {
+   "arquivo": "src/services/skillsSimulationService.ts",
+   "linhas": 1168
+  },
+  {
+   "arquivo": "scripts/graphify-local.mjs",
+   "linhas": 1076
+  },
+  {
+   "arquivo": "src/pages/IRPlaybooksPage.tsx",
+   "linhas": 1032
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "linhas": 992
+  },
+  {
+   "arquivo": "src/data/agentTemplates.ts",
+   "linhas": 949
+  },
+  {
+   "arquivo": "src/components/agents/traces/ReplayDialog.tsx",
+   "linhas": 946
+  },
+  {
+   "arquivo": "src/pages/ChangeManagementPage.tsx",
+   "linhas": 939
+  },
+  {
+   "arquivo": "src/pages/BCPPage.tsx",
+   "linhas": 925
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linhas": 924
+  },
+  {
+   "arquivo": "src/components/agents/detail/RestoreHistorySection.tsx",
+   "linhas": 896
+  },
+  {
+   "arquivo": "src/components/agents/traces/ExecutionTimeline.tsx",
+   "linhas": 895
+  },
+  {
+   "arquivo": "src/pages/SkillHarvestPage.tsx",
+   "linhas": 880
+  },
+  {
+   "arquivo": "supabase/functions/smolagent-runtime/index.ts",
+   "linhas": 853
+  },
+  {
+   "arquivo": "src/components/agents/wizard/DraftRecoveryBanner.tsx",
+   "linhas": 845
+  },
+  {
+   "arquivo": "supabase/functions/test-runner/contract_test.ts",
+   "linhas": 829
+  },
+  {
+   "arquivo": "src/data/curatedSkills.ts",
+   "linhas": 807
+  }
+ ],
+ "qualidade": {
+  "any": 110,
+  "console_log": 87,
+  "ts_ignore": 0,
+  "eslint_disable": 3,
+  "todos": 16,
+  "arquivos_acima_500_linhas": 91
+ },
+ "todos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 188,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 222,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
+  },
+  {
+   "arquivo": "src/lib/normalize.ts",
+   "linha": 75,
+   "tipo": "XXX",
+   "texto": ".XXX/XXXX-XX"
+  },
+  {
+   "arquivo": "src/lib/skills/descriptionEnrichment.ts",
+   "linha": 42,
+   "tipo": "TODO",
+   "texto": "\" no catálogo."
+  },
+  {
+   "arquivo": "src/lib/validations/quickAgentSchema.ts",
+   "linha": 115,
+   "tipo": "TODO",
+   "texto": "etc)."
+  },
+  {
+   "arquivo": "src/lib/validations/quickAgentSchema.ts",
+   "linha": 162,
+   "tipo": "TODO",
+   "texto": "\", \"...\" etc."
+  },
+  {
+   "arquivo": "src/lib/validations/quickAgentSchema.ts",
+   "linha": 174,
+   "tipo": "TODO",
+   "texto": ")';"
+  },
+  {
+   "arquivo": "src/services/skillEnrichmentService.ts",
+   "linha": 46,
+   "tipo": "TODO",
+   "texto": "\", procedência humana) fica no módulo"
+  },
+  {
+   "arquivo": "src/services/templateSkillLinkService.ts",
+   "linha": 6,
+   "tipo": "TODO",
+   "texto": "o registry para cada template. Persistir o resultado permite"
+  },
+  {
+   "arquivo": "src/test/security-service.test.ts",
+   "linha": 12,
+   "tipo": "TODO",
+   "texto": "acesso a dados (inclusive via `fromTable(...)`) e o client local"
+  },
+  {
+   "arquivo": "src/test/skill-description-enrichment.test.ts",
+   "linha": 73,
+   "tipo": "TODO",
+   "texto": "', 'tbd', 'N/A', 'Sem Descrição', '...', '--'])("
+  },
+  {
+   "arquivo": "src/test/skill-description-enrichment.test.ts",
+   "linha": 93,
+   "tipo": "TODO",
+   "texto": "', 'Descrição curada por um humano de verdade.'];"
+  },
+  {
+   "arquivo": "src/test/skill-description-enrichment.test.ts",
+   "linha": 128,
+   "tipo": "TODO",
+   "texto": "', 'texto curado']) {"
+  },
+  {
+   "arquivo": "src/test/skill-description-parity.test.ts",
+   "linha": 88,
+   "tipo": "TODO",
+   "texto": "revisar depois desta entrega')).toBe(false);"
+  },
+  {
+   "arquivo": "src/test/template-skill-links.test.ts",
+   "linha": 4,
+   "tipo": "TODO",
+   "texto": "template departamental encontre skills instaláveis no"
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linha": 570,
+   "tipo": "TODO",
+   "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
+  }
+ ],
+ "alertas": {
+  "rotas_sem_arquivo": [],
+  "componentes_ambiguos": [],
+  "menu_sem_destino": [
+   "Coleções -> collections",
+   "Especialistas -> experts",
+   "Fatos -> facts",
+   "Grafo Temporal -> graph",
+   "Sandbox -> sandbox",
+   "Saúde -> health",
+   "Visão Geral -> overview"
+  ],
+  "edges_orfas": [
+   "bitrix24-api",
+   "bitrix24-oauth",
+   "guardrails-engine",
+   "oracle-research",
+   "pg-net-smoke-test",
+   "slack-agent-notify"
+  ],
+  "edges_chamadas_sem_pasta": [],
+  "tabelas_sem_rls": [
+   "agent_traces_v2_2026_11",
+   "agent_traces_v2_2026_12",
+   "agent_traces_v2_2027_01",
+   "agent_usage",
+   "audit_log_v2_2026_05",
+   "audit_log_v2_2026_06",
+   "prompt_versions",
+   "trace_events_v2_2026_05",
+   "trace_events_v2_2026_06"
+  ],
+  "tabelas_usadas_sem_definicao": [],
+  "tabelas_com_drift_migration_vs_types": [
+   "agent_installed_skills",
+   "agent_memories",
+   "agent_memories_v2",
+   "agent_routing_config",
+   "agent_skills",
+   "agent_usage",
+   "agent_versions",
+   "api_keys",
+   "audit_log",
+   "auth_attempts",
+   "chunks",
+   "consent_records",
+   "cron_schedule_executions",
+   "cron_schedules",
+   "data_deletion_requests",
+   "deploy_connections",
+   "dr_drills",
+   "entity_resolution_logs",
+   "evaluation_runs",
+   "forum_posts",
+   "forum_threads",
+   "idempotency_keys",
+   "knowledge_bases",
+   "knowledge_relations",
+   "mcp_servers",
+   "model_pricing",
+   "notification_templates",
+   "notifications",
+   "permissions",
+   "prompt_versions",
+   "queue_items",
+   "roles",
+   "security_events",
+   "skill_registry",
+   "task_queues",
+   "usage_records",
+   "webhook_endpoints",
+   "webhook_events",
+   "workflow_runs",
+   "workflows",
+   "workspaces"
+  ],
+  "rpcs_sem_definicao": [
+   "exec_sql"
+  ],
+  "componentes_orfaos": [
+   "src/components/agents/AgentCardGrid.tsx",
+   "src/components/agents/detail/SLOPanel.tsx",
+   "src/components/agents/wizard/WizardStepComponents.tsx",
+   "src/components/dashboard/BudgetWidget.tsx",
+   "src/components/dashboard/CostAnomalyWidget.tsx",
+   "src/components/datahub/DataHubStats.tsx",
+   "src/components/datahub/RecordFieldRenderers.tsx",
+   "src/components/integrations/WhatsAppLiveConsole.tsx",
+   "src/components/layout/AuthGuard.tsx",
+   "src/components/sandbox/SandboxConfigTab.tsx",
+   "src/components/sandbox/SandboxExecuteTab.tsx",
+   "src/components/sandbox/SandboxOutputTab.tsx",
+   "src/components/sandbox/SandboxSecurityTab.tsx",
+   "src/components/shared/CitationRenderer.tsx",
+   "src/components/shared/DashboardSkeleton.tsx",
+   "src/components/shared/GenerativeUI.tsx",
+   "src/components/shared/LoadingSpinner.tsx",
+   "src/components/shared/PaginationControls.tsx",
+   "src/components/super-cerebro/CerebroTabNav.tsx",
+   "src/components/super-cerebro/tabs/HealthTab.tsx",
+   "src/components/super-cerebro/tabs/SandboxTab.tsx",
+   "src/components/ui/accordion.tsx",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/breadcrumb.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/carousel.tsx",
+   "src/components/ui/context-menu.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/input-otp.tsx",
+   "src/components/ui/menubar.tsx",
+   "src/components/ui/navigation-menu.tsx",
+   "src/components/ui/pagination.tsx",
+   "src/components/ui/resizable.tsx",
+   "src/components/workflows/CanvasMinimap.tsx",
+   "src/components/workflows/WorkflowScheduler.tsx",
+   "src/components/workflows/WorkflowTimeTravelPanel.tsx"
+  ],
+  "componentes_com_nome_duplicado": [
+   "AddressCard",
+   "CommandPalette",
+   "CrossDbResults",
+   "EmailList",
+   "EmptySecondary",
+   "EmptyState",
+   "FieldValue",
+   "GenericSecondaryCard",
+   "GroupMembers",
+   "MessagesTimeline",
+   "PhoneList",
+   "SECONDARY_LABELS",
+   "SECONDARY_RENDERERS",
+   "SliderField",
+   "SupplierScoreCard",
+   "Toaster",
+   "ToggleField",
+   "VendorCard"
+  ],
+  "scripts_orfaos": [],
+  "env_usadas_nao_declaradas": [
+   "DEV",
+   "MODE",
+   "PROD",
+   "VITEST",
+   "VITE_SUPABASE_ANON_KEY"
+  ],
+  "ciclos_de_import": 1,
+  "possiveis_segredos_no_codigo": [
+   "scripts/ai-context/cenarios.mjs:102",
+   "scripts/ci/inventario-banco.unit.mjs:138"
+  ]
+ },
+ "erros_do_gerador": []
+}

@@ -1,0 +1,1670 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "stack": {
+  "linguagens": [
+   "TypeScript (1389)",
+   "SQL (332)",
+   "Markdown (113)",
+   "JavaScript (52)",
+   "JSON (24)",
+   "YAML (13)",
+   "Shell (10)",
+   "Python (5)"
+  ],
+  "linguagem_principal": "TypeScript",
+  "framework": "React",
+  "backend_http": [],
+  "bundler": "Vite",
+  "roteador": "react-router",
+  "banco": "Supabase",
+  "testes": [
+   "vitest",
+   "playwright"
+  ],
+  "ui": [
+   "tailwind",
+   "radix/shadcn"
+  ],
+  "estado": [
+   "react-query",
+   "zustand"
+  ],
+  "gerenciador_pacotes": "bun",
+  "node": null,
+  "python": null,
+  "deploy": [],
+  "monorepo": null,
+  "pastas_fonte": [
+   "src"
+  ]
+ },
+ "workspaces": [],
+ "package": {
+  "nome": "vite_react_shadcn_ts",
+  "versao": "1.6.1",
+  "scripts": {
+   "automation:check": "node scripts/automation.mjs check --ref HEAD",
+   "automation:doctor": "node scripts/automation.mjs doctor",
+   "automation:graph": "node scripts/automation.mjs graph",
+   "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+   "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+   "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+   "automation:status": "node scripts/automation.mjs graph status",
+   "automation:test": "node scripts/automation.mjs test",
+   "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks",
+   "build": "vite build",
+   "build:analyze": "vite build && echo 'Open dist/bundle-report.html in your browser'",
+   "build:dev": "vite build --mode development",
+   "check:bundle": "node scripts/check-bundle-size.mjs",
+   "dev": "vite",
+   "docs:pdf": "node scripts/generate-audit-pdf.mjs",
+   "lhci": "lhci autorun",
+   "lhci:local": "vite build && lhci autorun && lhci autorun --config=./lighthouserc.mobile.json",
+   "lhci:mobile": "lhci autorun --config=./lighthouserc.mobile.json",
+   "lint": "eslint .",
+   "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+   "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+   "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
+   "prepare": "husky",
+   "preview": "vite preview",
+   "test": "vitest run",
+   "test:coverage": "vitest run --coverage",
+   "test:coverage:ci": "vitest run --coverage --reporter=verbose",
+   "test:e2e": "playwright test",
+   "test:e2e:auth": "playwright test e2e/auth-flows.spec.ts",
+   "test:e2e:ui": "playwright test --ui",
+   "test:e2e:update": "playwright test --update-snapshots",
+   "test:e2e:visual": "playwright test e2e/visual.spec.ts",
+   "test:load": "k6 run tests/load/llm-gateway.k6.js",
+   "test:load:smoke": "k6 run --vus 1 --duration 30s tests/load/llm-gateway.k6.js",
+   "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
+   "test:rls": "vitest run --config vitest.rls.config.ts",
+   "test:watch": "vitest",
+   "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json"
+  },
+  "dependencias": 89,
+  "dev_dependencias": 25,
+  "principais": {
+   "@supabase/supabase-js": "2.119.0",
+   "@tanstack/react-query": "^5.83.0",
+   "date-fns": "^3.6.0",
+   "next-themes": "^0.3.0",
+   "react": "^18.3.1",
+   "react-day-picker": "^8.10.1",
+   "react-dom": "^18.3.1",
+   "react-dropzone": "^19.1.1",
+   "react-hook-form": "^7.61.1",
+   "react-markdown": "^10.1.0",
+   "react-resizable-panels": "^2.1.9",
+   "react-router-dom": "^7.18.5",
+   "reactflow": "^11.11.4",
+   "recharts": "^3.10.1",
+   "tailwindcss-animate": "^1.0.7",
+   "zod": "^3.25.76",
+   "zustand": "^5.0.14"
+  },
+  "engines": null,
+  "packageManager": null
+ },
+ "python": {
+  "dependencias": [
+   "psycopg"
+  ]
+ },
+ "configs": [
+  ".github/CODEOWNERS",
+  ".github/PULL_REQUEST_TEMPLATE.md",
+  ".github/dependabot.yml",
+  ".husky/commit-msg",
+  ".husky/pre-commit",
+  ".prettierrc",
+  "ai-context.config.json",
+  "components.json",
+  "eslint.config.js",
+  "package.json",
+  "playwright.config.ts",
+  "postcss.config.js",
+  "supabase/config.toml",
+  "tailwind.config.ts",
+  "tsconfig.app.json",
+  "tsconfig.json",
+  "tsconfig.node.json",
+  "vite.config.ts",
+  "vitest.config.ts"
+ ],
+ "workflows": [
+  {
+   "arquivo": ".github/workflows/automation-local.yml",
+   "nome": "Automação local",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "contracts"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/automation.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/ci.yml",
+   "nome": "Nexus CI",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "security-audit",
+    "db-drift-check",
+    "lint-and-typecheck",
+    "unit-tests",
+    "e2e-tests",
+    "edge-contracts",
+    "build",
+    "lighthouse",
+    "load-test",
+    "notify-failure"
+   ],
+   "permissoes": [],
+   "scripts_usados": [
+    "scripts/check-agents-md-integrity.mjs",
+    "scripts/db-drift-check.mjs"
+   ],
+   "npm_scripts": [
+    "build",
+    "check:bundle",
+    "docs:pdf",
+    "typecheck"
+   ],
+   "secrets": [
+    "DB_MCP_URL",
+    "SLACK_WEBHOOK_URL",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "actions": [
+    "8398a7/action-slack",
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "denoland/setup-deno",
+    "grafana/setup-k6-action"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/codeql.yml",
+   "nome": "CodeQL",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "schedule"
+   ],
+   "crons": [
+    "17 5 * * 1"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "analyze"
+   ],
+   "permissoes": [],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "github/codeql-action/analyze",
+    "github/codeql-action/autobuild",
+    "github/codeql-action/init"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/contexto.yml",
+   "nome": "Contexto para agentes de IA (10 min)",
+   "gatilhos": [
+    "push",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "3-59/10 * * * *"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "gate",
+    "codigo",
+    "banco",
+    "regras",
+    "publicar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/ai-context/gerar.mjs",
+    "scripts/regras_negocio/generate.py",
+    "scripts/regras_negocio/indice.py",
+    "scripts/supabase_snapshot/snapshot.py"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/cache",
+    "actions/checkout",
+    "actions/download-artifact",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/guards.yml",
+   "nome": "Guards",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "testes-dos-guards",
+    "ratchets",
+    "segredos",
+    "artefatos-gerados",
+    "achados-herdados"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/ci/a11y-button-name-ratchet.mjs",
+    "scripts/ci/check-bundle-secrets.mjs",
+    "scripts/ci/check-e2e-artifact-secrets.mjs",
+    "scripts/ci/check-edge-error-exposure.mjs",
+    "scripts/ci/check-pr-workflow-secrets.mjs",
+    "scripts/ci/check-supabase-url-import-meta.mjs",
+    "scripts/ci/gerar-matriz-edge-tabela.mjs",
+    "scripts/ci/implicit-any-ratchet.mjs",
+    "scripts/ci/lint-ratchet.mjs",
+    "scripts/ci/typecheck-ratchet.mjs",
+    "scripts/edge-deploy/generate-manifest.mjs"
+   ],
+   "npm_scripts": [
+    "build"
+   ],
+   "secrets": [
+    "mjs",
+    "txt"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/inventario-estado-semanal.yml",
+   "nome": "Inventário do estado real (semanal)",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 10 * * 1"
+   ],
+   "branches": [],
+   "jobs": [
+    "gerar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/inventario/gerar-banco.mjs",
+    "scripts/inventario/gerar-repo.mjs",
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/github-script",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "peter-evans/create-pull-request"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/release-drafter.yml",
+   "nome": "release-drafter",
+   "gatilhos": [
+    "pull_request",
+    "push"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "update_release_draft"
+   ],
+   "permissoes": [
+    "contents: write",
+    "pull-requests: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "GITHUB_TOKEN"
+   ],
+   "actions": [
+    "release-drafter/release-drafter"
+   ]
+  }
+ ],
+ "hooks_git": [
+  {
+   "arquivo": ".husky/commit-msg",
+   "comandos": [
+    "node scripts/ci/commit-msg-lint.mjs \"$1\""
+   ]
+  },
+  {
+   "arquivo": ".husky/pre-commit",
+   "comandos": [
+    "npx lint-staged"
+   ]
+  }
+ ],
+ "docs_raiz": [
+  {
+   "arquivo": ".github/PULL_REQUEST_TEMPLATE.md",
+   "titulo": null,
+   "linhas": 31
+  },
+  {
+   "arquivo": ".github/pull_request_template.md",
+   "titulo": null,
+   "linhas": 26
+  },
+  {
+   "arquivo": "AGENTS.md",
+   "titulo": "AGENTS.md — Fator X V2 (Nexus Agents Studio)",
+   "linhas": 124
+  },
+  {
+   "arquivo": "BACKLOG-10-10.md",
+   "titulo": "🎯 Backlog 10/10 — Nexus Agents Studio / FATOR X",
+   "linhas": 166
+  },
+  {
+   "arquivo": "CHANGELOG.md",
+   "titulo": "Changelog",
+   "linhas": 190
+  },
+  {
+   "arquivo": "CLAUDE.md",
+   "titulo": null,
+   "linhas": 2
+  },
+  {
+   "arquivo": "CODE_OF_CONDUCT.md",
+   "titulo": "Código de Conduta — Contributor Covenant v2.1",
+   "linhas": 64
+  },
+  {
+   "arquivo": "CONTRIBUTING.md",
+   "titulo": "Guia de Contribuição — Nexus / Agent Studio",
+   "linhas": 53
+  },
+  {
+   "arquivo": "COVERAGE-REPORT.md",
+   "titulo": "📊 Coverage Report — Nexus Agents Studio / FATOR X",
+   "linhas": 101
+  },
+  {
+   "arquivo": "DESIGN.md",
+   "titulo": "🎨 DESIGN.md — Nexus Agents Studio / FATOR X",
+   "linhas": 516
+  },
+  {
+   "arquivo": "ESTADO-ATUAL.md",
+   "titulo": "ESTADO ATUAL DO SISTEMA — Fator X V2 / Nexus Agents Studio",
+   "linhas": 468
+  },
+  {
+   "arquivo": "FUNCIONALIDADES-DO-SISTEMA.md",
+   "titulo": "🚀 Nexus Agents Studio — Funcionalidades do Sistema",
+   "linhas": 712
+  },
+  {
+   "arquivo": "GAP-ANALYSIS-GITHUB-TOPICS-AGENT-2026-04-05.md",
+   "titulo": "🔍 ANÁLISE EXAUSTIVA: GitHub /topics/agent vs NEXUS AGENTS STUDIO",
+   "linhas": 183
+  },
+  {
+   "arquivo": "HANDOFF-AGENTIC-FRAMEWORK-ANALYSIS.md",
+   "titulo": "🔄 HANDOFF: Análise Exaustiva GitHub /topics/agentic-framework",
+   "linhas": 245
+  },
+  {
+   "arquivo": "HANDOFF-AUTOMATION-ANALYSIS.md",
+   "titulo": "🔄 HANDOFF: Análise Exaustiva GitHub /topics/automation",
+   "linhas": 327
+  },
+  {
+   "arquivo": "NEXUS-AUDITORIA-FRONTEND-COVERAGE.md",
+   "titulo": "🔍 AUDITORIA: COBERTURA FRONTEND vs BACKEND",
+   "linhas": 92
+  },
+  {
+   "arquivo": "NEXUS-GAP-ANALYSIS-AUTOMATION.md",
+   "titulo": "📊 Gap Analysis: GitHub /topics/automation vs Nexus Agents Studio",
+   "linhas": 184
+  },
+  {
+   "arquivo": "NEXUS-RELATORIO-TESTES-ABRANGENTE-V2.md",
+   "titulo": "🧪 RELATÓRIO QA TOTAL V2 — NEXUS AGENTS STUDIO",
+   "linhas": 108
+  },
+  {
+   "arquivo": "NEXUS-RELATORIO-TESTES-ABRANGENTE-V3.md",
+   "titulo": "Nexus QA — Relatório V3 (Hardening Final)",
+   "linhas": 47
+  },
+  {
+   "arquivo": "NEXUS-RELATORIO-TESTES-ABRANGENTE-V4.md",
+   "titulo": "Nexus QA — Relatório V4 (Excelência Absoluta)",
+   "linhas": 48
+  },
+  {
+   "arquivo": "NEXUS-RELATORIO-TESTES-ABRANGENTE-V5.md",
+   "titulo": "🏆 NEXUS — RELATÓRIO V5 (Sprint Polish Arquitetural)",
+   "linhas": 65
+  },
+  {
+   "arquivo": "NEXUS-RELATORIO-TESTES-ABRANGENTE-V6.md",
+   "titulo": "NEXUS — Relatório de Testes Abrangente V6",
+   "linhas": 62
+  },
+  {
+   "arquivo": "NEXUS-RELATORIO-TESTES-ABRANGENTE.md",
+   "titulo": "🧪 RELATÓRIO DE TESTES ABRANGENTE — NEXUS AGENTS STUDIO",
+   "linhas": 110
+  },
+  {
+   "arquivo": "README.md",
+   "titulo": "⚡ Nexus Agents Studio",
+   "linhas": 77
+  },
+  {
+   "arquivo": "RELATORIO-FINAL-50-ETAPAS.md",
+   "titulo": "RELATÓRIO FINAL — PLANO 50-ETAPAS-10-10",
+   "linhas": 379
+  },
+  {
+   "arquivo": "SECURITY.md",
+   "titulo": "Política de Segurança — Nexus Agents Studio",
+   "linhas": 73
+  },
+  {
+   "arquivo": "docs/AGENTES-A-IMPLEMENTAR.md",
+   "titulo": "🤖 Agentes a Implementar — Fator X / Promo Brindes",
+   "linhas": 323
+  },
+  {
+   "arquivo": "docs/ARQUITETURA-BIBLIOTECA-SKILLS.md",
+   "titulo": "Arquitetura da Biblioteca de Skills",
+   "linhas": 57
+  },
+  {
+   "arquivo": "docs/AUDITORIA-BACKEND-SENIOR.md",
+   "titulo": "Auditoria Enterprise — Back-End Sênior · Fator X (Nexus)",
+   "linhas": 255
+  },
+  {
+   "arquivo": "docs/AUDITORIA_BACKEND_2026-07-12.md",
+   "titulo": "🔍 Auditoria Back-End Exaustiva — Nexus / Fator X",
+   "linhas": 256
+  },
+  {
+   "arquivo": "docs/AUDITORIA_NEXUS_10-10.md",
+   "titulo": "🔬 AUDITORIA TÉCNICA EXAUSTIVA — NEXUS AGENTS STUDIO",
+   "linhas": 225
+  },
+  {
+   "arquivo": "docs/AUTOGRAPH-MEMORY-LAYER.md",
+   "titulo": "Autograph Memory Layer — Guia Técnico",
+   "linhas": 66
+  },
+  {
+   "arquivo": "docs/AUTOGRAPH-SIMULATION-2026-07-21.md",
+   "titulo": "Autograph Memory Layer — Simulação de Cenários (2026-07-21)",
+   "linhas": 84
+  },
+  {
+   "arquivo": "docs/AUTOMACAO_LOCAL.md",
+   "titulo": "Automação local — Fator_X_V2",
+   "linhas": 74
+  },
+  {
+   "arquivo": "docs/CHECKLIST-COMPLETO-LOVABLE-vs-CODIGO-REAL.md",
+   "titulo": "🔍 CHECKLIST EXAUSTIVO — O QUE O LOVABLE DEVE TER CRIADO",
+   "linhas": 841
+  },
+  {
+   "arquivo": "docs/CONTRIBUTING.md",
+   "titulo": "🛠 Contributing — Nexus Agents Studio",
+   "linhas": 18
+  },
+  {
+   "arquivo": "docs/DATA-DICTIONARY.md",
+   "titulo": "Data Dictionary (Core Tables)",
+   "linhas": 24
+  },
+  {
+   "arquivo": "docs/EDGE-FUNCTIONS-AUDIT-2026-07-21.md",
+   "titulo": "Auditoria de Edge Functions — Fator X",
+   "linhas": 217
+  },
+  {
+   "arquivo": "docs/FASE10-PERFORMANCE-INSIGHTS.md",
+   "titulo": "Fase 10 — Performance Insights & Auto-EXPLAIN",
+   "linhas": 36
+  },
+  {
+   "arquivo": "docs/FASE11-TIMESERIES-DASHBOARD.md",
+   "titulo": "Fase 11 — Séries temporais WAL/Conexões + EXPLAIN 1-clique",
+   "linhas": 28
+  },
+  {
+   "arquivo": "docs/FASE12-PROACTIVE-TRENDS.md",
+   "titulo": "Fase 12 — Alertas Proativos de Tendência",
+   "linhas": 44
+  },
+  {
+   "arquivo": "docs/FASE13-SMOKE-TEST-ALERTS.md",
+   "titulo": "Fase 13 — Smoke Test Automatizado dos Alertas de Tendência (chaos-lite)",
+   "linhas": 47
+  },
+  {
+   "arquivo": "docs/FASE14-SMOKE-COVERAGE-SLO.md",
+   "titulo": "Fase 14 — Smoke Coverage Estendido + Painel SLO dos Detectores",
+   "linhas": 50
+  },
+  {
+   "arquivo": "docs/FASE15-SLO-BREACH-SLACK-DISPATCH.md",
+   "titulo": "Fase 15 — Dispatch automático para Slack quando SLO dos detectores quebra",
+   "linhas": 52
+  },
+  {
+   "arquivo": "docs/FASE6-HARDENING-FINAL.md",
+   "titulo": "🏁 Fase 6 — Hardening Final (Rumo ao 10/10)",
+   "linhas": 40
+  },
+  {
+   "arquivo": "docs/FASE7-HARDENING-POS-10-10.md",
+   "titulo": "🏁 Fase 7 — Hardening Pós-10/10 (Slack DLQ + DB Health)",
+   "linhas": 31
+  },
+  {
+   "arquivo": "docs/FASE8-OBSERVABILIDADE-PROFUNDA.md",
+   "titulo": "Fase 8 — Observabilidade Profunda e Auto-Drenagem",
+   "linhas": 42
+  },
+  {
+   "arquivo": "docs/FASE8-TEST-REPORT.md",
+   "titulo": "📊 Relatório de Testes — Fase 8 (Observabilidade Profunda)",
+   "linhas": 78
+  },
+  {
+   "arquivo": "docs/FASE9-PERF-TUNING.md",
+   "titulo": "Fase 9 — Perf Tuning e Alerting Automático de Queries Lentas",
+   "linhas": 55
+  },
+  {
+   "arquivo": "docs/FUNCIONALIDADES-SEM-INTERFACE-VISUAL-V2.md",
+   "titulo": "🕳️ Funcionalidades sem Interface Visual Completa — V2",
+   "linhas": 234
+  },
+  {
+   "arquivo": "docs/FUNCIONALIDADES-SEM-INTERFACE-VISUAL.md",
+   "titulo": "🕳️ Funcionalidades sem Interface Visual Completa",
+   "linhas": 194
+  },
+  {
+   "arquivo": "docs/FUNCIONALIDADES-SISTEMA-COMPLETO.md",
+   "titulo": "🚀 Nexus Agents Studio — Análise Exaustiva de Funcionalidades",
+   "linhas": 366
+  },
+  {
+   "arquivo": "docs/GAP-ANALYSIS-CLASSE-MUNDIAL-2026.md",
+   "titulo": "🌍 Análise de Gaps — Classe Mundial vs Nexus Agents Studio",
+   "linhas": 433
+  },
+  {
+   "arquivo": "docs/HYBRID-SEARCH-V2-SIMULATION-2026-07-21.md",
+   "titulo": "Simulação — Retrieval Híbrido v2 (pgvector) no `oracle-research`",
+   "linhas": 29
+  },
+  {
+   "arquivo": "docs/ONBOARDING.md",
+   "titulo": "🚀 Onboarding — Nexus Agents Studio",
+   "linhas": 33
+  },
+  {
+   "arquivo": "docs/QA-BASELINE-2026-07-15.md",
+   "titulo": "QA Baseline — 2026-07-15 (Fase 1 completa)",
+   "linhas": 24
+  },
+  {
+   "arquivo": "docs/QA-SIM-2026-07-21.md",
+   "titulo": "QA Simulação Exaustiva — 2026-07-21",
+   "linhas": 77
+  },
+  {
+   "arquivo": "docs/RUNBOOK.md",
+   "titulo": "Nexus Agents Studio — Runbook Operacional",
+   "linhas": 1186
+  },
+  {
+   "arquivo": "docs/SIMULACAO-CENARIOS-2026-07-22.md",
+   "titulo": "Simulação de Cenários — Slack Integration (2026-07-22)",
+   "linhas": 51
+  },
+  {
+   "arquivo": "docs/SIMULACAO-CENARIOS-FASE6.md",
+   "titulo": "🧪 Simulação Fase 6 — 200 cenários auditados",
+   "linhas": 84
+  },
+  {
+   "arquivo": "docs/SIMULACAO-CENARIOS-FASE7.md",
+   "titulo": "🧪 Simulação Fase 7 — 120 cenários pós-10/10",
+   "linhas": 63
+  },
+  {
+   "arquivo": "docs/SIMULACAO-SUPER-CEREBRO-2026-07-22.md",
+   "titulo": "🧪 Simulação — Super Cérebro NotebookLM + Obsidian (2026-07-22)",
+   "linhas": 107
+  },
+  {
+   "arquivo": "docs/SIMULACAO-SUPER-CEREBRO-V1.5-2026-07-22.md",
+   "titulo": "Simulação — Super Cérebro v1.5.0",
+   "linhas": 102
+  },
+  {
+   "arquivo": "docs/SKILLS-10-10-2026-07-23.md",
+   "titulo": "Skills de Agentes — Rumo ao 10/10",
+   "linhas": 59
+  },
+  {
+   "arquivo": "docs/SLACK-INTEGRATION.md",
+   "titulo": "Integração Slack — Documentação Técnica",
+   "linhas": 88
+  },
+  {
+   "arquivo": "docs/TYPOGRAPHY-MIGRATION-REPORT.md",
+   "titulo": "Relatório da Migração de Tipografia — Fator X",
+   "linhas": 79
+  }
+ ],
+ "docs_em_subpastas": [
+  {
+   "pasta": "docs/auditoria-estado-2026-08",
+   "arquivos_md": 11
+  },
+  {
+   "pasta": "docs/adr",
+   "arquivos_md": 7
+  },
+  {
+   "pasta": "docs/agentes",
+   "arquivos_md": 6
+  },
+  {
+   "pasta": "docs/architecture",
+   "arquivos_md": 2
+  },
+  {
+   "pasta": "docs/contexto",
+   "arquivos_md": 2
+  },
+  {
+   "pasta": "docs/runbooks",
+   "arquivos_md": 2
+  },
+  {
+   "pasta": "docs/migration",
+   "arquivos_md": 1
+  }
+ ],
+ "changelog_topo": "[1.6.1] - 2026-09-05",
+ "env": {
+  "declaradas_no_env_example": [
+   "ANTHROPIC_API_KEY",
+   "BITRIX24_WEBHOOK_TOKEN",
+   "HUGGINGFACE_API_KEY",
+   "OPENAI_API_KEY",
+   "SLACK_BOT_TOKEN",
+   "SLACK_SIGNING_SECRET",
+   "TWILIO_AUTH_TOKEN",
+   "VITE_APP_ENV",
+   "VITE_APP_URL",
+   "VITE_EXTERNAL_SUPABASE_ANON_KEY",
+   "VITE_EXTERNAL_SUPABASE_URL",
+   "VITE_LANGFUSE_HOST",
+   "VITE_LANGFUSE_PUBLIC_KEY",
+   "VITE_LANGFUSE_SECRET_KEY",
+   "VITE_OTEL_EXPORTER_OTLP_ENDPOINT",
+   "VITE_OTEL_SERVICE_NAME",
+   "VITE_SENTRY_DSN",
+   "VITE_SUPABASE_PROJECT_ID",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL",
+   "WHATSAPP_EVOLUTION_TOKEN",
+   "WHATSAPP_ZAPI_TOKEN"
+  ],
+  "usadas_no_front": [
+   "DEV",
+   "MODE",
+   "PROD",
+   "VITEST",
+   "VITE_EXTERNAL_SUPABASE_ANON_KEY",
+   "VITE_EXTERNAL_SUPABASE_URL",
+   "VITE_SENTRY_DSN",
+   "VITE_SUPABASE_ANON_KEY",
+   "VITE_SUPABASE_PROJECT_ID",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL"
+  ],
+  "usadas_nas_edges": [
+   "API_KEY_HMAC_SECRET",
+   "BITRIX24_CLIENT_ID",
+   "BITRIX24_CLIENT_SECRET",
+   "BITRIX24_DOMAIN",
+   "COHERE_API_KEY",
+   "DENO_ENV",
+   "ENABLE_AGENTIC_GUARDRAIL",
+   "ENABLE_AUTO_CLASSIFY",
+   "ENABLE_EMOTION_DETECTION",
+   "ENABLE_HALLUCINATION_CHECK",
+   "ENABLE_HF_RERANKER",
+   "ENABLE_KEYPHRASE_EXTRACTION",
+   "ENABLE_LANGUAGE_DETECTION",
+   "ENABLE_ML_INJECTION_CHECK",
+   "ENABLE_OUTPUT_TOXICITY",
+   "ENABLE_PII_ML",
+   "ENABLE_TOXICITY_CHECK",
+   "ENVIRONMENT",
+   "GITHUB_API_KEY",
+   "GITHUB_TOKEN",
+   "HF_API_TOKEN",
+   "HUGGINGFACE_API_KEY",
+   "LOVABLE_API_KEY",
+   "OPENAI_API_KEY",
+   "OPENCLAW_API_TOKEN",
+   "OPENCLAW_URL",
+   "OPENCLAW_WEBHOOK_SECRET",
+   "SB_FUNCTION_NAME",
+   "SLACK_ALERT_WEBHOOK_URL",
+   "SLACK_BOT_TOKEN",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_DB_URL",
+   "SUPABASE_SERVICE_ROLE_KEY",
+   "SUPABASE_URL",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL",
+   "WHATSAPP_API_KEY",
+   "WHATSAPP_API_URL",
+   "WHATSAPP_EVOLUTION_TOKEN",
+   "WHATSAPP_INSTANCE",
+   "WHATSAPP_META_APP_SECRET",
+   "WHATSAPP_TWILIO_AUTH_TOKEN",
+   "WHATSAPP_ZAPI_TOKEN"
+  ],
+  "usadas_no_python": [
+   "AI_CONTEXT_INDEX",
+   "AI_CONTEXT_MODEL",
+   "AI_CONTEXT_PROFILE",
+   "AI_CONTEXT_SCHEMA_SNAPSHOT",
+   "ANTHROPIC_API_KEY",
+   "CODE_SCAN_DIRS",
+   "GEN_TYPES",
+   "PGDUMP",
+   "PGDUMP_SCHEMAS",
+   "REPO_ROOT",
+   "SNAPSHOT_DIR",
+   "SNAPSHOT_EXCLUDE_SCHEMAS",
+   "SNAPSHOT_INCLUDE_SCHEMAS",
+   "SUPABASE_ACCESS_TOKEN",
+   "SUPABASE_DB_URL",
+   "SUPABASE_PROJECT_REF",
+   "SUPABASE_SNAPSHOT_PUBLICACAO"
+  ],
+  "usadas_mas_nao_declaradas": [
+   "DEV",
+   "MODE",
+   "PROD",
+   "VITEST",
+   "VITE_SUPABASE_ANON_KEY"
+  ],
+  "secrets_em_workflows": [
+   "DB_MCP_URL",
+   "GITHUB_TOKEN",
+   "SLACK_WEBHOOK_URL",
+   "SUPABASE_ACCESS_TOKEN",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_DB_URL",
+   "SUPABASE_SERVICE_ROLE_KEY",
+   "SUPABASE_URL",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL",
+   "mjs",
+   "txt"
+  ]
+ },
+ "deploy": {
+  "alvos": [],
+  "dockerfiles": [],
+  "compose": [],
+  "vercel": null
+ },
+ "integracoes": {
+  "sdks": [
+   {
+    "pacote": "@tanstack/react-query",
+    "servico": "react-query",
+    "versao": "^5.83.0"
+   },
+   {
+    "pacote": "@sentry/react",
+    "servico": "Sentry",
+    "versao": "^10"
+   },
+   {
+    "pacote": "@supabase/supabase-js",
+    "servico": "Supabase",
+    "versao": "2.119.0"
+   },
+   {
+    "pacote": "zod",
+    "servico": "zod",
+    "versao": "^3.25.76"
+   }
+  ],
+  "hosts_externos": [
+   {
+    "host": "ai.gateway.lovable.dev",
+    "arquivos": 19
+   },
+   {
+    "host": "router.huggingface.co",
+    "arquivos": 17
+   },
+   {
+    "host": "api.openai.com",
+    "arquivos": 5
+   },
+   {
+    "host": "openrouter.ai",
+    "arquivos": 5
+   },
+   {
+    "host": "api.anthropic.com",
+    "arquivos": 3
+   },
+   {
+    "host": "generativelanguage.googleapis.com",
+    "arquivos": 3
+   },
+   {
+    "host": "nexus.promobrindes.com.br",
+    "arquivos": 3
+   },
+   {
+    "host": "slack.com",
+    "arquivos": 3
+   },
+   {
+    "host": "api-inference.huggingface.co",
+    "arquivos": 2
+   },
+   {
+    "host": "api.cohere.ai",
+    "arquivos": 2
+   },
+   {
+    "host": "api.exemplo.com",
+    "arquivos": 2
+   },
+   {
+    "host": "api.slack.com",
+    "arquivos": 2
+   },
+   {
+    "host": "app.promobrindes.com.br",
+    "arquivos": 2
+   },
+   {
+    "host": "exemplo.com",
+    "arquivos": 2
+   },
+   {
+    "host": "gitlab.com",
+    "arquivos": 2
+   },
+   {
+    "host": "osv.dev",
+    "arquivos": 2
+   },
+   {
+    "host": "placeholder.supabase.co",
+    "arquivos": 2
+   },
+   {
+    "host": "promobrindes.com.br",
+    "arquivos": 2
+   },
+   {
+    "host": "qdlnzopxrlsoljcrcmzv.supabase.co",
+    "arquivos": 2
+   },
+   {
+    "host": "raw.githubusercontent.com",
+    "arquivos": 2
+   },
+   {
+    "host": "supabase.com",
+    "arquivos": 2
+   },
+   {
+    "host": "x.com",
+    "arquivos": 2
+   },
+   {
+    "host": "x.supabase.co",
+    "arquivos": 2
+   },
+   {
+    "host": "0ef3e2b6-577d-454f-881a-388fe5cf1ec6.functions.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "api.duckduckgo.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.lovable.dev",
+    "arquivos": 1
+   },
+   {
+    "host": "api.osv.dev",
+    "arquivos": 1
+   },
+   {
+    "host": "api.pwnedpasswords.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.resend.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.supabase.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.twilio.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.x.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.z-api.io",
+    "arquivos": 1
+   },
+   {
+    "host": "briaai-bria-rmbg-2-0.hf.space",
+    "arquivos": 1
+   },
+   {
+    "host": "cloud.langfuse.com",
+    "arquivos": 1
+   },
+   {
+    "host": "connector-gateway.lovable.dev",
+    "arquivos": 1
+   },
+   {
+    "host": "demo.nexus.app",
+    "arquivos": 1
+   },
+   {
+    "host": "developers.google.com",
+    "arquivos": 1
+   },
+   {
+    "host": "diffusers-stable-diffusion-xl-inpainting.hf.space",
+    "arquivos": 1
+   },
+   {
+    "host": "doc.evolution-api.com",
+    "arquivos": 1
+   },
+   {
+    "host": "duckduckgo.com",
+    "arquivos": 1
+   },
+   {
+    "host": "facebook-sam2.hf.space",
+    "arquivos": 1
+   },
+   {
+    "host": "functions.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "graph.facebook.com",
+    "arquivos": 1
+   },
+   {
+    "host": "html.duckduckgo.com",
+    "arquivos": 1
+   },
+   {
+    "host": "httpbin.org",
+    "arquivos": 1
+   },
+   {
+    "host": "huggingface.co",
+    "arquivos": 1
+   },
+   {
+    "host": "images.unsplash.com",
+    "arquivos": 1
+   },
+   {
+    "host": "inseguro.com",
+    "arquivos": 1
+   },
+   {
+    "host": "jaeger.nexus.local",
+    "arquivos": 1
+   },
+   {
+    "host": "jasperai-flux-dev-upscaler.hf.space",
+    "arquivos": 1
+   },
+   {
+    "host": "langfuse.com",
+    "arquivos": 1
+   },
+   {
+    "host": "lovable.dev",
+    "arquivos": 1
+   },
+   {
+    "host": "maintenance.invalid",
+    "arquivos": 1
+   },
+   {
+    "host": "nexus.fatorx.app",
+    "arquivos": 1
+   },
+   {
+    "host": "production.invalid",
+    "arquivos": 1
+   },
+   {
+    "host": "production.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "sheets.googleapis.com",
+    "arquivos": 1
+   },
+   {
+    "host": "test.com",
+    "arquivos": 1
+   },
+   {
+    "host": "training.bitrix24.com",
+    "arquivos": 1
+   },
+   {
+    "host": "www.okta.com",
+    "arquivos": 1
+   },
+   {
+    "host": "x.dev",
+    "arquivos": 1
+   },
+   {
+    "host": "your-idp.com",
+    "arquivos": 1
+   }
+  ],
+  "env_de_integracao": [
+   "ANTHROPIC_API_KEY",
+   "API_KEY_HMAC_SECRET",
+   "BITRIX24_CLIENT_ID",
+   "BITRIX24_CLIENT_SECRET",
+   "BITRIX24_WEBHOOK_TOKEN",
+   "COHERE_API_KEY",
+   "GITHUB_API_KEY",
+   "GITHUB_TOKEN",
+   "HF_API_TOKEN",
+   "HUGGINGFACE_API_KEY",
+   "LOVABLE_API_KEY",
+   "OPENAI_API_KEY",
+   "OPENCLAW_API_TOKEN",
+   "OPENCLAW_WEBHOOK_SECRET",
+   "SLACK_ALERT_WEBHOOK_URL",
+   "SLACK_BOT_TOKEN",
+   "SLACK_SIGNING_SECRET",
+   "TWILIO_AUTH_TOKEN",
+   "VITE_LANGFUSE_SECRET_KEY",
+   "VITE_SENTRY_DSN",
+   "WHATSAPP_API_KEY",
+   "WHATSAPP_API_URL",
+   "WHATSAPP_EVOLUTION_TOKEN",
+   "WHATSAPP_INSTANCE",
+   "WHATSAPP_META_APP_SECRET",
+   "WHATSAPP_TWILIO_AUTH_TOKEN",
+   "WHATSAPP_ZAPI_TOKEN"
+  ],
+  "webhooks_recebidos": [
+   "migrate-helper",
+   "openclaw-webhook",
+   "rag-embed-backfill",
+   "slack-events-webhook",
+   "whatsapp-router"
+  ],
+  "realtime": [
+   "billing-cost-stream",
+   "budget-events",
+   "cost-anomaly-alerts",
+   "curation-feed-${filtro}",
+   "dashboard-alerts",
+   "dr-drills-${workspace.id}",
+   "game-day-${id}",
+   "incident-runs-global",
+   "ingestion-events:${ingestionId}",
+   "ingestions:${userId}",
+   "notifications-agents",
+   "notifications-evals",
+   "notifications-traces",
+   "security_alerts_changes",
+   "synthetic-alerts",
+   "wa-inbox-${workspaceId}"
+  ]
+ },
+ "permissoes": {
+  "papeis_no_codigo": [
+   {
+    "papel": "user",
+    "ocorrencias": 60
+   },
+   {
+    "papel": "button",
+    "ocorrencias": 46
+   },
+   {
+    "papel": "system",
+    "ocorrencias": 41
+   },
+   {
+    "papel": "status",
+    "ocorrencias": 31
+   },
+   {
+    "papel": "alert",
+    "ocorrencias": 16
+   },
+   {
+    "papel": "assistant",
+    "ocorrencias": 15
+   },
+   {
+    "papel": "group",
+    "ocorrencias": 7
+   },
+   {
+    "papel": "admin",
+    "ocorrencias": 6
+   },
+   {
+    "papel": "listbox",
+    "ocorrencias": 6
+   },
+   {
+    "papel": "option",
+    "ocorrencias": 6
+   },
+   {
+    "papel": "tab",
+    "ocorrencias": 6
+   },
+   {
+    "papel": "tablist",
+    "ocorrencias": 6
+   },
+   {
+    "papel": "progressbar",
+    "ocorrencias": 5
+   },
+   {
+    "papel": "radio",
+    "ocorrencias": 5
+   },
+   {
+    "papel": "radiogroup",
+    "ocorrencias": 5
+   },
+   {
+    "papel": "dialog",
+    "ocorrencias": 4
+   },
+   {
+    "papel": "region",
+    "ocorrencias": 4
+   },
+   {
+    "papel": "agent",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "anon",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "img",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "log",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "navigation",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "service_role",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "article",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "ausente",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "authenticated",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "banner",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "combobox",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "editor",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "finance",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "link",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "list",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "logistics",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "manager",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "menuitem",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "presentation",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "purchasing",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "sales",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "searchbox",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "separator",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "string",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "sup",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "superadmin",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "support",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "switch",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "textbox",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "tool",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "toolbar",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "viewer",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "workspace_admin",
+    "ocorrencias": 1
+   }
+  ],
+  "enums_de_papel": [],
+  "rpcs_de_autorizacao": [
+   "is_user_locked_out",
+   "is_workspace_admin"
+  ],
+  "guards": [
+   "src/components/agent-builder/GuardrailsConfig.tsx",
+   "src/components/agent-builder/GuardrailsPolicyEditor.tsx",
+   "src/components/agent-builder/modules/GuardrailsModule.tsx",
+   "src/components/agents/versioning/GuardrailsDiffPanel.tsx",
+   "src/components/layout/AuthGuard.tsx",
+   "src/components/rbac/AccessControl.tsx",
+   "src/components/rbac/ProtectedRoute.tsx",
+   "src/components/security/GuardrailPolicies.tsx",
+   "src/components/security/GuardrailsLibrary.tsx",
+   "src/components/security/GuardrailsSimulator.tsx"
+  ],
+  "rotas_protegidas": 39,
+  "rotas_publicas": [
+   "/",
+   "/*",
+   "/a2a",
+   "/ab-test",
+   "/agent-builder",
+   "/agent-evals",
+   "/agent-experiments",
+   "/agent-sessions",
+   "/agents",
+   "/agents/:id",
+   "/agents/:id/alerts",
+   "/agents/:id/traces",
+   "/agents/:id/versions",
+   "/agents/:id/versions/v/:versionId",
+   "/agents/installed-skills",
+   "/agents/new",
+   "/agents/swarm",
+   "/agents/templates",
+   "/agents/workflows",
+   "/ai-studio",
+   "/arena",
+   "/automation",
+   "/automations",
+   "/brain",
+   "/browser-agent",
+   "/budgets",
+   "/builder",
+   "/builder/:id",
+   "/canary",
+   "/chat",
+   "/chat/:agentId",
+   "/code-interpreter",
+   "/computer-use",
+   "/cost-optimizer",
+   "/cost-simulator",
+   "/creator-payouts",
+   "/crm",
+   "/dashboard",
+   "/data-storage",
+   "/datahub",
+   "/debugger",
+   "/deploy/openclaw",
+   "/deployments",
+   "/docs/partitioning",
+   "/docs/typography",
+   "/email-triggers",
+   "/entity-resolution",
+   "/evaluations",
+   "/fine-tuning",
+   "/governance",
+   "/graph-executions",
+   "/help/:slug",
+   "/help/:slug/:articleSlug",
+   "/help/:slug/forum",
+   "/help/:slug/forum/:threadId",
+   "/knowledge",
+   "/knowledge-decay",
+   "/knowledge-graph",
+   "/knowledge-management",
+   "/knowledge-management/article/:id",
+   "/llm-cost-by-caller",
+   "/marketplace-pro",
+   "/mcp-servers",
+   "/memory",
+   "/mobile-sdk",
+   "/monitoring",
+   "/monitoring/metrics",
+   "/nlp",
+   "/observability",
+   "/observability/cost-anomalies",
+   "/observability/game-days",
+   "/observability/game-days/:id/live",
+   "/observability/oncall",
+   "/observability/playbooks",
+   "/observability/postmortems",
+   "/observability/postmortems/:id",
+   "/observability/slo",
+   "/observability/synthetic",
+   "/openclaw",
+   "/openclaw/templates",
+   "/oracle",
+   "/orchestration",
+   "/prompts",
+   "/prompts/:id",
+   "/prompts/experiments",
+   "/replay",
+   "/reset-password",
+   "/routing",
+   "/search",
+   "/security/chaos-experiments",
+   "/share/n",
+   "/simulation",
+   "/skills",
+   "/skills/audit",
+   "/skills/composer",
+   "/skills/library",
+   "/smolagent",
+   "/super-cerebro",
+   "/super-cerebro/e2ee-simulacao",
+   "/super-cerebro/n/:notebookId/note/:noteId",
+   "/synthetic-data",
+   "/system-jobs",
+   "/tools",
+   "/traces",
+   "/vendas",
+   "/vision",
+   "/voice",
+   "/voice-agents",
+   "/voice-telephony",
+   "/webhook-events",
+   "/widget-builder",
+   "/workflows"
+  ],
+  "menu_com_papeis": [],
+  "tabelas_sem_rls": [
+   "agent_traces_v2_2026_11",
+   "agent_traces_v2_2026_12",
+   "agent_traces_v2_2027_01",
+   "agent_usage",
+   "audit_log_v2_2026_05",
+   "audit_log_v2_2026_06",
+   "prompt_versions",
+   "trace_events_v2_2026_05",
+   "trace_events_v2_2026_06"
+  ]
+ },
+ "feature_flags": {
+  "total": 15,
+  "flags": [
+   {
+    "flag": "ENABLE_AUTO_CLASSIFY",
+    "arquivos": 2
+   },
+   {
+    "flag": "ENABLE_HF_RERANKER",
+    "arquivos": 2
+   },
+   {
+    "flag": "ENABLE_LANGUAGE_DETECTION",
+    "arquivos": 2
+   },
+   {
+    "flag": "ENABLE_ML_INJECTION_CHECK",
+    "arquivos": 2
+   },
+   {
+    "flag": "ENABLE_TOXICITY_CHECK",
+    "arquivos": 2
+   },
+   {
+    "flag": "ENABLE_AGENTIC_GUARDRAIL",
+    "arquivos": 1
+   },
+   {
+    "flag": "ENABLE_EMOTION_DETECTION",
+    "arquivos": 1
+   },
+   {
+    "flag": "ENABLE_HALLUCINATION_CHECK",
+    "arquivos": 1
+   },
+   {
+    "flag": "ENABLE_HF_EMBEDDINGS",
+    "arquivos": 1
+   },
+   {
+    "flag": "ENABLE_KEYPHRASE_EXTRACTION",
+    "arquivos": 1
+   },
+   {
+    "flag": "ENABLE_OUTPUT_TOXICITY",
+    "arquivos": 1
+   },
+   {
+    "flag": "ENABLE_PII_ML",
+    "arquivos": 1
+   },
+   {
+    "flag": "FEATURE_X",
+    "arquivos": 1
+   },
+   {
+    "flag": "nova-tela",
+    "arquivos": 1
+   },
+   {
+    "flag": "novo-inbox",
+    "arquivos": 1
+   }
+  ],
+  "tabelas_de_flag": [
+   "lgpd_settings"
+  ]
+ },
+ "providers": {
+  "entrada": "src/main.tsx",
+  "providers": [
+   "AuthProvider",
+   "BrowserRouter",
+   "ErrorBoundary",
+   "I18nProvider",
+   "QueryClientProvider",
+   "ThemeProvider",
+   "TooltipProvider"
+  ]
+ },
+ "i18n": {
+  "arquivos": 1,
+  "idiomas": [],
+  "lib": []
+ }
+}

@@ -1,0 +1,343 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "nos": 1206,
+ "arestas": 5232,
+ "hubs": [
+  {
+   "arquivo": "src/components/ui/button.tsx",
+   "importado_por": 404
+  },
+  {
+   "arquivo": "src/components/ui/badge.tsx",
+   "importado_por": 358
+  },
+  {
+   "arquivo": "src/components/ui/card.tsx",
+   "importado_por": 210
+  },
+  {
+   "arquivo": "src/components/ui/input.tsx",
+   "importado_por": 186
+  },
+  {
+   "arquivo": "src/lib/logger.ts",
+   "importado_por": 172
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "importado_por": 160
+  },
+  {
+   "arquivo": "src/lib/utils.ts",
+   "importado_por": 151
+  },
+  {
+   "arquivo": "src/components/ui/label.tsx",
+   "importado_por": 134
+  },
+  {
+   "arquivo": "src/components/ui/select.tsx",
+   "importado_por": 130
+  },
+  {
+   "arquivo": "src/integrations/supabase/externalClient.ts",
+   "importado_por": 117
+  },
+  {
+   "arquivo": "src/components/ui/textarea.tsx",
+   "importado_por": 109
+  },
+  {
+   "arquivo": "src/components/ui/dialog.tsx",
+   "importado_por": 104
+  },
+  {
+   "arquivo": "src/components/shared/PageHeader.tsx",
+   "importado_por": 91
+  },
+  {
+   "arquivo": "supabase/functions/_shared/mod.ts",
+   "importado_por": 85
+  },
+  {
+   "arquivo": "src/components/ui/tabs.tsx",
+   "importado_por": 74
+  },
+  {
+   "arquivo": "src/types/dbRow.ts",
+   "importado_por": 65
+  },
+  {
+   "arquivo": "src/components/ui/scroll-area.tsx",
+   "importado_por": 59
+  },
+  {
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 56
+  },
+  {
+   "arquivo": "src/components/ui/switch.tsx",
+   "importado_por": 50
+  },
+  {
+   "arquivo": "src/lib/supabaseExtended.ts",
+   "importado_por": 45
+  },
+  {
+   "arquivo": "supabase/functions/_shared/retry.ts",
+   "importado_por": 41
+  },
+  {
+   "arquivo": "src/lib/agentService.ts",
+   "importado_por": 40
+  },
+  {
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "importado_por": 38
+  },
+  {
+   "arquivo": "src/lib/a11y.ts",
+   "importado_por": 35
+  },
+  {
+   "arquivo": "src/components/ui/progress.tsx",
+   "importado_por": 33
+  },
+  {
+   "arquivo": "src/hooks/use-data.ts",
+   "importado_por": 33
+  },
+  {
+   "arquivo": "src/services/agentsService.ts",
+   "importado_por": 33
+  },
+  {
+   "arquivo": "src/services/notesService.ts",
+   "importado_por": 30
+  },
+  {
+   "arquivo": "src/components/ui/slider.tsx",
+   "importado_por": 29
+  },
+  {
+   "arquivo": "src/services/skillsRegistryService.ts",
+   "importado_por": 27
+  },
+  {
+   "arquivo": "src/stores/agentBuilderStore.ts",
+   "importado_por": 27
+  },
+  {
+   "arquivo": "src/stores/cerebroStore.ts",
+   "importado_por": 27
+  },
+  {
+   "arquivo": "src/components/ui/alert.tsx",
+   "importado_por": 25
+  },
+  {
+   "arquivo": "src/types/agentTypes.ts",
+   "importado_por": 25
+  },
+  {
+   "arquivo": "supabase/functions/_shared/cors.ts",
+   "importado_por": 24
+  },
+  {
+   "arquivo": "src/hooks/use-toast.ts",
+   "importado_por": 22
+  },
+  {
+   "arquivo": "src/components/ui/table.tsx",
+   "importado_por": 21
+  },
+  {
+   "arquivo": "src/components/shared/EmptyState.tsx",
+   "importado_por": 20
+  },
+  {
+   "arquivo": "src/components/ui/alert-dialog.tsx",
+   "importado_por": 20
+  },
+  {
+   "arquivo": "src/components/ui/checkbox.tsx",
+   "importado_por": 20
+  }
+ ],
+ "ciclos": {
+  "total": 1,
+  "maiores": [
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/lib/oracleHistory.ts",
+     "src/stores/oracleStore.ts"
+    ]
+   }
+  ]
+ },
+ "orfaos": [
+  "playwright-fixture.ts",
+  "public/sw.js",
+  "src/components/agents/AgentCardGrid.tsx",
+  "src/components/agents/detail/SLOPanel.tsx",
+  "src/components/agents/wizard/WizardStepComponents.tsx",
+  "src/components/automation/index.ts",
+  "src/components/dashboard/BudgetWidget.tsx",
+  "src/components/dashboard/CostAnomalyWidget.tsx",
+  "src/components/datahub/DataHubStats.tsx",
+  "src/components/datahub/RecordFieldRenderers.tsx",
+  "src/components/integrations/WhatsAppLiveConsole.tsx",
+  "src/components/layout/AuthGuard.tsx",
+  "src/components/sandbox/SandboxConfigTab.tsx",
+  "src/components/sandbox/SandboxExecuteTab.tsx",
+  "src/components/sandbox/SandboxOutputTab.tsx",
+  "src/components/sandbox/SandboxSecurityTab.tsx",
+  "src/components/shared/CitationRenderer.tsx",
+  "src/components/shared/DashboardSkeleton.tsx",
+  "src/components/shared/GenerativeUI.tsx",
+  "src/components/shared/LoadingSpinner.tsx",
+  "src/components/shared/PaginationControls.tsx",
+  "src/components/super-cerebro/CerebroTabNav.tsx",
+  "src/components/super-cerebro/tabs/HealthTab.tsx",
+  "src/components/super-cerebro/tabs/SandboxTab.tsx",
+  "src/components/ui/accordion.tsx",
+  "src/components/ui/aspect-ratio.tsx",
+  "src/components/ui/avatar.tsx",
+  "src/components/ui/breadcrumb.tsx",
+  "src/components/ui/calendar.tsx",
+  "src/components/ui/carousel.tsx",
+  "src/components/ui/context-menu.tsx",
+  "src/components/ui/form.tsx",
+  "src/components/ui/input-otp.tsx",
+  "src/components/ui/menubar.tsx",
+  "src/components/ui/navigation-menu.tsx",
+  "src/components/ui/pagination.tsx",
+  "src/components/ui/resizable.tsx",
+  "src/components/ui/use-toast.ts",
+  "src/components/workflows/CanvasMinimap.tsx",
+  "src/components/workflows/WorkflowScheduler.tsx",
+  "src/components/workflows/WorkflowTimeTravelPanel.tsx",
+  "src/config/auto-facts.ts",
+  "src/config/env.ts",
+  "src/config/huggingface-models.ts",
+  "src/config/huggingface.ts",
+  "src/data/curatedSkills.ts",
+  "src/hooks/useRetryAction.ts",
+  "src/integrations/supabase/types.extended.ts",
+  "src/lib/ag-ui/index.ts",
+  "src/lib/invokeWithRetry.ts",
+  "src/lib/otel-genai.ts",
+  "src/lib/validations/brazilianDocuments.ts",
+  "src/services/riskService.ts",
+  "src/services/skillsSimulationService.ts",
+  "src/stores/index.ts",
+  "supabase/functions/test-runner/contract_test.ts",
+  "supabase/functions/test-runner/security_contract_test.ts",
+  "supabase/functions/test-runner/versioning_contract_test.ts"
+ ],
+ "modulos_mais_acoplados": [
+  {
+   "modulo": "pages",
+   "depende_de": 55,
+   "importado_por": 1
+  },
+  {
+   "modulo": "lib",
+   "depende_de": 9,
+   "importado_por": 43
+  },
+  {
+   "modulo": "services",
+   "depende_de": 11,
+   "importado_por": 35
+  },
+  {
+   "modulo": "components/ui",
+   "depende_de": 2,
+   "importado_por": 39
+  },
+  {
+   "modulo": "hooks",
+   "depende_de": 9,
+   "importado_por": 18
+  },
+  {
+   "modulo": "integrations/supabase",
+   "depende_de": 1,
+   "importado_por": 25
+  },
+  {
+   "modulo": "types",
+   "depende_de": 0,
+   "importado_por": 20
+  },
+  {
+   "modulo": "components/agents",
+   "depende_de": 15,
+   "importado_por": 2
+  },
+  {
+   "modulo": "components/shared",
+   "depende_de": 7,
+   "importado_por": 10
+  },
+  {
+   "modulo": "components/agent-builder",
+   "depende_de": 15,
+   "importado_por": 1
+  },
+  {
+   "modulo": "stores",
+   "depende_de": 7,
+   "importado_por": 8
+  },
+  {
+   "modulo": "components/workflows",
+   "depende_de": 10,
+   "importado_por": 3
+  },
+  {
+   "modulo": "components/skills",
+   "depende_de": 8,
+   "importado_por": 3
+  },
+  {
+   "modulo": "lib/validations",
+   "depende_de": 3,
+   "importado_por": 8
+  },
+  {
+   "modulo": "components/datahub",
+   "depende_de": 8,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/rbac",
+   "depende_de": 5,
+   "importado_por": 4
+  },
+  {
+   "modulo": "components/super-cerebro",
+   "depende_de": 8,
+   "importado_por": 1
+  },
+  {
+   "modulo": "config",
+   "depende_de": 1,
+   "importado_por": 8
+  },
+  {
+   "modulo": "data",
+   "depende_de": 2,
+   "importado_por": 7
+  },
+  {
+   "modulo": "components/security",
+   "depende_de": 7,
+   "importado_por": 1
+  }
+ ],
+ "arestas_em": "docs/contexto/codigo/grafo-arestas.json"
+}

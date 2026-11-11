@@ -1,0 +1,1971 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 75,
+ "hooks": [
+  {
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "hooks_exportados": [
+    "useA",
+    "useB",
+    "useC",
+    "useX"
+   ],
+   "linhas": 173,
+   "dominio": null,
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "rpcs": [
+    "r1"
+   ],
+   "edges": [
+    "inexistente",
+    "other",
+    "tick"
+   ],
+   "hooks_internos": [
+    "useFeatureFlag"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/agents/versioning/useRestoreDialogMemory.ts",
+   "hooks_exportados": [
+    "useRestoreDialogMemory"
+   ],
+   "linhas": 98,
+   "dominio": "components/agents",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/agents/versioning/RestoreVersionDialog.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/agents/wizard/quickSteps/PreflightReviewSummary.tsx",
+   "hooks_exportados": [
+    "useReviewData"
+   ],
+   "linhas": 388,
+   "dominio": "components/agents",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/agents/wizard/QuickCreateWizard.tsx",
+    "src/components/agents/wizard/quickSteps/StepQuickPrompt.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/agents/wizard/quickSteps/useFieldHighlight.ts",
+   "hooks_exportados": [
+    "useFieldHighlight"
+   ],
+   "linhas": 70,
+   "dominio": "components/agents",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/agents/wizard/quickSteps/StepQuickIdentity.tsx",
+    "src/components/agents/wizard/quickSteps/StepQuickModel.tsx",
+    "src/components/agents/wizard/quickSteps/StepQuickPrompt.tsx",
+    "src/components/agents/wizard/quickSteps/StepQuickType.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/charts/useChartDimensions.ts",
+   "hooks_exportados": [
+    "useChartDimensions"
+   ],
+   "linhas": 29,
+   "dominio": "components/charts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/charts/LightAreaChart.tsx",
+    "src/components/charts/LightBarChart.tsx",
+    "src/components/charts/LightLineChart.tsx",
+    "src/components/charts/LightPieChart.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/rbac/AccessControl.tsx",
+   "hooks_exportados": [
+    "useAccessGuard"
+   ],
+   "linhas": 91,
+   "dominio": "components/rbac",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useRBAC"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/rbac/index.ts",
+    "src/pages/WorkflowsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/rbac/index.ts",
+   "hooks_exportados": [
+    "useAccessGuard"
+   ],
+   "linhas": 4,
+   "dominio": "components/rbac",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 14,
+   "usado_por_arquivos": [
+    "src/components/settings/ApiKeysTab.tsx",
+    "src/components/settings/EnvironmentsManager.tsx",
+    "src/components/super-cerebro/DecayDetectionTab.tsx",
+    "src/components/super-cerebro/EntityResolutionTab.tsx",
+    "src/pages/AdminPage.tsx",
+    "src/pages/AgentsPage.tsx",
+    "src/pages/DashboardPage.tsx",
+    "src/pages/KnowledgePage.tsx",
+    "src/pages/MemoryPage.tsx",
+    "src/pages/OraclePage.tsx",
+    "src/pages/PromptEditorPage.tsx",
+    "src/pages/SecurityPage.tsx",
+    "src/pages/TeamPage.tsx",
+    "src/pages/ToolsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/form.tsx",
+   "hooks_exportados": [
+    "useFormField"
+   ],
+   "linhas": 168,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useFormContext",
+    "useId"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "hooks_exportados": [
+    "useSidebar"
+   ],
+   "linhas": 735,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useIsMobile",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/layout/AppLayout.tsx",
+    "src/components/layout/AppSidebar.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/components/ui/use-toast.ts",
+   "hooks_exportados": [
+    "useToast"
+   ],
+   "linhas": 4,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "hooks_exportados": [
+    "useAuth"
+   ],
+   "linhas": 154,
+   "dominio": "contexts",
+   "tabelas": [
+    "auth_attempts",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 37,
+   "usado_por_arquivos": [
+    "src/App.tsx",
+    "src/components/agents/CreateAgentWizard.tsx",
+    "src/components/agents/wizard/QuickCreateWizard.tsx",
+    "src/components/layout/AppLayout.tsx",
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/layout/AuthGuard.tsx",
+    "src/components/rbac/ProtectedRoute.tsx",
+    "src/components/shared/BudgetEventsMounter.tsx",
+    "src/components/shared/CostAnomalyAlertsMounter.tsx",
+    "src/components/shared/HealthAlertsMounter.tsx",
+    "src/components/shared/IncidentRunsMounter.tsx",
+    "src/components/shared/SyntheticAlertsMounter.tsx",
+    "src/hooks/use-workflow-persistence.ts",
+    "src/hooks/use2FA.ts",
+    "src/hooks/useCurrentWorkspace.ts",
+    "src/hooks/useNotifications.ts",
+    "src/hooks/useRBAC.ts",
+    "src/hooks/useSLOAlerts.ts",
+    "src/pages/AgentTemplatesPage.tsx",
+    "src/pages/AgentsPage.tsx",
+    "src/pages/AssetInventoryPage.tsx",
+    "src/pages/AuthPage.tsx",
+    "src/pages/BCPPage.tsx",
+    "src/pages/ChangeManagementPage.tsx",
+    "src/pages/CreatorPayoutsPage.tsx",
+    "src/pages/DashboardPage.tsx",
+    "src/pages/IRPlaybooksPage.tsx",
+    "src/pages/IncidentPlaybooksPage.tsx",
+    "src/pages/OncallPage.tsx",
+    "src/pages/PentestFindingsPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/index.ts",
+   "hooks_exportados": [
+    "useBillingData",
+    "useI18n",
+    "useRBAC",
+    "useStreamingResponse",
+    "useTracesData"
+   ],
+   "linhas": 6,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "scripts/ai-context/cenarios.mjs"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-data.ts",
+   "hooks_exportados": [
+    "useAgent",
+    "useAgents",
+    "useInvalidate",
+    "useWorkspace",
+    "useWorkspaceId"
+   ],
+   "linhas": 54,
+   "dominio": "hooks",
+   "tabelas": [
+    "agents",
+    "workspaces"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 33,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/modules/EvalsModule.tsx",
+    "src/components/agent-builder/modules/OrchestratorModule.tsx",
+    "src/components/agents/traces/AgentContextPanel.tsx",
+    "src/components/dashboard/BudgetWidget.tsx",
+    "src/components/security/AccessControlPanel.tsx",
+    "src/components/skills/SkillAutoRecommendationsPanel.tsx",
+    "src/components/skills/SkillLibraryInstallPanel.tsx",
+    "src/pages/AgentEvalsPage.tsx",
+    "src/pages/AgentExperimentsPage.tsx",
+    "src/pages/AgentSessionsPage.tsx",
+    "src/pages/AgentWorkflowsPage.tsx",
+    "src/pages/AgentsPage.tsx",
+    "src/pages/AutomationsPage.tsx",
+    "src/pages/BCPTestRunsPage.tsx",
+    "src/pages/BudgetSettingsPage.tsx",
+    "src/pages/BudgetsPage.tsx",
+    "src/pages/ChaosExperimentsPage.tsx",
+    "src/pages/ChatWithAgentPage.tsx",
+    "src/pages/ComplianceReportsPage.tsx",
+    "src/pages/DRDrillsPage.tsx",
+    "src/pages/EmailCalendarTriggersPage.tsx",
+    "src/pages/FreezeWindowsPage.tsx",
+    "src/pages/GameDaysPage.tsx",
+    "src/pages/GovernancePage.tsx",
+    "src/pages/IPWhitelistPage.tsx",
+    "src/pages/MobileSDKPage.tsx",
+    "src/pages/PentestPage.tsx",
+    "src/pages/PostmortemsPage.tsx",
+    "src/pages/PromptExperimentsPage.tsx",
+    "src/pages/RiskRegisterPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-debounce.ts",
+   "hooks_exportados": [
+    "useDebounce"
+   ],
+   "linhas": 13,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 7,
+   "usado_por_arquivos": [
+    "src/components/agents/traces/ReplayDialog.tsx",
+    "src/components/agents/wizard/quickSteps/AgentLivePreviewCard.tsx",
+    "src/components/chat/AgentListPane.tsx",
+    "src/components/datahub/DataBrowser.tsx",
+    "src/hooks/useGlobalSearch.ts",
+    "src/pages/AgentTracesPage.tsx",
+    "src/pages/CrmPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/use-document-title.ts",
+   "hooks_exportados": [
+    "useDocumentTitle"
+   ],
+   "linhas": 50,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useLocation"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/AppLayout.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/use-keyboard-shortcuts.ts",
+   "hooks_exportados": [
+    "useKeyboardShortcuts"
+   ],
+   "linhas": 41,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/AppLayout.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-mobile.tsx",
+   "hooks_exportados": [
+    "useIsMobile"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/layout/AppLayout.tsx",
+    "src/components/shared/BackButton.tsx",
+    "src/components/super-cerebro/notebook/NotebookWorkspace.tsx",
+    "src/components/ui/sidebar.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/use-network-status.ts",
+   "hooks_exportados": [
+    "useNetworkStatus"
+   ],
+   "linhas": 55,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/layout/AppLayout.tsx",
+    "src/components/shared/SystemStatusIndicator.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/use-paginated-query.ts",
+   "hooks_exportados": [
+    "usePaginatedQuery"
+   ],
+   "linhas": 129,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/shared/PaginationControls.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-toast.ts",
+   "hooks_exportados": [
+    "useToast"
+   ],
+   "linhas": 185,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 22,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/DraftVersionsDialog.tsx",
+    "src/components/agents/RecentCurationsPanel.tsx",
+    "src/components/automation/BatchProcessorPanel.tsx",
+    "src/components/automation/ConnectorRegistryPanel.tsx",
+    "src/components/automation/CredentialVaultPanel.tsx",
+    "src/components/automation/CronSchedulerPanel.tsx",
+    "src/components/automation/ExecutionHistoryPanel.tsx",
+    "src/components/automation/ExecutionTimelineDialog.tsx",
+    "src/components/automation/MultiChannelComposer.tsx",
+    "src/components/automation/NotificationCenterPanel.tsx",
+    "src/components/automation/QueueMonitorPanel.tsx",
+    "src/components/automation/WebhookManagerPanel.tsx",
+    "src/components/crm/CadenceStepsEditor.tsx",
+    "src/components/crm/CadencesPanel.tsx",
+    "src/components/crm/IcpProfilePanel.tsx",
+    "src/components/ui/toaster.tsx",
+    "src/components/ui/use-toast.ts",
+    "src/hooks/useAutomation.ts",
+    "src/hooks/useAutomationRules.ts",
+    "src/hooks/useRetryAction.ts",
+    "src/pages/AssetInventoryPage.tsx",
+    "src/pages/CrmPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-unsaved-changes.tsx",
+   "hooks_exportados": [
+    "useUnsavedChanges"
+   ],
+   "linhas": 97,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/layout/AppLayout.tsx",
+    "src/components/shared/BackButton.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/use-workflow-persistence.ts",
+   "hooks_exportados": [
+    "useWorkflowPersistence"
+   ],
+   "linhas": 241,
+   "dominio": "hooks",
+   "tabelas": [
+    "workflow_steps",
+    "workflows",
+    "workspace_members"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/workflows/WorkflowCanvasTab.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAgentDailyMetrics.ts",
+   "hooks_exportados": [
+    "useAgentDailyMetrics"
+   ],
+   "linhas": 16,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/AgentMetricsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAgentEvals.ts",
+   "hooks_exportados": [
+    "useCreateEvalDataset",
+    "useDeleteEvalDataset",
+    "useEvalDatasets",
+    "useEvalResults",
+    "useEvalRuns",
+    "useRunEval"
+   ],
+   "linhas": 162,
+   "dominio": "hooks",
+   "tabelas": [
+    "agent_eval_datasets",
+    "agent_eval_results",
+    "agent_eval_runs"
+   ],
+   "rpcs": [],
+   "edges": [
+    "agent-eval-runner"
+   ],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/modules/EvalsModule.tsx",
+    "src/components/evaluations/AuditReportDialog.tsx",
+    "src/pages/AgentEvalsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAgentExperiments.ts",
+   "hooks_exportados": [
+    "useCreateExperiment",
+    "useDeclareWinner",
+    "useDeleteExperiment",
+    "useExperimentRuns",
+    "useExperiments",
+    "useLogRun",
+    "useUpdateExperimentStatus"
+   ],
+   "linhas": 194,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/modules/ExperimentsModule.tsx",
+    "src/pages/AgentExperimentsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAgentSLOTargets.ts",
+   "hooks_exportados": [
+    "useAgentSLOTargets"
+   ],
+   "linhas": 56,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/agents/detail/InteractiveSLOPanel.tsx",
+    "src/components/agents/detail/sloReportPdf.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAgentVersions.ts",
+   "hooks_exportados": [
+    "useAgentVersions"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [
+    "agent_versions"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/AgentBuilderLayout.tsx",
+    "src/components/agent-builder/modules/BlueprintModule.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAgentWorkflows.ts",
+   "hooks_exportados": [
+    "useAgentWorkflows",
+    "useWorkflowRuns"
+   ],
+   "linhas": 156,
+   "dominio": "hooks",
+   "tabelas": [
+    "agent_workflow_runs",
+    "agent_workflows"
+   ],
+   "rpcs": [],
+   "edges": [
+    "agent-workflow-runner"
+   ],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/modules/OrchestratorModule.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAutoE2EESync.ts",
+   "hooks_exportados": [
+    "useAutoE2EESync"
+   ],
+   "linhas": 40,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/notebook/E2EESyncPanel.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAutomation.ts",
+   "hooks_exportados": [
+    "useAsyncAction",
+    "useAutomationDashboard"
+   ],
+   "linhas": 116,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/automation/AutomationOverviewWidget.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAutomationRules.ts",
+   "hooks_exportados": [
+    "useAutomationRules"
+   ],
+   "linhas": 101,
+   "dominio": "hooks",
+   "tabelas": [
+    "automation_logs",
+    "automation_rules"
+   ],
+   "rpcs": [],
+   "edges": [
+    "automation-pipeline"
+   ],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/AutomationsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useBillingData.ts",
+   "hooks_exportados": [
+    "useBillingData"
+   ],
+   "linhas": 174,
+   "dominio": "hooks",
+   "tabelas": [
+    "trace_events",
+    "usage_records"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/modules/BillingModule.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useChecklistAutoUnlock.ts",
+   "hooks_exportados": [
+    "useChecklistAutoUnlock"
+   ],
+   "linhas": 48,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/agents/wizard/QuickCreateWizard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCostEstimate.ts",
+   "hooks_exportados": [
+    "useCostEstimate"
+   ],
+   "linhas": 122,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "cost-calculator"
+   ],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/AgentPlayground.tsx",
+    "src/components/agent-builder/CostEstimateCard.tsx",
+    "src/components/agents/wizard/quickSteps/AgentLivePreviewCard.tsx",
+    "src/components/agents/wizard/quickSteps/QuickAgentTestPanel.tsx",
+    "src/components/agents/wizard/quickSteps/RealExamplePreview.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCurationRealtime.ts",
+   "hooks_exportados": [
+    "useCurationRealtime"
+   ],
+   "linhas": 232,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useQueryClient",
+    "useRef"
+   ],
+   "canais_realtime": [
+    "curation-feed-${filtro}"
+   ],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/agents/RecentCurationsPanel.tsx"
+   ],
+   "coberto_por_testes": 3
+  },
+  {
+   "arquivo": "src/hooks/useCurrentWorkspace.ts",
+   "hooks_exportados": [
+    "useCurrentWorkspace"
+   ],
+   "linhas": 52,
+   "dominio": "hooks",
+   "tabelas": [
+    "workspace_members"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 16,
+   "usado_por_arquivos": [
+    "src/components/slack/SlackAgentNotificationsPanel.tsx",
+    "src/components/slack/SlackBotBindingPanel.tsx",
+    "src/components/slack/SlackDlqPanel.tsx",
+    "src/components/slack/SlackTestBroadcastButton.tsx",
+    "src/components/super-cerebro/CitationDialog.tsx",
+    "src/components/super-cerebro/NotebookSelector.tsx",
+    "src/components/super-cerebro/NotebooksTab.tsx",
+    "src/components/super-cerebro/SearchTab.tsx",
+    "src/components/super-cerebro/notebook/AdvancedSearchPanel.tsx",
+    "src/components/super-cerebro/notebook/E2EESyncPanel.tsx",
+    "src/components/super-cerebro/notebook/NotebookWorkspace.tsx",
+    "src/components/super-cerebro/notebook/StudioPanel.tsx",
+    "src/components/super-cerebro/notebook/VaultSyncPanel.tsx",
+    "src/hooks/useSlackConfig.ts",
+    "src/pages/AgentMetricsPage.tsx",
+    "src/pages/SuperCerebroPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFilterPersistence.ts",
+   "hooks_exportados": [
+    "useFilterPersistence"
+   ],
+   "linhas": 181,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/skills/SkillDemandPanel.tsx",
+    "src/pages/AgentTracesPage.tsx",
+    "src/pages/SkillsMarketplacePage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGlobalSearch.ts",
+   "hooks_exportados": [
+    "useGlobalSearch"
+   ],
+   "linhas": 48,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "global-search"
+   ],
+   "hooks_internos": [
+    "useDebounce",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/shared/CommandPalette.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGuardrails.ts",
+   "hooks_exportados": [
+    "useGuardrails"
+   ],
+   "linhas": 36,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/modules/GuardrailsModule.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useI18n.ts",
+   "hooks_exportados": [
+    "useI18n"
+   ],
+   "linhas": 16,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useI18nContext"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/layout/AppSidebar.tsx",
+    "src/hooks/index.ts",
+    "src/pages/RoutingConfigPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNLPAnalysis.ts",
+   "hooks_exportados": [
+    "useNLPAnalysis"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/shared/NLPAnalysisDialog.tsx",
+    "src/pages/NLPPipelinePage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNotifications.ts",
+   "hooks_exportados": [
+    "useNotifications"
+   ],
+   "linhas": 72,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/shared/NotificationBell.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useObsidianMode.ts",
+   "hooks_exportados": [
+    "useObsidianMode"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/SuperCerebroPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useOpenclawTemplates.ts",
+   "hooks_exportados": [
+    "useOpenclawTemplates"
+   ],
+   "linhas": 93,
+   "dominio": "hooks",
+   "tabelas": [
+    "openclaw_agent_templates"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/OpenclawTemplatesPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePasswordBreachCheck.ts",
+   "hooks_exportados": [
+    "usePasswordBreachCheck"
+   ],
+   "linhas": 81,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/pages/AuthPage.tsx",
+    "src/pages/ResetPasswordPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePrefersReducedMotion.ts",
+   "hooks_exportados": [
+    "usePrefersReducedMotion"
+   ],
+   "linhas": 25,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/agents/wizard/quickSteps/FieldValidationHint.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRBAC.ts",
+   "hooks_exportados": [
+    "useRBAC"
+   ],
+   "linhas": 148,
+   "dominio": "hooks",
+   "tabelas": [
+    "workspace_members"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/rbac/AccessControl.tsx",
+    "src/components/rbac/ProtectedRoute.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRetryAction.ts",
+   "hooks_exportados": [
+    "useRetryAction"
+   ],
+   "linhas": 115,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSlackConfig.ts",
+   "hooks_exportados": [
+    "useSlackAgentNotifications",
+    "useSlackBotBinding",
+    "useSlackConfig",
+    "useSlackRagSources"
+   ],
+   "linhas": 405,
+   "dominio": "hooks",
+   "tabelas": [
+    "slack_agent_notifications",
+    "slack_bot_bindings",
+    "slack_channel_routes",
+    "slack_rag_sources",
+    "slack_workspace_config"
+   ],
+   "rpcs": [],
+   "edges": [
+    "slack-alert-dispatcher",
+    "slack-rag-sync",
+    "slack-verify-connection"
+   ],
+   "hooks_internos": [
+    "useCurrentWorkspace",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/slack/SlackAgentNotificationsPanel.tsx",
+    "src/components/slack/SlackBotBindingPanel.tsx",
+    "src/components/slack/SlackOnboardingWizard.tsx",
+    "src/components/slack/SlackRagSourcesPanel.tsx",
+    "src/pages/SlackSettingsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSLOAlerts.ts",
+   "hooks_exportados": [
+    "useSLOAlerts"
+   ],
+   "linhas": 72,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/shared/SLOAlertsMounter.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useStreamingResponse.ts",
+   "hooks_exportados": [
+    "useStreamingResponse"
+   ],
+   "linhas": 331,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/AgentPlayground.tsx",
+    "src/components/shared/StreamingChat.tsx",
+    "src/hooks/index.ts",
+    "src/pages/ChatWithAgentPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTracesData.ts",
+   "hooks_exportados": [
+    "useTracesData"
+   ],
+   "linhas": 124,
+   "dominio": "hooks",
+   "tabelas": [
+    "trace_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/modules/ObservabilityModule.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWorkflowAutosave.ts",
+   "hooks_exportados": [
+    "useWorkflowAutosave"
+   ],
+   "linhas": 74,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/workflows/WorkflowCanvasTab.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWorkflowKeyboard.ts",
+   "hooks_exportados": [
+    "useWorkflowKeyboard"
+   ],
+   "linhas": 80,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/workflows/WorkflowCanvasTab.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/i18n/I18nProvider.tsx",
+   "hooks_exportados": [
+    "useI18nContext"
+   ],
+   "linhas": 96,
+   "dominio": "i18n",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/App.tsx",
+    "src/hooks/useI18n.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/lib/researchConfig.ts",
+   "hooks_exportados": [
+    "useResearchConfig"
+   ],
+   "linhas": 193,
+   "dominio": "lib",
+   "tabelas": [
+    "user_research_configs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/oracle/DeepResearchPanel.tsx",
+    "src/components/oracle/ResearchSettingsDialog.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/lib/slo/useDrilldownAuditLog.ts",
+   "hooks_exportados": [
+    "useDrilldownAuditLog"
+   ],
+   "linhas": 177,
+   "dominio": "lib/slo",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/slo/DrilldownAuditPanel.tsx",
+    "src/pages/SLODashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/services/basesService.ts",
+   "hooks_exportados": [
+    "useBaseRows"
+   ],
+   "linhas": 267,
+   "dominio": "services",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/notebook/BasesPanel.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/services/canvasesService.ts",
+   "hooks_exportados": [
+    "useCanvas",
+    "useCanvases",
+    "useCreateCanvas",
+    "useDeleteCanvas",
+    "useUpdateCanvas"
+   ],
+   "linhas": 166,
+   "dominio": "services",
+   "tabelas": [
+    "notebook_canvases"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/notebook/CanvasEditor.tsx",
+    "src/components/super-cerebro/notebook/CanvasWorkspace.tsx",
+    "src/components/super-cerebro/notebook/CanvasesPanel.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/services/kanbanService.ts",
+   "hooks_exportados": [
+    "useKanbanColumns",
+    "useMoveNote"
+   ],
+   "linhas": 153,
+   "dominio": "services",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/notebook/KanbanBoard.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/services/notebookPodcastsService.ts",
+   "hooks_exportados": [
+    "useCancelPodcast",
+    "useDeletePodcast",
+    "useGeneratePodcast",
+    "useNotebookPodcasts"
+   ],
+   "linhas": 108,
+   "dominio": "services",
+   "tabelas": [
+    "notebook_podcasts"
+   ],
+   "rpcs": [],
+   "edges": [
+    "notebook-podcast-generate"
+   ],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/notebook/PodcastPanel.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/services/notebooksService.ts",
+   "hooks_exportados": [
+    "useCreateNotebook",
+    "useNotebooks",
+    "useUpdateNotebook"
+   ],
+   "linhas": 182,
+   "dominio": "services",
+   "tabelas": [
+    "collections",
+    "documents",
+    "knowledge_bases"
+   ],
+   "rpcs": [
+    "log_audit_entry"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/NotebookFormDialog.tsx",
+    "src/components/super-cerebro/NotebookSelector.tsx",
+    "src/components/super-cerebro/NotebooksTab.tsx",
+    "src/components/super-cerebro/SearchTab.tsx",
+    "src/components/super-cerebro/notebook/NotebookWorkspace.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/services/notesService.ts",
+   "hooks_exportados": [
+    "useBacklinks",
+    "useCreateNote",
+    "useNote",
+    "useNotes",
+    "useOutgoingLinks",
+    "useUpdateNote"
+   ],
+   "linhas": 341,
+   "dominio": "services",
+   "tabelas": [
+    "documents",
+    "knowledge_entities",
+    "knowledge_links",
+    "notebook_notes"
+   ],
+   "rpcs": [
+    "log_audit_entry"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 27,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/notebook/AiStudio.tsx",
+    "src/components/super-cerebro/notebook/BacklinksList.tsx",
+    "src/components/super-cerebro/notebook/BookmarksPanel.tsx",
+    "src/components/super-cerebro/notebook/CanvasEditor.tsx",
+    "src/components/super-cerebro/notebook/E2EESyncPanel.tsx",
+    "src/components/super-cerebro/notebook/EditorAutocomplete.tsx",
+    "src/components/super-cerebro/notebook/KanbanBoard.tsx",
+    "src/components/super-cerebro/notebook/LocalGraphView.tsx",
+    "src/components/super-cerebro/notebook/NoteEditor.tsx",
+    "src/components/super-cerebro/notebook/NoteQuickOpen.tsx",
+    "src/components/super-cerebro/notebook/NotebookWorkspace.tsx",
+    "src/components/super-cerebro/notebook/OutlinePanel.tsx",
+    "src/components/super-cerebro/notebook/PropertiesPanel.tsx",
+    "src/components/super-cerebro/notebook/RelatedNotesPanel.tsx",
+    "src/components/super-cerebro/notebook/SourcesPanel.tsx",
+    "src/components/super-cerebro/notebook/StudioPanel.tsx",
+    "src/components/super-cerebro/notebook/TagsGlobalPanel.tsx",
+    "src/components/super-cerebro/notebook/TemplatesPanel.tsx",
+    "src/components/super-cerebro/notebook/UnlinkedMentions.tsx",
+    "src/pages/SuperCerebroPage.tsx",
+    "src/services/basesService.ts",
+    "src/services/e2eeService.ts",
+    "src/services/kanbanService.ts",
+    "src/services/noteTemplatesService.ts",
+    "src/services/noteVersionsService.ts",
+    "src/services/relatedNotesService.ts",
+    "src/services/vaultSyncService.ts"
+   ],
+   "coberto_por_testes": 3
+  },
+  {
+   "arquivo": "src/services/noteTemplatesService.ts",
+   "hooks_exportados": [
+    "useCreateTemplate",
+    "useDeleteTemplate",
+    "useTemplates",
+    "useUpdateTemplate"
+   ],
+   "linhas": 208,
+   "dominio": "services",
+   "tabelas": [
+    "notebook_note_templates",
+    "notebook_notes"
+   ],
+   "rpcs": [
+    "log_audit_entry"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/notebook/TemplatesPanel.tsx",
+    "src/pages/SuperCerebroPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/services/noteVersionsService.ts",
+   "hooks_exportados": [
+    "useRestoreVersion",
+    "useVersions"
+   ],
+   "linhas": 144,
+   "dominio": "services",
+   "tabelas": [
+    "notebook_note_versions"
+   ],
+   "rpcs": [
+    "log_audit_entry"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/notebook/VersionHistoryPanel.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/services/relatedNotesService.ts",
+   "hooks_exportados": [
+    "useRelatedNotes"
+   ],
+   "linhas": 96,
+   "dominio": "services",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/notebook/RelatedNotesPanel.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/stores/agentBuilderStore.ts",
+   "hooks_exportados": [
+    "useAgentBuilderStore"
+   ],
+   "linhas": 579,
+   "dominio": "stores",
+   "tabelas": [
+    "agent_versions",
+    "agents",
+    "audit_events",
+    "prompt_versions",
+    "tool_policies"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 27,
+   "usado_por_arquivos": [
+    "src/components/agent-builder/AgentBuilderLayout.tsx",
+    "src/components/agent-builder/AgentPlayground.tsx",
+    "src/components/agent-builder/ConversationalBuilder.tsx",
+    "src/components/agent-builder/DraftVersionsDialog.tsx",
+    "src/components/agent-builder/ReadinessBadge.tsx",
+    "src/components/agent-builder/TabNavigation.tsx",
+    "src/components/agent-builder/modules/BillingModule.tsx",
+    "src/components/agent-builder/modules/BlueprintModule.tsx",
+    "src/components/agent-builder/modules/BrainModule.tsx",
+    "src/components/agent-builder/modules/DeployModule.tsx",
+    "src/components/agent-builder/modules/ExperimentsModule.tsx",
+    "src/components/agent-builder/modules/GuardrailsModule.tsx",
+    "src/components/agent-builder/modules/IdentityModule.tsx",
+    "src/components/agent-builder/modules/MemoryModule.tsx",
+    "src/components/agent-builder/modules/ObservabilityModule.tsx",
+    "src/components/agent-builder/modules/OrchestrationModule.tsx",
+    "src/components/agent-builder/modules/OrchestratorModule.tsx",
+    "src/components/agent-builder/modules/PromptModule.tsx",
+    "src/components/agent-builder/modules/RAGModule.tsx",
+    "src/components/agent-builder/modules/ReadinessModule.tsx",
+    "src/components/agent-builder/modules/SettingsModule.tsx",
+    "src/components/agent-builder/modules/SkillsModule.tsx",
+    "src/components/agent-builder/modules/TestExecutionPanel.tsx",
+    "src/components/agent-builder/modules/TestingModule.tsx",
+    "src/components/agent-builder/modules/ToolsModule.tsx",
+    "src/pages/AgentBuilder.tsx",
+    "src/stores/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/stores/agentDrilldownStore.ts",
+   "hooks_exportados": [
+    "useAgentDrilldownStore"
+   ],
+   "linhas": 46,
+   "dominio": "stores",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/shared/AgentDrilldownBadge.tsx",
+    "src/pages/AgentTracesPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/stores/cerebroStore.ts",
+   "hooks_exportados": [
+    "useCerebroStore"
+   ],
+   "linhas": 107,
+   "dominio": "stores",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 27,
+   "usado_por_arquivos": [
+    "src/components/super-cerebro/CerebroTabNav.tsx",
+    "src/components/super-cerebro/CitationDialog.tsx",
+    "src/components/super-cerebro/DocumentUploadTab.tsx",
+    "src/components/super-cerebro/NotebookSelector.tsx",
+    "src/components/super-cerebro/NotebooksTab.tsx",
+    "src/components/super-cerebro/SearchTab.tsx",
+    "src/components/super-cerebro/notebook/AdvancedSearchPanel.tsx",
+    "src/components/super-cerebro/notebook/BacklinksList.tsx",
+    "src/components/super-cerebro/notebook/BasesPanel.tsx",
+    "src/components/super-cerebro/notebook/BookmarksPanel.tsx",
+    "src/components/super-cerebro/notebook/CanvasEditor.tsx",
+    "src/components/super-cerebro/notebook/E2EESyncPanel.tsx",
+    "src/components/super-cerebro/notebook/KanbanBoard.tsx",
+    "src/components/super-cerebro/notebook/LocalGraphView.tsx",
+    "src/components/super-cerebro/notebook/NoteEditor.tsx",
+    "src/components/super-cerebro/notebook/NoteQuickOpen.tsx",
+    "src/components/super-cerebro/notebook/NotebookWorkspace.tsx",
+    "src/components/super-cerebro/notebook/RelatedNotesPanel.tsx",
+    "src/components/super-cerebro/notebook/SourcesPanel.tsx",
+    "src/components/super-cerebro/notebook/StudioPanel.tsx",
+    "src/components/super-cerebro/notebook/TagsGlobalPanel.tsx",
+    "src/components/super-cerebro/notebook/TemplatesPanel.tsx",
+    "src/components/super-cerebro/notebook/UnlinkedMentions.tsx",
+    "src/components/super-cerebro/notebook/VaultSyncPanel.tsx",
+    "src/components/super-cerebro/notebook/WikilinkHoverCard.tsx",
+    "src/pages/SuperCerebroPage.tsx",
+    "src/stores/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/stores/datahubStore.ts",
+   "hooks_exportados": [
+    "useDatahubStore"
+   ],
+   "linhas": 64,
+   "dominio": "stores",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/pages/DataHubPage.tsx",
+    "src/stores/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/stores/index.ts",
+   "hooks_exportados": [
+    "useAgentBuilderStore",
+    "useCerebroStore",
+    "useDatahubStore",
+    "useNotificationStore",
+    "useOracleStore",
+    "useUIStore",
+    "useWorkflowStore"
+   ],
+   "linhas": 8,
+   "dominio": "stores",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/stores/notificationStore.ts",
+   "hooks_exportados": [
+    "useNotificationStore"
+   ],
+   "linhas": 69,
+   "dominio": "stores",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/shared/NotificationsDrawer.tsx",
+    "src/services/healthAlertsService.ts",
+    "src/stores/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/stores/oracleStore.ts",
+   "hooks_exportados": [
+    "useOracleStore"
+   ],
+   "linhas": 292,
+   "dominio": "stores",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "oracle-council"
+   ],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 13,
+   "usado_por_arquivos": [
+    "src/components/oracle/ConsensusMatrix.tsx",
+    "src/components/oracle/ModelCard.tsx",
+    "src/components/oracle/OracleAnalyticsPanel.tsx",
+    "src/components/oracle/OracleComparisonPanel.tsx",
+    "src/components/oracle/OracleHistory.tsx",
+    "src/components/oracle/OracleInputArea.tsx",
+    "src/components/oracle/OracleResultsPanel.tsx",
+    "src/components/oracle/PresetSelector.tsx",
+    "src/components/oracle/StageProgress.tsx",
+    "src/lib/oracleExport.ts",
+    "src/lib/oracleHistory.ts",
+    "src/pages/OraclePage.tsx",
+    "src/stores/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/stores/uiStore.ts",
+   "hooks_exportados": [
+    "useUIStore"
+   ],
+   "linhas": 43,
+   "dominio": "stores",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/shared/OnboardingTour.tsx",
+    "src/stores/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/stores/workflowStore.ts",
+   "hooks_exportados": [
+    "useWorkflowStore"
+   ],
+   "linhas": 120,
+   "dominio": "stores",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/workflows/WorkflowCanvas.tsx",
+    "src/components/workflows/WorkflowTemplatesGallery.tsx",
+    "src/stores/index.ts"
+   ],
+   "coberto_por_testes": 0
+  }
+ ]
+}

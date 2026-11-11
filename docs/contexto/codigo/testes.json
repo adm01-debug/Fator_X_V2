@@ -1,0 +1,2855 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "frameworks": [
+  "vitest",
+  "playwright"
+ ],
+ "total": 239,
+ "por_tipo": {
+  "contrato": 3,
+  "e2e": 10,
+  "pytest": 2,
+  "unit": 224
+ },
+ "onde_ficam": [
+  {
+   "padrao": "co-localizado (*.test)",
+   "arquivos": 196
+  },
+  {
+   "padrao": "outro",
+   "arquivos": 23
+  },
+  {
+   "padrao": "e2e/",
+   "arquivos": 9
+  },
+  {
+   "padrao": "co-localizado (__tests__)",
+   "arquivos": 7
+  },
+  {
+   "padrao": "tests/",
+   "arquivos": 4
+  }
+ ],
+ "arquivos": [
+  {
+   "arquivo": "e2e/agent-builder.spec.ts",
+   "tipo": "e2e",
+   "linhas": 55,
+   "testa": [
+    "playwright-fixture.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "e2e/auth-flows.spec.ts",
+   "tipo": "e2e",
+   "linhas": 110,
+   "testa": [
+    "playwright-fixture.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "e2e/auth.spec.ts",
+   "tipo": "e2e",
+   "linhas": 66,
+   "testa": [
+    "playwright-fixture.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "e2e/critical-flows.spec.ts",
+   "tipo": "e2e",
+   "linhas": 56,
+   "testa": [
+    "playwright-fixture.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "e2e/helpers/a11y.ts",
+   "tipo": "e2e",
+   "linhas": 73,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "e2e/helpers/auth-fixtures.ts",
+   "tipo": "e2e",
+   "linhas": 94,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "e2e/navigation.spec.ts",
+   "tipo": "e2e",
+   "linhas": 64,
+   "testa": [
+    "playwright-fixture.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "e2e/security.spec.ts",
+   "tipo": "e2e",
+   "linhas": 52,
+   "testa": [
+    "playwright-fixture.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "e2e/visual.spec.ts",
+   "tipo": "e2e",
+   "linhas": 64,
+   "testa": [
+    "playwright-fixture.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.unit.mjs",
+   "tipo": "unit",
+   "linhas": 361,
+   "testa": [],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/automation.unit.mjs",
+   "tipo": "unit",
+   "linhas": 603,
+   "testa": [
+    "scripts/automation.mjs"
+   ],
+   "casos": 32
+  },
+  {
+   "arquivo": "scripts/ci/a11y-button-name-ratchet.unit.mjs",
+   "tipo": "unit",
+   "linhas": 418,
+   "testa": [
+    "src/components/ui/button.tsx",
+    "src/components/ui/select.tsx",
+    "src/components/ui/tabs.tsx"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "scripts/ci/check-bundle-secrets.unit.mjs",
+   "tipo": "unit",
+   "linhas": 294,
+   "testa": [
+    "scripts/ci/check-bundle-secrets.mjs"
+   ],
+   "casos": 27
+  },
+  {
+   "arquivo": "scripts/ci/check-e2e-artifact-secrets.unit.mjs",
+   "tipo": "unit",
+   "linhas": 130,
+   "testa": [
+    "scripts/ci/check-e2e-artifact-secrets.mjs"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "scripts/ci/check-edge-error-exposure.unit.mjs",
+   "tipo": "unit",
+   "linhas": 229,
+   "testa": [
+    "scripts/ci/check-edge-error-exposure.mjs"
+   ],
+   "casos": 25
+  },
+  {
+   "arquivo": "scripts/ci/check-pr-workflow-secrets.unit.mjs",
+   "tipo": "unit",
+   "linhas": 298,
+   "testa": [
+    "scripts/ci/check-pr-workflow-secrets.mjs"
+   ],
+   "casos": 35
+  },
+  {
+   "arquivo": "scripts/ci/check-supabase-url-import-meta.unit.mjs",
+   "tipo": "unit",
+   "linhas": 165,
+   "testa": [
+    "scripts/ci/check-supabase-url-import-meta.mjs"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "scripts/ci/commit-msg-lint.unit.mjs",
+   "tipo": "unit",
+   "linhas": 137,
+   "testa": [
+    "scripts/ci/commit-msg-lint.mjs"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "scripts/ci/gerar-matriz-edge-tabela.unit.mjs",
+   "tipo": "unit",
+   "linhas": 38,
+   "testa": [
+    "scripts/ci/gerar-matriz-edge-tabela.mjs"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "scripts/ci/implicit-any-ratchet.unit.mjs",
+   "tipo": "unit",
+   "linhas": 297,
+   "testa": [],
+   "casos": 14
+  },
+  {
+   "arquivo": "scripts/ci/inventario-banco.unit.mjs",
+   "tipo": "unit",
+   "linhas": 191,
+   "testa": [
+    "scripts/inventario/gerar-banco.mjs"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "scripts/ci/inventario-mudou.unit.mjs",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "scripts/ci/inventario-repo.unit.mjs",
+   "tipo": "unit",
+   "linhas": 93,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "scripts/ci/lint-ratchet.unit.mjs",
+   "tipo": "unit",
+   "linhas": 738,
+   "testa": [
+    "scripts/ci/lint-ratchet.mjs",
+    "scripts/lib/seguranca-processo.mjs"
+   ],
+   "casos": 36
+  },
+  {
+   "arquivo": "scripts/ci/typecheck-ratchet.unit.mjs",
+   "tipo": "unit",
+   "linhas": 399,
+   "testa": [
+    "scripts/ci/typecheck-ratchet.mjs"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "scripts/edge-deploy/manifest.unit.mjs",
+   "tipo": "unit",
+   "linhas": 255,
+   "testa": [
+    "scripts/edge-deploy/manifest-lib.mjs"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "scripts/graphify-local.unit.mjs",
+   "tipo": "unit",
+   "linhas": 463,
+   "testa": [
+    "scripts/graphify-local.mjs"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "scripts/maintenance/maintenance.unit.mjs",
+   "tipo": "unit",
+   "linhas": 887,
+   "testa": [
+    "scripts/maintenance/lib.mjs",
+    "scripts/maintenance/run.mjs"
+   ],
+   "casos": 44
+  },
+  {
+   "arquivo": "scripts/regras_negocio/test_generate.py",
+   "tipo": "pytest",
+   "linhas": 164,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
+   "tipo": "pytest",
+   "linhas": 878,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/components/agents/wizard/__tests__/promptVariantState.test.ts",
+   "tipo": "unit",
+   "linhas": 275,
+   "testa": [
+    "src/components/agents/wizard/draftStore.ts",
+    "src/data/quickAgentTemplates.ts",
+    "src/lib/validations/quickAgentSchema.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/agents/wizard/__tests__/RestoreFeedbackBanner.keyboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 271,
+   "testa": [
+    "src/components/agents/wizard/RestoreFeedbackBanner.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/agents/wizard/quickSteps/__tests__/PromptContradictionAutoFixPanel.test.tsx",
+   "tipo": "unit",
+   "linhas": 98,
+   "testa": [
+    "src/components/agents/wizard/quickSteps/PromptContradictionAutoFixPanel.tsx",
+    "src/lib/validations/promptContradictions.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/security/SecurityMonitoringPanel.test.tsx",
+   "tipo": "unit",
+   "linhas": 38,
+   "testa": [
+    "src/components/security/SecurityMonitoringPanel.tsx",
+    "src/types/dbRow.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/components/slack/__tests__/SlackOnboardingWizard.test.tsx",
+   "tipo": "unit",
+   "linhas": 42,
+   "testa": [
+    "src/components/slack/SlackOnboardingWizard.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/lib/__tests__/citationValidation.test.ts",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/lib/citationValidation.ts",
+    "src/types/cerebroCitations.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/lib/validations/__tests__/contradictionAutoFix.test.ts",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/lib/validations/contradictionSuggestions.ts",
+    "src/lib/validations/promptContradictions.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/lib/validations/__tests__/promptContradictions.test.ts",
+   "tipo": "unit",
+   "linhas": 228,
+   "testa": [
+    "src/lib/validations/promptContradictions.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/security.test.ts",
+   "tipo": "unit",
+   "linhas": 43,
+   "testa": [
+    "src/integrations/supabase/externalClient.ts",
+    "src/services/securityService.ts",
+    "src/types/dbRow.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/test/accessibility.test.tsx",
+   "tipo": "unit",
+   "linhas": 51,
+   "testa": [
+    "src/components/shared/EmptyState.tsx",
+    "src/components/shared/LoadingSpinner.tsx",
+    "src/components/shared/PageLoading.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/agent-evolution.test.ts",
+   "tipo": "unit",
+   "linhas": 37,
+   "testa": [
+    "src/services/agentEvolutionService.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/agent-handoff.test.ts",
+   "tipo": "unit",
+   "linhas": 344,
+   "testa": [
+    "src/services/agentHandoffService.ts"
+   ],
+   "casos": 30
+  },
+  {
+   "arquivo": "src/test/agent-routing.test.ts",
+   "tipo": "unit",
+   "linhas": 233,
+   "testa": [
+    "src/services/agentRoutingService.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/test/agent-templates-merge.test.ts",
+   "tipo": "unit",
+   "linhas": 125,
+   "testa": [
+    "src/types/dbRow.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/agents-service.test.ts",
+   "tipo": "unit",
+   "linhas": 191,
+   "testa": [
+    "src/services/agentsService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/animated-counter.test.tsx",
+   "tipo": "unit",
+   "linhas": 32,
+   "testa": [
+    "src/components/shared/AnimatedCounter.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/app-sidebar.test.tsx",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/ui/sidebar.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/architecture-dual-client.test.ts",
+   "tipo": "unit",
+   "linhas": 91,
+   "testa": [
+    "src/lib/supabaseExtended.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/auth-context-signin.test.tsx",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/contexts/AuthContext.tsx"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/automation-template.test.ts",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [
+    "src/services/automationTemplateService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/basesService.test.ts",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/services/basesService.ts",
+    "src/services/notesService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/batch-processor.test.ts",
+   "tipo": "unit",
+   "linhas": 209,
+   "testa": [
+    "src/services/batchProcessorService.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/test/billing-service.test.ts",
+   "tipo": "unit",
+   "linhas": 175,
+   "testa": [
+    "src/services/billingService.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/test/bitrix24-webhook.test.ts",
+   "tipo": "unit",
+   "linhas": 263,
+   "testa": [
+    "src/services/bitrix24WebhookService.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/test/browser-sessions-service.test.ts",
+   "tipo": "unit",
+   "linhas": 95,
+   "testa": [
+    "src/services/browserAgentService.ts",
+    "src/types/dbRow.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/calibration-csv-export.test.ts",
+   "tipo": "unit",
+   "linhas": 167,
+   "testa": [
+    "src/lib/skills/calibrationCsv.ts",
+    "src/lib/skills/thresholdCalibration.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/test/calibration-governance.test.ts",
+   "tipo": "unit",
+   "linhas": 224,
+   "testa": [
+    "src/lib/skills/calibrationGovernance.ts",
+    "src/lib/skills/thresholdCalibration.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/test/calibration-scale-partition.test.ts",
+   "tipo": "unit",
+   "linhas": 167,
+   "testa": [
+    "src/lib/skills/calibrationCsv.ts",
+    "src/lib/skills/thresholdCalibration.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/cerebro-service.test.ts",
+   "tipo": "unit",
+   "linhas": 47,
+   "testa": [
+    "src/services/cerebroService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/chat-message-bubble.test.tsx",
+   "tipo": "unit",
+   "linhas": 46,
+   "testa": [
+    "src/components/chat/MessageBubble.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/chat-thread-service.test.ts",
+   "tipo": "unit",
+   "linhas": 182,
+   "testa": [
+    "src/services/chatThreadService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/connector-registry.test.ts",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/services/connectorRegistryService.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/test/context-tiers.test.ts",
+   "tipo": "unit",
+   "linhas": 13,
+   "testa": [
+    "src/services/contextTiersService.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/test/cost-calculator.test.ts",
+   "tipo": "unit",
+   "linhas": 264,
+   "testa": [
+    "src/services/costCalculatorService.ts"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "src/test/credential-vault.test.ts",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [
+    "src/services/credentialVaultService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/crm-scoring-service.test.ts",
+   "tipo": "unit",
+   "linhas": 448,
+   "testa": [
+    "src/services/crmScoringService.ts"
+   ],
+   "casos": 36
+  },
+  {
+   "arquivo": "src/test/crm-service.test.ts",
+   "tipo": "unit",
+   "linhas": 243,
+   "testa": [
+    "src/services/crmService.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/test/cron-scheduler.test.ts",
+   "tipo": "unit",
+   "linhas": 122,
+   "testa": [
+    "src/services/cronSchedulerService.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/test/curated-skills.test.ts",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/config/skill-departments.ts",
+    "src/data/curatedSkills.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/curation-csv.test.ts",
+   "tipo": "unit",
+   "linhas": 250,
+   "testa": [
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/test/curation-feed-pagination.test.ts",
+   "tipo": "unit",
+   "linhas": 194,
+   "testa": [
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/curation-feed.test.ts",
+   "tipo": "unit",
+   "linhas": 451,
+   "testa": [
+    "src/data/agentTemplates.ts",
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 30
+  },
+  {
+   "arquivo": "src/test/curation-highlight.test.ts",
+   "tipo": "unit",
+   "linhas": 169,
+   "testa": [
+    "src/lib/curationHighlight.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/test/curation-pending-by-filter.test.ts",
+   "tipo": "unit",
+   "linhas": 183,
+   "testa": [
+    "src/hooks/useCurationRealtime.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/test/curation-realtime-pending.test.ts",
+   "tipo": "unit",
+   "linhas": 157,
+   "testa": [
+    "src/hooks/useCurationRealtime.ts",
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/test/curation-realtime.test.ts",
+   "tipo": "unit",
+   "linhas": 144,
+   "testa": [
+    "src/hooks/useCurationRealtime.ts",
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/test/datahub-service.test.ts",
+   "tipo": "unit",
+   "linhas": 147,
+   "testa": [
+    "src/services/datahubService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/deep-link-sources.test.ts",
+   "tipo": "unit",
+   "linhas": 52,
+   "testa": [
+    "src/lib/sourceIdsSync.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/deployments-service.test.ts",
+   "tipo": "unit",
+   "linhas": 213,
+   "testa": [
+    "src/services/deploymentsService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/design-improvements.test.tsx",
+   "tipo": "unit",
+   "linhas": 973,
+   "testa": [
+    "src/components/layout/AppLayout.tsx",
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/shared/Breadcrumbs.tsx",
+    "src/components/shared/CommandPalette.tsx",
+    "src/components/shared/InfoHint.tsx",
+    "src/components/shared/MetricCard.tsx",
+    "src/components/shared/OnboardingTour.tsx",
+    "src/components/shared/PageHeader.tsx",
+    "src/components/shared/StatusBadge.tsx",
+    "src/components/ui/sidebar.tsx",
+    "src/pages/DashboardPage.tsx",
+    "src/stores/uiStore.ts"
+   ],
+   "casos": 52
+  },
+  {
+   "arquivo": "src/test/dialog-validations.test.ts",
+   "tipo": "unit",
+   "linhas": 101,
+   "testa": [
+    "src/lib/validations/dialogSchemas.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/test/document-title.test.ts",
+   "tipo": "unit",
+   "linhas": 72,
+   "testa": [
+    "src/hooks/use-document-title.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/draft-store-skills.test.ts",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/components/agents/wizard/draftStore.ts",
+    "src/lib/validations/quickAgentSchema.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/e2ee-service.test.ts",
+   "tipo": "unit",
+   "linhas": 141,
+   "testa": [
+    "src/services/e2eeService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/edge-runtime-contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 147,
+   "testa": [],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/edge-shared-skills.test.ts",
+   "tipo": "unit",
+   "linhas": 135,
+   "testa": [
+    "src/lib/promptCompiler.ts",
+    "supabase/functions/_shared/skills.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/test/edge-symbol-guard.test.ts",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/embedding-dimension-contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 91,
+   "testa": [],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/error-boundary.test.tsx",
+   "tipo": "unit",
+   "linhas": 54,
+   "testa": [
+    "src/components/shared/ErrorBoundary.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/evaluations-scoring.test.ts",
+   "tipo": "unit",
+   "linhas": 161,
+   "testa": [
+    "src/services/evaluationsService.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/test/evaluations-service.test.ts",
+   "tipo": "unit",
+   "linhas": 55,
+   "testa": [
+    "src/services/evaluationsService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/example.test.ts",
+   "tipo": "unit",
+   "linhas": 8,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/test/execution-history.test.ts",
+   "tipo": "unit",
+   "linhas": 195,
+   "testa": [
+    "src/services/executionHistoryService.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/extended-services.test.ts",
+   "tipo": "unit",
+   "linhas": 192,
+   "testa": [
+    "src/services/agentEvolutionService.ts",
+    "src/services/approvalService.ts",
+    "src/services/cerebroService.ts",
+    "src/services/contextTiersService.ts",
+    "src/services/datahubService.ts",
+    "src/services/lgpdService.ts",
+    "src/services/llmGatewayService.ts",
+    "src/services/memoryService.ts",
+    "src/services/skillsRegistryService.ts",
+    "src/services/teamsService.ts",
+    "src/services/workflowsService.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/test/freeze-window-service.test.ts",
+   "tipo": "unit",
+   "linhas": 144,
+   "testa": [
+    "src/services/freezeWindowService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/frontmatter.test.ts",
+   "tipo": "unit",
+   "linhas": 54,
+   "testa": [
+    "src/lib/frontmatter.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/guardrails-ml-service.test.ts",
+   "tipo": "unit",
+   "linhas": 48,
+   "testa": [
+    "src/services/guardrailsMLService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/harvest-checkpoint-bulk-purge.test.ts",
+   "tipo": "unit",
+   "linhas": 101,
+   "testa": [
+    "src/services/skillHarvestService.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/harvest-checkpoint-list.test.ts",
+   "tipo": "unit",
+   "linhas": 137,
+   "testa": [
+    "src/services/skillHarvestService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/harvest-checkpoint-purge.test.ts",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "src/services/skillHarvestService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/health-alerts-service.test.ts",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/services/healthAlertsService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/hooks.test.ts",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/hooks/use-debounce.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/i18n-interpolation.test.tsx",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [
+    "src/i18n/I18nProvider.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/i18n.test.ts",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [
+    "src/i18n/translations.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/kanbanService.test.ts",
+   "tipo": "unit",
+   "linhas": 55,
+   "testa": [
+    "src/services/kanbanService.ts",
+    "src/services/notesService.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/knowledge-service.test.ts",
+   "tipo": "unit",
+   "linhas": 52,
+   "testa": [
+    "src/services/knowledgeService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/llm-gateway-providers.test.ts",
+   "tipo": "unit",
+   "linhas": 1012,
+   "testa": [],
+   "casos": 130
+  },
+  {
+   "arquivo": "src/test/llm-gateway-service.test.ts",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/services/llmGatewayService.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/local-graph-view.test.tsx",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/components/super-cerebro/notebook/LocalGraphView.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/mcp-client.test.ts",
+   "tipo": "unit",
+   "linhas": 17,
+   "testa": [
+    "src/lib/mcp/mcpClient.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/test/memory-service.test.ts",
+   "tipo": "unit",
+   "linhas": 185,
+   "testa": [
+    "src/services/memoryService.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/test/memory-tiers.test.ts",
+   "tipo": "unit",
+   "linhas": 34,
+   "testa": [
+    "src/lib/memory/tiers.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/metric-card.test.tsx",
+   "tipo": "unit",
+   "linhas": 45,
+   "testa": [
+    "src/components/shared/MetricCard.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/middleware-pipeline.test.ts",
+   "tipo": "unit",
+   "linhas": 493,
+   "testa": [
+    "src/services/middlewarePipelineService.ts"
+   ],
+   "casos": 27
+  },
+  {
+   "arquivo": "src/test/model-router-service.test.ts",
+   "tipo": "unit",
+   "linhas": 49,
+   "testa": [
+    "src/services/modelRouterService.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/monitoring-service.test.ts",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/services/monitoringService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/multi-agent-e2e.test.ts",
+   "tipo": "unit",
+   "linhas": 224,
+   "testa": [
+    "src/services/agentHandoffService.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/network-status.test.ts",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/hooks/use-network-status.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/nexus-design-eslint.test.ts",
+   "tipo": "unit",
+   "linhas": 144,
+   "testa": [
+    "eslint-plugins/nexus-design.js"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/nlp-pipeline-service.test.ts",
+   "tipo": "unit",
+   "linhas": 44,
+   "testa": [
+    "src/services/nlpPipelineService.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/normalize-fold.test.ts",
+   "tipo": "unit",
+   "linhas": 33,
+   "testa": [
+    "src/lib/normalize.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/normalize.test.ts",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/lib/normalize.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/test/notification-and-middleware.test.ts",
+   "tipo": "unit",
+   "linhas": 419,
+   "testa": [
+    "src/services/middlewarePipelineService.ts",
+    "src/services/notificationEngineService.ts"
+   ],
+   "casos": 33
+  },
+  {
+   "arquivo": "src/test/notification-engine.test.ts",
+   "tipo": "unit",
+   "linhas": 138,
+   "testa": [
+    "src/services/notificationEngineService.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/test/notifications-drawer.test.tsx",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [
+    "src/components/shared/NotificationsDrawer.tsx"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/observability-governance-alerts.test.ts",
+   "tipo": "unit",
+   "linhas": 254,
+   "testa": [
+    "src/lib/skills/observability.ts",
+    "src/lib/skills/thresholdCalibration.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/test/openclaw-compiler.test.ts",
+   "tipo": "unit",
+   "linhas": 151,
+   "testa": [
+    "src/lib/openclawCompiler.ts",
+    "src/types/agentTypes.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/openclaw-runtime.test.tsx",
+   "tipo": "unit",
+   "linhas": 74,
+   "testa": [
+    "src/pages/OpenclawDeployPage.tsx",
+    "src/services/openclawDeployService.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/openclaw-whatsapp-setup.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/openclaw/OpenclawWhatsappSetup.tsx",
+    "src/services/openclawDeployService.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/oracle-comparison-aggregate.test.ts",
+   "tipo": "unit",
+   "linhas": 173,
+   "testa": [],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/test/oracle-service.test.ts",
+   "tipo": "unit",
+   "linhas": 43,
+   "testa": [
+    "src/services/oracleService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/otel-genai.test.ts",
+   "tipo": "unit",
+   "linhas": 34,
+   "testa": [
+    "src/lib/otel-genai.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/test/page-loading.test.tsx",
+   "tipo": "unit",
+   "linhas": 12,
+   "testa": [
+    "src/components/shared/PageLoading.tsx"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/test/partitioning-docs-route.test.tsx",
+   "tipo": "unit",
+   "linhas": 30,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/progressive-skill-loader.test.ts",
+   "tipo": "unit",
+   "linhas": 402,
+   "testa": [
+    "src/services/progressiveSkillLoader.ts"
+   ],
+   "casos": 36
+  },
+  {
+   "arquivo": "src/test/prompt-compiler-skills.test.ts",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/lib/promptCompiler.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/queue-failure-summary.test.ts",
+   "tipo": "unit",
+   "linhas": 203,
+   "testa": [
+    "src/lib/skills/llmClassificationQueue.ts",
+    "src/lib/skills/queueFailureSummary.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/test/queue-manager.test.ts",
+   "tipo": "unit",
+   "linhas": 161,
+   "testa": [
+    "src/services/queueManagerService.ts",
+    "src/types/dbRow.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/test/quick-type-template-map.test.ts",
+   "tipo": "unit",
+   "linhas": 142,
+   "testa": [
+    "src/data/agentTemplates.ts",
+    "src/data/quickAgentTemplates.ts",
+    "src/services/quickTypeTemplateMap.ts",
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/rag-pipeline-service.test.ts",
+   "tipo": "unit",
+   "linhas": 176,
+   "testa": [
+    "src/services/ragPipelineService.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/rate-limiter.test.ts",
+   "tipo": "unit",
+   "linhas": 45,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/rbac-service.test.ts",
+   "tipo": "unit",
+   "linhas": 38,
+   "testa": [
+    "src/services/rbacService.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/real-time-cost-stream.test.tsx",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [
+    "src/components/billing/RealTimeCostStream.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/regression-ui-invariants.test.tsx",
+   "tipo": "unit",
+   "linhas": 295,
+   "testa": [
+    "src/components/ui/alert.tsx",
+    "src/components/ui/badge.tsx",
+    "src/components/ui/button.tsx",
+    "src/components/ui/card.tsx",
+    "src/lib/utils.ts",
+    "src/types/dbRow.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/test/relatedNotes.test.ts",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/services/notesService.ts",
+    "src/services/relatedNotesService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/research-config-schema.test.ts",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "src/lib/validations/researchConfig.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/retry-engine.test.ts",
+   "tipo": "unit",
+   "linhas": 314,
+   "testa": [
+    "src/services/retryEngineService.ts"
+   ],
+   "casos": 27
+  },
+  {
+   "arquivo": "src/test/rich-editor.test.tsx",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [
+    "src/components/knowledge/RichEditor.tsx"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/test/schema-contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 139,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/searchDsl.test.ts",
+   "tipo": "unit",
+   "linhas": 52,
+   "testa": [
+    "src/lib/searchDsl.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/security-guards.test.ts",
+   "tipo": "unit",
+   "linhas": 142,
+   "testa": [
+    "src/lib/securityGuards.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/test/security-service.test.ts",
+   "tipo": "unit",
+   "linhas": 245,
+   "testa": [
+    "src/services/securityService.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/test/services.test.ts",
+   "tipo": "unit",
+   "linhas": 165,
+   "testa": [
+    "src/services/billingService.ts",
+    "src/services/deploymentsService.ts",
+    "src/services/evaluationsService.ts",
+    "src/services/knowledgeService.ts",
+    "src/services/monitoringService.ts",
+    "src/services/securityService.ts",
+    "src/types/dbRow.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/test/setup.ts",
+   "tipo": "unit",
+   "linhas": 35,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/sidebar-persistence.test.ts",
+   "tipo": "unit",
+   "linhas": 32,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/silent-error-guard.test.ts",
+   "tipo": "unit",
+   "linhas": 67,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/skill-attribution.test.ts",
+   "tipo": "unit",
+   "linhas": 286,
+   "testa": [
+    "src/lib/skills/attribution.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/test/skill-classification-efficacy.test.ts",
+   "tipo": "unit",
+   "linhas": 251,
+   "testa": [
+    "src/lib/skills/classificationEfficacy.ts"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "src/test/skill-classifier-parity.test.ts",
+   "tipo": "unit",
+   "linhas": 181,
+   "testa": [
+    "src/config/skill-departments.ts",
+    "src/services/skillDepartmentClassifier.ts",
+    "supabase/functions/skill-harvester/departments.ts",
+    "supabase/functions/skill-harvester/lib.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/skill-composer.test.ts",
+   "tipo": "unit",
+   "linhas": 197,
+   "testa": [
+    "src/lib/skillComposer/skillDraft.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/test/skill-demand-department-filter.test.ts",
+   "tipo": "unit",
+   "linhas": 311,
+   "testa": [
+    "src/config/skill-departments.ts",
+    "src/lib/skills/skillDemand.ts"
+   ],
+   "casos": 26
+  },
+  {
+   "arquivo": "src/test/skill-demand-department-provenance.test.ts",
+   "tipo": "unit",
+   "linhas": 88,
+   "testa": [
+    "src/lib/skills/skillDemand.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/skill-demand-needs-review-filter.test.ts",
+   "tipo": "unit",
+   "linhas": 125,
+   "testa": [
+    "src/lib/skills/skillDemand.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/skill-demand-source-filter.test.ts",
+   "tipo": "unit",
+   "linhas": 226,
+   "testa": [
+    "src/lib/skills/skillDemand.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/test/skill-demand.test.ts",
+   "tipo": "unit",
+   "linhas": 197,
+   "testa": [
+    "src/lib/skills/skillDemand.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/skill-department-classifier-invariants.test.ts",
+   "tipo": "unit",
+   "linhas": 189,
+   "testa": [
+    "src/config/skill-departments.ts",
+    "src/services/skillDepartmentClassifier.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/skill-department-provenance-chain.test.ts",
+   "tipo": "unit",
+   "linhas": 218,
+   "testa": [
+    "src/lib/skills/skillDemand.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/skill-department-reclassification.test.ts",
+   "tipo": "unit",
+   "linhas": 358,
+   "testa": [
+    "src/config/skill-departments.ts",
+    "src/lib/skills/departmentReclassification.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/test/skill-departments-parity.test.ts",
+   "tipo": "unit",
+   "linhas": 154,
+   "testa": [
+    "src/config/skill-departments.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/skill-description-enrichment.test.ts",
+   "tipo": "unit",
+   "linhas": 296,
+   "testa": [
+    "src/lib/skills/descriptionEnrichment.ts"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "src/test/skill-description-parity.test.ts",
+   "tipo": "unit",
+   "linhas": 91,
+   "testa": [
+    "src/lib/skills/descriptionEnrichment.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/skill-efficacy-scales.test.ts",
+   "tipo": "unit",
+   "linhas": 348,
+   "testa": [
+    "src/lib/skills/classificationEfficacy.ts",
+    "src/lib/skills/skillDemand.ts",
+    "src/services/skillDepartmentClassifier.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/test/skill-enrichment-service.test.ts",
+   "tipo": "unit",
+   "linhas": 141,
+   "testa": [
+    "src/services/skillEnrichmentService.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/test/skill-install-cap-audit.test.ts",
+   "tipo": "unit",
+   "linhas": 122,
+   "testa": [
+    "src/lib/skills/installCapAudit.ts",
+    "src/lib/skills/installGuard.ts",
+    "src/lib/skills/promptSimulation.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/test/skill-install-cap-ledger.test.ts",
+   "tipo": "unit",
+   "linhas": 235,
+   "testa": [
+    "src/lib/skills/installCapLedger.ts",
+    "src/lib/skills/promptSimulation.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/test/skill-install-guard.test.ts",
+   "tipo": "unit",
+   "linhas": 172,
+   "testa": [
+    "src/lib/skills/installGuard.ts",
+    "src/lib/skills/promptSimulation.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/skill-license-filter-persistence.test.ts",
+   "tipo": "unit",
+   "linhas": 142,
+   "testa": [
+    "src/lib/skills/attribution.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/skill-license-filter.test.ts",
+   "tipo": "unit",
+   "linhas": 157,
+   "testa": [
+    "src/lib/skills/attribution.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/skill-llm-classification-queue.test.ts",
+   "tipo": "unit",
+   "linhas": 402,
+   "testa": [
+    "src/lib/skills/llmClassificationQueue.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/test/skill-meta-collection.test.ts",
+   "tipo": "unit",
+   "linhas": 267,
+   "testa": [
+    "src/lib/skills/skillDemand.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/test/skill-observability.test.ts",
+   "tipo": "unit",
+   "linhas": 218,
+   "testa": [
+    "src/lib/skills/classificationEfficacy.ts",
+    "src/lib/skills/observability.ts",
+    "src/lib/skills/thresholdCalibration.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/test/skill-platform-tier.test.ts",
+   "tipo": "unit",
+   "linhas": 257,
+   "testa": [
+    "src/services/skillDepartmentClassifier.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/test/skill-prompt-diff.test.ts",
+   "tipo": "unit",
+   "linhas": 251,
+   "testa": [
+    "src/lib/promptCompiler.ts",
+    "src/lib/skills/promptAuditArtifact.ts",
+    "src/lib/skills/promptDiff.ts",
+    "src/lib/skills/promptSimulation.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/test/skill-prompt-evidence-ledger.test.ts",
+   "tipo": "unit",
+   "linhas": 282,
+   "testa": [
+    "src/lib/skills/promptAuditArtifact.ts",
+    "src/lib/skills/promptEvidenceLedger.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/test/skill-prompt-evidence.test.ts",
+   "tipo": "unit",
+   "linhas": 147,
+   "testa": [
+    "src/lib/promptCompiler.ts",
+    "src/lib/skills/promptAuditArtifact.ts",
+    "src/lib/skills/promptSimulation.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/skill-prompt-overflow-alert.test.ts",
+   "tipo": "unit",
+   "linhas": 137,
+   "testa": [
+    "src/lib/skills/promptOverflowAlert.ts",
+    "src/lib/skills/promptSimulation.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/skill-prompt-simulation.test.ts",
+   "tipo": "unit",
+   "linhas": 162,
+   "testa": [
+    "src/lib/promptCompiler.ts",
+    "src/lib/skills/promptSimulation.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/test/skill-reclassification-review.test.ts",
+   "tipo": "unit",
+   "linhas": 361,
+   "testa": [
+    "src/lib/skills/departmentReclassification.ts",
+    "src/services/skillReclassificationReviewService.ts"
+   ],
+   "casos": 30
+  },
+  {
+   "arquivo": "src/test/skill-recommender-pending.test.ts",
+   "tipo": "unit",
+   "linhas": 36,
+   "testa": [
+    "src/services/skillRecommenderService.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/skill-recommender.test.ts",
+   "tipo": "unit",
+   "linhas": 202,
+   "testa": [
+    "src/services/skillRecommenderService.ts",
+    "src/services/skillsRegistryService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/skills-registry-bulk-install.test.ts",
+   "tipo": "unit",
+   "linhas": 38,
+   "testa": [
+    "src/services/skillsRegistryService.ts",
+    "src/services/skillsSimulationService.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/skills-registry-install-single.test.ts",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [
+    "src/services/skillsRegistryService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/skills-registry.test.ts",
+   "tipo": "unit",
+   "linhas": 12,
+   "testa": [
+    "src/services/skillsRegistryService.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/test/skills-selection-diff.test.ts",
+   "tipo": "unit",
+   "linhas": 35,
+   "testa": [
+    "src/services/skillsRegistryService.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/span-tree-view.test.tsx",
+   "tipo": "unit",
+   "linhas": 99,
+   "testa": [
+    "src/components/monitoring/SpanTreeView.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/status-badge.test.tsx",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [
+    "src/components/shared/StatusBadge.tsx"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/streaming.test.ts",
+   "tipo": "unit",
+   "linhas": 29,
+   "testa": [
+    "src/lib/ag-ui/protocol.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/supabase-mock-simulation.test.ts",
+   "tipo": "unit",
+   "linhas": 187,
+   "testa": [],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/template-canvas-preview.test.tsx",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [
+    "src/components/workflows/TemplateCanvasPreview.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/template-department-coverage.test.ts",
+   "tipo": "unit",
+   "linhas": 37,
+   "testa": [
+    "src/data/agentTemplates.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/template-link-coverage.test.ts",
+   "tipo": "unit",
+   "linhas": 82,
+   "testa": [
+    "src/data/agentTemplates.ts",
+    "src/data/curatedSkills.ts",
+    "src/services/skillsRegistryService.ts",
+    "src/services/templateSkillRegistry.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/template-skill-link.test.ts",
+   "tipo": "unit",
+   "linhas": 57,
+   "testa": [
+    "src/data/agentTemplates.ts",
+    "src/services/skillsRegistryService.ts",
+    "src/services/templateSkillRegistry.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/template-skill-links-merge.test.ts",
+   "tipo": "unit",
+   "linhas": 201,
+   "testa": [
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/test/template-skill-links-rebuild.test.ts",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/template-skill-links-restore-all.test.ts",
+   "tipo": "unit",
+   "linhas": 471,
+   "testa": [
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 41
+  },
+  {
+   "arquivo": "src/test/template-skill-links-restore.test.ts",
+   "tipo": "unit",
+   "linhas": 127,
+   "testa": [
+    "src/services/templateSkillLinkService.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/template-skill-links.test.ts",
+   "tipo": "unit",
+   "linhas": 93,
+   "testa": [
+    "src/data/agentTemplates.ts",
+    "src/data/curatedSkills.ts",
+    "src/services/skillsRegistryService.ts",
+    "src/services/templateSkillRegistry.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/template-skill-registry.test.ts",
+   "tipo": "unit",
+   "linhas": 74,
+   "testa": [
+    "src/data/agentTemplates.ts",
+    "src/services/templateSkillRegistry.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/test/templateEngine.test.ts",
+   "tipo": "unit",
+   "linhas": 35,
+   "testa": [
+    "src/lib/templateEngine.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/templates.test.ts",
+   "tipo": "unit",
+   "linhas": 29,
+   "testa": [
+    "src/data/agentTemplates.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/threshold-calibration-instability.test.ts",
+   "tipo": "unit",
+   "linhas": 183,
+   "testa": [
+    "src/lib/skills/thresholdCalibration.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/test/threshold-calibration-override.test.ts",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "src/lib/skills/thresholdCalibration.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/threshold-calibration-scale.test.ts",
+   "tipo": "unit",
+   "linhas": 202,
+   "testa": [
+    "src/lib/skills/calibrationCsv.ts",
+    "src/lib/skills/thresholdCalibration.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/threshold-calibration.test.ts",
+   "tipo": "unit",
+   "linhas": 128,
+   "testa": [
+    "src/lib/skills/thresholdCalibration.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/tracing.test.ts",
+   "tipo": "unit",
+   "linhas": 307,
+   "testa": [
+    "src/lib/tracing.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/test/use-mobile.test.ts",
+   "tipo": "unit",
+   "linhas": 19,
+   "testa": [
+    "src/hooks/use-mobile.tsx"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/test/use-unsaved-changes.test.tsx",
+   "tipo": "unit",
+   "linhas": 45,
+   "testa": [
+    "src/hooks/use-unsaved-changes.tsx"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/utils/supabaseMock.ts",
+   "tipo": "unit",
+   "linhas": 334,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/validations.test.ts",
+   "tipo": "unit",
+   "linhas": 111,
+   "testa": [
+    "src/lib/validations/agentSchema.ts"
+   ],
+   "casos": 38
+  },
+  {
+   "arquivo": "src/test/vaultSync.test.ts",
+   "tipo": "unit",
+   "linhas": 20,
+   "testa": [
+    "src/services/vaultSyncService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/voice-agents-service.test.ts",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/services/voiceAgentService.ts",
+    "src/types/dbRow.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/webhook-trigger.test.ts",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/services/webhookTriggerService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/whatsapp-outbound.test.ts",
+   "tipo": "unit",
+   "linhas": 242,
+   "testa": [
+    "src/services/whatsappOutboundService.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/whatsapp-webhook.test.ts",
+   "tipo": "unit",
+   "linhas": 278,
+   "testa": [
+    "src/services/whatsappWebhookService.ts",
+    "src/types/dbRow.ts"
+   ],
+   "casos": 25
+  },
+  {
+   "arquivo": "src/test/wikilink.test.ts",
+   "tipo": "unit",
+   "linhas": 50,
+   "testa": [
+    "src/lib/wikilink.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/workflow-checkpoint.test.ts",
+   "tipo": "unit",
+   "linhas": 102,
+   "testa": [
+    "src/services/workflowCheckpointService.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/test/workflow-nodes.test.ts",
+   "tipo": "unit",
+   "linhas": 29,
+   "testa": [
+    "src/components/workflows/nodes/index.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/workflow-tracer.test.ts",
+   "tipo": "unit",
+   "linhas": 202,
+   "testa": [
+    "src/lib/tracing.ts",
+    "src/services/workflowsService.ts",
+    "src/types/dbRow.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/test/workflows-service.test.ts",
+   "tipo": "unit",
+   "linhas": 44,
+   "testa": [
+    "src/services/workflowsService.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/test/workspace-context-service.test.ts",
+   "tipo": "unit",
+   "linhas": 101,
+   "testa": [
+    "src/services/workspaceContextService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/tests/automation-services.test.ts",
+   "tipo": "unit",
+   "linhas": 1031,
+   "testa": [
+    "src/services/automationTemplateService.ts",
+    "src/services/batchProcessorService.ts",
+    "src/services/connectorRegistryService.ts",
+    "src/services/credentialVaultService.ts",
+    "src/services/cronSchedulerService.ts",
+    "src/services/executionHistoryService.ts",
+    "src/services/notificationEngineService.ts",
+    "src/services/queueManagerService.ts",
+    "src/services/retryEngineService.ts",
+    "src/services/webhookTriggerService.ts"
+   ],
+   "casos": 101
+  },
+  {
+   "arquivo": "src/tests/nexus-complete-test-suite.test.ts",
+   "tipo": "unit",
+   "linhas": 493,
+   "testa": [
+    "src/services/agentCardService.ts",
+    "src/services/automationTemplateService.ts",
+    "src/services/connectorRegistryService.ts",
+    "src/services/costCalculatorService.ts",
+    "src/services/credentialVaultService.ts",
+    "src/services/cronSchedulerService.ts",
+    "src/services/executionHistoryService.ts",
+    "src/services/index.ts",
+    "src/services/middlewarePipelineService.ts",
+    "src/services/notificationEngineService.ts",
+    "src/services/progressiveSkillLoader.ts",
+    "src/services/queueManagerService.ts",
+    "src/services/retryEngineService.ts",
+    "src/services/webhookTriggerService.ts"
+   ],
+   "casos": 64
+  },
+  {
+   "arquivo": "supabase/functions/_shared/alternation.test.ts",
+   "tipo": "unit",
+   "linhas": 61,
+   "testa": [
+    "supabase/functions/_shared/alternation.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "supabase/functions/_shared/retry.test.ts",
+   "tipo": "unit",
+   "linhas": 123,
+   "testa": [
+    "supabase/functions/_shared/retry.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "supabase/functions/rag-embed-v2/index.test.ts",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "supabase/functions/rag-embed-v2/embedder.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "tests/e2e/security-audits.spec.ts",
+   "tipo": "e2e",
+   "linhas": 34,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/load/llm-gateway.k6.js",
+   "tipo": "unit",
+   "linhas": 126,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/rls/personas.test.ts",
+   "tipo": "unit",
+   "linhas": 177,
+   "testa": [],
+   "casos": 8
+  },
+  {
+   "arquivo": "tests/rls/setup.ts",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [],
+   "casos": 0
+  }
+ ],
+ "sql": [],
+ "cobertura_por_arquivo": {
+  "eslint-plugins/nexus-design.js": 1,
+  "playwright-fixture.ts": 7,
+  "scripts/automation.mjs": 1,
+  "scripts/ci/check-bundle-secrets.mjs": 1,
+  "scripts/ci/check-e2e-artifact-secrets.mjs": 1,
+  "scripts/ci/check-edge-error-exposure.mjs": 1,
+  "scripts/ci/check-pr-workflow-secrets.mjs": 1,
+  "scripts/ci/check-supabase-url-import-meta.mjs": 1,
+  "scripts/ci/commit-msg-lint.mjs": 1,
+  "scripts/ci/gerar-matriz-edge-tabela.mjs": 1,
+  "scripts/ci/lint-ratchet.mjs": 1,
+  "scripts/ci/typecheck-ratchet.mjs": 1,
+  "scripts/edge-deploy/manifest-lib.mjs": 1,
+  "scripts/graphify-local.mjs": 1,
+  "scripts/inventario/gerar-banco.mjs": 1,
+  "scripts/inventario/mudou-conteudo.mjs": 1,
+  "scripts/lib/seguranca-processo.mjs": 1,
+  "scripts/maintenance/lib.mjs": 1,
+  "scripts/maintenance/run.mjs": 1,
+  "src/components/agents/wizard/RestoreFeedbackBanner.tsx": 1,
+  "src/components/agents/wizard/draftStore.ts": 2,
+  "src/components/agents/wizard/quickSteps/PromptContradictionAutoFixPanel.tsx": 1,
+  "src/components/billing/RealTimeCostStream.tsx": 1,
+  "src/components/chat/MessageBubble.tsx": 1,
+  "src/components/knowledge/RichEditor.tsx": 1,
+  "src/components/layout/AppLayout.tsx": 1,
+  "src/components/layout/AppSidebar.tsx": 2,
+  "src/components/monitoring/SpanTreeView.tsx": 1,
+  "src/components/openclaw/OpenclawWhatsappSetup.tsx": 1,
+  "src/components/security/SecurityMonitoringPanel.tsx": 1,
+  "src/components/shared/AnimatedCounter.tsx": 1,
+  "src/components/shared/Breadcrumbs.tsx": 1,
+  "src/components/shared/CommandPalette.tsx": 1,
+  "src/components/shared/EmptyState.tsx": 1,
+  "src/components/shared/ErrorBoundary.tsx": 1,
+  "src/components/shared/InfoHint.tsx": 1,
+  "src/components/shared/LoadingSpinner.tsx": 1,
+  "src/components/shared/MetricCard.tsx": 2,
+  "src/components/shared/NotificationsDrawer.tsx": 1,
+  "src/components/shared/OnboardingTour.tsx": 1,
+  "src/components/shared/PageHeader.tsx": 1,
+  "src/components/shared/PageLoading.tsx": 2,
+  "src/components/shared/StatusBadge.tsx": 2,
+  "src/components/slack/SlackOnboardingWizard.tsx": 1,
+  "src/components/super-cerebro/notebook/LocalGraphView.tsx": 1,
+  "src/components/ui/alert.tsx": 1,
+  "src/components/ui/badge.tsx": 1,
+  "src/components/ui/button.tsx": 2,
+  "src/components/ui/card.tsx": 1,
+  "src/components/ui/select.tsx": 1,
+  "src/components/ui/sidebar.tsx": 2,
+  "src/components/ui/tabs.tsx": 1,
+  "src/components/workflows/TemplateCanvasPreview.tsx": 1,
+  "src/components/workflows/nodes/index.ts": 1,
+  "src/config/skill-departments.ts": 6,
+  "src/contexts/AuthContext.tsx": 1,
+  "src/data/agentTemplates.ts": 8,
+  "src/data/curatedSkills.ts": 3,
+  "src/data/quickAgentTemplates.ts": 2,
+  "src/hooks/use-debounce.ts": 1,
+  "src/hooks/use-document-title.ts": 1,
+  "src/hooks/use-mobile.tsx": 1,
+  "src/hooks/use-network-status.ts": 1,
+  "src/hooks/use-unsaved-changes.tsx": 1,
+  "src/hooks/useCurationRealtime.ts": 3,
+  "src/i18n/I18nProvider.tsx": 1,
+  "src/i18n/translations.ts": 1,
+  "src/integrations/supabase/externalClient.ts": 1,
+  "src/lib/ag-ui/protocol.ts": 1,
+  "src/lib/citationValidation.ts": 1,
+  "src/lib/curationHighlight.ts": 1,
+  "src/lib/frontmatter.ts": 1,
+  "src/lib/mcp/mcpClient.ts": 1,
+  "src/lib/memory/tiers.ts": 1,
+  "src/lib/normalize.ts": 2,
+  "src/lib/openclawCompiler.ts": 1,
+  "src/lib/otel-genai.ts": 1,
+  "src/lib/promptCompiler.ts": 5,
+  "src/lib/searchDsl.ts": 1,
+  "src/lib/securityGuards.ts": 1,
+  "src/lib/skillComposer/skillDraft.ts": 1,
+  "src/lib/skills/attribution.ts": 3,
+  "src/lib/skills/calibrationCsv.ts": 3,
+  "src/lib/skills/calibrationGovernance.ts": 1,
+  "src/lib/skills/classificationEfficacy.ts": 3,
+  "src/lib/skills/departmentReclassification.ts": 2,
+  "src/lib/skills/descriptionEnrichment.ts": 2,
+  "src/lib/skills/installCapAudit.ts": 1,
+  "src/lib/skills/installCapLedger.ts": 1,
+  "src/lib/skills/installGuard.ts": 2,
+  "src/lib/skills/llmClassificationQueue.ts": 2,
+  "src/lib/skills/observability.ts": 2,
+  "src/lib/skills/promptAuditArtifact.ts": 3,
+  "src/lib/skills/promptDiff.ts": 1,
+  "src/lib/skills/promptEvidenceLedger.ts": 1,
+  "src/lib/skills/promptOverflowAlert.ts": 1,
+  "src/lib/skills/promptSimulation.ts": 7,
+  "src/lib/skills/queueFailureSummary.ts": 1,
+  "src/lib/skills/skillDemand.ts": 8,
+  "src/lib/skills/thresholdCalibration.ts": 9,
+  "src/lib/sourceIdsSync.ts": 1,
+  "src/lib/supabaseExtended.ts": 1,
+  "src/lib/templateEngine.ts": 1,
+  "src/lib/tracing.ts": 2,
+  "src/lib/utils.ts": 1,
+  "src/lib/validations/agentSchema.ts": 1,
+  "src/lib/validations/contradictionSuggestions.ts": 1,
+  "src/lib/validations/dialogSchemas.ts": 1,
+  "src/lib/validations/promptContradictions.ts": 3,
+  "src/lib/validations/quickAgentSchema.ts": 2,
+  "src/lib/validations/researchConfig.ts": 1,
+  "src/lib/wikilink.ts": 1,
+  "src/pages/DashboardPage.tsx": 1,
+  "src/pages/OpenclawDeployPage.tsx": 1,
+  "src/services/agentCardService.ts": 1,
+  "src/services/agentEvolutionService.ts": 2,
+  "src/services/agentHandoffService.ts": 2,
+  "src/services/agentRoutingService.ts": 1,
+  "src/services/agentsService.ts": 1,
+  "src/services/approvalService.ts": 1,
+  "src/services/automationTemplateService.ts": 3,
+  "src/services/basesService.ts": 1,
+  "src/services/batchProcessorService.ts": 2,
+  "src/services/billingService.ts": 2,
+  "src/services/bitrix24WebhookService.ts": 1,
+  "src/services/browserAgentService.ts": 1,
+  "src/services/cerebroService.ts": 2,
+  "src/services/chatThreadService.ts": 1,
+  "src/services/connectorRegistryService.ts": 3,
+  "src/services/contextTiersService.ts": 2,
+  "src/services/costCalculatorService.ts": 2,
+  "src/services/credentialVaultService.ts": 3,
+  "src/services/crmScoringService.ts": 1,
+  "src/services/crmService.ts": 1,
+  "src/services/cronSchedulerService.ts": 3,
+  "src/services/datahubService.ts": 2,
+  "src/services/deploymentsService.ts": 2,
+  "src/services/e2eeService.ts": 1,
+  "src/services/evaluationsService.ts": 3,
+  "src/services/executionHistoryService.ts": 3,
+  "src/services/freezeWindowService.ts": 1,
+  "src/services/guardrailsMLService.ts": 1,
+  "src/services/healthAlertsService.ts": 1,
+  "src/services/index.ts": 1,
+  "src/services/kanbanService.ts": 1,
+  "src/services/knowledgeService.ts": 2,
+  "src/services/lgpdService.ts": 1,
+  "src/services/llmGatewayService.ts": 2,
+  "src/services/memoryService.ts": 2,
+  "src/services/middlewarePipelineService.ts": 3,
+  "src/services/modelRouterService.ts": 1,
+  "src/services/monitoringService.ts": 2,
+  "src/services/nlpPipelineService.ts": 1,
+  "src/services/notesService.ts": 3,
+  "src/services/notificationEngineService.ts": 4,
+  "src/services/openclawDeployService.ts": 2,
+  "src/services/oracleService.ts": 1,
+  "src/services/progressiveSkillLoader.ts": 2,
+  "src/services/queueManagerService.ts": 3,
+  "src/services/quickTypeTemplateMap.ts": 1,
+  "src/services/ragPipelineService.ts": 1,
+  "src/services/rbacService.ts": 1,
+  "src/services/relatedNotesService.ts": 1,
+  "src/services/retryEngineService.ts": 3,
+  "src/services/securityService.ts": 3,
+  "src/services/skillDepartmentClassifier.ts": 4,
+  "src/services/skillEnrichmentService.ts": 1,
+  "src/services/skillHarvestService.ts": 3,
+  "src/services/skillReclassificationReviewService.ts": 1,
+  "src/services/skillRecommenderService.ts": 2,
+  "src/services/skillsRegistryService.ts": 9,
+  "src/services/skillsSimulationService.ts": 1,
+  "src/services/teamsService.ts": 1,
+  "src/services/templateSkillLinkService.ts": 10,
+  "src/services/templateSkillRegistry.ts": 4,
+  "src/services/vaultSyncService.ts": 1,
+  "src/services/voiceAgentService.ts": 1,
+  "src/services/webhookTriggerService.ts": 3,
+  "src/services/whatsappOutboundService.ts": 1,
+  "src/services/whatsappWebhookService.ts": 1,
+  "src/services/workflowCheckpointService.ts": 1,
+  "src/services/workflowsService.ts": 3,
+  "src/services/workspaceContextService.ts": 1,
+  "src/stores/uiStore.ts": 1,
+  "src/types/agentTypes.ts": 1,
+  "src/types/cerebroCitations.ts": 1,
+  "src/types/dbRow.ts": 10,
+  "supabase/functions/_shared/alternation.ts": 1,
+  "supabase/functions/_shared/retry.ts": 1,
+  "supabase/functions/_shared/skills.ts": 1,
+  "supabase/functions/rag-embed-v2/embedder.ts": 1,
+  "supabase/functions/skill-harvester/departments.ts": 1,
+  "supabase/functions/skill-harvester/lib.ts": 1
+ },
+ "sem_teste": {
+  "telas": [
+   "src/pages/A2APanelPage.tsx",
+   "src/pages/AIStudioPage.tsx",
+   "src/pages/AdminPage.tsx",
+   "src/pages/AgentAlertsPage.tsx",
+   "src/pages/AgentArenaPage.tsx",
+   "src/pages/AgentBuilder.tsx",
+   "src/pages/AgentDebuggerPage.tsx",
+   "src/pages/AgentDetailPage.tsx",
+   "src/pages/AgentEvalsPage.tsx",
+   "src/pages/AgentExperimentsPage.tsx",
+   "src/pages/AgentInstalledSkillsPage.tsx",
+   "src/pages/AgentMetricsPage.tsx",
+   "src/pages/AgentOrchestrationPage.tsx",
+   "src/pages/AgentSessionsPage.tsx",
+   "src/pages/AgentSimulationPage.tsx",
+   "src/pages/AgentTemplatesPage.tsx",
+   "src/pages/AgentTracesPage.tsx",
+   "src/pages/AgentVersioningPage.tsx",
+   "src/pages/AgentWorkflowsPage.tsx",
+   "src/pages/AgentsPage.tsx",
+   "src/pages/ApprovalQueuePage.tsx",
+   "src/pages/ArticleEditorPage.tsx",
+   "src/pages/AssetInventoryPage.tsx",
+   "src/pages/AuthPage.tsx",
+   "src/pages/AutomationCenterPage.tsx",
+   "src/pages/AutomationsPage.tsx",
+   "src/pages/BCPPage.tsx",
+   "src/pages/BCPTestRunsPage.tsx",
+   "src/pages/BillingPage.tsx",
+   "src/pages/BrowserAgentPage.tsx",
+   "src/pages/BudgetSettingsPage.tsx",
+   "src/pages/BudgetsPage.tsx",
+   "src/pages/CanaryDeploymentsPage.tsx",
+   "src/pages/ChangeManagementPage.tsx",
+   "src/pages/ChaosExperimentsPage.tsx",
+   "src/pages/ChaosLabPage.tsx",
+   "src/pages/ChatWithAgentPage.tsx",
+   "src/pages/CodeInterpreterPage.tsx",
+   "src/pages/ComplianceFrameworksPage.tsx",
+   "src/pages/ComplianceReportsPage.tsx",
+   "src/pages/ComputerUsePage.tsx",
+   "src/pages/CostAnomaliesPage.tsx",
+   "src/pages/CostOptimizerPage.tsx",
+   "src/pages/CostSimulatorPage.tsx",
+   "src/pages/CreateAgentPage.tsx",
+   "src/pages/CreatorPayoutsPage.tsx",
+   "src/pages/CrmPage.tsx",
+   "src/pages/DRDrillsPage.tsx",
+   "src/pages/DataHubPage.tsx",
+   "src/pages/DataResidencyPage.tsx",
+   "src/pages/DataStoragePage.tsx",
+   "src/pages/DeploymentsPage.tsx",
+   "src/pages/DisasterRecoveryPage.tsx",
+   "src/pages/E2EESimulationPage.tsx",
+   "src/pages/EmailCalendarTriggersPage.tsx",
+   "src/pages/EnterpriseSSOPage.tsx",
+   "src/pages/EntityResolutionLogsPage.tsx",
+   "src/pages/EvaluationsPage.tsx",
+   "src/pages/FederatedLearningPage.tsx",
+   "src/pages/FineTuningPage.tsx",
+   "src/pages/ForensicSnapshotsPage.tsx",
+   "src/pages/FreezeWindowsPage.tsx",
+   "src/pages/GameDayLivePage.tsx",
+   "src/pages/GameDaysPage.tsx",
+   "src/pages/GovernancePage.tsx",
+   "src/pages/GraphExecutionsPage.tsx",
+   "src/pages/IPWhitelistPage.tsx",
+   "src/pages/IRPlaybooksPage.tsx",
+   "src/pages/IncidentPlaybooksPage.tsx",
+   "src/pages/KnowledgeDecayPage.tsx",
+   "src/pages/KnowledgeGraphPage.tsx",
+   "src/pages/KnowledgeManagementPage.tsx",
+   "src/pages/KnowledgePage.tsx",
+   "src/pages/LGPDCompliancePage.tsx",
+   "src/pages/LlmCostByCallerPage.tsx",
+   "src/pages/MCPServersPage.tsx",
+   "src/pages/MarketplaceMonetizedPage.tsx",
+   "src/pages/MemoryPage.tsx",
+   "src/pages/MobileSDKPage.tsx",
+   "src/pages/MonitoringPage.tsx",
+   "src/pages/MultiTenancyPage.tsx",
+   "src/pages/NLPPipelinePage.tsx",
+   "src/pages/NotFound.tsx",
+   "src/pages/ObservabilityOTelPage.tsx",
+   "src/pages/OncallPage.tsx",
+   "src/pages/OpenclawTemplatesPage.tsx",
+   "src/pages/OraclePage.tsx",
+   "src/pages/PartitioningDocsPage.tsx",
+   "src/pages/PentestFindingsPage.tsx",
+   "src/pages/PentestPage.tsx",
+   "src/pages/PerformancePage.tsx",
+   "src/pages/PermissionsPage.tsx",
+   "src/pages/PostmortemEditorPage.tsx",
+   "src/pages/PostmortemsPage.tsx",
+   "src/pages/PromptABTestPage.tsx",
+   "src/pages/PromptEditorPage.tsx",
+   "src/pages/PromptExperimentsPage.tsx",
+   "src/pages/PromptsPage.tsx",
+   "src/pages/PublicForumPage.tsx",
+   "src/pages/PublicHelpCenterPage.tsx",
+   "src/pages/PublicNoteView.tsx",
+   "src/pages/ReplayForkPage.tsx",
+   "src/pages/ResetPasswordPage.tsx",
+   "src/pages/RiskRegisterPage.tsx",
+   "src/pages/RolePermissionsPage.tsx",
+   "src/pages/RolesPage.tsx",
+   "src/pages/RoutingConfigPage.tsx",
+   "src/pages/SBOMPage.tsx",
+   "src/pages/SLODashboard.tsx",
+   "src/pages/SearchPage.tsx",
+   "src/pages/SecretsRotationPage.tsx",
+   "src/pages/SecurityPage.tsx",
+   "src/pages/SettingsPage.tsx",
+   "src/pages/SkillComposerPage.tsx",
+   "src/pages/SkillHarvestPage.tsx",
+   "src/pages/SkillLibraryPage.tsx",
+   "src/pages/SkillbookAuditPage.tsx",
+   "src/pages/SkillsMarketplacePage.tsx",
+   "src/pages/SlackSettingsPage.tsx",
+   "src/pages/SmolagentPage.tsx",
+   "src/pages/SuperCerebroPage.tsx",
+   "src/pages/SwarmOrchestrationPage.tsx",
+   "src/pages/SyntheticDataPage.tsx",
+   "src/pages/SyntheticMonitoringPage.tsx",
+   "src/pages/SystemJobsPage.tsx",
+   "src/pages/TeamPage.tsx",
+   "src/pages/ToolsPage.tsx",
+   "src/pages/TracesTimelinePage.tsx",
+   "src/pages/TypographyDocsPage.tsx",
+   "src/pages/VendorsPage.tsx",
+   "src/pages/VisionAgentsPage.tsx",
+   "src/pages/VoiceAgentStudioPage.tsx",
+   "src/pages/VoiceAgentsPage.tsx",
+   "src/pages/VoiceTelephonyPage.tsx",
+   "src/pages/VulnerabilitiesPage.tsx",
+   "src/pages/WebhookEventsPage.tsx",
+   "src/pages/WidgetBuilderPage.tsx",
+   "src/pages/WorkflowsPage.tsx"
+  ],
+  "hooks": [
+   "scripts/ai-context/cenarios.mjs",
+   "src/components/agents/versioning/useRestoreDialogMemory.ts",
+   "src/components/agents/wizard/quickSteps/PreflightReviewSummary.tsx",
+   "src/components/agents/wizard/quickSteps/useFieldHighlight.ts",
+   "src/components/charts/useChartDimensions.ts",
+   "src/components/rbac/AccessControl.tsx",
+   "src/components/rbac/index.ts",
+   "src/components/ui/form.tsx",
+   "src/components/ui/use-toast.ts",
+   "src/hooks/index.ts",
+   "src/hooks/use-data.ts",
+   "src/hooks/use-keyboard-shortcuts.ts",
+   "src/hooks/use-paginated-query.ts",
+   "src/hooks/use-toast.ts",
+   "src/hooks/use-workflow-persistence.ts",
+   "src/hooks/useAgentDailyMetrics.ts",
+   "src/hooks/useAgentEvals.ts",
+   "src/hooks/useAgentExperiments.ts",
+   "src/hooks/useAgentSLOTargets.ts",
+   "src/hooks/useAgentVersions.ts",
+   "src/hooks/useAgentWorkflows.ts",
+   "src/hooks/useAutoE2EESync.ts",
+   "src/hooks/useAutomation.ts",
+   "src/hooks/useAutomationRules.ts",
+   "src/hooks/useBillingData.ts",
+   "src/hooks/useChecklistAutoUnlock.ts",
+   "src/hooks/useCostEstimate.ts",
+   "src/hooks/useCurrentWorkspace.ts",
+   "src/hooks/useFilterPersistence.ts",
+   "src/hooks/useGlobalSearch.ts",
+   "src/hooks/useGuardrails.ts",
+   "src/hooks/useI18n.ts",
+   "src/hooks/useNLPAnalysis.ts",
+   "src/hooks/useNotifications.ts",
+   "src/hooks/useObsidianMode.ts",
+   "src/hooks/useOpenclawTemplates.ts",
+   "src/hooks/usePasswordBreachCheck.ts",
+   "src/hooks/usePrefersReducedMotion.ts",
+   "src/hooks/useRBAC.ts",
+   "src/hooks/useRetryAction.ts",
+   "src/hooks/useSlackConfig.ts",
+   "src/hooks/useSLOAlerts.ts",
+   "src/hooks/useStreamingResponse.ts",
+   "src/hooks/useTracesData.ts",
+   "src/hooks/useWorkflowAutosave.ts",
+   "src/hooks/useWorkflowKeyboard.ts",
+   "src/lib/researchConfig.ts",
+   "src/lib/slo/useDrilldownAuditLog.ts",
+   "src/services/canvasesService.ts",
+   "src/services/notebookPodcastsService.ts",
+   "src/services/notebooksService.ts",
+   "src/services/noteTemplatesService.ts",
+   "src/services/noteVersionsService.ts",
+   "src/stores/agentBuilderStore.ts",
+   "src/stores/agentDrilldownStore.ts",
+   "src/stores/cerebroStore.ts",
+   "src/stores/datahubStore.ts",
+   "src/stores/index.ts",
+   "src/stores/notificationStore.ts",
+   "src/stores/oracleStore.ts",
+   "src/stores/workflowStore.ts"
+  ],
+  "edges": [
+   "a2a-server",
+   "agent-conversational-builder",
+   "agent-eval-runner",
+   "agent-workflow-runner",
+   "audio-transcribe",
+   "automation-pipeline",
+   "bitrix24-api",
+   "bitrix24-oauth",
+   "browser-agent-run",
+   "browser-session-cancel",
+   "cerebro-brain",
+   "cerebro-query",
+   "code-interpreter-execute",
+   "computer-use-execute",
+   "crm-bitrix-sync",
+   "crm-cadence-runner",
+   "crm-enrich",
+   "cron-executor",
+   "datahub-mcp-server",
+   "datahub-query",
+   "doc-ocr",
+   "doc-parse",
+   "doc-rechunk",
+   "dr-orchestrator",
+   "eval-engine-v2",
+   "eval-judge",
+   "global-search",
+   "graph-execute",
+   "guardrails-engine",
+   "guardrails-ml",
+   "health-check",
+   "hf-autotrain",
+   "image-analysis",
+   "incident-orchestrator",
+   "kb-analyze-gaps",
+   "kb-translate-article",
+   "lgpd-manager",
+   "llm-gateway",
+   "memory-manager",
+   "memory-tools",
+   "migrate-helper",
+   "nlp-pipeline",
+   "notebook-podcast-generate",
+   "notification-sender",
+   "openclaw-proxy",
+   "openclaw-webhook",
+   "oracle-council",
+   "oracle-research",
+   "pg-net-smoke-test",
+   "product-mockup",
+   "queue-worker",
+   "quick-agent-test",
+   "rag-embed-backfill",
+   "rag-ingest",
+   "rag-rerank",
+   "rag-rerank-v2",
+   "replay-fork-execute",
+   "sbom-scanner",
+   "semantic-search",
+   "skill-classify-llm",
+   "skill-describe-llm",
+   "skill-harvester",
+   "slack-agent-notify",
+   "slack-alert-dispatcher",
+   "slack-dlq-discard",
+   "slack-dlq-retry",
+   "slack-events-webhook",
+   "slack-rag-sync",
+   "slack-verify-connection",
+   "smart-model-router",
+   "smolagent-runtime",
+   "synthetic-runner",
+   "test-runner",
+   "text-to-speech",
+   "validate-access",
+   "visual-search",
+   "voice-session",
+   "voice-synthesize",
+   "voice-transcribe",
+   "webhook-receiver",
+   "whatsapp-router",
+   "widget-proxy",
+   "workflow-engine-v2"
+  ],
+  "servicos": [
+   "src/services/accessControlService.ts",
+   "src/services/adminCrudService.ts",
+   "src/services/agentBehaviorImpactService.ts",
+   "src/services/agentDailyMetricsService.ts",
+   "src/services/agentDayDetailsService.ts",
+   "src/services/agentDraftVersionsService.ts",
+   "src/services/agentGraphService.ts",
+   "src/services/agentPromptSimulationService.ts",
+   "src/services/agentSkillLoadService.ts",
+   "src/services/agentTestSimulationService.ts",
+   "src/services/agentTracesService.ts",
+   "src/services/alertRulesService.ts",
+   "src/services/assetInventoryService.ts",
+   "src/services/audioService.ts",
+   "src/services/auditLogService.ts",
+   "src/services/bcpService.ts",
+   "src/services/bookmarksService.ts",
+   "src/services/budgetService.ts",
+   "src/services/canvasesService.ts",
+   "src/services/changeManagementService.ts",
+   "src/services/chaosService.ts",
+   "src/services/citationTelemetryService.ts",
+   "src/services/codeInterpreterService.ts",
+   "src/services/complianceService.ts",
+   "src/services/costAnomalyService.ts",
+   "src/services/crmCadenceService.ts",
+   "src/services/dashboardService.ts",
+   "src/services/dataStorageService.ts",
+   "src/services/documentIngestionService.ts",
+   "src/services/drDrillService.ts",
+   "src/services/e2eeAutoSync.ts",
+   "src/services/e2eeSimulationService.ts",
+   "src/services/entityResolutionService.ts",
+   "src/services/evalEngineService.ts",
+   "src/services/fineTuningService.ts",
+   "src/services/gameDayService.ts",
+   "src/services/healthService.ts",
+   "src/services/incidentService.ts",
+   "src/services/installCapLedgerService.ts",
+   "src/services/irPlaybookService.ts",
+   "src/services/knowledgeDecayService.ts",
+   "src/services/knowledgeManagementService.ts",
+   "src/services/marketplaceService.ts",
+   "src/services/notebookPodcastsService.ts",
+   "src/services/notebooksService.ts",
+   "src/services/noteTemplatesService.ts",
+   "src/services/noteVersionsService.ts",
+   "src/services/pentestService.ts",
+   "src/services/postmortemService.ts",
+   "src/services/presets/connectorPresets.ts",
+   "src/services/presets/credentialPresets.ts",
+   "src/services/presets/cronPresets.ts",
+   "src/services/presets/notificationPresets.ts",
+   "src/services/presets/queuePresets.ts",
+   "src/services/productMockupService.ts",
+   "src/services/promptEvidenceLedgerService.ts",
+   "src/services/promptExperimentService.ts",
+   "src/services/promptVersionService.ts",
+   "src/services/replayForkService.ts",
+   "src/services/restorePresetsService.ts",
+   "src/services/savedTestRunsStore.ts",
+   "src/services/sbomService.ts",
+   "src/services/searchService.ts",
+   "src/services/secretsRotationService.ts",
+   "src/services/settingsService.ts",
+   "src/services/shareService.ts",
+   "src/services/sketchService.ts",
+   "src/services/skillbookAuditService.ts",
+   "src/services/skillClassificationTimelineService.ts",
+   "src/services/skillDemandService.ts",
+   "src/services/skillLibraryService.ts",
+   "src/services/skillObservabilityService.ts",
+   "src/services/skillReclassificationService.ts",
+   "src/services/syntheticService.ts",
+   "src/services/temporalKnowledgeService.ts",
+   "src/services/thresholdCalibrationService.ts",
+   "src/services/toolsService.ts",
+   "src/services/types/agentHandoffTypes.ts",
+   "src/services/types/batchProcessorTypes.ts",
+   "src/services/types/connectorRegistryTypes.ts",
+   "src/services/types/costCalculatorTypes.ts",
+   "src/services/types/credentialVaultTypes.ts",
+   "src/services/types/cronSchedulerTypes.ts",
+   "src/services/types/evaluationsTypes.ts",
+   "src/services/types/executionHistoryTypes.ts",
+   "src/services/types/knowledgeTypes.ts",
+   "src/services/types/middlewarePipelineTypes.ts",
+   "src/services/types/notificationTypes.ts",
+   "src/services/types/progressiveSkillTypes.ts",
+   "src/services/types/queueManagerTypes.ts",
+   "src/services/types/retryEngineTypes.ts",
+   "src/services/types/webhookTriggerTypes.ts",
+   "src/services/userFilterPreferencesService.ts",
+   "src/services/vendorRiskService.ts",
+   "src/services/visionService.ts",
+   "src/services/widgetService.ts"
+  ]
+ }
+}
