@@ -59,7 +59,10 @@ serve(async (req) => {
           metadata: { ...metadata, scope, scope_id: effectiveScopeId, created_by: user.id },
         }).select().single();
 
-        if (error) return errorResponse(req, error.message, 500);
+        if (error) {
+          console.error('memory-manager add error:', error);
+          return errorResponse(req, 'Internal server error', 500);
+        }
         return jsonResponse(req, { memory: data, message: 'Memory stored successfully' });
       }
 
@@ -101,14 +104,20 @@ serve(async (req) => {
         if (memory_type) dbQuery = dbQuery.eq('memory_type', memory_type);
 
         const { data, error } = await dbQuery;
-        if (error) return errorResponse(req, error.message, 500);
+        if (error) {
+          console.error('memory-manager list error:', error);
+          return errorResponse(req, 'Internal server error', 500);
+        }
         return jsonResponse(req, { memories: data || [], count: data?.length || 0 });
       }
 
       case 'forget': {
         if (!memory_id) return errorResponse(req, 'memory_id required for forget', 400);
         const { error } = await supabaseAdmin.from('agent_memories').delete().eq('id', memory_id);
-        if (error) return errorResponse(req, error.message, 500);
+        if (error) {
+          console.error('memory-manager forget error:', error);
+          return errorResponse(req, 'Internal server error', 500);
+        }
         return jsonResponse(req, { deleted: memory_id, message: 'Memory forgotten (LGPD compliant)' });
       }
 
@@ -120,7 +129,10 @@ serve(async (req) => {
           .eq('memory_type', memory_type);
         const deletedCount = 0;
 
-        if (error) return errorResponse(req, error.message, 500);
+        if (error) {
+          console.error('memory-manager forget_all error:', error);
+          return errorResponse(req, 'Internal server error', 500);
+        }
         return jsonResponse(req, { deleted_count: deletedCount, memory_type, message: 'All memories of this type forgotten' });
       }
 
@@ -137,6 +149,7 @@ serve(async (req) => {
         return errorResponse(req, 'Unknown action', 400);
     }
   } catch (error) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
+    console.error('memory-manager error:', error);
+    return errorResponse(req, 'Internal server error', 500);
   }
 });

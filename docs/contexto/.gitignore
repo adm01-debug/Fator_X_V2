@@ -1,0 +1,8 @@
+# Gerado pelo contexto.yml e publicado na branch `contexto`, nunca em main:
+# codigo/ (ai-context), supabase/ (snapshot do banco) e regras/ (regras de negócio).
+# Só o texto humano de regras/manual/ é versionado aqui.
+/*
+!/.gitignore
+!/regras/
+/regras/*
+!/regras/manual/

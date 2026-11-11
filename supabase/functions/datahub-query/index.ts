@@ -1351,7 +1351,7 @@ serve(async (req) => {
   } catch (error: unknown) {
     console.error('datahub-query error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Internal error' }),
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
     );
   }

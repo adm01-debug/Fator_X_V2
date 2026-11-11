@@ -510,6 +510,7 @@ serve(async (req) => {
       stepsExecuted,
     });
   } catch (e) {
-    return jsonResponse({ error: (e as Error).message }, 500);
+    console.error('workflow-engine-v2 error:', e);
+    return jsonResponse({ error: 'Internal server error' }, 500);
   }
 });

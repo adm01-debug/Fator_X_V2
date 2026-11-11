@@ -846,6 +846,7 @@ serve(async (req) => {
 
     return jsonResponse({ error: `Unknown action: ${action}` }, 400);
   } catch (error: unknown) {
-    return jsonResponse({ error: error instanceof Error ? error.message : 'Internal error' }, 500);
+    console.error('smolagent-runtime error:', error);
+    return jsonResponse({ error: 'Internal server error' }, 500);
   }
 });

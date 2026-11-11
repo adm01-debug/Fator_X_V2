@@ -73,7 +73,10 @@ Deno.serve(async (req) => {
     .order('next_retry_at', { ascending: true })
     .limit(BATCH_SIZE);
 
-  if (error) return errorResponse(req, 'Failed to load DLQ', 500, { details: error.message });
+  if (error) {
+    console.error('slack-dlq-retry query failed', error);
+    return errorResponse(req, 'Failed to load DLQ', 500);
+  }
   if (!pending || pending.length === 0) return jsonResponse(req, { processed: 0 });
 
   let resolved = 0;

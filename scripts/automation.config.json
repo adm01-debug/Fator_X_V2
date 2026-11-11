@@ -156,7 +156,354 @@
       "manual": ["node", "scripts/automation.mjs", "doctor", "--static"],
       "triggers": ["manual"],
       "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
+    },
+    {
+      "id": "legacy-82840af5843d28fd",
+      "kind": "legacy",
+      "files": ["scripts/ai-context/cenarios.mjs"],
+      "manual": ["node", "scripts/ai-context/cenarios.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Produtor codigo/' do .github/workflows/contexto.yml. Sem gatilho automático no inventário; execução manual controlada sem alterar o fluxo existente."
+    },
+    {
+      "id": "legacy-6fb9e57d4dc6413b",
+      "kind": "legacy",
+      "files": ["scripts/ai-context/gerar.mjs"],
+      "manual": ["node", "scripts/ai-context/gerar.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Produtor codigo/' do .github/workflows/contexto.yml (run node scripts/ai-context/gerar.mjs --out $CONTEXTO_DIR/codigo). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-b7f441815839b882",
+      "kind": "legacy",
+      "files": ["scripts/ai-context/gerar.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ai-context/gerar.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Produtor codigo/' do .github/workflows/contexto.yml (run node --test scripts/ai-context/gerar.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-469b8afb27eea348",
+      "kind": "legacy",
+      "files": ["scripts/ci/a11y-button-name-ratchet.mjs"],
+      "manual": ["node", "scripts/ci/a11y-button-name-ratchet.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Ratchets' do .github/workflows/guards.yml (run node scripts/ci/a11y-button-name-ratchet.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-9ebd828da54c91d7",
+      "kind": "legacy",
+      "files": ["scripts/ci/a11y-button-name-ratchet.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/a11y-button-name-ratchet.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-69a9adf6db7328d1",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-bundle-secrets.mjs"],
+      "manual": ["node", "scripts/ci/check-bundle-secrets.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Segredos' do .github/workflows/guards.yml (run node scripts/ci/check-bundle-secrets.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-a025db5e91581c18",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-bundle-secrets.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/check-bundle-secrets.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-db4bddc5670ee32d",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-e2e-artifact-secrets.mjs"],
+      "manual": ["node", "scripts/ci/check-e2e-artifact-secrets.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Segredos' do .github/workflows/guards.yml (run node scripts/ci/check-e2e-artifact-secrets.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-485c5e65d712cfed",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-e2e-artifact-secrets.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/check-e2e-artifact-secrets.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-84fc5ad17b1f93b7",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-edge-error-exposure.mjs"],
+      "manual": ["node", "scripts/ci/check-edge-error-exposure.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Segredos' do .github/workflows/guards.yml (run node scripts/ci/check-edge-error-exposure.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-63eb6e58b8e8ffff",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-edge-error-exposure.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/check-edge-error-exposure.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-54bcb5e9e43b75be",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-pr-workflow-secrets.mjs"],
+      "manual": ["node", "scripts/ci/check-pr-workflow-secrets.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Segredos' do .github/workflows/guards.yml (run node scripts/ci/check-pr-workflow-secrets.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-400ce890eb85a885",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-pr-workflow-secrets.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/check-pr-workflow-secrets.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-fd297074a423564a",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-supabase-url-import-meta.mjs"],
+      "manual": ["node", "scripts/ci/check-supabase-url-import-meta.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Segredos' do .github/workflows/guards.yml (run node scripts/ci/check-supabase-url-import-meta.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-670198085ff57a20",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-supabase-url-import-meta.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/check-supabase-url-import-meta.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-7d2113278ebf913e",
+      "kind": "legacy",
+      "files": ["scripts/ci/commit-msg-lint.mjs"],
+      "manual": ["node", "scripts/ci/commit-msg-lint.mjs"],
+      "triggers": ["manual"],
+      "reason": "Acionado pelo hook .husky/commit-msg (node scripts/ci/commit-msg-lint.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-44a94cb26b2018be",
+      "kind": "legacy",
+      "files": ["scripts/ci/commit-msg-lint.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/commit-msg-lint.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-ae38ca9f9b4184f5",
+      "kind": "legacy",
+      "files": ["scripts/ci/gerar-matriz-edge-tabela.mjs"],
+      "manual": ["node", "scripts/ci/gerar-matriz-edge-tabela.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Segredos' do .github/workflows/guards.yml (run node scripts/ci/gerar-matriz-edge-tabela.mjs --check). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-7a86ab4bc10fbc89",
+      "kind": "legacy",
+      "files": ["scripts/ci/gerar-matriz-edge-tabela.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/gerar-matriz-edge-tabela.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-4ca8782da2ce1ee9",
+      "kind": "legacy",
+      "files": ["scripts/ci/implicit-any-ratchet.mjs"],
+      "manual": ["node", "scripts/ci/implicit-any-ratchet.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Ratchets' do .github/workflows/guards.yml (run node scripts/ci/implicit-any-ratchet.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-7545aad1a6b05658",
+      "kind": "legacy",
+      "files": ["scripts/ci/implicit-any-ratchet.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/implicit-any-ratchet.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-869eb9d4a8271980",
+      "kind": "legacy",
+      "files": ["scripts/ci/inventario-banco.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/inventario-banco.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-a4a47e93cf4a3868",
+      "kind": "legacy",
+      "files": ["scripts/ci/inventario-mudou.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/inventario-mudou.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-65b1e2dc7822f3e6",
+      "kind": "legacy",
+      "files": ["scripts/ci/inventario-repo.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/inventario-repo.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-656f477405822bdd",
+      "kind": "legacy",
+      "files": ["scripts/ci/lint-ratchet.mjs"],
+      "manual": ["node", "scripts/ci/lint-ratchet.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Ratchets' do .github/workflows/guards.yml (run node scripts/ci/lint-ratchet.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-94781b7e8eb803be",
+      "kind": "legacy",
+      "files": ["scripts/ci/lint-ratchet.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/lint-ratchet.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-b870486fd78304fd",
+      "kind": "legacy",
+      "files": ["scripts/ci/typecheck-ratchet.mjs"],
+      "manual": ["node", "scripts/ci/typecheck-ratchet.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Ratchets' do .github/workflows/guards.yml (run node scripts/ci/typecheck-ratchet.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-2946bff32ce1beeb",
+      "kind": "legacy",
+      "files": ["scripts/ci/typecheck-ratchet.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/typecheck-ratchet.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-9c81a838d1013121",
+      "kind": "legacy",
+      "files": ["scripts/edge-deploy/generate-manifest.mjs"],
+      "manual": ["node", "scripts/edge-deploy/generate-manifest.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Segredos' do .github/workflows/guards.yml (run node scripts/edge-deploy/generate-manifest.mjs --check). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-e9a53a93a74d95e1",
+      "kind": "legacy",
+      "files": ["scripts/edge-deploy/manifest-lib.mjs"],
+      "manual": ["node", "scripts/edge-deploy/generate-manifest.mjs"],
+      "triggers": ["manual"],
+      "reason": "Biblioteca importada por generate-manifest.mjs e manifest.unit.mjs (guards.yml). Sem invocação própria; execução manual via chamador real, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-882f09bca317d142",
+      "kind": "legacy",
+      "files": ["scripts/edge-deploy/manifest.unit.mjs"],
+      "manual": ["node", "--test", "scripts/edge-deploy/manifest.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Verificação unitária dos guards' do .github/workflows/guards.yml (run node --test scripts/ci/*.unit.mjs scripts/edge-deploy/*.unit.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-5756115b7ccd93cb",
+      "kind": "legacy",
+      "files": ["scripts/inventario/gerar-banco.mjs"],
+      "manual": ["node", "scripts/inventario/gerar-banco.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo .github/workflows/inventario-estado-semanal.yml (run node scripts/inventario/gerar-banco.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-91c294c2c3806593",
+      "kind": "legacy",
+      "files": ["scripts/inventario/gerar-repo.mjs"],
+      "manual": ["node", "scripts/inventario/gerar-repo.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo .github/workflows/inventario-estado-semanal.yml (run node scripts/inventario/gerar-repo.mjs < /dev/null). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-19c9cd7ede58e08d",
+      "kind": "legacy",
+      "files": ["scripts/inventario/mudou-conteudo.mjs"],
+      "manual": ["node", "scripts/inventario/mudou-conteudo.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo .github/workflows/inventario-estado-semanal.yml (run node scripts/inventario/mudou-conteudo.mjs). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-4a55377ca8575051",
+      "kind": "legacy",
+      "files": ["scripts/lib/seguranca-processo.mjs"],
+      "manual": ["node", "scripts/ci/lint-ratchet.mjs"],
+      "triggers": ["manual"],
+      "reason": "Biblioteca importada por lint-ratchet.mjs e lint-ratchet.unit.mjs (guards.yml). Sem invocação própria; execução manual via chamador real, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-cf29f15ad530cd12",
+      "kind": "legacy",
+      "files": ["scripts/regras_negocio/generate.py"],
+      "manual": ["python3", "scripts/regras_negocio/generate.py"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Produtor regras/' do .github/workflows/contexto.yml (run python3 scripts/regras_negocio/generate.py --repo .). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-35c9448a1cd6fffb",
+      "kind": "legacy",
+      "files": ["scripts/regras_negocio/indice.py"],
+      "manual": ["python3", "scripts/regras_negocio/indice.py"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Produtor regras/' do .github/workflows/contexto.yml (run python3 scripts/regras_negocio/indice.py --repo .). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-82d4ddd084fb0743",
+      "kind": "legacy",
+      "files": ["scripts/regras_negocio/publish.sh"],
+      "manual": ["sh", "scripts/regras_negocio/publish.sh"],
+      "triggers": ["manual"],
+      "reason": "Script legado de publicação sem chamador literal no inventário; o contexto.yml monta a branch contexto diretamente. Mantido para execução manual controlada; o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-6c451105de1a3801",
+      "kind": "legacy",
+      "files": ["scripts/regras_negocio/test_generate.py"],
+      "manual": ["python3", "scripts/regras_negocio/test_generate.py"],
+      "triggers": ["manual"],
+      "reason": "Teste manual sem chamador literal no inventário; mantido para execução manual controlada e verificação local do gerador de regras. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-273b2b444423e6de",
+      "kind": "legacy",
+      "files": ["scripts/supabase_snapshot/snapshot.py"],
+      "manual": ["python3", "scripts/supabase_snapshot/snapshot.py"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo job 'Produtor supabase/' do .github/workflows/contexto.yml (run python3 scripts/supabase_snapshot/snapshot.py). Sem gatilho próprio; execução manual controlada, o dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-e0f789971225ac50",
+      "kind": "legacy",
+            "files": ["scripts/supabase_snapshot/test_snapshot.py"],
+            "manual": ["python3", "scripts/supabase_snapshot/test_snapshot.py"],
+            "triggers": ["manual"],
+            "reason": "Teste manual sem chamador literal no inventário; mantido para execução manual controlada e verificação local do snapshot. O dispatcher não executa esta operação."
     }
+  ],
+  "ci": [
+    {
+      "file": ".github/workflows/automation-local.yml",
+      "events": ["PR", "pushmain"],
+      "command": "node scripts/automation.mjs test"
+    }
+  ],
+  "nightly": {
+    "command": ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"]
+  },
+  "timeoutMs": 900000,
+  "toolingPatterns": [
+    "scripts/**",
+    ".github/**",
+    ".husky/**",
+    "package.json",
+    "*lock*",
+    "graphify.local.json"
   ],
   "ci": [
     {

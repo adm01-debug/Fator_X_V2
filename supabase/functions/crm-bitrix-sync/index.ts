@@ -186,6 +186,6 @@ Deno.serve(async (req) => {
     return jsonResponse(req, { ok: true, summary });
   } catch (error) {
     console.error('crm-bitrix-sync error', error);
-    return errorResponse(req, error instanceof Error ? error.message : 'Erro interno', 500);
+    return errorResponse(req, 'Erro interno', 500);
   }
 });

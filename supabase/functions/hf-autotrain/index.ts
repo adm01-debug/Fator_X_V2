@@ -222,6 +222,7 @@ serve(async (req) => {
     return hfJsonResponse(req, { error: `Unknown action: ${action}` }, 400);
 
   } catch (error: unknown) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
+    console.error('hf-autotrain error:', error);
+    return errorResponse(req, 'Internal server error', 500);
   }
 });

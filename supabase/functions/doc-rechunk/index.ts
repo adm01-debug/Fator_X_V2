@@ -135,7 +135,8 @@ serve(async (req) => {
       .eq('document_id', doc.id)
       .eq('is_active', true);
     if (archiveErr) {
-      return errorResponse(req, `Falha ao arquivar chunks anteriores: ${archiveErr.message}`, 500);
+      console.error('doc-rechunk archive error:', archiveErr);
+      return errorResponse(req, 'Falha ao arquivar chunks anteriores', 500);
     }
 
     const newChunks = chunkText(doc.parsed_text, nextOpts);
@@ -174,7 +175,8 @@ serve(async (req) => {
         .update({ is_active: true })
         .eq('document_id', doc.id)
         .eq('chunk_version', doc.chunk_version);
-      return errorResponse(req, `Falha ao inserir novos chunks: ${insErr.message}`, 500);
+      console.error('doc-rechunk insert error:', insErr);
+      return errorResponse(req, 'Falha ao inserir novos chunks', 500);
     }
 
     await supabase

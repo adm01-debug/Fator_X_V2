@@ -110,6 +110,7 @@ serve(async (req) => {
     });
 
   } catch (error: unknown) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
+    console.error('test-runner error:', error);
+    return errorResponse(req, 'Internal server error', 500);
   }
 });

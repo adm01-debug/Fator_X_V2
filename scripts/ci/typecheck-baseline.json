@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 2,
+  "command": "tsc -b --force",
+  "issues": [
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 77,
+      "column": 109,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'redo' does not exist on type 'ChainedCommands'.",
+      "contextHash": "a37206911ed9c3346fb57980c385490fe30a76d649824b64f36b103887eed132"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 65,
+      "column": 130,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'toggleBlockquote' does not exist on type 'ChainedCommands'.",
+      "contextHash": "ed14fc19a3f96ea0d33b93cddd8c5cd31a1881732183811ef38cc37d9171957a"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 62,
+      "column": 130,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'toggleBulletList' does not exist on type 'ChainedCommands'.",
+      "contextHash": "e01a446580b666fa3d395b8e2285e2a398e3a9adb9cfbe9980e13ad2fd2f989f"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 58,
+      "column": 141,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'toggleHeading' does not exist on type 'ChainedCommands'.",
+      "contextHash": "34cb75040500a9a13e08f79f0e09245ea18374e37d5842a9dec562f7a43a9b12"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 59,
+      "column": 141,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'toggleHeading' does not exist on type 'ChainedCommands'.",
+      "contextHash": "29ff66f3998235992eb28b65713c606f6c0ba008f9670b3f93439178f8489f84"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 60,
+      "column": 141,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'toggleHeading' does not exist on type 'ChainedCommands'.",
+      "contextHash": "a2ceb16ad3dea68610cc4afd13ebdfa5aeadf64c222effb75a34b42967a47271"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 54,
+      "column": 126,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'toggleItalic' does not exist on type 'ChainedCommands'.",
+      "contextHash": "12ddde1bed567f43ac0ad227eb65acbdba7354cf60b82801fff150ccb342d2bd"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 63,
+      "column": 131,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'toggleOrderedList' does not exist on type 'ChainedCommands'.",
+      "contextHash": "e70cddb9cbfa43f061ed3da3bcc851d8cc40b8301033decfa5573faee00a849c"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 55,
+      "column": 126,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'toggleStrike' does not exist on type 'ChainedCommands'.",
+      "contextHash": "47d226717cc72c0816aa3a213b4bbd091e828e53903d46c25c322a2519f6a7c8"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 76,
+      "column": 109,
+      "severity": "error",
+      "code": "TS2339",
+      "message": "Property 'undo' does not exist on type 'ChainedCommands'.",
+      "contextHash": "632e04ad9d46a3acbda2568999a137695cd61e568bccd36520544d453a4901bd"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 53,
+      "column": 124,
+      "severity": "error",
+      "code": "TS2551",
+      "message": "Property 'toggleBold' does not exist on type 'ChainedCommands'. Did you mean 'toggleNode'?",
+      "contextHash": "bb28edfd2b5a2ba6b9adb95329bf9f5eda6de762350e17e279eb00236692de46"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 56,
+      "column": 124,
+      "severity": "error",
+      "code": "TS2551",
+      "message": "Property 'toggleCode' does not exist on type 'ChainedCommands'. Did you mean 'toggleNode'?",
+      "contextHash": "4b8fcdd3c00a2e76582922992366e461206480c0b76ffa4c3e2375123611de53"
+    },
+    {
+      "file": "src/components/knowledge/RichEditor.tsx",
+      "line": 22,
+      "column": 7,
+      "severity": "error",
+      "code": "TS2769",
+      "message": "No overload matches this call. Overload 1 of 2, '(options: Partial<EditorOptions> & { immediatelyRender?: boolean | undefined; shouldRerenderOnTransaction?: boolean | undefined; } & { immediatelyRender: true; }, deps?: DependencyList | undefined): Editor', gave the following error. Type 'Extension<StarterKitOptions, any>' is not assignable to type 'AnyExtension'. Type 'Extension<StarterKitOptions, any>' is not assignable to type 'Mark<any, any>'. Types of property 'parent' are incompatible. Type 'Extendable<any, any, ExtensionConfig<any, any> | NodeConfig<any, any> | MarkConfig<any, any>> | null' is not assignable to type 'Mark<any, any> | null'. Type 'Extendable<any, any, ExtensionConfig<any, any> | NodeConfig<any, any> | MarkConfig<any, any>>' is not assignable to type 'Mark<any, any>'. Types of property 'config' are incompatible. Type 'ExtensionConfig<any, any> | NodeConfig<any, any> | MarkConfig<any, any>' is not assignable to type 'MarkConfig<any, any>'. Type 'ExtensionConfig<any, any>' is not assignable to type 'MarkConfig<any, any>'. Types of property 'addGlobalAttributes' are incompatible. Type '((this: { name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<...>)[]; parent: (() => im...' is not assignable to type '((this: { name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/type...'. Type '(this: { name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<...>)[]; parent: (() => imp...' is not assignable to type '(this: { name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/types...'. The 'this' types of each signature are incompatible. Type '{ name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/types\").Glob...' is not assignable to type '{ name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<...>)[]; parent: (() => import(\"/h...'. Types of property 'extensions' are incompatible. Type '(import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>)[]' is not assignable to type '(import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<any, any>)[]'. Type 'import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>' is not assignable to type 'import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<any, any>'. Type 'Node<any, any>' is not assignable to type 'Node<any, any> | Mark<any, any>'. Type 'Node<any, any>' is not assignable to type 'Mark<any, any>'. Types of property 'extend' are incompatible. Type '<ExtendedOptions = any, ExtendedStorage = any>(extendedConfig?: Partial<NodeConfig<ExtendedOptions, ExtendedStorage>> | undefined) => Node<ExtendedOptions, ExtendedStorage>' is not assignable to type '<ExtendedOptions = any, ExtendedStorage = any, ExtendedConfig extends MarkConfig<ExtendedOptions, ExtendedStorage> = MarkConfig<ExtendedOptions, ExtendedStorage>>(extendedConfig?: (() => Partial<...>) | ... 1 more ... | undefined) => Mark<...>'. Types of parameters 'extendedConfig' and 'extendedConfig' are incompatible. Type '(() => Partial<ExtendedConfig>) | (Partial<ExtendedConfig> & ThisType<{ name: string; options: ExtendedOptions; storage: ExtendedStorage; editor: Editor; type: MarkType; }>) | undefined' is not assignable to type 'Partial<NodeConfig<ExtendedOptions, ExtendedStorage>> | undefined'. Type 'Partial<ExtendedConfig> & ThisType<{ name: string; options: ExtendedOptions; storage: ExtendedStorage; editor: Editor; type: MarkType; }>' is not assignable to type 'Partial<NodeConfig<ExtendedOptions, ExtendedStorage>> | undefined'. Type 'Partial<ExtendedConfig> & ThisType<{ name: string; options: ExtendedOptions; storage: ExtendedStorage; editor: Editor; type: MarkType; }>' is not assignable to type 'Partial<NodeConfig<ExtendedOptions, ExtendedStorage>>'. Types of property 'addGlobalAttributes' are incompatible. Type 'ExtendedConfig[\"addGlobalAttributes\"] | undefined' is not assignable to type '((this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (Node<any, any> | Mark<any, any>)[]; parent: (() => GlobalAttributes) | undefined; }) => GlobalAttributes) | undefined'. Type 'ExtendedConfig[\"addGlobalAttributes\"]' is not assignable to type '((this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (Node<any, any> | Mark<any, any>)[]; parent: (() => GlobalAttributes) | undefined; }) => GlobalAttributes) | undefined'. Type '((this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<.....' is not assignable to type '((this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<...>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@ti...'. Type '(this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<......' is not assignable to type '(this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<...>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tip...'. Type 'import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").GlobalAttributes' is not assignable to type 'import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/types\").GlobalAttributes'. Type '{ types: string[] | \"*\" | \"nodes\" | \"marks\"; attributes: Record<string, Attribute | undefined>; }' is not assignable to type '{ types: string[]; attributes: Record<string, Attribute | undefined>; }'. Types of property 'types' are incompatible. Type 'string[] | \"*\" | \"nodes\" | \"marks\"' is not assignable to type 'string[]'. Type 'string' is not assignable to type 'string[]'. Overload 2 of 2, '(options?: UseEditorOptions | undefined, deps?: DependencyList | undefined): Editor | null', gave the following error. Type 'Extension<StarterKitOptions, any>' is not assignable to type 'AnyExtension'. Type 'Extension<StarterKitOptions, any>' is not assignable to type 'Mark<any, any>'. Types of property 'parent' are incompatible. Type 'Extendable<any, any, ExtensionConfig<any, any> | NodeConfig<any, any> | MarkConfig<any, any>> | null' is not assignable to type 'Mark<any, any> | null'. Type 'Extendable<any, any, ExtensionConfig<any, any> | NodeConfig<any, any> | MarkConfig<any, any>>' is not assignable to type 'Mark<any, any>'. Types of property 'config' are incompatible. Type 'ExtensionConfig<any, any> | NodeConfig<any, any> | MarkConfig<any, any>' is not assignable to type 'MarkConfig<any, any>'. Type 'ExtensionConfig<any, any>' is not assignable to type 'MarkConfig<any, any>'. Types of property 'addGlobalAttributes' are incompatible. Type '((this: { name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<...>)[]; parent: (() => im...' is not assignable to type '((this: { name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/type...'. Type '(this: { name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<...>)[]; parent: (() => imp...' is not assignable to type '(this: { name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/types...'. The 'this' types of each signature are incompatible. Type '{ name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/types\").Glob...' is not assignable to type '{ name: string; options: any; storage: any; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<...>)[]; parent: (() => import(\"/h...'. Types of property 'extensions' are incompatible. Type '(import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>)[]' is not assignable to type '(import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<any, any>)[]'. Type 'import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<any, any>' is not assignable to type 'import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<any, any>'. Type 'Node<any, any>' is not assignable to type 'Node<any, any> | Mark<any, any>'. Type 'Node<any, any>' is not assignable to type 'Mark<any, any>'. Types of property 'extend' are incompatible. Type '<ExtendedOptions = any, ExtendedStorage = any>(extendedConfig?: Partial<NodeConfig<ExtendedOptions, ExtendedStorage>> | undefined) => Node<ExtendedOptions, ExtendedStorage>' is not assignable to type '<ExtendedOptions = any, ExtendedStorage = any, ExtendedConfig extends MarkConfig<ExtendedOptions, ExtendedStorage> = MarkConfig<ExtendedOptions, ExtendedStorage>>(extendedConfig?: (() => Partial<...>) | ... 1 more ... | undefined) => Mark<...>'. Types of parameters 'extendedConfig' and 'extendedConfig' are incompatible. Type '(() => Partial<ExtendedConfig>) | (Partial<ExtendedConfig> & ThisType<{ name: string; options: ExtendedOptions; storage: ExtendedStorage; editor: Editor; type: MarkType; }>) | undefined' is not assignable to type 'Partial<NodeConfig<ExtendedOptions, ExtendedStorage>> | undefined'. Type 'Partial<ExtendedConfig> & ThisType<{ name: string; options: ExtendedOptions; storage: ExtendedStorage; editor: Editor; type: MarkType; }>' is not assignable to type 'Partial<NodeConfig<ExtendedOptions, ExtendedStorage>> | undefined'. Type 'Partial<ExtendedConfig> & ThisType<{ name: string; options: ExtendedOptions; storage: ExtendedStorage; editor: Editor; type: MarkType; }>' is not assignable to type 'Partial<NodeConfig<ExtendedOptions, ExtendedStorage>>'. Types of property 'addGlobalAttributes' are incompatible. Type 'ExtendedConfig[\"addGlobalAttributes\"] | undefined' is not assignable to type '((this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (Node<any, any> | Mark<any, any>)[]; parent: (() => GlobalAttributes) | undefined; }) => GlobalAttributes) | undefined'. Type 'ExtendedConfig[\"addGlobalAttributes\"]' is not assignable to type '((this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (Node<any, any> | Mark<any, any>)[]; parent: (() => GlobalAttributes) | undefined; }) => GlobalAttributes) | undefined'. Type '((this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<.....' is not assignable to type '((this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<...>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@ti...'. Type '(this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").Mark<......' is not assignable to type '(this: { name: string; options: ExtendedOptions; storage: ExtendedStorage; extensions: (import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Node\").Node<any, any> | import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/Mark\").Mark<...>)[]; parent: (() => import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tip...'. Type 'import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/starter-kit/node_modules/@tiptap/core/dist/index\").GlobalAttributes' is not assignable to type 'import(\"/home/runner/work/Fator_X_V2/Fator_X_V2/node_modules/@tiptap/core/dist/types\").GlobalAttributes'. Type '{ types: string[] | \"*\" | \"nodes\" | \"marks\"; attributes: Record<string, Attribute | undefined>; }' is not assignable to type '{ types: string[]; attributes: Record<string, Attribute | undefined>; }'. Types of property 'types' are incompatible. Type 'string[] | \"*\" | \"nodes\" | \"marks\"' is not assignable to type 'string[]'. Type 'string' is not assignable to type 'string[]'.",
+      "contextHash": "feb7d11fa1fc6698ee091379614715492a3cf9a691b11458dc3fc0631a17a17e"
+    },
+    {
+      "file": "src/contexts/AuthContext.tsx",
+      "line": 88,
+      "column": 8,
+      "severity": "error",
+      "code": "TS2551",
+      "message": "Property 'catch' does not exist on type 'PostgrestFilterBuilder<{ PostgrestVersion: \"14.5\"; }, { Tables: { access_blocked_log: { Row: { country_code: string | null; created_at: string; id: string; ip_address: string | null; metadata: Json; reason: string; user_agent: string | null; user_id: string | null; workspace_id: string | null; }; Insert: { ...; }; U...'. Did you mean 'match'?",
+      "contextHash": "a28d12247130b066872686ebb338369338dd650b3f7319a9a839869779ee562f"
+    }
+  ]
+}

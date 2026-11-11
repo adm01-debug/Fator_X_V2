@@ -173,7 +173,7 @@ Deno.serve(async (req) => {
   } catch (err) {
     console.error('[replay-fork-execute]', err);
     return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
+      JSON.stringify({ error: 'Internal server error' }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

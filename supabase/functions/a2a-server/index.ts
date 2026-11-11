@@ -251,6 +251,7 @@ serve(async (req) => {
     return errorResponse(req, 'Not found. Available: GET /agent.json, POST /tasks/send', 404);
 
   } catch (error) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
+    console.error('a2a-server error:', error);
+    return errorResponse(req, 'Internal server error', 500);
   }
 });

@@ -438,6 +438,6 @@ Deno.serve(async (req) => {
     return jsonResponse(req, { ok: true, evaluated: companies.length, updated, layers });
   } catch (error) {
     console.error('crm-enrich error', error);
-    return errorResponse(req, error instanceof Error ? error.message : 'Erro interno', 500);
+    return errorResponse(req, 'Erro interno', 500);
   }
 });

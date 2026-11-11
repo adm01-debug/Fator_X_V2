@@ -76,9 +76,8 @@ Deno.serve(async (req) => {
       bot_id?: string;
     }>('auth.test', {});
   } catch (err) {
-    return errorResponse(req, 'Falha ao verificar Slack', 502, {
-      details: err instanceof Error ? err.message : String(err),
-    });
+    console.error('slack-verify-connection auth.test failed', err);
+    return errorResponse(req, 'Falha ao verificar Slack', 502);
   }
   if (!authTest.ok) {
     return errorResponse(req, `Slack rejeitou o token: ${authTest.error}`, 400);
@@ -108,8 +107,10 @@ Deno.serve(async (req) => {
     },
     { onConflict: 'workspace_id' },
   );
-  if (upErr)
-    return errorResponse(req, 'Falha ao salvar configuração', 500, { details: upErr.message });
+  if (upErr) {
+    console.error('slack-verify-connection upsert failed', upErr);
+    return errorResponse(req, 'Falha ao salvar configuração', 500);
+  }
 
   await svc.from('audit_events').insert({
     workspace_id: body.workspace_id,

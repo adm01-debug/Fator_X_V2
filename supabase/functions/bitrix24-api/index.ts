@@ -58,6 +58,7 @@ serve(async (req) => {
     return jsonResponse(req, result);
 
   } catch (error) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
+    console.error('bitrix24-api error:', error);
+    return errorResponse(req, 'Internal server error', 500);
   }
 });

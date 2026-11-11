@@ -224,7 +224,8 @@ serve(async (req) => {
       target: { type: webhook.target_type, id: webhook.target_id },
     });
   } catch (error) {
-    return errorResponse(req, error instanceof Error ? error.message : 'Internal error', 500);
+    console.error('webhook-receiver error:', error);
+    return errorResponse(req, 'Internal server error', 500);
   }
 });
 

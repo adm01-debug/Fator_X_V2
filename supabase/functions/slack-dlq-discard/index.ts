@@ -79,7 +79,10 @@ Deno.serve(async (req) => {
     .gte('attempts', MAX_ATTEMPTS)
     .select('id');
 
-  if (updErr) return errorResponse(req, 'Failed to discard', 500, { details: updErr.message });
+  if (updErr) {
+    console.error('slack-dlq-discard update error:', updErr);
+    return errorResponse(req, 'Failed to discard', 500);
+  }
 
   return jsonResponse(req, { discarded: updated?.length ?? 0 });
 });

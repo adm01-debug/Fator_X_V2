@@ -1,0 +1,176 @@
+# docs:
+#   gatilho: PR e push em main que toque src/, supabase/functions/, scripts/ ou os workflows
+#   prova: ratchets (lint, typecheck, implicit-any, a11y) sem dívida nova; bundle sem service_role;
+#          matriz edge x tabela e manifesto de edges em dia; achados herdados como relatório
+#   falha: job `ratchets` ou `segredos` vermelho = regressão introduzida pelo PR
+#   avisa: ninguém (o resumo do run é a prova)
+# nao-e-bug:
+#   - achados-herdados: o job `achados-herdados` é informativo (continue-on-error) — ele lista dívida
+#     que já estava na main antes destes guards; número subindo é que é problema
+name: Guards
+
+# Guards portados do Zapp Web V2 (scripts/ci/). Em arquivo próprio para não disputar o ci.yml.
+# Princípio dos ratchets: não exigem repo limpo, exigem que não PIORE. O baseline de cada um
+# vive em scripts/ci/*-baseline.json e foi medido neste repo em 2026-11-08
+# (lint 24, typecheck 14, implicit-any 0, a11y 280).
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'supabase/functions/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig*.json'
+      - 'eslint.config.js'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'supabase/functions/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+concurrency:
+  group: guards-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+jobs:
+  testes-dos-guards:
+    name: Testes dos próprios guards
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: node --test em scripts/ci e scripts/edge-deploy
+        run: node --test scripts/ci/*.unit.mjs scripts/edge-deploy/*.unit.mjs
+
+  ratchets:
+    name: Ratchets (lint, typecheck, implicit-any, a11y)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: Lint ratchet
+        run: node scripts/ci/lint-ratchet.mjs
+      - name: Typecheck ratchet
+        run: node scripts/ci/typecheck-ratchet.mjs
+      - name: Implicit-any ratchet
+        run: node scripts/ci/implicit-any-ratchet.mjs
+      - name: A11y button-name ratchet
+        run: node scripts/ci/a11y-button-name-ratchet.mjs
+
+  segredos:
+    name: Segredos no bundle e nos artefatos de E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      # Sem secret nenhum: o guard procura JWT de service_role no dist/, e um build sem
+      # VITE_* produz o mesmo bundle para esse efeito. Secret em workflow de PR é o que o
+      # próprio check-pr-workflow-secrets proíbe.
+      - name: Build (o guard varre o dist/)
+        run: npm run build
+      - name: Nenhum JWT service_role no bundle
+        run: node scripts/ci/check-bundle-secrets.mjs
+      - name: Workflow de E2E não publica report junto das credenciais
+        run: node scripts/ci/check-e2e-artifact-secrets.mjs
+      - name: Nenhuma edge function vaza detalhe interno em resposta 5xx
+        run: node scripts/ci/check-edge-error-exposure.mjs
+
+  artefatos-gerados:
+    name: Artefatos gerados em dia (matriz e manifesto de edges)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+      - name: docs/migration/MATRIZ_EDGE_TABELA.md bate com o código
+        run: node scripts/ci/gerar-matriz-edge-tabela.mjs --check
+      - name: supabase/deployment-manifest.json bate com supabase/functions/
+        run: node scripts/edge-deploy/generate-manifest.mjs --check
+
+  achados-herdados:
+    name: Achados herdados (informativo)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Dívida que já existia na main antes destes guards. NÃO bloqueia: serve para o número
+    # ser visível e cair. Medido em 2026-11-09: 52 leituras de VITE_SUPABASE_* em src/, 8
+    # secrets privilegiados em workflow de PR. A exposição de erro interno em edges saiu
+    # daqui: o check-edge-error-exposure virou bloqueante no job `segredos` (zerou em
+    # 09/11, depois de corrigir o próprio guard — ele não detectava
+    # errorResponse(req, msg, 5xx), a ordem real do helper deste repo).
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+      - name: src/ lendo VITE_SUPABASE_URL/PUBLISHABLE_KEY direto do import.meta.env
+        id: env
+        continue-on-error: true
+        run: node scripts/ci/check-supabase-url-import-meta.mjs | tee relatorio-env.txt
+      - name: Secret privilegiado em workflow de PR ou push irrestrito
+        id: secrets
+        continue-on-error: true
+        run: node scripts/ci/check-pr-workflow-secrets.mjs | tee relatorio-secrets.txt
+      - name: Resumo
+        if: always()
+        run: |
+          {
+            echo '### Achados herdados (não bloqueia)'
+            for f in relatorio-env.txt relatorio-secrets.txt; do
+              [ -f "$f" ] || continue
+              echo "<details><summary>$f</summary>"
+              echo
+              echo '```'
+              head -60 "$f"
+              echo '```'
+              echo '</details>'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Guardar relatórios
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: achados-herdados-${{ github.run_id }}
+          path: relatorio-*.txt
+          if-no-files-found: ignore
+          retention-days: 14

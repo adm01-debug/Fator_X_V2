@@ -1,0 +1,4 @@
+#!/bin/sh
+# Gate de mensagem de commit (Conventional Commits). O git passa o caminho do arquivo
+# de mensagem em $1; o padrao cobrado esta em scripts/ci/commit-msg-lint.mjs.
+node scripts/ci/commit-msg-lint.mjs "$1"
