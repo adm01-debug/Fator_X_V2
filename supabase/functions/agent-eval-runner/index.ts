@@ -12,7 +12,7 @@ import {
   getRateLimitIdentifier,
   RATE_LIMITS,
 } from '../_shared/mod.ts';
-import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiCostUsd, aiModel } from '../_shared/ai-provider.ts';
 validateRequiredEnv([
   'SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
@@ -113,6 +113,8 @@ function estimateCost(model: string, tokensIn: number, tokensOut: number): numbe
     'openai/gpt-5-mini': [0.25, 1.0],
     'openai/gpt-5-nano': [0.05, 0.2],
   };
+  const deepseekCost = aiCostUsd(aiModel(model), tokensIn, tokensOut);
+  if (deepseekCost !== null) return deepseekCost;
   const [inP, outP] = pricing[model] ?? [0.1, 0.4];
   return (tokensIn / 1_000_000) * inP + (tokensOut / 1_000_000) * outP;
 }

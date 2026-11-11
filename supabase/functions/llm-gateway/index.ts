@@ -50,6 +50,8 @@ async function calculateCost(
   promptTokens: number,
   completionTokens: number,
 ): Promise<number> {
+  const deepseekCost = aiCostUsd(model, promptTokens, completionTokens);
+  if (deepseekCost !== null) return deepseekCost;
   try {
     const { data: pricing } = await supabase
       .from('model_pricing')
@@ -597,7 +599,12 @@ async function resolveFallbackChain(
 }
 
 // ═══ Call with Fallback — tries each provider in chain (com Circuit Breaker) ═══
-import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
+import {
+  AI_API_KEY_ENV,
+  AI_CHAT_COMPLETIONS_URL,
+  aiCostUsd,
+  aiModel,
+} from '../_shared/ai-provider.ts';
 import { getBreaker } from '../_shared/circuitBreaker.ts';
 import { drainBreakerTransition } from '../_shared/breakerEvents.ts';
 

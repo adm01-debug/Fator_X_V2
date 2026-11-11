@@ -23,3 +23,18 @@ export function aiModel(requested?: string | null): string {
   if (/^deepseek-reasoner$/i.test(requested)) return pro;
   return PRO_HINT.test(requested) ? pro : flash;
 }
+
+// USD por 1M tokens no horário de pico (entrada sem cache, saída) — conservador; fora do pico custa metade.
+// Fonte: https://api-docs.deepseek.com/quick_start/pricing (consultada em 11/11/2026).
+const PRICES_PER_1M: Record<string, [number, number]> = {
+  'deepseek-flash': [0.3, 1.2],
+  'deepseek-v4-flash': [0.3, 1.2],
+  'deepseek-v4-pro': [1.32, 3.96],
+};
+
+/** Custo em USD de uma chamada DeepSeek; null se o modelo não for DeepSeek conhecido. */
+export function aiCostUsd(model: string, promptTokens: number, completionTokens: number): number | null {
+  const p = PRICES_PER_1M[model.toLowerCase()];
+  if (!p) return null;
+  return (promptTokens / 1_000_000) * p[0] + (completionTokens / 1_000_000) * p[1];
+}
