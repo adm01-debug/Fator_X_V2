@@ -57,7 +57,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npx tsc --noEmit
+      - run: npm run typecheck
       # --format=json: ESLint 9.32.0 stylish formatter crashes (TypeError in stylish.js:67).
       # compact was removed from core in 9.x; json is a stable built-in that
       # exits non-zero on errors without crashing.
