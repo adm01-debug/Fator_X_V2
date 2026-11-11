@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e8510396088801323b03fe7ff86f79f044d06b7c",
+  "commit": "fd6c7ffc22ccf047ab788031c3c6d48450b9e620",
   "branch": "main",
-  "data_commit": "2026-11-11T19:24:19-03:00",
+  "data_commit": "2026-11-11T20:31:11-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "fd6c7ffc",
+    "data": "2026-11-11",
+    "assunto": "style(manutencao): aplica correcoes locais verificadas (#77)"
+   },
+   {
+    "sha": "898e6abc",
+    "data": "2026-11-11",
+    "assunto": "fix(config): aponta todas as referências de projeto Supabase para qdlnzopxrlsoljcrcmzv (#80)"
+   },
    {
     "sha": "e8510396",
     "data": "2026-11-11",
@@ -121,19 +131,9 @@
     "sha": "89161291",
     "data": "2026-09-05",
     "assunto": "Merge pull request #46 from adm01-debug/dependabot/npm_and_yarn/supabase-f2a27b35cd"
-   },
-   {
-    "sha": "66c5eedb",
-    "data": "2026-08-31",
-    "assunto": "chore(deps)(deps): bump @supabase/supabase-js"
-   },
-   {
-    "sha": "eecc9de3",
-    "data": "2026-08-31",
-    "assunto": "chore(deps)(deps): bump @sentry/react"
    }
   ],
-  "arquivos_mudados_7d": 166,
+  "arquivos_mudados_7d": 184,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "package.json",
@@ -144,7 +144,15 @@
     "mudancas": 4
    },
    {
+    "pasta": "src/components/admin",
+    "mudancas": 4
+   },
+   {
     "pasta": ".github/workflows/ci.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": "AGENTS.md",
     "mudancas": 3
    },
    {
@@ -160,11 +168,19 @@
     "mudancas": 2
    },
    {
-    "pasta": "AGENTS.md",
+    "pasta": "docs/agentes/banco.md",
+    "mudancas": 2
+   },
+   {
+    "pasta": "docs/agentes/deploy.md",
     "mudancas": 2
    },
    {
     "pasta": "docs/agentes/github-ci.md",
+    "mudancas": 2
+   },
+   {
+    "pasta": "docs/agentes/mapa-repo.md",
     "mudancas": 2
    },
    {
@@ -176,24 +192,8 @@
     "mudancas": 2
    },
    {
-    "pasta": ".claude/hooks/session-start.sh",
-    "mudancas": 1
-   },
-   {
-    "pasta": ".claude/identity.json",
-    "mudancas": 1
-   },
-   {
-    "pasta": ".claude/settings.json",
-    "mudancas": 1
-   },
-   {
-    "pasta": ".claude/skills/fator-x-v2",
-    "mudancas": 1
-   },
-   {
-    "pasta": ".codex/AGENTS.md",
-    "mudancas": 1
+    "pasta": "src/components/agent-builder",
+    "mudancas": 2
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -211,10 +211,14 @@
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 3
+    "mudancas": 4
    },
    {
     "arquivo": "CHANGELOG.md",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "ESTADO-ATUAL.md",
     "mudancas": 3
    },
    {
@@ -222,15 +226,23 @@
     "mudancas": 2
    },
    {
-    "arquivo": "ESTADO-ATUAL.md",
-    "mudancas": 2
-   },
-   {
     "arquivo": "docs/adr/README.md",
     "mudancas": 2
    },
    {
+    "arquivo": "docs/agentes/banco.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "docs/agentes/deploy.md",
+    "mudancas": 2
+   },
+   {
     "arquivo": "docs/agentes/github-ci.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "docs/agentes/mapa-repo.md",
     "mudancas": 2
    },
    {
@@ -247,6 +259,10 @@
    },
    {
     "arquivo": "scripts/automation.config.json",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "src/pages/DeploymentsPage.tsx",
     "mudancas": 2
    },
    {
@@ -280,28 +296,12 @@
    {
     "arquivo": "supabase/functions/crm-enrich/index.ts",
     "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/datahub-query/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/doc-rechunk/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/dr-orchestrator/index.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "supabase/functions/eval-judge/index.ts",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 7
+    "commits": 9
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1967,
   "arquivos_codigo": 1445,
-  "linhas_codigo": 316049,
+  "linhas_codigo": 316193,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -464,7 +464,7 @@
   },
   "src/components": {
    "arquivos": 557,
-   "linhas": 103557
+   "linhas": 103701
   },
   "src/config": {
    "arquivos": 10,

@@ -100,7 +100,7 @@
     "AuditTrailPanel"
    ],
    "export_default": null,
-   "linhas": 229,
+   "linhas": 266,
    "dominio": "components/admin",
    "hooks_locais": [],
    "tabelas": [],
@@ -114,7 +114,7 @@
     "DbHealthCard"
    ],
    "export_default": null,
-   "linhas": 218,
+   "linhas": 232,
    "dominio": "components/admin",
    "hooks_locais": [],
    "tabelas": [],
@@ -128,7 +128,7 @@
     "DbHealthTimeseriesCard"
    ],
    "export_default": null,
-   "linhas": 137,
+   "linhas": 160,
    "dominio": "components/admin",
    "hooks_locais": [],
    "tabelas": [],
@@ -142,7 +142,7 @@
     "DetectorSloCard"
    ],
    "export_default": null,
-   "linhas": 101,
+   "linhas": 108,
    "dominio": "components/admin",
    "hooks_locais": [],
    "tabelas": [],
@@ -193,7 +193,7 @@
     "ConversationalBuilder"
    ],
    "export_default": null,
-   "linhas": 240,
+   "linhas": 256,
    "dominio": "components/agent-builder",
    "hooks_locais": [
     "useAgentBuilderStore"
@@ -211,7 +211,7 @@
     "CostEstimateCard"
    ],
    "export_default": null,
-   "linhas": 72,
+   "linhas": 119,
    "dominio": "components/agent-builder",
    "hooks_locais": [],
    "tabelas": [],

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e851039608` · branch `main` · 2026-11-11 22:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fd6c7ffc22` · branch `main` · 2026-11-11 23:35 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2470,7 +2470,7 @@ _nenhum item encontrado_
   ```
 - **validateEnv()** — `src/config/env.ts`
   ```
-  try { return { SUPABASE_URL: getEnvVar('VITE_SUPABASE_URL'), SUPABASE_ANON_KEY: getEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY'), SUPABASE_PROJECT_ID: getEnvVar('VITE_SUPABASE_PROJECT_ID', 'tdprnylgyrogbbhgdoik'), }; } catch (error) { if (import.meta.env.DEV) { logger.error('🔴 Environment validation failed:', (error as Error).message); logger.error(' Check your .env file or Lovable environment settings.'); } throw error; }
+  try { return { SUPABASE_URL: getEnvVar('VITE_SUPABASE_URL'), SUPABASE_ANON_KEY: getEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY'), SUPABASE_PROJECT_ID: getEnvVar('VITE_SUPABASE_PROJECT_ID', 'qdlnzopxrlsoljcrcmzv'), }; } catch (error) { if (import.meta.env.DEV) { logger.error('🔴 Environment validation failed:', (error as Error).message); logger.error(' Check your .env file or Lovable environment settings.'); } throw error; }
   ```
 - **computeVariantStats(runs: ExperimentRun[], variant: ExperimentVariant)** — `src/hooks/useAgentExperiments.ts`
   ```
@@ -3184,7 +3184,7 @@ _nenhum item encontrado_
 | `LINK_THRESHOLD` | `0.02` | `src/services/templateSkillRegistry.ts` |
 | `THRESHOLD_CALIBRATION_LIMIT` | `20` | `src/services/thresholdCalibrationService.ts` |
 | `MAX_FILE_BYTES` | `2` | `src/services/vaultSyncService.ts` |
-| `PROJECT_REF` | `'tdprnylgyrogbbhgdoik'` | `src/services/widgetService.ts` |
+| `PROJECT_REF` | `'qdlnzopxrlsoljcrcmzv'` | `src/services/widgetService.ts` |
 | `CITATIONS_SENTINEL` | `"\n\u241E"` | `src/types/cerebroCitations.ts` |
 | `FAULT_CACHE_TTL_MS` | `5` | `supabase/functions/_shared/chaos.ts` |
 | `ALLOWED_METHODS` | `'GET, POST, PUT, PATCH, DELETE, OPTIONS'` | `supabase/functions/_shared/cors.ts` |

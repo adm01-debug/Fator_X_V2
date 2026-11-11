@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e8510396088801323b03fe7ff86f79f044d06b7c` (2026-11-11T19:24:19-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fd6c7ffc22ccf047ab788031c3c6d48450b9e620` (2026-11-11T20:31:11-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1967 |
 | arquivos_codigo | 1445 |
-| linhas_codigo | 316049 |
+| linhas_codigo | 316193 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -403,7 +403,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
-- hosts mais citados: ai.gateway.lovable.dev, router.huggingface.co, api.openai.com, openrouter.ai, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, slack.com, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.slack.com, app.promobrindes.com.br, exemplo.com, gitlab.com
+- hosts mais citados: ai.gateway.lovable.dev, router.huggingface.co, api.openai.com, openrouter.ai, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.slack.com, app.promobrindes.com.br, exemplo.com
 - webhooks recebidos: migrate-helper, openclaw-webhook, rag-embed-backfill, slack-events-webhook, whatsapp-router
 - env de integração (só nomes): ANTHROPIC_API_KEY, API_KEY_HMAC_SECRET, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_WEBHOOK_TOKEN, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
 
@@ -431,7 +431,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13749 nós · 36888 arestas · 878 comunidades · grafo do commit `e8510396`
+- 13749 nós · 36888 arestas · 878 comunidades · grafo do commit `fd6c7ffc`
 - comunidades maiores: react (336), lucide-react (300), @tanstack/react-query (219), App.tsx (192), checkRateLimit (171), cn (135), templateSkillLinkService.ts (122), KnowledgePage.tsx (113), dependencies (90), package.json (89), ChatWithAgentPage.tsx (88), mod.ts (88)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -440,18 +440,18 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package.json (17)
 - package-lock.json (16)
 - .github/workflows/ci.yml (6)
-- AGENTS.md (3)
+- AGENTS.md (4)
 - CHANGELOG.md (3)
+- ESTADO-ATUAL.md (3)
 - .github/workflows/contexto.yml (2)
-- ESTADO-ATUAL.md (2)
 - docs/adr/README.md (2)
+- docs/agentes/banco.md (2)
+- docs/agentes/deploy.md (2)
 - docs/agentes/github-ci.md (2)
+- docs/agentes/mapa-repo.md (2)
 - docs/auditoria-estado-2026-08/02-services.md (2)
 - docs/auditoria-estado-2026-08/03-edge-functions.md (2)
 - docs/auditoria-estado-2026-08/10-testes-e-ci.md (2)
-- scripts/automation.config.json (2)
-- supabase/functions/agent-workflow-runner/index.ts (2)
-- supabase/functions/browser-session-cancel/index.ts (2)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -505,7 +505,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Documentos (raiz e docs/)
 - `.github/PULL_REQUEST_TEMPLATE.md` (31 linhas)
 - `.github/pull_request_template.md` (26 linhas)
-- `AGENTS.md` — AGENTS.md — Fator X V2 (Nexus Agents Studio) (124 linhas)
+- `AGENTS.md` — AGENTS.md — Fator X V2 (Nexus Agents Studio) (123 linhas)
 - `BACKLOG-10-10.md` — 🎯 Backlog 10/10 — Nexus Agents Studio / FATOR X (166 linhas)
 - `CHANGELOG.md` — Changelog (190 linhas)
 - `CLAUDE.md` (2 linhas)
@@ -573,6 +573,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-11 `fd6c7ffc` style(manutencao): aplica correcoes locais verificadas (#77)
+- 2026-11-11 `898e6abc` fix(config): aponta todas as referências de projeto Supabase para qdlnzopxrlsoljcrcmzv (#80)
 - 2026-11-11 `e8510396` fix(contexto): autentica o fetch da branch contexto em repo privado (#75)
 - 2026-11-11 `531aa687` feat(automacao): porta os scripts autônomos de estado real do Zapp Web V2 (#71)
 - 2026-11-11 `b9162c98` ci(agentes): liga o guard de integridade do AGENTS.md no CI (#70)
@@ -586,8 +588,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-09-14 `43b3ceaf` chore(deps)(deps): bump @sentry/react in the sentry group (#57)
 - 2026-09-14 `133852ac` chore(deps)(deps): bump @supabase/supabase-js in the supabase group (#56)
 - 2026-09-14 `8e0b2996` chore(deps)(deps): bump react-router-dom in the react group (#55)
-- 2026-09-05 `4de77145` fix(qa): corrigir bugs reais e estabilizar a suíte de testes [resolved] (#19)
-- 2026-09-05 `2fa2e7b5` security(db): Onda 2.5 — hotfix da validação red-team (exec_sql, IDOR, policies, grants) (#54)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

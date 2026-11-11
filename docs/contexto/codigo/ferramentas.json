@@ -423,7 +423,7 @@
   {
    "arquivo": "AGENTS.md",
    "titulo": "AGENTS.md — Fator X V2 (Nexus Agents Studio)",
-   "linhas": 124
+   "linhas": 123
   },
   {
    "arquivo": "BACKLOG-10-10.md",
@@ -955,6 +955,10 @@
     "arquivos": 3
    },
    {
+    "host": "qdlnzopxrlsoljcrcmzv.supabase.co",
+    "arquivos": 3
+   },
+   {
     "host": "slack.com",
     "arquivos": 3
    },
@@ -999,10 +1003,6 @@
     "arquivos": 2
    },
    {
-    "host": "qdlnzopxrlsoljcrcmzv.supabase.co",
-    "arquivos": 2
-   },
-   {
     "host": "raw.githubusercontent.com",
     "arquivos": 2
    },
@@ -1017,10 +1017,6 @@
    {
     "host": "x.supabase.co",
     "arquivos": 2
-   },
-   {
-    "host": "0ef3e2b6-577d-454f-881a-388fe5cf1ec6.functions.supabase.co",
-    "arquivos": 1
    },
    {
     "host": "api.duckduckgo.com",
