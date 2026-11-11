@@ -3,13 +3,13 @@
  * Snapshot de saúde do banco (WAL, conexões, long queries, bloat).
  * Admin-only: RPC get_db_health_snapshot valida via workspace_members.
  */
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Activity, Database, Clock, AlertTriangle, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Activity, Database, Clock, AlertTriangle, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface LongQuery {
   pid: number;
@@ -52,20 +52,22 @@ function formatBytes(bytes: number): string {
 export function DbHealthCard() {
   const navigate = useNavigate();
   const { data, isLoading, error, refetch, isFetching } = useQuery({
-    queryKey: ["db-health-snapshot"],
+    queryKey: ['db-health-snapshot'],
     refetchInterval: 60_000,
     queryFn: async (): Promise<HealthSnapshot | null> => {
-      const { data, error } = await supabase.rpc("get_db_health_snapshot" as never);
+      const { data, error } = await supabase.rpc('get_db_health_snapshot' as never);
       if (error) throw error;
       return data as unknown as HealthSnapshot;
     },
   });
 
-  const connPctTone =
-    !data ? "muted"
-    : data.connections_pct >= 80 ? "danger"
-    : data.connections_pct >= 60 ? "warning"
-    : "success";
+  const connPctTone = !data
+    ? 'muted'
+    : data.connections_pct >= 80
+      ? 'danger'
+      : data.connections_pct >= 60
+        ? 'warning'
+        : 'success';
 
   return (
     <Card>
@@ -80,7 +82,7 @@ export function DbHealthCard() {
           </CardDescription>
         </div>
         <Button size="sm" variant="ghost" onClick={() => refetch()} disabled={isFetching}>
-          <Activity className={isFetching ? "h-3.5 w-3.5 animate-pulse" : "h-3.5 w-3.5"} />
+          <Activity className={isFetching ? 'h-3.5 w-3.5 animate-pulse' : 'h-3.5 w-3.5'} />
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -93,11 +95,7 @@ export function DbHealthCard() {
         {data && (
           <>
             <div className="grid grid-cols-2 gap-3">
-              <Metric
-                label="WAL total"
-                value={formatBytes(data.wal_bytes)}
-                tone="muted"
-              />
+              <Metric label="WAL total" value={formatBytes(data.wal_bytes)} tone="muted" />
               <Metric
                 label="Conexões"
                 value={`${data.connections_used} / ${data.connections_max} (${data.connections_pct}%)`}
@@ -154,13 +152,15 @@ export function DbHealthCard() {
                 Top 10 consultas mais lentas (média)
               </h4>
               {!data.slow_queries || data.slow_queries.length === 0 ? (
-                <p className="text-meta text-muted-foreground">Sem dados de pg_stat_statements ainda.</p>
+                <p className="text-meta text-muted-foreground">
+                  Sem dados de pg_stat_statements ainda.
+                </p>
               ) : (
                 <ul className="space-y-1 text-meta">
                   {data.slow_queries.slice(0, 10).map((q, idx) => (
                     <li key={idx} className="rounded border p-2">
                       <div className="flex justify-between items-center gap-2">
-                        <Badge variant={q.mean_ms > 500 ? "destructive" : "outline"}>
+                        <Badge variant={q.mean_ms > 500 ? 'destructive' : 'outline'}>
                           {q.mean_ms} ms / chamada
                         </Badge>
                         <div className="flex items-center gap-2">
@@ -174,9 +174,11 @@ export function DbHealthCard() {
                             title="Abrir no auto-EXPLAIN"
                             onClick={() => {
                               try {
-                                sessionStorage.setItem("perf:explain-query", q.query_preview);
-                              } catch { /* storage indisponível */ }
-                              navigate("/security/performance");
+                                sessionStorage.setItem('perf:explain-query', q.query_preview);
+                              } catch {
+                                /* storage indisponível */
+                              }
+                              navigate('/security/performance');
                             }}
                           >
                             <Sparkles className="h-3 w-3 mr-1" />
@@ -194,7 +196,7 @@ export function DbHealthCard() {
             </section>
 
             <p className="text-meta text-muted-foreground">
-              Capturado em {new Date(data.captured_at).toLocaleString("pt-BR")}
+              Capturado em {new Date(data.captured_at).toLocaleString('pt-BR')}
             </p>
           </>
         )}
@@ -203,11 +205,23 @@ export function DbHealthCard() {
   );
 }
 
-function Metric({ label, value, tone }: { label: string; value: string; tone: "muted" | "warning" | "danger" | "success" }) {
+function Metric({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: 'muted' | 'warning' | 'danger' | 'success';
+}) {
   const cls =
-    tone === "danger" ? "text-destructive" :
-    tone === "warning" ? "text-nexus-amber" :
-    tone === "success" ? "text-nexus-emerald" : "text-foreground";
+    tone === 'danger'
+      ? 'text-destructive'
+      : tone === 'warning'
+        ? 'text-nexus-amber'
+        : tone === 'success'
+          ? 'text-nexus-emerald'
+          : 'text-foreground';
   return (
     <div className="rounded-md border p-3">
       <div className="text-meta text-muted-foreground">{label}</div>

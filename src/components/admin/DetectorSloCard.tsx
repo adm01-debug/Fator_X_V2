@@ -3,13 +3,13 @@
  * Painel SLO dos jobs de detecção: detector de tendência + 3 smoke tests.
  * Admin-only via RPC public.get_detector_slo_status().
  */
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, Clock, Gauge } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle2, XCircle, Clock, Gauge } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface SloRow {
   job_name: string;
@@ -22,18 +22,22 @@ interface SloRow {
 }
 
 const LABELS: Record<string, string> = {
-  "detect-health-trend-every-15min": "Detector de tendências",
-  "smoke-test-health-alerts-every-6h": "Smoke: slow-query spike",
-  "smoke-test-wal-every-6h": "Smoke: crescimento de WAL",
-  "smoke-test-conn-every-6h": "Smoke: saturação de conexões",
+  'detect-health-trend-every-15min': 'Detector de tendências',
+  'smoke-test-health-alerts-every-6h': 'Smoke: slow-query spike',
+  'smoke-test-wal-every-6h': 'Smoke: crescimento de WAL',
+  'smoke-test-conn-every-6h': 'Smoke: saturação de conexões',
 };
 
 export function DetectorSloCard() {
-  const { data = [], isLoading, error } = useQuery({
-    queryKey: ["detector-slo-status"],
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['detector-slo-status'],
     refetchInterval: 60_000,
     queryFn: async (): Promise<SloRow[]> => {
-      const { data, error } = await supabase.rpc("get_detector_slo_status" as never);
+      const { data, error } = await supabase.rpc('get_detector_slo_status' as never);
       if (error) throw error;
       return (data ?? []) as unknown as SloRow[];
     },
@@ -75,19 +79,22 @@ export function DetectorSloCard() {
                       {LABELS[row.job_name] ?? row.job_name}
                     </p>
                     <p className="text-meta text-muted-foreground font-mono">
-                      {row.schedule} · {row.active ? "ativo" : "inativo"}
+                      {row.schedule} · {row.active ? 'ativo' : 'inativo'}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Badge variant={row.last_status === "succeeded" ? "outline" : "destructive"}>
+                  <Badge variant={row.last_status === 'succeeded' ? 'outline' : 'destructive'}>
                     {row.last_status}
                   </Badge>
                   <span className="text-meta text-muted-foreground flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     {row.last_run_at
-                      ? formatDistanceToNow(new Date(row.last_run_at), { addSuffix: true, locale: ptBR })
-                      : "nunca"}
+                      ? formatDistanceToNow(new Date(row.last_run_at), {
+                          addSuffix: true,
+                          locale: ptBR,
+                        })
+                      : 'nunca'}
                   </span>
                 </div>
               </li>
