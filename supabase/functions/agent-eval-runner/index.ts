@@ -17,7 +17,6 @@ validateRequiredEnv([
   'SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
   'SUPABASE_ANON_KEY',
-  AI_API_KEY_ENV,
 ]);
 const EvalRunnerBodySchema = z
   .object({

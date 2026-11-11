@@ -20,7 +20,7 @@ const InputSchema = z.object({
 });
 
 const MAX_NODES = 15;
-const LOVABLE_KEY = requireEnv(AI_API_KEY_ENV);
+const LOVABLE_KEY = Deno.env.get(AI_API_KEY_ENV) ?? '';
 const SUPABASE_URL = requireEnv('SUPABASE_URL');
 const SERVICE_KEY = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
 

@@ -15,8 +15,8 @@
   "source_files": [
     {
       "path": "supabase/functions/_shared/ai-provider.ts",
-      "bytes": 1077,
-      "sha256": "e5aa82fe73b1b3f5a5bcbfa190ca7ec24f39982b651655461b048f5119b4f764"
+      "bytes": 1353,
+      "sha256": "ae069a2323fc65d12647515d922100d31ada96fccafc6dee87268d8ca35fe624"
     },
     {
       "path": "supabase/functions/_shared/alternation.ts",
@@ -150,8 +150,8 @@
     },
     {
       "path": "supabase/functions/agent-eval-runner/index.ts",
-      "bytes": 9965,
-      "sha256": "e2148dbebf63df5b9413b3c355274070cf40ac7eef7a7fe6876124cdf8d58f65"
+      "bytes": 9947,
+      "sha256": "c9a7c67f360b63f550a6e74d8f562e547b636d23d06db650a9311a346a936b39"
     },
     {
       "path": "supabase/functions/agent-workflow-runner/index.ts",
@@ -280,13 +280,13 @@
     },
     {
       "path": "supabase/functions/global-search/index.ts",
-      "bytes": 13821,
-      "sha256": "437cf892197c2c33539b51740ca9dc00c0f8c91d1b03a6c938ccd10b1c84d784"
+      "bytes": 13823,
+      "sha256": "bb95795899da8523c733eb767c1f4cdb834c52ef4cc9d5449bfc4df0a9c08493"
     },
     {
       "path": "supabase/functions/graph-execute/index.ts",
-      "bytes": 9978,
-      "sha256": "79fca698758c8e8a6859e5d4b02ac0aa81df7be42ddcae8bde247bf40e27eb1e"
+      "bytes": 9986,
+      "sha256": "8aaef99c538f9e8031b14698eb9c164accfa413c4ee745dc203d319bb62444c5"
     },
     {
       "path": "supabase/functions/guardrails-engine/index.ts",
@@ -320,8 +320,8 @@
     },
     {
       "path": "supabase/functions/kb-analyze-gaps/index.ts",
-      "bytes": 5155,
-      "sha256": "4879789e5f76175318566086d528dad8e7d361072b67aeba07b9763652d831f2"
+      "bytes": 5157,
+      "sha256": "e23837a991ea2d8bc29700fe200324065d5634c5593562515fe7e9d8dc6f6245"
     },
     {
       "path": "supabase/functions/kb-translate-article/index.ts",
@@ -335,8 +335,8 @@
     },
     {
       "path": "supabase/functions/llm-gateway/index.ts",
-      "bytes": 61632,
-      "sha256": "589d0220b4f63ad1c08864d1299f13166c69d57aab41cc33a186b8c639b4f333"
+      "bytes": 61732,
+      "sha256": "b15ea5c0e5846f04e8e8ca28ea63cb01ef82f66e4481390c9696e5716d331118"
     },
     {
       "path": "supabase/functions/llm-gateway/providers.ts",
@@ -505,8 +505,8 @@
     },
     {
       "path": "supabase/functions/skill-describe-llm/index.ts",
-      "bytes": 14354,
-      "sha256": "2147c75c5886f25f66ec0483ac8797cea467144d0c044aa2db0089cbbd22546f"
+      "bytes": 14372,
+      "sha256": "f17c219edfde045d1206b102f4ebebe16e6bba7e8a1116c70bc52391e1960b08"
     },
     {
       "path": "supabase/functions/skill-harvester/departments.ts",
@@ -666,7 +666,7 @@
       "name": "agent-conversational-builder",
       "entrypoint": "supabase/functions/agent-conversational-builder/index.ts",
       "verify_jwt": true,
-      "source_sha256": "860d512d47a0b21aeada4c72e739b91ba02db8919fa8f400b6511d7bc9e06193",
+      "source_sha256": "f6e5b33d79278b2a65ede73bf8777f51703f92a6526a85314de7d9d867ac44e8",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -689,7 +689,7 @@
       "name": "agent-eval-runner",
       "entrypoint": "supabase/functions/agent-eval-runner/index.ts",
       "verify_jwt": true,
-      "source_sha256": "ec7904301d9fdc9b8dce9052c53f877552b354159323b12791b633dc7349742d",
+      "source_sha256": "8870f423fff3bacc55302dad68ddbcf2e4ba16173e9ca4d708403096446947d5",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -713,7 +713,7 @@
       "name": "agent-workflow-runner",
       "entrypoint": "supabase/functions/agent-workflow-runner/index.ts",
       "verify_jwt": true,
-      "source_sha256": "19e3f71acf22e73f47ccaf325b8dad322b8d7d0f645dc6fefe212ee5cd4fd314",
+      "source_sha256": "bc261050fb34beaab056530d35bf9b5cf6867ccc14fc7b971ab7b82309429952",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -938,7 +938,7 @@
       "name": "code-interpreter-execute",
       "entrypoint": "supabase/functions/code-interpreter-execute/index.ts",
       "verify_jwt": true,
-      "source_sha256": "665ffcc1f06b6cd53a5070978c6275fe7d46086eecc3e5a51b06381c1bdbb9f5",
+      "source_sha256": "304605b9cb1a1ba8326024a373207af2c0297ffa4b970186ba10961cebb31af0",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1053,7 +1053,7 @@
       "name": "crm-enrich",
       "entrypoint": "supabase/functions/crm-enrich/index.ts",
       "verify_jwt": true,
-      "source_sha256": "de8247d13bb9cfff0cee5f79a9abeb94a9ca32b3f7cee0566155618defacddfa",
+      "source_sha256": "203431011d8103e17782af3ca930fe8829f48a226af2428a224c95d2512b3132",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1276,7 +1276,7 @@
       "name": "global-search",
       "entrypoint": "supabase/functions/global-search/index.ts",
       "verify_jwt": true,
-      "source_sha256": "721e4fad73da704c4218813c7680781e1b61f2d4d39864e1ab66630dbbd2eec5",
+      "source_sha256": "ad3da69eb60714a5288052c99b177e20f6a6490f0852679265881d6843b6e773",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1299,7 +1299,7 @@
       "name": "graph-execute",
       "entrypoint": "supabase/functions/graph-execute/index.ts",
       "verify_jwt": true,
-      "source_sha256": "020acacb60cfffc116805542ee7ae90a83b05cee49ab04eee8e461192185ebe6",
+      "source_sha256": "4280dae46ce5a433c8282b1e946f07fd0476eb4b845429f1c74c6a4ab5979e9a",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1456,7 +1456,7 @@
       "name": "kb-analyze-gaps",
       "entrypoint": "supabase/functions/kb-analyze-gaps/index.ts",
       "verify_jwt": true,
-      "source_sha256": "164b571ae25d6547e15a8053af3dbd61e2cb77d3adf54aa54e510303f902e2d1",
+      "source_sha256": "ff3738092e5600090585af6d3336a536ce68a8b09b7cf656b6bc412f7d9a0a35",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1479,7 +1479,7 @@
       "name": "kb-translate-article",
       "entrypoint": "supabase/functions/kb-translate-article/index.ts",
       "verify_jwt": true,
-      "source_sha256": "6bd29364624a8243a3859f84e8ac8fcf36f8176ae28ae6da491df9ba8787a0ac",
+      "source_sha256": "14441ffbf98b61dcaa02cf784ddc3b23554d3d6065ebaf9c1c152891c809ac27",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1524,7 +1524,7 @@
       "name": "llm-gateway",
       "entrypoint": "supabase/functions/llm-gateway/index.ts",
       "verify_jwt": true,
-      "source_sha256": "ddf4340202f54afa9543e526ea1fc1a845537c6cde8b8c9a79f58cae4ae970e1",
+      "source_sha256": "90cea8f50f985d3698e7665d080e756297adac36c433e233a6e0699dc3343b93",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1826,7 +1826,7 @@
       "name": "quick-agent-test",
       "entrypoint": "supabase/functions/quick-agent-test/index.ts",
       "verify_jwt": true,
-      "source_sha256": "f70c8f3054add8537f713470603cdd24d0cea6d53d0535956384fa9f0056a542",
+      "source_sha256": "9fc030bf11035e9757f8bc1887a612282d60a88a3dca364aaccdee172fc230b1",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -2027,7 +2027,7 @@
       "name": "skill-classify-llm",
       "entrypoint": "supabase/functions/skill-classify-llm/index.ts",
       "verify_jwt": true,
-      "source_sha256": "8d3cc635e79e6b19394a82be2fb796ffa6e422b809d257311f43a8f41c08aac3",
+      "source_sha256": "d662820a376c199337d2674bbda31e8f0c53c66b9ebfe97c648548f271d512d8",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -2051,7 +2051,7 @@
       "name": "skill-describe-llm",
       "entrypoint": "supabase/functions/skill-describe-llm/index.ts",
       "verify_jwt": true,
-      "source_sha256": "3682c09aa80878f8c034e32b287d1a11b34404c0b9b3f1854221ca53e1c7a371",
+      "source_sha256": "b92558ad4358f7737d16966b777761bceecbca90328474e9e566b36cb8701260",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -2442,7 +2442,7 @@
       "name": "voice-synthesize",
       "entrypoint": "supabase/functions/voice-synthesize/index.ts",
       "verify_jwt": true,
-      "source_sha256": "e23ceefee23e3c45c77b336ae9567ff3cb2a526efc7a0e9b193b19e454f9f57d",
+      "source_sha256": "e71ee9ebe477182ed6f4264a3fa17dd47450b539bb802e572135503da79b4724",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -2597,5 +2597,5 @@
       ]
     }
   ],
-  "manifest_sha256": "ac55669311171d4d7598e354ca2cfb99053ac312e3bc8c52672905302416a573"
+  "manifest_sha256": "b3b5c6d055ba164e88d228c00f80aaf0982111e557d1527e399519b27d09f796"
 }

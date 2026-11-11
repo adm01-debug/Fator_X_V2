@@ -1109,6 +1109,7 @@ serve(async (req) => {
                 max_tokens,
                 stream: true,
               };
+              if (opt.provider === 'deepseek') streamBody.stream_options = { include_usage: true };
               // Disable thinking for Qwen3/DeepSeek to save tokens
               if (
                 isHuggingFace &&

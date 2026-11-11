@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
       requireEnv('SUPABASE_URL'),
       requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
     );
-    const lovableKey = requireEnv(AI_API_KEY_ENV);
+    const lovableKey = Deno.env.get(AI_API_KEY_ENV);
 
     // Pegar últimas 100 queries do oracle_history (proxy para queries dos usuários)
     const { data: history } = await supabase

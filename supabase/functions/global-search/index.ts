@@ -266,7 +266,7 @@ Deno.serve(async (req) => {
     const topCandidates = candidates.slice(0, Math.min(20, candidates.length));
 
     // STAGE 2 — Semantic re-rank via Lovable AI
-    const LOVABLE_API_KEY = requireEnv(AI_API_KEY_ENV);
+    const LOVABLE_API_KEY = Deno.env.get(AI_API_KEY_ENV);
     let mode: string = 'lexical';
 
     if (semanticEnabled && LOVABLE_API_KEY && topCandidates.length > 1) {
