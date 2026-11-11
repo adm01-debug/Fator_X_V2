@@ -13,6 +13,7 @@ import {
 
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { appendSkillsToPrompt, loadAgentSkills } from '../_shared/skills.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 const WorkflowRunSchema = z.object({
   workflow_id: z.string().uuid(),
   input: z
@@ -95,10 +96,10 @@ async function executeNode(
           content: typeof lastInput === 'string' ? lastInput : JSON.stringify(lastInput),
         },
       ];
-      const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      const r = await fetchWithTimeout(AI_CHAT_COMPLETIONS_URL, {
         method: 'POST',
         headers: { Authorization: `Bearer ${lovableKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: agent.model || 'google/gemini-2.5-flash', messages }),
+        body: JSON.stringify({ model: aiModel(agent.model), messages }),
       });
       const j = await r.json();
       return j.choices?.[0]?.message?.content ?? '';
@@ -189,7 +190,7 @@ Deno.serve(async (req) => {
 
       (async () => {
         try {
-          const lovableKey = requireEnv('LOVABLE_API_KEY');
+          const lovableKey = requireEnv(AI_API_KEY_ENV);
           const ordered = topoSort(wf.nodes || [], wf.edges || []);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const ctx: Record<string, any> = { __input: input };

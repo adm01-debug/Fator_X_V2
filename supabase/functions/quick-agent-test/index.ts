@@ -10,6 +10,7 @@ import {
 
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { appendSkillsToPrompt, countInjectedSkills } from '../_shared/skills.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 const BodySchema = z.object({
   system_prompt: z.string().min(10).max(20_000),
   user_message: z.string().min(1).max(4000),
@@ -66,7 +67,7 @@ Deno.serve(async (req) => {
       return json({ error: 'Method not allowed' }, 405);
     }
 
-    const apiKey = requireEnv('LOVABLE_API_KEY');
+    const apiKey = requireEnv(AI_API_KEY_ENV);
 
     const raw = await req.json().catch(() => null);
     const parsed = BodySchema.safeParse(raw);
@@ -87,14 +88,14 @@ Deno.serve(async (req) => {
     const mapped = mapModel(model);
     const startedAt = Date.now();
 
-    const upstream = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const upstream = await fetchWithTimeout(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: mapped,
+        model: aiModel(mapped),
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userMessage },

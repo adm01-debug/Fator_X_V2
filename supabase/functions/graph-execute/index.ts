@@ -13,13 +13,14 @@ import {
   requireEnv,
   getCorsHeaders,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 const InputSchema = z.object({
   graph_id: z.string().uuid(),
   input: z.string().min(1).max(20000),
 });
 
 const MAX_NODES = 15;
-const LOVABLE_KEY = requireEnv('LOVABLE_API_KEY');
+const LOVABLE_KEY = Deno.env.get(AI_API_KEY_ENV) ?? '';
 const SUPABASE_URL = requireEnv('SUPABASE_URL');
 const SERVICE_KEY = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
 
@@ -43,12 +44,12 @@ async function callLLM(
   const start = Date.now();
   const res = await withRetry(
     () =>
-      fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      fetchWithTimeout(AI_CHAT_COMPLETIONS_URL, {
         method: 'POST',
         timeoutMs: 60_000,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${LOVABLE_KEY}` },
         body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
+          model: aiModel('google/gemini-2.5-flash'),
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userInput },

@@ -8,6 +8,7 @@ import {
   RATE_LIMITS,
   getCorsHeaders,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 const CodeInterpBodySchema = z
   .object({
     runtime: z.enum(['python', 'node', 'deno']),
@@ -76,8 +77,8 @@ async function simulateExecution(
   files: Array<{ name: string; size: number }>;
 }> {
   const start = Date.now();
-  const apiKey = Deno.env.get('LOVABLE_API_KEY');
-  if (!apiKey) throw new Error('LOVABLE_API_KEY not configured');
+  const apiKey = Deno.env.get(AI_API_KEY_ENV);
+  if (!apiKey) throw new Error('DEEPSEEK_API_KEY not configured');
 
   const systemPrompt = `Você é um sandbox virtual de execução de ${runtime}. Analise o código estaticamente e retorne APENAS um JSON com os campos:
 {
@@ -88,14 +89,14 @@ async function simulateExecution(
 }
 Se houver erro de sintaxe óbvio, simule a mensagem de erro real do interpretador. Para imports não disponíveis, retorne ModuleNotFoundError. Seja realista e determinístico.`;
 
-  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const response = await fetch(AI_CHAT_COMPLETIONS_URL, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
+      model: aiModel('google/gemini-2.5-flash'),
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: `Código ${runtime}:\n\`\`\`\n${code}\n\`\`\`` },

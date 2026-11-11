@@ -7,6 +7,7 @@ import {
   getRateLimitIdentifier,
   RATE_LIMITS,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 
 const BuilderBodySchema = z
   .object({
@@ -55,8 +56,8 @@ Deno.serve(async (req) => {
   if (!rateResult.allowed) return createRateLimitResponse(rateResult, corsHeaders);
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY missing');
+    const LOVABLE_API_KEY = Deno.env.get(AI_API_KEY_ENV);
+    if (!LOVABLE_API_KEY) throw new Error('DEEPSEEK_API_KEY missing');
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = BuilderBodySchema.safeParse(rawBody);
@@ -75,14 +76,14 @@ Deno.serve(async (req) => {
       ? `\n\nESTADO ATUAL DO AGENTE:\n${JSON.stringify(currentAgent, null, 2)}`
       : '';
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetch(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: aiModel('google/gemini-2.5-flash'),
         messages: [{ role: 'system', content: SYSTEM_PROMPT + contextMsg }, ...messages],
         stream: true,
         tools: [

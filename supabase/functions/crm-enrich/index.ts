@@ -28,6 +28,7 @@ import {
   validateWorkspaceMembership,
   z,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL, aiModel } from '../_shared/ai-provider.ts';
 
 const EnrichInput = z.object({
   workspace_id: z.string().uuid(),
@@ -232,7 +233,7 @@ const KNOWN_INDUSTRIES = INDUSTRY_KEYWORDS.map(([industry]) => industry);
 async function classifyWithLlm(
   companies: Array<{ id: string; name: string; domain: string | null }>,
 ): Promise<Record<string, string>> {
-  const apiKey = Deno.env.get('LOVABLE_API_KEY');
+  const apiKey = Deno.env.get(AI_API_KEY_ENV);
   if (!apiKey || companies.length === 0) return {};
 
   const prompt = [
@@ -244,11 +245,11 @@ async function classifyWithLlm(
   ].join('\n');
 
   try {
-    const resp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resp = await fetch(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: aiModel('google/gemini-2.5-flash'),
         messages: [
           {
             role: 'system',

@@ -50,6 +50,8 @@ async function calculateCost(
   promptTokens: number,
   completionTokens: number,
 ): Promise<number> {
+  const deepseekCost = aiCostUsd(model, promptTokens, completionTokens);
+  if (deepseekCost !== null) return deepseekCost;
   try {
     const { data: pricing } = await supabase
       .from('model_pricing')
@@ -582,19 +584,27 @@ async function resolveFallbackChain(
       }
     }
   }
-  // Last resort: Lovable API key from env (strip provider prefix for cross-provider compat)
-  const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
-  if (lovableApiKey) {
-    const lovableModel = requestedModel.startsWith('huggingface/')
-      ? requestedModel
-      : requestedModel;
-    chain.push({ apiKey: lovableApiKey, provider: 'lovable', model: lovableModel, priority: 4 });
+  // Last resort: DeepSeek (DEEPSEEK_API_KEY) — substitui o Lovable AI Gateway
+  const deepseekApiKey = Deno.env.get(AI_API_KEY_ENV);
+  if (deepseekApiKey) {
+    chain.push({
+      apiKey: deepseekApiKey,
+      provider: 'deepseek',
+      model: aiModel(requestedModel),
+      priority: 4,
+    });
   }
 
   return chain.sort((a, b) => a.priority - b.priority);
 }
 
 // ═══ Call with Fallback — tries each provider in chain (com Circuit Breaker) ═══
+import {
+  AI_API_KEY_ENV,
+  AI_CHAT_COMPLETIONS_URL,
+  aiCostUsd,
+  aiModel,
+} from '../_shared/ai-provider.ts';
 import { getBreaker } from '../_shared/circuitBreaker.ts';
 import { drainBreakerTransition } from '../_shared/breakerEvents.ts';
 
@@ -1071,11 +1081,13 @@ serve(async (req) => {
                   ? 'https://router.huggingface.co/v1/chat/completions'
                   : isLovable
                     ? 'https://ai.gateway.lovable.dev/v1/chat/completions'
-                    : isGoogle
-                      ? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
-                      : opt.provider === 'openrouter'
-                        ? 'https://openrouter.ai/api/v1/chat/completions'
-                        : 'https://api.openai.com/v1/chat/completions';
+                    : opt.provider === 'deepseek'
+                      ? AI_CHAT_COMPLETIONS_URL
+                      : isGoogle
+                        ? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
+                        : opt.provider === 'openrouter'
+                          ? 'https://openrouter.ai/api/v1/chat/completions'
+                          : 'https://api.openai.com/v1/chat/completions';
               const headers: Record<string, string> = { 'Content-Type': 'application/json' };
               if (isAnthropic) {
                 headers['x-api-key'] = opt.apiKey;
@@ -1104,6 +1116,7 @@ serve(async (req) => {
                 max_tokens,
                 stream: true,
               };
+              if (opt.provider === 'deepseek') streamBody.stream_options = { include_usage: true };
               // Disable thinking for Qwen3/DeepSeek to save tokens
               if (
                 isHuggingFace &&

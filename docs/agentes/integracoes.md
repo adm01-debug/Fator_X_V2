@@ -28,7 +28,8 @@ mas falha de outro jeito (lê o `bytea` encriptado sem decriptar):
 | `src/services/whatsappOutboundService.ts:70,77`                               | lê `encrypted_value` (coluna real, `bytea` pgp-encriptado) direto como string, sem decriptar — nunca lê `key_value` |
 
 **Efeito no `llm-gateway`:** a cadeia de fallback só monta 2 opções, as duas por env (`HF_API_TOKEN`,
-`LOVABLE_API_KEY`) → **Lovable AI Gateway é o único provedor LLM realmente ligado hoje**. Mexer em provedor de
+`DEEPSEEK_API_KEY`) → **DeepSeek é o provedor LLM das edges** (`_shared/ai-provider.ts`; trocou o Lovable AI Gateway,
+cuja `LOVABLE_API_KEY` nunca existiu no projeto `qdlnzopxrlsoljcrcmzv`). Mexer em provedor de
 LLM sem corrigir isso é trabalho perdido.
 
 ## Por integração — o que checar antes de tocar
@@ -43,7 +44,9 @@ LLM sem corrigir isso é trabalho perdido.
   trigger de autoreply posta no projeto errado (`20260721155600_*.sql:65`) e engole o erro com
   `EXCEPTION WHEN OTHERS THEN RETURN NEW` — nada aparece em log. Envio direto do navegador com credencial de
   provedor está classificado como MORTO: não reanime sem decisão do dono.
-- **HuggingFace / Lovable AI Gateway / Sentry**: os três ligados por env. Mudança aqui afeta custo → avise.
+- **HuggingFace / DeepSeek / Sentry**: os três ligados por env. Mudança aqui afeta custo → avise. Ainda presas ao
+  Lovable (DeepSeek sem suporte confirmado a imagem, áudio ou TTS): `visual-search`, `browser-agent-run` (imagem),
+  `voice-transcribe` (áudio) e `notebook-podcast-generate` (TTS).
 - **MCP**: `datahub-mcp-server` é servidor próprio (edge). O `agent.json` da raiz aponta 3 MCPs em
   `*.workers.dev` (Bitrix24, n8n, chrome) que são SUGERIDO — não trate como infraestrutura do produto.
   `MCPServerManager` (registro de servidores externos) está MORTO.
