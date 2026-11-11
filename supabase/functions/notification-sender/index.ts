@@ -184,14 +184,32 @@ function renderTemplate(template: string, vars: Record<string, unknown>): string
 }
 
 async function sendEmail(
-  _subject: string,
-  _body: string,
-  _to: string,
+  subject: string,
+  body: string,
+  to: string,
 ): Promise<{ success: boolean; error?: string }> {
-  // Integration point: connect to SMTP, SendGrid, Resend, etc.
-  // Using standard logging which follows no-console rules in non-deno environments
-  // In Deno Edge Functions, console.log is the standard for Supabase Logs visibility
-  return { success: true };
+  // Resend (domínio promobrindes.com.br verificado). Remetente sobrescrevível por EMAIL_FROM.
+  const apiKey = Deno.env.get('RESEND_API_KEY');
+  if (!apiKey) return { success: false, error: 'Email API not configured' };
+  const from = Deno.env.get('EMAIL_FROM') || 'Fator X <noreply@promobrindes.com.br>';
+
+  try {
+    const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
+    const resp = await withRetry(
+      () =>
+        fetchWithTimeout('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+          body: JSON.stringify({ from, to: [to], subject: subject || 'Notificação', text: body }),
+          timeoutMs: 15_000,
+        }),
+      { attempts: 2, baseMs: 400, capMs: 3_000 },
+    );
+    if (!resp.ok) return { success: false, error: `Email API returned ${resp.status}` };
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : 'Email send failed' };
+  }
 }
 
 async function sendWhatsApp(

@@ -405,8 +405,8 @@
     },
     {
       "path": "supabase/functions/notification-sender/index.ts",
-      "bytes": 10246,
-      "sha256": "bb7cb8c89ead0cefe5dca615bcf10ee1e246e4660314c6dc73a37176d76d802e"
+      "bytes": 11036,
+      "sha256": "61bf82704a3a2732fe6ed827919de287347cfdee333d78c06c42b996bcbbbf02"
     },
     {
       "path": "supabase/functions/openclaw-proxy/index.ts",
@@ -1657,7 +1657,7 @@
       "name": "notification-sender",
       "entrypoint": "supabase/functions/notification-sender/index.ts",
       "verify_jwt": true,
-      "source_sha256": "9c48de8d71354ba414be47fbc2669dc8f1f91293337969bc4be45925021f8d6a",
+      "source_sha256": "a3b65f1f739067f01505fb3c425e1d1d9bacde8bc3d680d32851f5fb66ee8bd8",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2598,5 +2598,5 @@
       ]
     }
   ],
-  "manifest_sha256": "98b45e49efd6c1321a41560fb794c1ea0713298a30acf9f78095de4d326720e0"
+  "manifest_sha256": "c2482f17041e34e4772dd598a2168edc353d524cc54c7041ab1112c99de7deb3"
 }
