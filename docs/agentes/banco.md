@@ -31,13 +31,13 @@ estado de produção a partir de migration ou documento.
 
 ### IDs de outros projetos ainda dentro do código
 
-| ID                     | Onde                                                                                                                                                                                            | O que é                                                                              |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `tdprnylgyrogbbhgdoik` | `src/config/env.ts:28` (default de `VITE_SUPABASE_PROJECT_ID`), `index.html:17` (dns-prefetch), `scripts/deploy-edge-functions.sh:8`, `scripts/set-secrets.sh:8`, `scripts/generate-types.sh:8` | "banco externo" da arquitetura dual; os 3 scripts fazem `supabase link` **neste** ID |
-| `fqdohnmgmtaycfwsioik` | `supabase/migrations/20260721155600_*.sql:65`, `20260722112903_*.sql:132`, `20260722115149_*.sql:4`, `src/pages/WidgetBuilderPage.tsx:41`                                                       | destino errado de alertas de segurança e WhatsApp em triggers                        |
+| ID                     | Onde                                                                                                | O que é                                                       |
+| ---------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `fqdohnmgmtaycfwsioik` | `supabase/migrations/20260721155600_*.sql:65`, `20260722112903_*.sql:132`, `20260722115149_*.sql:4` | destino errado de alertas de segurança e WhatsApp em triggers |
 
-Antes de rodar qualquer um desses scripts, **confira o `PROJECT_ID` no topo do arquivo**: rodar
-`deploy-edge-functions.sh` ou `set-secrets.sh` como estão publica código e segredos em outro projeto.
+`tdprnylgyrogbbhgdoik` saiu do código na PR #80 (scripts, fallbacks, widget, dns-prefetch). As 3 migrations acima
+são histórico: em produção nenhuma função ou cron guarda URL de outro projeto (consulta em `pg_proc`/`cron.job`,
+11/11/2026); só reaparecem se forem reaplicadas do zero.
 
 ## Arquitetura de dois clients (ADR 006)
 
