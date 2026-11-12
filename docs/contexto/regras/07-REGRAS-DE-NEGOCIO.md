@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b8f1e8324b` · branch `main` · 2026-11-11 23:46 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d53c9e3cf2` · branch `main` · 2026-11-12 01:25 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1270,7 +1270,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `accepted_risk` | compara | `src/services/pentestService.ts` |
 | `status` | `acknowledged` | compara | `src/pages/VulnerabilitiesPage.tsx` |
 | `status` | `acting` | escreve | `supabase/functions/smolagent-runtime/index.ts` |
-| `status` | `active` | compara, escreve, filtra | `src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agents/traces/AgentContextPanel.tsx`<br>`src/components/automation/CredentialVaultPanel.tsx`<br>`src/components/automation/WebhookManagerPanel.tsx`<br>`src/components/crm/CadencesPanel.tsx`<br>… +31 |
+| `status` | `active` | compara, escreve, filtra | `src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agents/traces/AgentContextPanel.tsx`<br>`src/components/automation/CredentialVaultPanel.tsx`<br>`src/components/automation/WebhookManagerPanel.tsx`<br>`src/components/crm/CadencesPanel.tsx`<br>… +30 |
 | `status` | `added` | compara | `src/components/agents/versioning/GuardrailsDiffPanel.tsx`<br>`src/components/agents/versioning/VersionComparePanel.tsx` |
 | `status` | `aguardando_retry` | compara | `src/components/skills/SkillReclassifyDialog.tsx` |
 | `status` | `all` | compara | `src/services/crmService.ts`<br>`src/services/skillHarvestService.ts` |
@@ -2210,7 +2210,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
   ```
 - **ChatInputSchema** (`supabase/functions/widget-proxy/index.ts`, z.object):
   ```ts
-  { message: z.string().min(1).max(8000), agent_id: z.string().uuid(), session_id: z.string().uuid().optional(), }
+  { message: z.string().min(1).max(8000), agent_id: z.string().uuid(), session_id: z.string().min(1).max(100).optional(), }
   ```
 - **WorkflowInput** (`supabase/functions/workflow-engine-v2/index.ts`, z.object):
   ```ts
@@ -3598,7 +3598,6 @@ _nenhum item encontrado_
 | 1 | `src/services/workflowCheckpointService.ts` |
 | 1 | `src/services/workspaceContextService.ts` |
 | 1 | `supabase/functions/_shared/auth.ts` |
-| 100 | `supabase/functions/_shared/auth.ts` |
 | 50 | `supabase/functions/_shared/memory-tiers.ts` |
 | 100 | `supabase/functions/_shared/skills.ts` |
 | 20 | `supabase/functions/a2a-server/index.ts` |
@@ -4326,7 +4325,6 @@ _nenhum item encontrado_
 | `sendWhatsAppMessage` | `src/services/whatsappOutboundService.ts` |
 | `sendWhatsAppTemplate` | `src/services/whatsappOutboundService.ts` |
 | `sendWhatsAppText` | `src/services/whatsappOutboundService.ts` |
-| `invoke(` | `src/services/widgetService.ts` |
 | `invoke(` | `src/services/workflowsService.ts` |
 | `slack.com` | `src/services/presets/connectorPresets.ts` |
 | `notify` | `src/services/types/retryEngineTypes.ts` |

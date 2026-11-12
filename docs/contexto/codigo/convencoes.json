@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)",
    "feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)",
    "style(manutencao): aplica correcoes locais verificadas (#77)",
    "fix(config): aponta todas as referências de projeto Supabase para qdlnzopxrlsoljcrcmzv (#80)",
-   "fix(contexto): autentica o fetch da branch contexto em repo privado (#75)",
-   "feat(automacao): porta os scripts autônomos de estado real do Zapp Web V2 (#71)"
+   "fix(contexto): autentica o fetch da branch contexto em repo privado (#75)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

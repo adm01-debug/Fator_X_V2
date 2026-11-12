@@ -8,7 +8,8 @@
   "openclaw-webhook",
   "rag-embed-backfill",
   "slack-events-webhook",
-  "whatsapp-router"
+  "whatsapp-router",
+  "widget-proxy"
  ],
  "shared": [
   "supabase/functions/_shared/ai-provider.ts",
@@ -2587,7 +2588,6 @@
    ],
    "chamada_por_edges": [
     "a2a-server",
-    "widget-proxy",
     "workflow-engine-v2"
    ],
    "chamada_por_sql_ou_cron": false,
@@ -2966,26 +2966,27 @@
    "nome": "widget-proxy",
    "entrada": "supabase/functions/widget-proxy/index.ts",
    "arquivos": 1,
-   "linhas": 93,
-   "verify_jwt": true,
+   "linhas": 194,
+   "verify_jwt": false,
    "metodos": [
     "GET",
     "OPTIONS",
     "POST"
    ],
-   "tabelas": [],
+   "tabelas": [
+    "agents"
+   ],
    "rpcs": [],
    "env": [
-    "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "buckets": [],
-   "chama_edges": [
-    "smolagent-runtime"
-   ],
+   "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [
-    "mod.ts"
+    "ai-provider.ts",
+    "mod.ts",
+    "retry.ts"
    ],
    "chamada_pelo_front": [
     "src/pages/WidgetBuilderPage.tsx",

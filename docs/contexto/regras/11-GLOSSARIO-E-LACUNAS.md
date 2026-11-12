@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b8f1e8324b` · branch `main` · 2026-11-11 23:46 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d53c9e3cf2` · branch `main` · 2026-11-12 01:25 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -396,11 +396,11 @@ _nenhum item encontrado_
 | coluna | coluna `title` usada no código não existe no schema de `document_ingestions` |  |
 | coluna | coluna `email` usada no código não existe no schema de `workspace_members` |  |
 | coluna | coluna `knowledge_base_id` usada no código não existe no schema de `chunks` |  |
-| coluna | coluna `api_key_hash` usada no código não existe no schema de `deploy_connections` |  |
 | coluna | coluna `agent_id` usada no código não existe no schema de `agent_memories` |  |
 | coluna | coluna `metadata` usada no código não existe no schema de `agent_memories` |  |
 | coluna | coluna `key_value` usada no código não existe no schema de `workspace_secrets` |  |
 | coluna | coluna `user_id` usada no código não existe no schema de `session_traces` |  |
+| coluna | coluna `agent_id` usada no código não existe no schema de `api_keys` |  |
 | coluna | coluna `avg_latency_ms` usada no código não existe no schema de `model_pricing` |  |
 | coluna | coluna `context_window` usada no código não existe no schema de `model_pricing` |  |
 | coluna | coluna `label` usada no código não existe no schema de `model_pricing` |  |

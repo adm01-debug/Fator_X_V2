@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b8f1e8324ba237838487e3f7f77260f18f76c1d4` (2026-11-11T20:42:12-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d53c9e3cf2997349f84e43e3a0f0360fa9466823` (2026-11-11T22:23:36-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1968 |
 | arquivos_codigo | 1446 |
-| linhas_codigo | 316264 |
+| linhas_codigo | 316348 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -359,7 +359,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `webhook-receiver` — tabelas: webhook_endpoints, webhook_events; chamada por 1 arquivo(s) do front
 - `whatsapp-router` (verify_jwt=false) — tabelas: openclaw_events, openclaw_whatsapp_instances, openclaw_whatsapp_messages; chamada por 0 arquivo(s) do front, por SQL/cron
 - `whatsapp-webhook` — tabelas: agent_routing_config, openclaw_events, trace_events, whatsapp_webhook_events, workspace_secrets; chamada por 1 arquivo(s) do front
-- `widget-proxy` — tabelas: -; chamada por 3 arquivo(s) do front
+- `widget-proxy` (verify_jwt=false) — tabelas: agents; chamada por 3 arquivo(s) do front
 - `workflow-engine-v2` — tabelas: workflow_runs, workflow_steps, workflows; chamada por 2 arquivo(s) do front
 
 ## Cron jobs (pg_cron / vercel)
@@ -404,11 +404,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
 - hosts mais citados: router.huggingface.co, ai.gateway.lovable.dev, api.openai.com, openrouter.ai, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.slack.com, app.promobrindes.com.br, exemplo.com
-- webhooks recebidos: migrate-helper, openclaw-webhook, rag-embed-backfill, slack-events-webhook, whatsapp-router
-- env de integração (só nomes): ANTHROPIC_API_KEY, API_KEY_HMAC_SECRET, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_WEBHOOK_TOKEN, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
+- webhooks recebidos: migrate-helper, openclaw-webhook, rag-embed-backfill, slack-events-webhook, whatsapp-router, widget-proxy
+- env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_WEBHOOK_TOKEN, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
 
 ## Permissões / papéis
-- papéis no código: user (60), button (46), system (41), status (31), alert (16), assistant (15), group (7), admin (6), listbox (6), option (6), tab (6), tablist (6), progressbar (5), radio (5), radiogroup (5), dialog (4), region (4), agent (2), anon (2), img (2), log (2), navigation (2), service_role (2), article (1), ausente (1), authenticated (1), banner (1), combobox (1), editor (1), finance (1), link (1), list (1), logistics (1), manager (1), menuitem (1), presentation (1), purchasing (1), sales (1), searchbox (1), separator (1), string (1), sup (1), superadmin (1), support (1), switch (1), textbox (1), tool (1), toolbar (1), viewer (1), workspace_admin (1)
+- papéis no código: user (61), button (46), system (42), status (31), alert (16), assistant (15), group (7), admin (6), listbox (6), option (6), tab (6), tablist (6), progressbar (5), radio (5), radiogroup (5), dialog (4), region (4), agent (2), anon (2), img (2), log (2), navigation (2), service_role (2), article (1), ausente (1), authenticated (1), banner (1), combobox (1), editor (1), finance (1), link (1), list (1), logistics (1), manager (1), menuitem (1), presentation (1), purchasing (1), sales (1), searchbox (1), separator (1), string (1), sup (1), superadmin (1), support (1), switch (1), textbox (1), tool (1), toolbar (1), viewer (1), workspace_admin (1)
 - enums de papel: nenhum
 - guards: src/components/agent-builder/GuardrailsConfig.tsx, src/components/agent-builder/GuardrailsPolicyEditor.tsx, src/components/agent-builder/modules/GuardrailsModule.tsx, src/components/agents/versioning/GuardrailsDiffPanel.tsx, src/components/layout/AuthGuard.tsx, src/components/rbac/AccessControl.tsx, src/components/rbac/ProtectedRoute.tsx, src/components/security/GuardrailPolicies.tsx, src/components/security/GuardrailsLibrary.tsx, src/components/security/GuardrailsSimulator.tsx · rotas protegidas: 39 · públicas: /, /*, /a2a, /ab-test, /agent-builder, /agent-evals, /agent-experiments, /agent-sessions, /agents, /agents/:id, /agents/:id/alerts, /agents/:id/traces, /agents/:id/versions, /agents/:id/versions/v/:versionId, /agents/installed-skills, /agents/new, /agents/swarm, /agents/templates, /agents/workflows, /ai-studio, /arena, /automation, /automations, /brain, /browser-agent, /budgets, /builder, /builder/:id, /canary, /chat, /chat/:agentId, /code-interpreter, /computer-use, /cost-optimizer, /cost-simulator, /creator-payouts, /crm, /dashboard, /data-storage, /datahub, /debugger, /deploy/openclaw, /deployments, /docs/partitioning, /docs/typography, /email-triggers, /entity-resolution, /evaluations, /fine-tuning, /governance, /graph-executions, /help/:slug, /help/:slug/:articleSlug, /help/:slug/forum, /help/:slug/forum/:threadId, /knowledge, /knowledge-decay, /knowledge-graph, /knowledge-management, /knowledge-management/article/:id, /llm-cost-by-caller, /marketplace-pro, /mcp-servers, /memory, /mobile-sdk, /monitoring, /monitoring/metrics, /nlp, /observability, /observability/cost-anomalies, /observability/game-days, /observability/game-days/:id/live, /observability/oncall, /observability/playbooks, /observability/postmortems, /observability/postmortems/:id, /observability/slo, /observability/synthetic, /openclaw, /openclaw/templates, /oracle, /orchestration, /prompts, /prompts/:id, /prompts/experiments, /replay, /reset-password, /routing, /search, /security/chaos-experiments, /share/n, /simulation, /skills, /skills/audit, /skills/composer, /skills/library, /smolagent, /super-cerebro, /super-cerebro/e2ee-simulacao, /super-cerebro/n/:notebookId/note/:noteId, /synthetic-data, /system-jobs, /tools, /traces, /vendas, /vision, /voice, /voice-agents, /voice-telephony, /webhook-events, /widget-builder, /workflows
 - feature flags: ENABLE_AUTO_CLASSIFY, ENABLE_HF_RERANKER, ENABLE_LANGUAGE_DETECTION, ENABLE_ML_INJECTION_CHECK, ENABLE_TOXICITY_CHECK, ENABLE_AGENTIC_GUARDRAIL, ENABLE_EMOTION_DETECTION, ENABLE_HALLUCINATION_CHECK, ENABLE_HF_EMBEDDINGS, ENABLE_KEYPHRASE_EXTRACTION, ENABLE_OUTPUT_TOXICITY, ENABLE_PII_ML, FEATURE_X, nova-tela, novo-inbox
@@ -431,8 +431,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13755 nós · 36963 arestas · 868 comunidades · grafo do commit `b8f1e832`
-- comunidades maiores: react (323), lucide-react (283), dialog.tsx (230), checkRateLimit (163), cn (148), App.tsx (140), SkillHarvestPage.tsx (113), ui/index.ts (105), graph-execute/index.ts (103), useAgentBuilderStore (97), mod.ts (96), dependencies (90)
+- 13759 nós · 36971 arestas · 880 comunidades · grafo do commit `d53c9e3c`
+- comunidades maiores: lucide-react (343), react (302), App.tsx (297), logger.ts (200), button.tsx (193), ref_https (147), fromTable (131), nexus-complete-test-suite.test.ts (112), cn (108), requireEnv (106), ref_node_fs (101), templateSkillLinkService.ts (99)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -443,6 +443,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - AGENTS.md (4)
 - CHANGELOG.md (3)
 - ESTADO-ATUAL.md (3)
+- supabase/deployment-manifest.json (3)
 - supabase/functions/agent-workflow-runner/index.ts (3)
 - supabase/functions/code-interpreter-execute/index.ts (3)
 - supabase/functions/crm-enrich/index.ts (3)
@@ -451,7 +452,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - supabase/functions/kb-analyze-gaps/index.ts (3)
 - supabase/functions/kb-translate-article/index.ts (3)
 - supabase/functions/voice-synthesize/index.ts (3)
-- .github/workflows/contexto.yml (2)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -573,6 +573,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-11 `d53c9e3c` fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)
 - 2026-11-11 `b8f1e832` feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)
 - 2026-11-11 `fd6c7ffc` style(manutencao): aplica correcoes locais verificadas (#77)
 - 2026-11-11 `898e6abc` fix(config): aponta todas as referências de projeto Supabase para qdlnzopxrlsoljcrcmzv (#80)
@@ -587,7 +588,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `b0a3cb55` fix(deps): Security Audit da main volta a passar (0 critical em prod) (#68)
 - 2026-09-14 `e7a2c896` chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 6 updates (#60)
 - 2026-09-14 `43b3ceaf` chore(deps)(deps): bump @sentry/react in the sentry group (#57)
-- 2026-09-14 `133852ac` chore(deps)(deps): bump @supabase/supabase-js in the supabase group (#56)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

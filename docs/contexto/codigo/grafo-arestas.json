@@ -7273,7 +7273,9 @@
    "supabase/functions/_shared/webhookSignature.ts"
   ],
   "supabase/functions/widget-proxy/index.ts": [
-   "supabase/functions/_shared/mod.ts"
+   "supabase/functions/_shared/ai-provider.ts",
+   "supabase/functions/_shared/mod.ts",
+   "supabase/functions/_shared/retry.ts"
   ],
   "supabase/functions/workflow-engine-v2/index.ts": [
    "supabase/functions/_shared/mod.ts"

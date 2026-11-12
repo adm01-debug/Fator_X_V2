@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b8f1e8324ba237838487e3f7f77260f18f76c1d4",
+  "commit": "d53c9e3cf2997349f84e43e3a0f0360fa9466823",
   "branch": "main",
-  "data_commit": "2026-11-11T20:42:12-03:00",
+  "data_commit": "2026-11-11T22:23:36-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "d53c9e3c",
+    "data": "2026-11-11",
+    "assunto": "fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)"
+   },
    {
     "sha": "b8f1e832",
     "data": "2026-11-11",
@@ -126,14 +131,9 @@
     "sha": "670bc3cf",
     "data": "2026-09-05",
     "assunto": "Merge pull request #48 from adm01-debug/dependabot/npm_and_yarn/testing-library/user-event-14.6.4"
-   },
-   {
-    "sha": "7af45453",
-    "data": "2026-09-05",
-    "assunto": "Merge pull request #47 from adm01-debug/dependabot/npm_and_yarn/sentry-1899a56159"
    }
   ],
-  "arquivos_mudados_7d": 191,
+  "arquivos_mudados_7d": 193,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "package.json",
@@ -153,6 +153,10 @@
    },
    {
     "pasta": "AGENTS.md",
+    "mudancas": 3
+   },
+   {
+    "pasta": "supabase/deployment-manifest.json",
     "mudancas": 3
    },
    {
@@ -190,10 +194,6 @@
    {
     "pasta": "docs/contexto/regras",
     "mudancas": 2
-   },
-   {
-    "pasta": "scripts/automation.config.json",
-    "mudancas": 2
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -219,6 +219,10 @@
    },
    {
     "arquivo": "ESTADO-ATUAL.md",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/deployment-manifest.json",
     "mudancas": 3
    },
    {
@@ -292,16 +296,12 @@
    {
     "arquivo": "docs/auditoria-estado-2026-08/10-testes-e-ci.md",
     "mudancas": 2
-   },
-   {
-    "arquivo": "scripts/automation.config.json",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 10
+    "commits": 11
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1968,
   "arquivos_codigo": 1446,
-  "linhas_codigo": 316264,
+  "linhas_codigo": 316348,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -508,7 +508,7 @@
   },
   "src/services": {
    "arquivos": 166,
-   "linhas": 33152
+   "linhas": 33159
   },
   "src/stores": {
    "arquivos": 12,
@@ -528,7 +528,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 31919
+   "linhas": 31996
   },
   "tailwind.config.ts": {
    "arquivos": 1,

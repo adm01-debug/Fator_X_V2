@@ -5246,7 +5246,8 @@
     "incident-orchestrator",
     "llm-gateway",
     "test-runner",
-    "voice-synthesize"
+    "voice-synthesize",
+    "widget-proxy"
    ],
    "triggers": [
     "update_agents_updated_at"
@@ -5688,7 +5689,9 @@
     "so_no_types": []
    },
    "usada_no_front": 1,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "_shared"
+   ],
    "triggers": [
     "update_api_keys_updated_at"
    ],
@@ -15214,9 +15217,7 @@
     "so_no_types": []
    },
    "usada_no_front": 1,
-   "usada_em_edges": [
-    "_shared"
-   ],
+   "usada_em_edges": [],
    "triggers": [
     "update_deploy_connections_updated_at"
    ],

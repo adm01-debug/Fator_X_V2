@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b8f1e8324ba237838487e3f7f77260f18f76c1d4",
+  "sha": "d53c9e3cf2997349f84e43e3a0f0360fa9466823",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-11 23:46 UTC",
+  "generated_at": "2026-11-12 01:25 UTC",
   "files_total": 1973,
   "code_files": 1779,
-  "code_lines": 345198
+  "code_lines": 345282
  },
  "version": "1.3.2",
- "facts_hash": "dae7e665d9e76f11",
+ "facts_hash": "344b23809011aa8f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -226,7 +226,8 @@
     "whatsapp-router",
     "rag-embed-backfill",
     "slack-events-webhook",
-    "migrate-helper"
+    "migrate-helper",
+    "widget-proxy"
    ],
    "auth": {}
   },
@@ -50813,7 +50814,6 @@
      "validate-access",
      "visual-search",
      "webhook-receiver",
-     "widget-proxy",
      "workflow-engine-v2"
     ],
     "rpc_transitive": [
@@ -51278,7 +51278,6 @@
     ],
     "invokes_transitive": [
      "health-check",
-     "widget-proxy",
      "workflow-engine-v2"
     ],
     "rpc_transitive": [
@@ -52693,7 +52692,7 @@
     "tables": [
      "agent_usage",
      "agents",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -52723,7 +52722,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -52752,7 +52751,7 @@
      "agent_eval_runs",
      "agent_usage",
      "agents",
-     "deploy_connections",
+     "api_keys",
      "idempotency_keys",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -52787,7 +52786,7 @@
      "agent_workflow_runs",
      "agent_workflows",
      "agents",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "spans",
      "traces",
@@ -52815,7 +52814,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -52840,9 +52839,9 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "automation_logs",
      "automation_rules",
-     "deploy_connections",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -52869,7 +52868,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members",
@@ -52899,7 +52898,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members",
@@ -52932,9 +52931,9 @@
     "tables": [
      "agent_routing_config",
      "agent_usage",
+     "api_keys",
      "bitrix24_webhook_events",
      "crm_activities",
-     "deploy_connections",
      "openclaw_events",
      "trace_events",
      "webhook_delivery_logs",
@@ -52959,8 +52958,8 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "browser_sessions",
-     "deploy_connections",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -52988,8 +52987,8 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "browser_sessions",
-     "deploy_connections",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53015,8 +53014,8 @@
      "agent_traces",
      "agent_usage",
      "agents",
+     "api_keys",
      "chunks",
-     "deploy_connections",
      "documents",
      "entity_resolution_logs",
      "knowledge_bases",
@@ -53053,9 +53052,9 @@
      "agent_traces",
      "agent_usage",
      "agents",
+     "api_keys",
      "chunks",
      "collections",
-     "deploy_connections",
      "knowledge_bases",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -53084,8 +53083,8 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "code_executions",
-     "deploy_connections",
      "idempotency_keys",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -53115,7 +53114,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53142,7 +53141,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "model_pricing",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -53166,8 +53165,8 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "crm_activities",
-     "deploy_connections",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members",
@@ -53198,6 +53197,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
+     "api_keys",
      "crm_activities",
      "crm_cadence_enrollments",
      "crm_cadence_runs",
@@ -53206,7 +53206,6 @@
      "crm_companies",
      "crm_contacts",
      "crm_deals",
-     "deploy_connections",
      "openclaw_events",
      "slack_channel_routes",
      "webhook_delivery_logs",
@@ -53236,10 +53235,10 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "crm_activities",
      "crm_companies",
      "crm_contacts",
-     "deploy_connections",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53263,9 +53262,9 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "cron_schedule_executions",
      "cron_schedules",
-     "deploy_connections",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53291,7 +53290,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53318,7 +53317,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53348,7 +53347,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53375,10 +53374,10 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "audit_events",
      "chunks",
      "collections",
-     "deploy_connections",
      "document_ingestions",
      "documents",
      "openclaw_events",
@@ -53416,9 +53415,9 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
+     "api_keys",
      "audit_events",
      "chunks",
-     "deploy_connections",
      "documents",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -53449,7 +53448,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "dr_drills",
      "dr_snapshots",
      "openclaw_events",
@@ -53474,7 +53473,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "eval_runs",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -53501,7 +53500,7 @@
     "tables": [
      "agent_usage",
      "agents",
-     "deploy_connections",
+     "api_keys",
      "evaluation_runs",
      "openclaw_events",
      "test_cases",
@@ -53530,8 +53529,8 @@
      "agent_usage",
      "agent_workflows",
      "agents",
+     "api_keys",
      "automation_rules",
-     "deploy_connections",
      "documents",
      "kb_articles",
      "knowledge_bases",
@@ -53560,7 +53559,7 @@
      "agent_installed_skills",
      "agent_usage",
      "agents",
-     "deploy_connections",
+     "api_keys",
      "graph_executions",
      "idempotency_keys",
      "openclaw_events",
@@ -53588,7 +53587,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53611,7 +53610,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53634,7 +53633,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members",
@@ -53662,7 +53661,7 @@
     "tables": [
      "agent_traces",
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53685,7 +53684,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53711,8 +53710,8 @@
     "tables": [
      "agent_usage",
      "agents",
+     "api_keys",
      "chaos_experiments",
-     "deploy_connections",
      "incident_playbooks",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -53740,7 +53739,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "kb_query_gaps",
      "openclaw_events",
      "oracle_history",
@@ -53765,7 +53764,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "kb_articles",
      "kb_translations",
      "openclaw_events",
@@ -53793,9 +53792,9 @@
     "tables": [
      "agent_memories",
      "agent_usage",
+     "api_keys",
      "consent_records",
      "data_deletion_requests",
-     "deploy_connections",
      "openclaw_events",
      "security_events",
      "session_traces",
@@ -53823,9 +53822,9 @@
      "agent_traces",
      "agent_usage",
      "agents",
+     "api_keys",
      "audit_events",
      "budgets",
-     "deploy_connections",
      "model_pricing",
      "openclaw_events",
      "session_traces",
@@ -53884,7 +53883,7 @@
     "tables": [
      "agent_memories",
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53908,7 +53907,7 @@
     "tables": [
      "agent_memories",
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53952,7 +53951,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -53975,8 +53974,8 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "collections",
-     "deploy_connections",
      "document_ingestions",
      "notebook_notes",
      "notebook_podcasts",
@@ -54007,7 +54006,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "notification_templates",
      "notifications",
      "openclaw_events",
@@ -54044,7 +54043,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "idempotency_keys",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -54099,7 +54098,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54128,7 +54127,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "oracle_history",
      "webhook_delivery_logs",
@@ -54156,7 +54155,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54179,7 +54178,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54206,7 +54205,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "queue_items",
      "task_queues",
@@ -54237,7 +54236,7 @@
     "tables": [
      "agent_installed_skills",
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54261,7 +54260,7 @@
     "tables": [
      "agent_memories_v2",
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54288,7 +54287,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members",
@@ -54315,8 +54314,8 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "chunks",
-     "deploy_connections",
      "documents",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -54343,7 +54342,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members",
@@ -54370,7 +54369,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members",
@@ -54400,7 +54399,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "replay_forks",
      "webhook_delivery_logs",
@@ -54424,7 +54423,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "sbom_components",
      "sbom_snapshots",
@@ -54451,8 +54450,8 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "chunks",
-     "deploy_connections",
      "documents",
      "openclaw_events",
      "webhook_delivery_logs",
@@ -54478,7 +54477,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54501,7 +54500,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54524,7 +54523,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "skill_harvest_candidates",
      "skill_harvest_runs",
@@ -54551,8 +54550,8 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
+     "api_keys",
      "audit_events",
-     "deploy_connections",
      "openclaw_events",
      "slack_agent_notifications",
      "webhook_delivery_logs",
@@ -54580,8 +54579,8 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
+     "api_keys",
      "audit_events",
-     "deploy_connections",
      "openclaw_events",
      "slack_channel_routes",
      "slack_dispatch_dlq",
@@ -54608,7 +54607,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "slack_dispatch_dlq",
      "webhook_delivery_logs",
@@ -54632,7 +54631,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "slack_dispatch_dlq",
      "webhook_delivery_logs",
@@ -54659,8 +54658,8 @@
     "auth": "PÚBLICA (verify_jwt=false em config.toml)",
     "tables": [
      "agent_usage",
+     "api_keys",
      "audit_events",
-     "deploy_connections",
      "openclaw_events",
      "slack_bot_bindings",
      "slack_workspace_config",
@@ -54688,7 +54687,7 @@
     "tables": [
      "agent_memories_v2",
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "slack_rag_sources",
      "webhook_delivery_logs",
@@ -54714,8 +54713,8 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
+     "api_keys",
      "audit_events",
-     "deploy_connections",
      "openclaw_events",
      "slack_workspace_config",
      "webhook_delivery_logs",
@@ -54741,7 +54740,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54765,7 +54764,7 @@
     "tables": [
      "agent_traces",
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54794,7 +54793,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "synthetic_checks",
      "synthetic_results",
@@ -54820,7 +54819,7 @@
     "tables": [
      "agent_usage",
      "agents",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54846,7 +54845,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54875,7 +54874,7 @@
     "tables": [
      "access_blocked_log",
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "geo_allowed_countries",
      "ip_whitelist",
      "openclaw_events",
@@ -54900,7 +54899,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -54925,7 +54924,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "voice_sessions",
      "webhook_delivery_logs",
@@ -54951,7 +54950,7 @@
     "tables": [
      "agent_usage",
      "agents",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "voice_sessions",
      "webhook_delivery_logs",
@@ -54975,7 +54974,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "voice_sessions",
      "webhook_delivery_logs",
@@ -54999,7 +54998,7 @@
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "webhook_endpoints",
@@ -55024,7 +55023,7 @@
     "auth": "PÚBLICA (verify_jwt=false em config.toml)",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "openclaw_whatsapp_instances",
      "openclaw_whatsapp_messages",
@@ -55051,7 +55050,7 @@
     "tables": [
      "agent_routing_config",
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "trace_events",
      "webhook_delivery_logs",
@@ -55081,21 +55080,21 @@
      "OPTIONS",
      "POST"
     ],
-    "auth": "service_role (ignora RLS) + valida JWT do usuário",
+    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "agents",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
     ],
     "env": [
-     "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
     "external": [],
     "invokes": [],
-    "doc": "═══════════════════════════════════════════════════════════════ Nexus Agents Studio — Widget Proxy ═══════════════════════════════════════════════════════════════ API endpoint for the embeddable web chat widget. <script src=\"https://nexus.app/widget/{agent_id}.js\"></script> Reference: Flowise embed …",
+    "doc": "",
     "errors": [],
     "side_effects": [],
     "webhook_events": [],
@@ -55110,7 +55109,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "agent_usage",
-     "deploy_connections",
+     "api_keys",
      "openclaw_events",
      "webhook_delivery_logs",
      "workflow_runs",
@@ -58239,7 +58238,7 @@
   {
    "module": "src/services",
    "files": 166,
-   "lines": 33152,
+   "lines": 33159,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -58750,7 +58749,7 @@
   {
    "module": "supabase/functions",
    "files": 134,
-   "lines": 31919,
+   "lines": 31996,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -58766,6 +58765,7 @@
     "agent_workflow_runs",
     "agent_workflows",
     "agents",
+    "api_keys",
     "audit_events",
     "automation_logs",
     "automation_rules",
@@ -58788,7 +58788,6 @@
     "cron_schedule_executions",
     "cron_schedules",
     "data_deletion_requests",
-    "deploy_connections",
     "document_ingestions",
     "documents",
     "dr_drills",
@@ -59404,6 +59403,7 @@
      "supabase/functions/llm-gateway/index.ts",
      "supabase/functions/test-runner/index.ts",
      "supabase/functions/voice-synthesize/index.ts",
+     "supabase/functions/widget-proxy/index.ts",
      "tests/rls/personas.test.ts"
     ],
     "update": [
@@ -59443,6 +59443,7 @@
    "api_keys": {
     "select": [
      "src/services/securityService.ts",
+     "supabase/functions/_shared/auth.ts",
      "tests/rls/personas.test.ts"
     ],
     "insert": [
@@ -59867,8 +59868,7 @@
    },
    "deploy_connections": {
     "select": [
-     "src/services/deploymentsService.ts",
-     "supabase/functions/_shared/auth.ts"
+     "src/services/deploymentsService.ts"
     ],
     "update": [
      "src/services/deploymentsService.ts"
@@ -61412,13 +61412,16 @@
     "title"
    ],
    "api_keys": [
+    "agent_id",
     "created_at",
     "id",
     "is_active",
+    "key_hash",
     "key_prefix",
     "last_used_at",
     "name",
-    "scopes"
+    "scopes",
+    "workspace_id"
    ],
    "asset_audits": [
     "asset_id"
@@ -61628,14 +61631,12 @@
    ],
    "deploy_connections": [
     "agent_id",
-    "api_key_hash",
     "channel",
     "error_message",
     "id",
     "last_message_at",
     "message_count",
-    "status",
-    "workspace_id"
+    "status"
    ],
    "document_ingestion_events": [
     "ingestion_id"
@@ -62292,9 +62293,6 @@
    "ANTHROPIC_API_KEY": [
     "scripts/regras_negocio/generate.py"
    ],
-   "API_KEY_HMAC_SECRET": [
-    "supabase/functions/_shared/auth.ts"
-   ],
    "BITRIX24_CLIENT_ID": [
     "supabase/functions/bitrix24-oauth/index.ts"
    ],
@@ -62577,7 +62575,6 @@
     "supabase/functions/openclaw-proxy/index.ts",
     "supabase/functions/openclaw-webhook/index.ts",
     "supabase/functions/queue-worker/index.ts",
-    "supabase/functions/widget-proxy/index.ts",
     "tests/rls/setup.ts"
    ],
    "SUPABASE_SNAPSHOT_PUBLICACAO": [
@@ -63304,9 +63301,6 @@
    ],
    "webhook-receiver": [
     "src/services/webhookTriggerService.ts"
-   ],
-   "widget-proxy": [
-    "src/services/widgetService.ts"
    ],
    "workflow-engine-v2": [
     "src/services/approvalService.ts",
@@ -64143,10 +64137,6 @@
     "column": "knowledge_base_id"
    },
    {
-    "table": "deploy_connections",
-    "column": "api_key_hash"
-   },
-   {
     "table": "agent_memories",
     "column": "agent_id"
    },
@@ -64161,6 +64151,10 @@
    {
     "table": "session_traces",
     "column": "user_id"
+   },
+   {
+    "table": "api_keys",
+    "column": "agent_id"
    },
    {
     "table": "model_pricing",
@@ -65346,7 +65340,7 @@
     "file": "supabase/functions/widget-proxy/index.ts",
     "name": "ChatInputSchema",
     "kind": "object",
-    "body": "{ message: z.string().min(1).max(8000), agent_id: z.string().uuid(), session_id: z.string().uuid().optional(), }",
+    "body": "{ message: z.string().min(1).max(8000), agent_id: z.string().uuid(), session_id: z.string().min(1).max(100).optional(), }",
     "refines": [],
     "chain": []
    },
@@ -71625,7 +71619,7 @@
    },
    {
     "file": "supabase/functions/_shared/auth.ts",
-    "text": "Uses API_KEY_HMAC_SECRET env var for HMAC validation."
+    "text": "The hash format must match src/services/securityService.ts (createApiKey): SHA-256 hex."
    },
    {
     "file": "supabase/functions/_shared/breakerEvents.ts",
@@ -94932,12 +94926,6 @@
     "kind": "compara"
    },
    {
-    "file": "supabase/functions/_shared/auth.ts",
-    "field": "status",
-    "value": "active",
-    "kind": "filtra"
-   },
-   {
     "file": "supabase/functions/_shared/circuitBreaker.ts",
     "field": "state",
     "value": "closed",
@@ -97905,6 +97893,18 @@
     "file": "supabase/functions/whatsapp-webhook/index.ts",
     "field": "status",
     "value": "ok",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/widget-proxy/index.ts",
+    "field": "role",
+    "value": "system",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/widget-proxy/index.ts",
+    "field": "role",
+    "value": "user",
     "kind": "escreve"
    },
    {
@@ -112974,10 +112974,6 @@
     "call": "sendWhatsAppText"
    },
    {
-    "file": "src/services/widgetService.ts",
-    "call": "invoke("
-   },
-   {
     "file": "src/services/workflowsService.ts",
     "call": "invoke("
    },
@@ -124453,10 +124449,6 @@
     "limit": "1"
    },
    {
-    "file": "supabase/functions/_shared/auth.ts",
-    "limit": "100"
-   },
-   {
     "file": "supabase/functions/_shared/memory-tiers.ts",
     "limit": "50"
    },
@@ -127218,7 +127210,6 @@
       "escreve:supabase/functions/llm-gateway/index.ts",
       "escreve:supabase/functions/voice-session/index.ts",
       "filtra:src/services/crmCadenceService.ts",
-      "filtra:supabase/functions/_shared/auth.ts",
       "filtra:supabase/functions/crm-cadence-runner/index.ts",
       "filtra:supabase/functions/cron-executor/index.ts",
       "filtra:supabase/functions/incident-orchestrator/index.ts",
@@ -128164,6 +128155,7 @@
       "escreve:supabase/functions/visual-search/index.ts",
       "escreve:supabase/functions/voice-synthesize/index.ts",
       "escreve:supabase/functions/voice-transcribe/index.ts",
+      "escreve:supabase/functions/widget-proxy/index.ts",
       "escreve:supabase/functions/workflow-engine-v2/index.ts",
       "escreve:tests/load/llm-gateway.k6.js"
      ],
@@ -128204,6 +128196,7 @@
       "escreve:supabase/functions/test-runner/index.ts",
       "escreve:supabase/functions/voice-synthesize/index.ts",
       "escreve:supabase/functions/voice-transcribe/index.ts",
+      "escreve:supabase/functions/widget-proxy/index.ts",
       "escreve:supabase/functions/workflow-engine-v2/index.ts"
      ],
      "assistant": [
@@ -132841,7 +132834,6 @@
    "supabase/functions/validate-access/index.ts",
    "supabase/functions/visual-search/index.ts",
    "supabase/functions/whatsapp-router/index.ts",
-   "supabase/functions/widget-proxy/index.ts",
    "supabase/migrations/20260405000001_shared_security_infrastructure.sql",
    "supabase/migrations/20260405000002_rbac_system.sql",
    "supabase/migrations/20260405000003_mcp_servers.sql",
@@ -133138,7 +133130,8 @@
    "whatsapp-router",
    "rag-embed-backfill",
    "slack-events-webhook",
-   "migrate-helper"
+   "migrate-helper",
+   "widget-proxy"
   ],
   "auth_config": {},
   "grants": [
@@ -139356,11 +139349,6 @@
    },
    {
     "kind": "coluna",
-    "msg": "coluna `api_key_hash` usada no código não existe no schema de `deploy_connections`",
-    "where": []
-   },
-   {
-    "kind": "coluna",
     "msg": "coluna `agent_id` usada no código não existe no schema de `agent_memories`",
     "where": []
    },
@@ -139377,6 +139365,11 @@
    {
     "kind": "coluna",
     "msg": "coluna `user_id` usada no código não existe no schema de `session_traces`",
+    "where": []
+   },
+   {
+    "kind": "coluna",
+    "msg": "coluna `agent_id` usada no código não existe no schema de `api_keys`",
     "where": []
    },
    {
@@ -171955,7 +171948,7 @@
   },
   "src/services/widgetService.ts": {
    "path": "src/services/widgetService.ts",
-   "lines": 101,
+   "lines": 108,
    "exports": [
     "interface WidgetEmbedSnippet",
     "interface WidgetChatInput",
@@ -171963,9 +171956,6 @@
     "function buildWidgetEmbedSnippet",
     "function sendWidgetChatMessage",
     "function checkWidgetEndpointAvailable"
-   ],
-   "invokes": [
-    "widget-proxy"
    ],
    "errors": [
     "agent_id and message are required"
@@ -171976,10 +171966,7 @@
      "value": "'qdlnzopxrlsoljcrcmzv'"
     }
    ],
-   "doc": "Nexus Agents Studio — Widget Service Wires the `widget-proxy` Edge Function to the UI. The widget-proxy EF serves an embeddable web chat widget script (`<script src=\".../widget-proxy/widget/{agent_id}.js\">`) and exposes a lightweight `/chat` endpoint the widget calls back into. Operators use this se …",
-   "side_effects": [
-    "invoke("
-   ]
+   "doc": "Nexus Agents Studio — Widget Service Wires the `widget-proxy` Edge Function to the UI. The widget-proxy EF serves an embeddable web chat widget script (`<script src=\".../widget-proxy/widget/{agent_id}.js\">`) and exposes a lightweight `/chat` endpoint the widget calls back into. Operators use this se …"
   },
   "src/services/workflowCheckpointService.ts": {
    "path": "src/services/workflowCheckpointService.ts",
@@ -178074,7 +178061,7 @@
   },
   "supabase/functions/_shared/auth.ts": {
    "path": "supabase/functions/_shared/auth.ts",
-   "lines": 216,
+   "lines": 192,
    "exports": [
     "interface AuthResult",
     "interface AuthError",
@@ -178092,7 +178079,7 @@
      "op": "select"
     },
     {
-     "table": "deploy_connections",
+     "table": "api_keys",
      "op": "select"
     },
     {
@@ -178106,15 +178093,14 @@
      "user_id",
      "workspace_id"
     ],
-    "deploy_connections": [
+    "api_keys": [
      "agent_id",
-     "api_key_hash",
-     "status",
+     "is_active",
+     "key_hash",
      "workspace_id"
     ]
    },
    "env": [
-    "API_KEY_HMAC_SECRET",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -178123,16 +178109,9 @@
     "Missing required env vars: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY",
     "Missing required env vars: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY"
    ],
-   "status_values": [
-    {
-     "field": "status",
-     "value": "active",
-     "kind": "filtra"
-    }
-   ],
    "rule_comments": [
     "FIX P2-02: HMAC-based API key validation (constant-time)",
-    "Uses API_KEY_HMAC_SECRET env var for HMAC validation."
+    "The hash format must match src/services/securityService.ts (createApiKey): SHA-256 hex."
    ],
    "doc": "Nexus Agents Studio — Shared Auth Helper (HARDENED) FIX P2-01: x-workspace-id header support FIX P2-02: HMAC-based API key validation (constant-time)",
    "calc_fns": [
@@ -178148,8 +178127,7 @@
     }
    ],
    "pagination": [
-    "1",
-    "100"
+    "1"
    ],
    "uses_service_role": true
   },
@@ -186441,22 +186419,47 @@
   },
   "supabase/functions/widget-proxy/index.ts": {
    "path": "supabase/functions/widget-proxy/index.ts",
-   "lines": 93,
+   "lines": 194,
+   "tables": [
+    {
+     "table": "agents",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "agents": [
+     "config",
+     "id",
+     "model",
+     "name",
+     "status",
+     "workspace_id"
+    ]
+   },
    "env": [
-    "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "zod": [
     {
      "name": "ChatInputSchema",
      "kind": "object",
-     "body": "{ message: z.string().min(1).max(8000), agent_id: z.string().uuid(), session_id: z.string().uuid().optional(), }",
+     "body": "{ message: z.string().min(1).max(8000), agent_id: z.string().uuid(), session_id: z.string().min(1).max(100).optional(), }",
      "refines": [],
      "chain": []
     }
    ],
-   "doc": "═══════════════════════════════════════════════════════════════ Nexus Agents Studio — Widget Proxy ═══════════════════════════════════════════════════════════════ API endpoint for the embeddable web chat widget. <script src=\"https://nexus.app/widget/{agent_id}.js\"></script> Reference: Flowise embed …",
-   "uses_service_role": true
+   "status_values": [
+    {
+     "field": "role",
+     "value": "system",
+     "kind": "escreve"
+    },
+    {
+     "field": "role",
+     "value": "user",
+     "kind": "escreve"
+    }
+   ]
   },
   "supabase/functions/workflow-engine-v2/index.ts": {
    "path": "supabase/functions/workflow-engine-v2/index.ts",
@@ -188682,10 +188685,24 @@
   }
  },
  "git": {
-  "sha": "b8f1e8324ba237838487e3f7f77260f18f76c1d4",
+  "sha": "d53c9e3cf2997349f84e43e3a0f0360fa9466823",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "d53c9e3",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)",
+    "files": [
+     "docs/migration/MATRIZ_EDGE_TABELA.md",
+     "src/services/widgetService.ts",
+     "supabase/config.toml",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/_shared/auth.ts",
+     "supabase/functions/widget-proxy/index.ts"
+    ]
+   },
    {
     "sha": "b8f1e83",
     "date": "2026-11-11",
@@ -189610,15 +189627,6 @@
      "supabase/config.toml",
      "supabase/functions/migrate-helper/index.ts"
     ]
-   },
-   {
-    "sha": "86f48e0",
-    "date": "2026-08-18",
-    "author": "adm01-debug",
-    "subject": "chore(hermes): adiciona .hermes.md (regras da casa Hermes)",
-    "files": [
-     ".hermes.md"
-    ]
    }
   ],
   "hot_files": [
@@ -189633,6 +189641,10 @@
    [
     ".github/workflows/ci.yml",
     5
+   ],
+   [
+    "supabase/deployment-manifest.json",
+    3
    ],
    [
     "supabase/functions/agent-workflow-runner/index.ts",
@@ -189679,27 +189691,23 @@
     3
    ],
    [
+    "docs/migration/MATRIZ_EDGE_TABELA.md",
+    2
+   ],
+   [
+    "src/services/widgetService.ts",
+    2
+   ],
+   [
+    "supabase/config.toml",
+    2
+   ],
+   [
+    "supabase/functions/widget-proxy/index.ts",
+    2
+   ],
+   [
     "docs/agentes/integracoes.md",
-    2
-   ],
-   [
-    "supabase/deployment-manifest.json",
-    2
-   ],
-   [
-    "supabase/functions/agent-conversational-builder/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/agent-eval-runner/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/llm-gateway/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/quick-agent-test/index.ts",
     2
    ]
   ]
