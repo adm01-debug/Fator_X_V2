@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d53c9e3cf2997349f84e43e3a0f0360fa9466823",
+  "commit": "60e36b81f83599d636282f37f7bd60c05444d022",
   "branch": "main",
-  "data_commit": "2026-11-11T22:23:36-03:00",
+  "data_commit": "2026-11-11T23:05:55-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "60e36b81",
+    "data": "2026-11-11",
+    "assunto": "feat(notificacao): envio real de e-mail via Resend no notification-sender (#82)"
+   },
    {
     "sha": "d53c9e3c",
     "data": "2026-11-11",
@@ -126,11 +131,6 @@
     "sha": "8a508903",
     "data": "2026-09-05",
     "assunto": "Merge pull request #49 from adm01-debug/dependabot/npm_and_yarn/tiptap/extension-placeholder-3.30.1"
-   },
-   {
-    "sha": "670bc3cf",
-    "data": "2026-09-05",
-    "assunto": "Merge pull request #48 from adm01-debug/dependabot/npm_and_yarn/testing-library/user-event-14.6.4"
    }
   ],
   "arquivos_mudados_7d": 193,
@@ -148,15 +148,15 @@
     "mudancas": 4
    },
    {
+    "pasta": "supabase/deployment-manifest.json",
+    "mudancas": 4
+   },
+   {
     "pasta": ".github/workflows/ci.yml",
     "mudancas": 3
    },
    {
     "pasta": "AGENTS.md",
-    "mudancas": 3
-   },
-   {
-    "pasta": "supabase/deployment-manifest.json",
     "mudancas": 3
    },
    {
@@ -214,15 +214,15 @@
     "mudancas": 4
    },
    {
+    "arquivo": "supabase/deployment-manifest.json",
+    "mudancas": 4
+   },
+   {
     "arquivo": "CHANGELOG.md",
     "mudancas": 3
    },
    {
     "arquivo": "ESTADO-ATUAL.md",
-    "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/deployment-manifest.json",
     "mudancas": 3
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 11
+    "commits": 12
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1968,
   "arquivos_codigo": 1446,
-  "linhas_codigo": 316348,
+  "linhas_codigo": 316366,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -528,7 +528,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 31996
+   "linhas": 32014
   },
   "tailwind.config.ts": {
    "arquivos": 1,

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d53c9e3cf2997349f84e43e3a0f0360fa9466823` (2026-11-11T22:23:36-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `60e36b81f83599d636282f37f7bd60c05444d022` (2026-11-11T23:05:55-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1968 |
 | arquivos_codigo | 1446 |
-| linhas_codigo | 316348 |
+| linhas_codigo | 316366 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -403,9 +403,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
-- hosts mais citados: router.huggingface.co, ai.gateway.lovable.dev, api.openai.com, openrouter.ai, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.slack.com, app.promobrindes.com.br, exemplo.com
+- hosts mais citados: router.huggingface.co, ai.gateway.lovable.dev, api.openai.com, openrouter.ai, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.resend.com, api.slack.com, app.promobrindes.com.br
 - webhooks recebidos: migrate-helper, openclaw-webhook, rag-embed-backfill, slack-events-webhook, whatsapp-router, widget-proxy
-- env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_WEBHOOK_TOKEN, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
+- env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_WEBHOOK_TOKEN, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
 
 ## Permissões / papéis
 - papéis no código: user (61), button (46), system (42), status (31), alert (16), assistant (15), group (7), admin (6), listbox (6), option (6), tab (6), tablist (6), progressbar (5), radio (5), radiogroup (5), dialog (4), region (4), agent (2), anon (2), img (2), log (2), navigation (2), service_role (2), article (1), ausente (1), authenticated (1), banner (1), combobox (1), editor (1), finance (1), link (1), list (1), logistics (1), manager (1), menuitem (1), presentation (1), purchasing (1), sales (1), searchbox (1), separator (1), string (1), sup (1), superadmin (1), support (1), switch (1), textbox (1), tool (1), toolbar (1), viewer (1), workspace_admin (1)
@@ -431,8 +431,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13759 nós · 36971 arestas · 880 comunidades · grafo do commit `d53c9e3c`
-- comunidades maiores: lucide-react (343), react (302), App.tsx (297), logger.ts (200), button.tsx (193), ref_https (147), fromTable (131), nexus-complete-test-suite.test.ts (112), cn (108), requireEnv (106), ref_node_fs (101), templateSkillLinkService.ts (99)
+- 13759 nós · 36972 arestas · 877 comunidades · grafo do commit `60e36b81`
+- comunidades maiores: Button (286), lucide-react (247), App.tsx (165), ref_https (147), KnowledgePage.tsx (144), react (138), logger.ts (120), BCPPage.tsx (119), @tanstack/react-query (118), DbRow (117), cn (111), requireEnv (106)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -441,9 +441,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (16)
 - .github/workflows/ci.yml (6)
 - AGENTS.md (4)
+- supabase/deployment-manifest.json (4)
 - CHANGELOG.md (3)
 - ESTADO-ATUAL.md (3)
-- supabase/deployment-manifest.json (3)
 - supabase/functions/agent-workflow-runner/index.ts (3)
 - supabase/functions/code-interpreter-execute/index.ts (3)
 - supabase/functions/crm-enrich/index.ts (3)
@@ -573,6 +573,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-11 `60e36b81` feat(notificacao): envio real de e-mail via Resend no notification-sender (#82)
 - 2026-11-11 `d53c9e3c` fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)
 - 2026-11-11 `b8f1e832` feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)
 - 2026-11-11 `fd6c7ffc` style(manutencao): aplica correcoes locais verificadas (#77)
@@ -587,7 +588,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `04f626e1` chore(agentes): adota o padrão AGENTS.md + docs/agentes do Zapp Web V2 (#69)
 - 2026-11-08 `b0a3cb55` fix(deps): Security Audit da main volta a passar (0 critical em prod) (#68)
 - 2026-09-14 `e7a2c896` chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 6 updates (#60)
-- 2026-09-14 `43b3ceaf` chore(deps)(deps): bump @sentry/react in the sentry group (#57)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

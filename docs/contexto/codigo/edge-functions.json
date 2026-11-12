@@ -1608,7 +1608,7 @@
    "nome": "notification-sender",
    "entrada": "supabase/functions/notification-sender/index.ts",
    "arquivos": 1,
-   "linhas": 298,
+   "linhas": 316,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1619,6 +1619,8 @@
    ],
    "rpcs": [],
    "env": [
+    "EMAIL_FROM",
+    "RESEND_API_KEY",
     "SLACK_BOT_TOKEN",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
@@ -1630,6 +1632,7 @@
    "buckets": [],
    "chama_edges": [],
    "hosts_externos": [
+    "api.resend.com",
     "slack.com"
    ],
    "usa_shared": [

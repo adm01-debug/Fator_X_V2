@@ -818,6 +818,7 @@
    "DEEPSEEK_MODEL",
    "DEEPSEEK_MODEL_PRO",
    "DENO_ENV",
+   "EMAIL_FROM",
    "ENABLE_AGENTIC_GUARDRAIL",
    "ENABLE_AUTO_CLASSIFY",
    "ENABLE_EMOTION_DETECTION",
@@ -839,6 +840,7 @@
    "OPENCLAW_API_TOKEN",
    "OPENCLAW_URL",
    "OPENCLAW_WEBHOOK_SECRET",
+   "RESEND_API_KEY",
    "SB_FUNCTION_NAME",
    "SLACK_ALERT_WEBHOOK_URL",
    "SLACK_BOT_TOKEN",
@@ -976,6 +978,10 @@
     "arquivos": 2
    },
    {
+    "host": "api.resend.com",
+    "arquivos": 2
+   },
+   {
     "host": "api.slack.com",
     "arquivos": 2
    },
@@ -1037,10 +1043,6 @@
    },
    {
     "host": "api.pwnedpasswords.com",
-    "arquivos": 1
-   },
-   {
-    "host": "api.resend.com",
     "arquivos": 1
    },
    {
@@ -1194,6 +1196,7 @@
    "OPENAI_API_KEY",
    "OPENCLAW_API_TOKEN",
    "OPENCLAW_WEBHOOK_SECRET",
+   "RESEND_API_KEY",
    "SLACK_ALERT_WEBHOOK_URL",
    "SLACK_BOT_TOKEN",
    "SLACK_SIGNING_SECRET",
