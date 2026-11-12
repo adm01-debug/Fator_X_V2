@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ba8344c33749367041457e04863b2ccc1209f47c",
+  "commit": "d41db7452df72a98bf89febfbf9f67af0e9b0818",
   "branch": "main",
-  "data_commit": "2026-11-12T09:46:49-03:00",
+  "data_commit": "2026-11-12T10:15:15-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "d41db745",
+    "data": "2026-11-12",
+    "assunto": "chore(deps)(deps): bump @sentry/react from 10.73.0 to 11.11.0 in the sentry group across 1 directory (#63)"
+   },
    {
     "sha": "ba8344c3",
     "data": "2026-11-12",
@@ -126,26 +131,21 @@
     "sha": "74e79f22",
     "data": "2026-09-05",
     "assunto": "feat(db): Onda 1 — RLS 100% (216/216), anti-escalação e rate-limit distribuído (#52)"
-   },
-   {
-    "sha": "c1931e17",
-    "data": "2026-09-05",
-    "assunto": "fix(deps): reverter @tiptap/extension-placeholder para v2.27.3 e destravar CI (#51)"
    }
   ],
   "arquivos_mudados_7d": 194,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "package.json",
+    "mudancas": 6
+   },
+   {
+    "pasta": "package-lock.json",
     "mudancas": 5
    },
    {
     "pasta": "supabase/deployment-manifest.json",
     "mudancas": 5
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 4
    },
    {
     "pasta": "src/components/admin",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 2
+    "commits": 3
    }
   ]
  },

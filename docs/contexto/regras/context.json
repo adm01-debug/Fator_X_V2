@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "ba8344c33749367041457e04863b2ccc1209f47c",
+  "sha": "d41db7452df72a98bf89febfbf9f67af0e9b0818",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-12 13:04 UTC",
+  "generated_at": "2026-11-12 14:09 UTC",
   "files_total": 1973,
   "code_files": 1779,
   "code_lines": 345302
@@ -188693,10 +188693,20 @@
   }
  },
  "git": {
-  "sha": "ba8344c33749367041457e04863b2ccc1209f47c",
+  "sha": "d41db7452df72a98bf89febfbf9f67af0e9b0818",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "d41db74",
+    "date": "2026-11-12",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps): bump @sentry/react from 10.73.0 to 11.11.0 in the sentry group across 1 directory (#63)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "ba8344c",
     "date": "2026-11-12",
@@ -189629,23 +189639,16 @@
     "author": "adm01-debug",
     "subject": "Merge pull request #47 from adm01-debug/dependabot/npm_and_yarn/sentry-1899a56159",
     "files": []
-   },
-   {
-    "sha": "8916129",
-    "date": "2026-09-05",
-    "author": "adm01-debug",
-    "subject": "Merge pull request #46 from adm01-debug/dependabot/npm_and_yarn/supabase-f2a27b35cd",
-    "files": []
    }
   ],
   "hot_files": [
    [
     "package.json",
-    12
+    13
    ],
    [
     "package-lock.json",
-    10
+    11
    ],
    [
     "supabase/deployment-manifest.json",
