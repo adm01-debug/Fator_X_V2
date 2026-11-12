@@ -43,7 +43,8 @@ function formatZodError(issues: { path: (string | number)[]; message: string; co
 const WEBHOOK_LIMIT = { windowMs: 60_000, maxRequests: 300, name: 'openclaw-webhook' };
 
 async function emitEvent(
-  supabase: ReturnType<typeof createClient>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
+  supabase: any,
   kind: string,
   level: 'info' | 'warn' | 'error',
   payload: Record<string, unknown>,

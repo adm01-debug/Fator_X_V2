@@ -55,7 +55,6 @@ serve(async (req) => {
       data: body,
       error: validationError,
       rawBody,
-      _version,
     } = await parseBody(req, WebhookReceiverContracts, {
       returnRawBody: true,
       defaultVersion: 'v1',
@@ -112,6 +111,10 @@ serve(async (req) => {
           401,
         );
         return errorResponse(req, 'Missing signature or secret', 401);
+      }
+      if (!rawBody) {
+        console.error('webhook-receiver: rawBody missing after parse');
+        return errorResponse(req, 'Internal server error', 500);
       }
       const valid = await verifyHmac(webhook.secret, rawBody, signature);
       if (!valid) {

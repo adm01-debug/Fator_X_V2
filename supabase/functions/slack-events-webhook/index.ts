@@ -4,7 +4,7 @@
  * Recebe eventos do Slack (Events API), valida HMAC v0, dedup por event_id,
  * roteia app_mention / message.im para o agente configurado e responde na thread.
  */
-import { createClient } from 'npm:@supabase/supabase-js@2.50.0';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import {
   checkRateLimit,
   createRateLimitResponse,
