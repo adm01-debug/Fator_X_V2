@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d41db7452df72a98bf89febfbf9f67af0e9b0818",
+  "commit": "81afc708cc224bc5f0bf62cde518e9d0880292b6",
   "branch": "main",
-  "data_commit": "2026-11-12T10:15:15-03:00",
+  "data_commit": "2026-11-12T11:26:05-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "81afc708",
+    "data": "2026-11-12",
+    "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates (#72)"
+   },
    {
     "sha": "d41db745",
     "data": "2026-11-12",
@@ -126,22 +131,17 @@
     "sha": "0db06c7e",
     "data": "2026-09-05",
     "assunto": "feat(ci): Onda 2 — DB Drift Check no CI + DEFAULT PRIVILEGES sem escrita anon + docs/semver 1.6.0 (#53)"
-   },
-   {
-    "sha": "74e79f22",
-    "data": "2026-09-05",
-    "assunto": "feat(db): Onda 1 — RLS 100% (216/216), anti-escalação e rate-limit distribuído (#52)"
    }
   ],
   "arquivos_mudados_7d": 194,
   "pastas_mais_mudadas_30d": [
    {
-    "pasta": "package.json",
+    "pasta": "package-lock.json",
     "mudancas": 6
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 5
+    "pasta": "package.json",
+    "mudancas": 6
    },
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -198,12 +198,12 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": "package.json",
+    "arquivo": "package-lock.json",
     "mudancas": 18
    },
    {
-    "arquivo": "package-lock.json",
-    "mudancas": 17
+    "arquivo": "package.json",
+    "mudancas": 18
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 3
+    "commits": 4
    }
   ]
  },

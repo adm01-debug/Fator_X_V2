@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "d41db7452df72a98bf89febfbf9f67af0e9b0818",
+  "sha": "81afc708cc224bc5f0bf62cde518e9d0880292b6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-12 14:09 UTC",
+  "generated_at": "2026-11-12 15:21 UTC",
   "files_total": 1973,
   "code_files": 1779,
   "code_lines": 345302
@@ -188693,10 +188693,19 @@
   }
  },
  "git": {
-  "sha": "d41db7452df72a98bf89febfbf9f67af0e9b0818",
+  "sha": "81afc708cc224bc5f0bf62cde518e9d0880292b6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "81afc70",
+    "date": "2026-11-12",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates (#72)",
+    "files": [
+     "package-lock.json"
+    ]
+   },
    {
     "sha": "d41db74",
     "date": "2026-11-12",
@@ -189632,13 +189641,6 @@
     "author": "adm01-debug",
     "subject": "Merge pull request #48 from adm01-debug/dependabot/npm_and_yarn/testing-library/user-event-14.6.4",
     "files": []
-   },
-   {
-    "sha": "7af4545",
-    "date": "2026-09-05",
-    "author": "adm01-debug",
-    "subject": "Merge pull request #47 from adm01-debug/dependabot/npm_and_yarn/sentry-1899a56159",
-    "files": []
    }
   ],
   "hot_files": [
@@ -189648,7 +189650,7 @@
    ],
    [
     "package-lock.json",
-    11
+    12
    ],
    [
     "supabase/deployment-manifest.json",
