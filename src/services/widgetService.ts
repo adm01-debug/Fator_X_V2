@@ -58,25 +58,32 @@ export async function sendWidgetChatMessage(
     throw new Error('agent_id and message are required');
   }
 
-  const { data, error } = await supabase.functions.invoke('widget-proxy', {
-    body: {
-      path: '/chat',
+  // O widget-proxy roteia pelo caminho (/chat), não pelo corpo. O token do operador libera o teste de
+  // agente ainda não publicado do próprio workspace.
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const res = await fetch(`${FUNCTIONS_BASE}/chat`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+    },
+    body: JSON.stringify({
       agent_id: input.agent_id,
       message: input.message,
       session_id: input.session_id ?? `widget-test-${Date.now()}`,
-      context: input.context ?? {},
-    },
+    }),
   });
+  const data = (await res.json().catch(() => null)) as (WidgetChatResult & { response?: string }) | null;
 
-  if (error) {
-    logger.error('widget-proxy chat invoke failed', {
-      agent_id: input.agent_id,
-      error: error.message,
-    });
-    throw new Error(error.message);
+  if (!res.ok) {
+    const message = data?.error ?? `HTTP ${res.status}`;
+    logger.error('widget-proxy chat failed', { agent_id: input.agent_id, error: message });
+    throw new Error(message);
   }
 
-  return (data as WidgetChatResult) ?? { ok: true };
+  return { ok: true, reply: data?.response ?? data?.reply, session_id: data?.session_id };
 }
 
 /**

@@ -140,8 +140,8 @@ export async function getAuthUserId(req: Request): Promise<string | null> {
 }
 
 /**
- * Validate API key with HMAC (P2-02: constant-time comparison).
- * Uses API_KEY_HMAC_SECRET env var for HMAC validation.
+ * Validate an API key (header x-api-key) against public.api_keys.key_hash.
+ * The hash format must match src/services/securityService.ts (createApiKey): SHA-256 hex.
  */
 export async function validateApiKey(
   req: Request
@@ -153,25 +153,16 @@ export async function validateApiKey(
   const keyHash = await hashApiKey(apiKey);
 
   const { data } = await supabaseAdmin
-    .from('deploy_connections')
-    .select('workspace_id, agent_id, api_key_hash')
-    .eq('status', 'active')
-    .limit(100);
+    .from('api_keys')
+    .select('workspace_id, agent_id, key_hash')
+    .eq('key_hash', keyHash)
+    .eq('is_active', true)
+    .maybeSingle();
 
-  if (!data) return { valid: false, workspaceId: null, agentId: null };
-
-  // P2-02: Constant-time comparison to prevent timing attacks
-  for (const row of data) {
-    if (constantTimeEqual(keyHash, row.api_key_hash)) {
-      return {
-        valid: true,
-        workspaceId: row.workspace_id,
-        agentId: row.agent_id,
-      };
-    }
+  if (!data || !constantTimeEqual(keyHash, data.key_hash as string)) {
+    return { valid: false, workspaceId: null, agentId: null };
   }
-
-  return { valid: false, workspaceId: null, agentId: null };
+  return { valid: true, workspaceId: data.workspace_id, agentId: data.agent_id };
 }
 
 /**
@@ -192,24 +183,9 @@ export async function validateWorkspaceMembership(
   return !!data;
 }
 
-// Hash API key with HMAC (if secret available) or SHA-256
+// SHA-256 hex — mesmo formato de createApiKey (src/services/securityService.ts). Sem HMAC: a chave é
+// criada no navegador, que não tem acesso a segredo do servidor.
 async function hashApiKey(key: string): Promise<string> {
-  const hmacSecret = Deno.env.get('API_KEY_HMAC_SECRET');
-  
-  if (hmacSecret) {
-    // HMAC-SHA256 with secret
-    const keyData = await crypto.subtle.importKey(
-      'raw',
-      new TextEncoder().encode(hmacSecret),
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    );
-    const signature = await crypto.subtle.sign('HMAC', keyData, new TextEncoder().encode(key));
-    return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
-  // Fallback: plain SHA-256
   const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(key));
   return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
 }

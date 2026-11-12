@@ -95,7 +95,7 @@
 | `webhook-receiver` | `webhook_endpoints`, `webhook_events` |
 | `whatsapp-router` | `openclaw_events`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages` |
 | `whatsapp-webhook` | `agent_routing_config`, `openclaw_events`, `trace_events`, `whatsapp_webhook_events`, `workspace_secrets` |
-| `widget-proxy` | — |
+| `widget-proxy` | `agents` |
 | `workflow-engine-v2` | `workflow_runs`, `workflow_steps`, `workflows` |
 
 ## Por tabela
@@ -114,7 +114,7 @@
 | `agent_usage` | `llm-gateway` |
 | `agent_workflow_runs` | `agent-workflow-runner` |
 | `agent_workflows` | `agent-workflow-runner`, `global-search` |
-| `agents` | `a2a-server`, `agent-eval-runner`, `agent-workflow-runner`, `cerebro-brain`, `cerebro-query`, `eval-judge`, `global-search`, `graph-execute`, `incident-orchestrator`, `llm-gateway`, `test-runner`, `voice-synthesize` |
+| `agents` | `a2a-server`, `agent-eval-runner`, `agent-workflow-runner`, `cerebro-brain`, `cerebro-query`, `eval-judge`, `global-search`, `graph-execute`, `incident-orchestrator`, `llm-gateway`, `test-runner`, `voice-synthesize`, `widget-proxy` |
 | `audit_events` | `doc-parse`, `doc-rechunk`, `llm-gateway`, `slack-agent-notify`, `slack-alert-dispatcher`, `slack-events-webhook`, `slack-verify-connection` |
 | `automation_logs` | `automation-pipeline` |
 | `automation_rules` | `automation-pipeline`, `global-search` |
