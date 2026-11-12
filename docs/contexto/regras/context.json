@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "60e36b81f83599d636282f37f7bd60c05444d022",
+  "sha": "1033b2fed1404d82321c734b3ace2a31c31d28d1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-12 02:12 UTC",
+  "generated_at": "2026-11-12 03:24 UTC",
   "files_total": 1973,
   "code_files": 1779,
-  "code_lines": 345300
+  "code_lines": 345302
  },
  "version": "1.3.2",
- "facts_hash": "047a8decaf82a8ee",
+ "facts_hash": "6c03aea36e7b0c6a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -58751,7 +58751,7 @@
   {
    "module": "supabase/functions",
    "files": 134,
-   "lines": 32014,
+   "lines": 32016,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -178312,7 +178312,7 @@
   },
   "supabase/functions/_shared/cors.ts": {
    "path": "supabase/functions/_shared/cors.ts",
-   "lines": 102,
+   "lines": 104,
    "exports": [
     "function getCorsHeaders",
     "function handleCorsPreflight",
@@ -178333,7 +178333,7 @@
      "value": "'86400'"
     }
    ],
-   "doc": "Nexus Agents Studio — Shared CORS (HARDENED) FIX P0-08: whitelist .lovable.app + x-workspace-id header + Vary: Origin"
+   "doc": "Nexus Agents Studio - Shared CORS (HARDENED) FIX P0-08: whitelist .lovable.app + x-workspace-id header + Vary: Origin FIX CORS-01: adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS"
   },
   "supabase/functions/_shared/crmNormalize.ts": {
    "path": "supabase/functions/_shared/crmNormalize.ts",
@@ -188693,10 +188693,21 @@
   }
  },
  "git": {
-  "sha": "60e36b81f83599d636282f37f7bd60c05444d022",
+  "sha": "1033b2fed1404d82321c734b3ace2a31c31d28d1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "1033b2f",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS",
+    "files": [
+     ".prettierignore",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/_shared/cors.ts"
+    ]
+   },
    {
     "sha": "60e36b8",
     "date": "2026-11-11",
@@ -189626,15 +189637,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "eecc9de",
-    "date": "2026-08-31",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @sentry/react",
-    "files": [
-     "package-lock.json"
-    ]
    }
   ],
   "hot_files": [
@@ -189644,15 +189646,15 @@
    ],
    [
     "package-lock.json",
-    12
+    11
+   ],
+   [
+    "supabase/deployment-manifest.json",
+    5
    ],
    [
     ".github/workflows/ci.yml",
     5
-   ],
-   [
-    "supabase/deployment-manifest.json",
-    4
    ],
    [
     "supabase/functions/agent-workflow-runner/index.ts",
@@ -189699,6 +189701,10 @@
     3
    ],
    [
+    ".prettierignore",
+    2
+   ],
+   [
     "supabase/functions/notification-sender/index.ts",
     2
    ],
@@ -189712,10 +189718,6 @@
    ],
    [
     "supabase/functions/widget-proxy/index.ts",
-    2
-   ],
-   [
-    "docs/agentes/integracoes.md",
     2
    ]
   ]

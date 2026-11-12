@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "60e36b81f83599d636282f37f7bd60c05444d022",
+  "commit": "1033b2fed1404d82321c734b3ace2a31c31d28d1",
   "branch": "main",
-  "data_commit": "2026-11-11T23:05:55-03:00",
+  "data_commit": "2026-11-12T00:15:03-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "1033b2fe",
+    "data": "2026-11-12",
+    "assunto": "fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS"
+   },
    {
     "sha": "60e36b81",
     "data": "2026-11-11",
@@ -126,17 +131,16 @@
     "sha": "43f8e5eb",
     "data": "2026-09-05",
     "assunto": "Merge pull request #50 from adm01-debug/dependabot/npm_and_yarn/recharts-3.10.1"
-   },
-   {
-    "sha": "8a508903",
-    "data": "2026-09-05",
-    "assunto": "Merge pull request #49 from adm01-debug/dependabot/npm_and_yarn/tiptap/extension-placeholder-3.30.1"
    }
   ],
-  "arquivos_mudados_7d": 193,
+  "arquivos_mudados_7d": 194,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "package.json",
+    "mudancas": 5
+   },
+   {
+    "pasta": "supabase/deployment-manifest.json",
     "mudancas": 5
    },
    {
@@ -148,15 +152,15 @@
     "mudancas": 4
    },
    {
-    "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 4
-   },
-   {
     "pasta": ".github/workflows/ci.yml",
     "mudancas": 3
    },
    {
     "pasta": "AGENTS.md",
+    "mudancas": 3
+   },
+   {
+    "pasta": "supabase/functions/_shared",
     "mudancas": 3
    },
    {
@@ -169,6 +173,10 @@
    },
    {
     "pasta": ".gitignore",
+    "mudancas": 2
+   },
+   {
+    "pasta": ".prettierignore",
     "mudancas": 2
    },
    {
@@ -186,14 +194,6 @@
    {
     "pasta": "docs/agentes/integracoes.md",
     "mudancas": 2
-   },
-   {
-    "pasta": "docs/agentes/mapa-repo.md",
-    "mudancas": 2
-   },
-   {
-    "pasta": "docs/contexto/regras",
-    "mudancas": 2
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -210,11 +210,11 @@
     "mudancas": 6
    },
    {
-    "arquivo": "AGENTS.md",
-    "mudancas": 4
+    "arquivo": "supabase/deployment-manifest.json",
+    "mudancas": 5
    },
    {
-    "arquivo": "supabase/deployment-manifest.json",
+    "arquivo": "AGENTS.md",
     "mudancas": 4
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 12
+    "commits": 13
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1968,
   "arquivos_codigo": 1446,
-  "linhas_codigo": 316366,
+  "linhas_codigo": 316368,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -528,7 +528,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32014
+   "linhas": 32016
   },
   "tailwind.config.ts": {
    "arquivos": 1,

@@ -1098,6 +1098,10 @@
     "arquivos": 1
    },
    {
+    "host": "fator-x-v2.vercel.app",
+    "arquivos": 1
+   },
+   {
     "host": "functions.supabase.co",
     "arquivos": 1
    },

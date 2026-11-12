@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `60e36b81f83599d636282f37f7bd60c05444d022` (2026-11-11T23:05:55-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1033b2fed1404d82321c734b3ace2a31c31d28d1` (2026-11-12T00:15:03-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1968 |
 | arquivos_codigo | 1446 |
-| linhas_codigo | 316366 |
+| linhas_codigo | 316368 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -431,7 +431,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13759 nós · 36972 arestas · 877 comunidades · grafo do commit `60e36b81`
+- 13759 nós · 36972 arestas · 877 comunidades · grafo do commit `1033b2fe`
 - comunidades maiores: Button (286), lucide-react (247), App.tsx (165), ref_https (147), KnowledgePage.tsx (144), react (138), logger.ts (120), BCPPage.tsx (119), @tanstack/react-query (118), DbRow (117), cn (111), requireEnv (106)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -440,8 +440,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package.json (17)
 - package-lock.json (16)
 - .github/workflows/ci.yml (6)
+- supabase/deployment-manifest.json (5)
 - AGENTS.md (4)
-- supabase/deployment-manifest.json (4)
 - CHANGELOG.md (3)
 - ESTADO-ATUAL.md (3)
 - supabase/functions/agent-workflow-runner/index.ts (3)
@@ -573,6 +573,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-12 `1033b2fe` fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS
 - 2026-11-11 `60e36b81` feat(notificacao): envio real de e-mail via Resend no notification-sender (#82)
 - 2026-11-11 `d53c9e3c` fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)
 - 2026-11-11 `b8f1e832` feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)
@@ -587,7 +588,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-09 `c5f36893` chore(deps)(deps): bump react-router-dom (#61)
 - 2026-11-08 `04f626e1` chore(agentes): adota o padrão AGENTS.md + docs/agentes do Zapp Web V2 (#69)
 - 2026-11-08 `b0a3cb55` fix(deps): Security Audit da main volta a passar (0 critical em prod) (#68)
-- 2026-09-14 `e7a2c896` chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 6 updates (#60)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
