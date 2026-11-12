@@ -12,7 +12,7 @@ name: Inventário do estado real (semanal)
 # automation/inventario-estado, com os checks liberados e auto-merge.
 #
 # Secrets:
-#   - SUPABASE_ACCESS_TOKEN (AINDA NÃO EXISTE neste repo): só leitura —
+#   - SUPABASE_ACCESS_TOKEN (configurado em 2026-11-11): só leitura —
 #     POST /database/query/read-only e GET /functions do projeto qdlnzopxrlsoljcrcmzv.
 #     Sem o secret, o job sai verde e refaz só edges.json (parte de código); banco.json fica como está.
 
