@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "1033b2fed1404d82321c734b3ace2a31c31d28d1",
+  "sha": "ba8344c33749367041457e04863b2ccc1209f47c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-12 03:24 UTC",
+  "generated_at": "2026-11-12 13:04 UTC",
   "files_total": 1973,
   "code_files": 1779,
   "code_lines": 345302
@@ -188693,10 +188693,19 @@
   }
  },
  "git": {
-  "sha": "1033b2fed1404d82321c734b3ace2a31c31d28d1",
+  "sha": "ba8344c33749367041457e04863b2ccc1209f47c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "ba8344c",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "chore(ci): atualiza comentario do SUPABASE_ACCESS_TOKEN no inventario semanal (#79)",
+    "files": [
+     ".github/workflows/inventario-estado-semanal.yml"
+    ]
+   },
    {
     "sha": "1033b2f",
     "date": "2026-11-12",
@@ -189627,26 +189636,16 @@
     "author": "adm01-debug",
     "subject": "Merge pull request #46 from adm01-debug/dependabot/npm_and_yarn/supabase-f2a27b35cd",
     "files": []
-   },
-   {
-    "sha": "66c5eed",
-    "date": "2026-08-31",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @supabase/supabase-js",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    13
+    12
    ],
    [
     "package-lock.json",
-    11
+    10
    ],
    [
     "supabase/deployment-manifest.json",
@@ -189701,6 +189700,10 @@
     3
    ],
    [
+    ".github/workflows/inventario-estado-semanal.yml",
+    2
+   ],
+   [
     ".prettierignore",
     2
    ],
@@ -189714,10 +189717,6 @@
    ],
    [
     "src/services/widgetService.ts",
-    2
-   ],
-   [
-    "supabase/functions/widget-proxy/index.ts",
     2
    ]
   ]

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "chore(ci): atualiza comentario do SUPABASE_ACCESS_TOKEN no inventario semanal (#79)",
    "fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS",
    "feat(notificacao): envio real de e-mail via Resend no notification-sender (#82)",
    "fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)",
-   "feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)",
-   "style(manutencao): aplica correcoes locais verificadas (#77)"
+   "feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

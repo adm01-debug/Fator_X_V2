@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1033b2fed1404d82321c734b3ace2a31c31d28d1",
+  "commit": "ba8344c33749367041457e04863b2ccc1209f47c",
   "branch": "main",
-  "data_commit": "2026-11-12T00:15:03-03:00",
+  "data_commit": "2026-11-12T09:46:49-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "ba8344c3",
+    "data": "2026-11-12",
+    "assunto": "chore(ci): atualiza comentario do SUPABASE_ACCESS_TOKEN no inventario semanal (#79)"
+   },
    {
     "sha": "1033b2fe",
     "data": "2026-11-12",
@@ -126,11 +131,6 @@
     "sha": "c1931e17",
     "data": "2026-09-05",
     "assunto": "fix(deps): reverter @tiptap/extension-placeholder para v2.27.3 e destravar CI (#51)"
-   },
-   {
-    "sha": "43f8e5eb",
-    "data": "2026-09-05",
-    "assunto": "Merge pull request #50 from adm01-debug/dependabot/npm_and_yarn/recharts-3.10.1"
    }
   ],
   "arquivos_mudados_7d": 194,
@@ -172,6 +172,10 @@
     "mudancas": 2
    },
    {
+    "pasta": ".github/workflows/inventario-estado-semanal.yml",
+    "mudancas": 2
+   },
+   {
     "pasta": ".gitignore",
     "mudancas": 2
    },
@@ -189,10 +193,6 @@
    },
    {
     "pasta": "docs/agentes/github-ci.md",
-    "mudancas": 2
-   },
-   {
-    "pasta": "docs/agentes/integracoes.md",
     "mudancas": 2
    }
   ],
@@ -262,6 +262,10 @@
     "mudancas": 2
    },
    {
+    "arquivo": ".github/workflows/inventario-estado-semanal.yml",
+    "mudancas": 2
+   },
+   {
     "arquivo": "docs/adr/README.md",
     "mudancas": 2
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "docs/auditoria-estado-2026-08/03-edge-functions.md",
     "mudancas": 2
-   },
-   {
-    "arquivo": "docs/auditoria-estado-2026-08/10-testes-e-ci.md",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 13
+    "commits": 14
    },
    {
     "autor": "dependabot[bot]",
