@@ -270,10 +270,10 @@ serve(async (req) => {
               Authorization: authHeader,
               apikey: supabaseKey,
             },
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             body: JSON.stringify({
               action: node.config.function_action,
               text: (state._output as string) || state.input || '',
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
               ...((node.config.extra_params as Record<string, any>) || {}),
             }),
             signal: AbortSignal.timeout(STEP_TIMEOUT_MS),

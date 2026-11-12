@@ -75,6 +75,7 @@ Deno.serve(async (req) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         history = ((session.transcript as any[]) || [])
           .slice(-10)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           .map((t: any) => ({ role: t.role === 'user' ? 'user' : 'assistant', content: t.text }));
       }
     }
@@ -125,8 +126,8 @@ Deno.serve(async (req) => {
         .eq('id', session_id)
         .maybeSingle();
       if (session) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const newTranscript = [
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           ...((session.transcript as any[]) || []),
           { role: 'assistant', text: reply, ts: new Date().toISOString() },
         ];

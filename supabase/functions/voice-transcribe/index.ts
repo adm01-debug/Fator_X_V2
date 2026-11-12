@@ -108,8 +108,8 @@ Deno.serve(async (req) => {
         .eq('id', session_id)
         .maybeSingle();
       if (session) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
         const newTranscript = [
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           ...((session.transcript as any[]) || []),
           { role: 'user', text, ts: new Date().toISOString() },
         ];

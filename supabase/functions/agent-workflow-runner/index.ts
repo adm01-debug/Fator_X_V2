@@ -28,10 +28,10 @@ const WorkflowRunSchema = z.object({
     .optional(),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 interface WFNode {
   id: string;
   type: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   data: Record<string, any>;
 }
 interface WFEdge {
@@ -67,12 +67,14 @@ function topoSort(nodes: WFNode[], edges: WFEdge[]): WFNode[] {
   return order.map((id) => map.get(id)!).filter(Boolean);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function executeNode(
   node: WFNode,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   ctx: Record<string, any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   supa: any,
   lovableKey: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 ): Promise<any> {
   switch (node.type) {
     case 'trigger':
