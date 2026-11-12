@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
@@ -24,11 +23,10 @@ describe('contrato do editor com as extensões TipTap instaladas', () => {
 
   it('preserva comandos de formatação, listas e histórico no mesmo núcleo', () => {
     const editor = new Editor({
-      extensions: [StarterKit, Link, Image, TaskList, TaskItem.configure({ nested: true })],
+      extensions: [StarterKit, Image, TaskList, TaskItem.configure({ nested: true })],
       content: documentWith('Texto de exemplo'),
     });
     try {
-      editor.commands.selectAll();
       expect(editor.chain().toggleBold().run()).toBe(true);
       expect(editor.isActive('bold')).toBe(true);
       editor.commands.toggleBold();

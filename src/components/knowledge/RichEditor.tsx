@@ -1,6 +1,5 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskList from "@tiptap/extension-task-list";
@@ -19,8 +18,7 @@ interface RichEditorProps {
 export function RichEditor({ value, onChange, placeholder = "Comece a escrever...", editable = true }: RichEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Link.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
+      StarterKit.configure({ link: { openOnClick: false, HTMLAttributes: { class: "text-primary underline" } } }),
       Image,
       Placeholder.configure({ placeholder }),
       TaskList,
