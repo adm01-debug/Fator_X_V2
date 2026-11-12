@@ -4,10 +4,10 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: bun run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "81afc708cc224bc5f0bf62cde518e9d0880292b6",
+ "commit_do_grafo": "12be19224248d0864eb3a9c4740cbffecd9829a9",
  "grafo_atual": true,
  "nos": 13759,
- "arestas": 36972,
+ "arestas": 36970,
  "comunidades_total": 877,
  "relacoes": {
   "calls": 4665,
@@ -17,7 +17,7 @@
   "dynamic_import": 271,
   "extends": 5,
   "imports": 10493,
-  "imports_from": 7835,
+  "imports_from": 7833,
   "indexes": 613,
   "indirect_call": 198,
   "inherits": 23,
@@ -29,7 +29,7 @@
   "triggers": 118
  },
  "origem": {
-  "EXTRACTED": 36406,
+  "EXTRACTED": 36404,
   "INFERRED": 566
  },
  "comunidades": [
@@ -674,6 +674,21 @@
   },
   {
    "id": 39,
+   "nome": "package.json",
+   "nos": 62,
+   "callables": 1,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "eslint.config.js",
+    "package.json",
+    "src/components/ui/aspect-ratio.tsx",
+    "tailwind.config.ts",
+    "vite.config.ts",
+    "vitest.config.ts"
+   ]
+  },
+  {
+   "id": 40,
    "nome": "DataBrowser.tsx",
    "nos": 62,
    "callables": 45,
@@ -687,21 +702,6 @@
     "src/components/datahub/DataBrowserTable.tsx",
     "src/components/datahub/EntityDetailPanel.tsx",
     "src/components/datahub/RecordDetail.tsx"
-   ]
-  },
-  {
-   "id": 40,
-   "nome": "package.json",
-   "nos": 61,
-   "callables": 1,
-   "arquivos": 6,
-   "exemplos_arquivos": [
-    "eslint.config.js",
-    "package.json",
-    "src/components/ui/aspect-ratio.tsx",
-    "tailwind.config.ts",
-    "vite.config.ts",
-    "vitest.config.ts"
    ]
   },
   {
@@ -2892,7 +2892,7 @@
   "src/components/workflows/sandbox/sandboxTypes.ts": "KnowledgePage.tsx",
   "src/config/auto-facts.ts": "auto-facts.ts",
   "src/config/datahub-blacklist.ts": "KnowledgePage.tsx",
-  "src/config/datahub-columns.ts": "DataBrowser.tsx",
+  "src/config/datahub-columns.ts": "KnowledgePage.tsx",
   "src/config/datahub-entities.ts": "DataBrowser.tsx",
   "src/config/department-bridge.ts": "templateSkillRegistry.ts",
   "src/config/env.ts": "env.ts",

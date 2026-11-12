@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "81afc708cc224bc5f0bf62cde518e9d0880292b6",
+  "commit": "12be19224248d0864eb3a9c4740cbffecd9829a9",
   "branch": "main",
-  "data_commit": "2026-11-12T11:26:05-03:00",
+  "data_commit": "2026-11-12T13:18:12-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "12be1922",
+    "data": "2026-11-12",
+    "assunto": "fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)"
+   },
    {
     "sha": "81afc708",
     "data": "2026-11-12",
@@ -126,22 +131,17 @@
     "sha": "2fa2e7b5",
     "data": "2026-09-05",
     "assunto": "security(db): Onda 2.5 — hotfix da validação red-team (exec_sql, IDOR, policies, grants) (#54)"
-   },
-   {
-    "sha": "0db06c7e",
-    "data": "2026-09-05",
-    "assunto": "feat(ci): Onda 2 — DB Drift Check no CI + DEFAULT PRIVILEGES sem escrita anon + docs/semver 1.6.0 (#53)"
    }
   ],
-  "arquivos_mudados_7d": 194,
+  "arquivos_mudados_7d": 195,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "package-lock.json",
-    "mudancas": 6
+    "mudancas": 7
    },
    {
     "pasta": "package.json",
-    "mudancas": 6
+    "mudancas": 7
    },
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "package.json",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -305,14 +305,14 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 4
+    "commits": 5
    }
   ]
  },
  "contagens": {
   "arquivos_total": 1968,
   "arquivos_codigo": 1446,
-  "linhas_codigo": 316368,
+  "linhas_codigo": 316364,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -464,7 +464,7 @@
   },
   "src/components": {
    "arquivos": 557,
-   "linhas": 103701
+   "linhas": 103699
   },
   "src/config": {
    "arquivos": 10,
@@ -516,7 +516,7 @@
   },
   "src/test": {
    "arquivos": 191,
-   "linhas": 28951
+   "linhas": 28949
   },
   "src/tests": {
    "arquivos": 2,

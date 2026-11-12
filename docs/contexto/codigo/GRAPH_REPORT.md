@@ -1,17 +1,17 @@
 # Graph Report - Fator_X_V2  (2026-11-12)
 
 ## Corpus Check
-- 1912 files · ~1,331,915 words
+- 1912 files · ~1,331,907 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 26 file(s) not represented in the graph (top: (none) 10, .toml 5, .css 3)
 
 ## Summary
-- 13759 nodes · 36972 edges · 877 communities (593 shown, 284 thin omitted)
+- 13759 nodes · 36970 edges · 877 communities (593 shown, 284 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 566 edges (avg confidence: 0.91)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `81afc708`
+- Built from commit: `12be1922`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -55,8 +55,8 @@
 - button.tsx
 - templateSkillRegistry.ts
 - promptSimulation.ts
-- DataBrowser.tsx
 - package.json
+- DataBrowser.tsx
 - SkillClassificationEfficacyCard.tsx
 - TeamPage.tsx
 - SuperCerebroPage.tsx
@@ -322,7 +322,6 @@
 - Runbook — Janela de Manutenção: `pg_net`
 - 20260728131430_3ddbcf0f-e975-401a-bacc-cd7d14132ed0.sql
 - RestorePresetMenu.tsx
-- RichEditor.tsx
 - ✅ FASE 5 — FRONTEND REFACTOR (Etapas 36-41) — CONCLUÍDA
 - check-e2e-artifact-secrets.mjs
 - build_function_callers
@@ -346,6 +345,7 @@
 - brazilianDocuments.ts
 - toast.tsx
 - CustomNodes.tsx
+- RichEditor.tsx
 - CurrentSqlSourcesTests
 - supabase-snapshot
 - audioService.ts
@@ -952,13 +952,13 @@ Nodes (50): emitSql, first, gaps, orphans, raw, Row, run(), second (+42 more)
 Cohesion: 0.07
 Nodes (51): SkillPromptSimulator(), syntheticSkills(), DISPOSITION_CLASS, SkillPromptSimulatorReport(), SkillPromptSimulatorReportProps, Tile(), TileProps, TONE (+43 more)
 
-### Community 39 - "DataBrowser.tsx"
+### Community 39 - "package.json"
+Cohesion: 0.04
+Nodes (55): lint-staged, *.{json,css,md}, *.{ts,tsx}, name, private, type, version, autoprefixer (+47 more)
+
+### Community 40 - "DataBrowser.tsx"
 Cohesion: 0.06
 Nodes (45): BulkEditDialog(), CreateRecordDialog(), DataBrowser(), ENTITY_ICONS, ActiveFilter, DataBrowserFilters(), DataBrowserPagination(), DataBrowserTable() (+37 more)
-
-### Community 40 - "package.json"
-Cohesion: 0.04
-Nodes (54): lint-staged, *.{json,css,md}, *.{ts,tsx}, name, private, type, version, autoprefixer (+46 more)
 
 ### Community 41 - "SkillClassificationEfficacyCard.tsx"
 Cohesion: 0.08
@@ -2020,101 +2020,101 @@ Nodes (11): public.touch_chat_thread, idx_chat_messages_parent, idx_chat_message
 Cohesion: 0.29
 Nodes (10): @radix-ui/react-popover, Props, RestorePresetMenu(), PopoverContent, createRestorePreset(), deleteRestorePreset(), listRestorePresets(), RestorePreset (+2 more)
 
-### Community 306 - "RichEditor.tsx"
-Cohesion: 0.23
-Nodes (10): ref_tiptap_core, @tiptap/extension-image, @tiptap/extension-link, @tiptap/extension-placeholder, @tiptap/extension-task-item, @tiptap/extension-task-list, @tiptap/react, @tiptap/starter-kit (+2 more)
-
-### Community 307 - "✅ FASE 5 — FRONTEND REFACTOR (Etapas 36-41) — CONCLUÍDA"
+### Community 306 - "✅ FASE 5 — FRONTEND REFACTOR (Etapas 36-41) — CONCLUÍDA"
 Cohesion: 0.27
 Nodes (11): ✅ FASE 5 — FRONTEND REFACTOR (Etapas 36-41) — CONCLUÍDA, ComplianceFrameworksPage(), FreezeWindowsPage(), statusOf(), toLocalInput(), createFreezeWindow(), deleteFreezeWindow(), FreezeWindow (+3 more)
 
-### Community 308 - "check-e2e-artifact-secrets.mjs"
+### Community 307 - "check-e2e-artifact-secrets.mjs"
 Cohesion: 0.35
 Nodes (11): antesDe(), avaliarWorkflow(), blocoDoUpload(), CAMINHOS_SENSIVEIS, guarda(), REDATOR, redigeAntesDoUpload(), semComentarios() (+3 more)
 
-### Community 309 - "build_function_callers"
+### Community 308 - "build_function_callers"
 Cohesion: 0.15
 Nodes (13): build_function_callers(), is_caller_source(), prepare_output_directory(), Path, Histórico, testes e fixtures não demonstram uso atual pela aplicação., Ignora nomes em assinaturas DDL sem apagar chamadas no corpo de CREATE FUNCTION., Lê arquivos do repo elegíveis como callers (caminho relativo, conteúdo)., Atualiza cada categoria disponível e informa a origem atual/anterior das… (+5 more)
 
-### Community 310 - "CompareTracesSheet.tsx"
+### Community 309 - "CompareTracesSheet.tsx"
 Cohesion: 0.24
 Nodes (11): CompareTracesSheet(), countByEvent(), countTools(), errorMessageOf(), fmtDelta(), MetricCellProps, MetricRow(), summarize() (+3 more)
 
-### Community 311 - "fineTuningService.ts"
+### Community 310 - "fineTuningService.ts"
 Cohesion: 0.21
 Nodes (12): DatasetConfig, DatasetSource, getJobStatus(), invoke(), JobStatusResult, listTrainingJobs(), prepareDataset(), PrepareDatasetResult (+4 more)
 
-### Community 312 - "llm-gateway-providers.test.ts"
+### Community 311 - "llm-gateway-providers.test.ts"
 Cohesion: 0.15
 Nodes (5): HF_FREE_MODELS, INJECTION_PATTERNS, LLMCallParams, LLMResult, PII_PATTERNS
 
-### Community 313 - "20260331215314_3e45a841-28d6-419f-a95a-01b7d78bc44d.sql"
+### Community 312 - "20260331215314_3e45a841-28d6-419f-a95a-01b7d78bc44d.sql"
 Cohesion: 0.15
 Nodes (12): idx_agent_traces_user_created, idx_agent_usage_user_id, idx_agents_user_updated, idx_evaluation_runs_workspace_id, idx_oracle_history_user_created, idx_workspace_members_user_id, public.agent_traces, public.agent_usage (+4 more)
 
-### Community 314 - "20260416180547_5555d03a-f522-4dc7-b8d1-dd9e75dd07c8.sql"
+### Community 313 - "20260416180547_5555d03a-f522-4dc7-b8d1-dd9e75dd07c8.sql"
 Cohesion: 0.26
 Nodes (12): idx_role_permissions_perm, idx_role_permissions_role, idx_user_roles_user, idx_user_roles_workspace, public.is_workspace_admin(), public.permissions, public.role_permissions, public.roles (+4 more)
 
-### Community 315 - "20260417004130_ee762e16-1bf5-48d0-9d18-1c49ad503d7d.sql"
+### Community 314 - "20260417004130_ee762e16-1bf5-48d0-9d18-1c49ad503d7d.sql"
 Cohesion: 0.27
 Nodes (11): idx_prompt_exp_runs_experiment, idx_prompt_exp_runs_variant, idx_prompt_experiments_agent, idx_prompt_experiments_status, idx_prompt_experiments_workspace, public.assign_variant(), public.compute_experiment_stats(), public.prompt_experiment_runs (+3 more)
 
-### Community 316 - "20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
+### Community 315 - "20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
 Cohesion: 0.26
 Nodes (11): game_days_updated_at, idx_game_day_events_drill, idx_game_days_status, idx_game_days_workspace, public.complete_game_day(), public.game_day_events, public.game_day_scorecards, public.game_days (+3 more)
 
-### Community 317 - "20260418123453_fbfb5bbd-3026-4439-84c4-02d9d66ead8b.sql"
+### Community 316 - "20260418123453_fbfb5bbd-3026-4439-84c4-02d9d66ead8b.sql"
 Cohesion: 0.26
 Nodes (11): idx_compliance_controls_framework, idx_compliance_evidence_report, idx_compliance_reports_workspace, public.compliance_controls, public.compliance_evidence, public.compliance_frameworks, public.compliance_reports, public.generate_compliance_report() (+3 more)
 
-### Community 318 - "20260418174026_9d9d37c7-5cee-4cc8-932e-4d98a926cf9e.sql"
+### Community 317 - "20260418174026_9d9d37c7-5cee-4cc8-932e-4d98a926cf9e.sql"
 Cohesion: 0.29
 Nodes (12): idx_oce_user, idx_oce_workspace, idx_wme_user, idx_wme_workspace, public.oncall_schedule_emails, public.oncall_schedule_safe, public.workspace_member_emails, public.workspace_members_directory (+4 more)
 
-### Community 319 - "20260722112903_e4950969-c93b-49eb-bec1-8637aa5b7e08.sql"
+### Community 318 - "20260722112903_e4950969-c93b-49eb-bec1-8637aa5b7e08.sql"
 Cohesion: 0.23
 Nodes (11): idx_slack_agent_notif_agent, idx_slack_agent_notif_workspace, idx_slack_rag_enabled, idx_slack_rag_workspace, public.slack_agent_notifications, public.slack_bot_bindings, public.slack_rag_sources, public.update_updated_at_column (+3 more)
 
-### Community 320 - "compilerOptions"
+### Community 319 - "compilerOptions"
 Cohesion: 0.15
 Nodes (12): compilerOptions, allowJs, noFallthroughCasesInSwitch, noImplicitAny, noUnusedLocals, noUnusedParameters, paths, skipLibCheck (+4 more)
 
-### Community 321 - "🔍 Auditoria Back-End Exaustiva — Nexus / Fator X"
+### Community 320 - "🔍 Auditoria Back-End Exaustiva — Nexus / Fator X"
 Cohesion: 0.17
 Nodes (11): 1. Sumário Executivo, 2. Achados Positivos (o que já está 10/10), 5. Roadmap Prioritizado, 6. Benchmarking, 7. Conclusão, 🔍 Auditoria Back-End Exaustiva — Nexus / Fator X, 🔴 Crítico (0-7 dias), 🟢 Desejável (30-90 dias) (+3 more)
 
-### Community 322 - "7️⃣ 🔐 Segurança & Compliance"
+### Community 321 - "7️⃣ 🔐 Segurança & Compliance"
 Cohesion: 0.18
 Nodes (12): 1️⃣8️⃣ ⚙️ Settings & Admin, 7.3 IP Whitelist + Geo-Blocking, 7.4 Guardrails (4 camadas), 7.5 LGPD Compliance, 7.6 Audit Log + Forensic Snapshots, 7.7 API Keys (SHA-256), 7️⃣ 🔐 Segurança & Compliance, H.8 API Keys (+4 more)
 
-### Community 323 - "🧪 Simulação Fase 6 — 200 cenários auditados"
+### Community 322 - "🧪 Simulação Fase 6 — 200 cenários auditados"
 Cohesion: 0.17
 Nodes (10): 1. Onboarding Slack (25), 2. DLQ Slack (30), 3. RLS SECURITY DEFINER (40), 4. Partições/Retenção (30), 5. Edge Functions críticas (50), 6. UX/A11y (25), Baseline pós-Fase 6, 🧪 Simulação Fase 6 — 200 cenários auditados (+2 more)
 
-### Community 324 - "20260724000009_audit_log_append_only.sql"
+### Community 323 - "20260724000009_audit_log_append_only.sql"
 Cohesion: 0.18
 Nodes (9): pg_trigger, public.make_audit_log_immutable, idx_audit_log_workspace, prevent_audit_log_delete, prevent_audit_log_update, public.insert_audit_log(), pg_namespace, pg_proc (+1 more)
 
-### Community 325 - "20260724000005_rls_knowledge_graph.sql"
+### Community 324 - "20260724000005_rls_knowledge_graph.sql"
 Cohesion: 0.21
 Nodes (11): public.knowledge_entities, public.knowledge_relations, idx_agent_memories_v2_agent, idx_agent_memories_v2_tier_decay, idx_agent_memories_v2_workspace, idx_entity_resolution_logs_workspace, idx_knowledge_entities_name, idx_knowledge_entities_workspace (+3 more)
 
-### Community 326 - "20260401000003_fix_stub_schemas.sql"
+### Community 325 - "20260401000003_fix_stub_schemas.sql"
 Cohesion: 0.17
 Nodes (8): public.roles, public.is_user_locked_out(), public.notification_templates, roles_key_unique, public.auth_attempts, public.notifications, public.update_updated_at_column, update_agents_updated_at
 
-### Community 327 - "brazilianDocuments.ts"
+### Community 326 - "brazilianDocuments.ts"
 Cohesion: 0.20
 Nodes (7): cpf-cnpj-validator, cepSchema, cnpjSchema, cpfSchema, isValidCNPJ(), isValidCPF(), phoneBRSchema
 
-### Community 328 - "toast.tsx"
+### Community 327 - "toast.tsx"
 Cohesion: 0.26
 Nodes (10): @radix-ui/react-toast, Toast, ToastAction, ToastClose, ToastDescription, src_components_ui_toast_toastprovider, ToastTitle, toastVariants (+2 more)
 
-### Community 329 - "CustomNodes.tsx"
+### Community 328 - "CustomNodes.tsx"
 Cohesion: 0.17
 Nodes (11): reactflow, AgentNode, ConditionNode, makeNode(), NODE_PALETTE, NodeProps, nodeTypes, OutputNode (+3 more)
+
+### Community 329 - "RichEditor.tsx"
+Cohesion: 0.24
+Nodes (9): ref_tiptap_core, @tiptap/extension-image, @tiptap/extension-placeholder, @tiptap/extension-task-item, @tiptap/extension-task-list, @tiptap/react, @tiptap/starter-kit, RichEditor() (+1 more)
 
 ### Community 331 - "supabase-snapshot"
 Cohesion: 0.17
@@ -3169,21 +3169,21 @@ Cohesion: 0.67
 Nodes (3): idx_mcp_tools_server_id, idx_mcp_tools_workspace_id, public.mcp_tools
 
 ## Knowledge Gaps
-- **3465 isolated node(s):** `session-start.sh script`, `PATH`, `$schema`, `config:recommended`, `:semanticCommits` (+3460 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 5062 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **3466 isolated node(s):** `session-start.sh script`, `PATH`, `$schema`, `config:recommended`, `:semanticCommits` (+3461 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 5063 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **284 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `react` to `Button`, `lucide-react`, `App.tsx`, `KnowledgePage.tsx`, `logger.ts`, `BCPPage.tsx`, `@tanstack/react-query`, `DbRow`, `cn`, `agentsService.ts`, `client.ts`, `AgentDetailPage.tsx`, `fromTable`, `notesService.ts`, `RestoreVersionDialog.tsx`, `QuickCreateWizard.tsx`, `quickAgentSchema.ts`, `RealExamplePreview.tsx`, `ui/index.ts`, `E2EESyncPanel.tsx`, `button.tsx`, `DataBrowser.tsx`, `package.json`, `SkillClassificationEfficacyCard.tsx`, `TeamPage.tsx`, `SuperCerebroPage.tsx`, `ChatWithAgentPage.tsx`, `promptSanitizer.ts`, `promptContradictions.ts`, `WorkflowTimeTravelPanel.tsx`, `AppLayout.tsx`, `AgentVersioningPage.tsx`, `useCerebroStore`, `agentService.ts`, `VendorsPage.tsx`, `useAgentBuilderStore`, `RecentCurationsPanel.tsx`, `supabaseMock.ts`, `RestoreDiffPreview.tsx`, `kanbanService.ts`, `AgentEvalsPage.tsx`, `SLODashboard.tsx`, `nexus-complete-test-suite.test.ts`, `skillsRegistryService.ts`, `sidebar.tsx`, `datahubService.ts`, `hooks/use-toast.ts`, `DocumentUploadTab.tsx`, `agentTypes.ts`, `securityService.ts`, `RunFilter.tsx`, `knowledgeService.ts`, `tooltip.tsx`, `foldForSearch`, `llmGatewayService.ts`, `charts/index.ts`, `basesService.ts`, `MonitoringPage.tsx`, `DashboardPage.tsx`, `ErrorBoundary.tsx`, `productMockupService.ts`, `noteTemplatesService.ts`, `BillingModule.tsx`, `signedUrlCache.ts`, `notificationEngineService.ts`, `SearchTab.tsx`, `nlpPipelineService.ts`, `restoreValidation.ts`, `MCPServersPanel.tsx`, `I18nProvider.tsx`, `VoiceAgentsPage.tsx`, `AgentBuilder.tsx`, `AgentTracesPage.tsx`, `ExecutionTimeline.tsx`, `PublicHelpCenterPage.tsx`, `SkillComposerPage.tsx`, `DeployModule.tsx`, `connectorRegistryService.ts`, `AgentListPane.tsx`, `DraftRecoveryBanner.tsx`, `oracleStore.ts`, `ResearchHistoryPanel.tsx`, `ResetPasswordPage.tsx`, `design-improvements.test.tsx`, `CitationDialog.tsx`, `TestingModule.tsx`, `WhatsAppWebhookPanel.tsx`, `CitedMarkdown.tsx`, `CanvasEditor.tsx`, `WorkflowCanvas.tsx`, `PromptHistoryPanel.tsx`, `AuthPage.tsx`, `BehaviorImpactPanel.tsx`, `ReadinessModule.tsx`, `DayDrillDownDrawer.tsx`, `GuardrailsModule.tsx`, `ExecutionList.tsx`, `carousel.tsx`, `BrainModule.tsx`, `DraftVersionsDialog.tsx`, `SpanTreeView.tsx`, `useAutomationRules.ts`, `form.tsx`, `PublicNoteView.tsx`, `lib/researchConfig.ts`, `chaosService.ts`, `noteVersionsService.ts`, `RestorePresetMenu.tsx`, `RichEditor.tsx`, `CompareTracesSheet.tsx`, `toast.tsx`, `agentGraphService.ts`, `PIIScannerPanel.tsx`, `PodcastPanel.tsx`, `useDrilldownAuditLog.ts`, `use-paginated-query.ts`, `TemplateCanvasPreview.tsx`, `toggle-group.tsx`, `UsageCharts.tsx`, `searchService.ts`, `KnowledgeGraphSvg.tsx`?**
+- **Why does `react` connect `react` to `Button`, `lucide-react`, `App.tsx`, `KnowledgePage.tsx`, `logger.ts`, `BCPPage.tsx`, `@tanstack/react-query`, `DbRow`, `cn`, `agentsService.ts`, `client.ts`, `AgentDetailPage.tsx`, `fromTable`, `notesService.ts`, `RestoreVersionDialog.tsx`, `QuickCreateWizard.tsx`, `quickAgentSchema.ts`, `RealExamplePreview.tsx`, `ui/index.ts`, `E2EESyncPanel.tsx`, `button.tsx`, `package.json`, `DataBrowser.tsx`, `SkillClassificationEfficacyCard.tsx`, `TeamPage.tsx`, `SuperCerebroPage.tsx`, `ChatWithAgentPage.tsx`, `promptSanitizer.ts`, `promptContradictions.ts`, `WorkflowTimeTravelPanel.tsx`, `AppLayout.tsx`, `AgentVersioningPage.tsx`, `useCerebroStore`, `agentService.ts`, `VendorsPage.tsx`, `useAgentBuilderStore`, `RecentCurationsPanel.tsx`, `supabaseMock.ts`, `RestoreDiffPreview.tsx`, `kanbanService.ts`, `AgentEvalsPage.tsx`, `SLODashboard.tsx`, `nexus-complete-test-suite.test.ts`, `skillsRegistryService.ts`, `sidebar.tsx`, `datahubService.ts`, `hooks/use-toast.ts`, `DocumentUploadTab.tsx`, `agentTypes.ts`, `securityService.ts`, `RunFilter.tsx`, `knowledgeService.ts`, `tooltip.tsx`, `foldForSearch`, `llmGatewayService.ts`, `charts/index.ts`, `basesService.ts`, `MonitoringPage.tsx`, `DashboardPage.tsx`, `ErrorBoundary.tsx`, `productMockupService.ts`, `noteTemplatesService.ts`, `BillingModule.tsx`, `signedUrlCache.ts`, `notificationEngineService.ts`, `SearchTab.tsx`, `nlpPipelineService.ts`, `restoreValidation.ts`, `MCPServersPanel.tsx`, `I18nProvider.tsx`, `VoiceAgentsPage.tsx`, `AgentBuilder.tsx`, `AgentTracesPage.tsx`, `ExecutionTimeline.tsx`, `PublicHelpCenterPage.tsx`, `SkillComposerPage.tsx`, `DeployModule.tsx`, `connectorRegistryService.ts`, `AgentListPane.tsx`, `DraftRecoveryBanner.tsx`, `oracleStore.ts`, `ResearchHistoryPanel.tsx`, `ResetPasswordPage.tsx`, `design-improvements.test.tsx`, `CitationDialog.tsx`, `TestingModule.tsx`, `WhatsAppWebhookPanel.tsx`, `CitedMarkdown.tsx`, `CanvasEditor.tsx`, `WorkflowCanvas.tsx`, `PromptHistoryPanel.tsx`, `AuthPage.tsx`, `BehaviorImpactPanel.tsx`, `ReadinessModule.tsx`, `DayDrillDownDrawer.tsx`, `GuardrailsModule.tsx`, `ExecutionList.tsx`, `carousel.tsx`, `BrainModule.tsx`, `DraftVersionsDialog.tsx`, `SpanTreeView.tsx`, `useAutomationRules.ts`, `form.tsx`, `PublicNoteView.tsx`, `lib/researchConfig.ts`, `chaosService.ts`, `noteVersionsService.ts`, `RestorePresetMenu.tsx`, `CompareTracesSheet.tsx`, `toast.tsx`, `RichEditor.tsx`, `agentGraphService.ts`, `PIIScannerPanel.tsx`, `PodcastPanel.tsx`, `useDrilldownAuditLog.ts`, `use-paginated-query.ts`, `TemplateCanvasPreview.tsx`, `toggle-group.tsx`, `UsageCharts.tsx`, `searchService.ts`, `KnowledgeGraphSvg.tsx`?**
   _High betweenness centrality (0.065) - this node is a cross-community bridge._
-- **Why does `vitest` connect `vitest` to `KnowledgePage.tsx`, `logger.ts`, `@tanstack/react-query`, `DbRow`, `requireEnv`, `ref_node_fs`, `agentsService.ts`, `templateSkillLinkService.ts`, `getWorkspaceId`, `client.ts`, `AgentDetailPage.tsx`, `fromTable`, `lib.ts`, `notesService.ts`, `QuickCreateWizard.tsx`, `skillDemand.ts`, `observability.ts`, `RealExamplePreview.tsx`, `skillDepartmentClassifier.ts`, `E2EESyncPanel.tsx`, `templateSkillRegistry.ts`, `promptSimulation.ts`, `package.json`, `SkillClassificationEfficacyCard.tsx`, `TeamPage.tsx`, `ChatWithAgentPage.tsx`, `webhookTriggerService.ts`, `promptContradictions.ts`, `WorkflowTimeTravelPanel.tsx`, `AppLayout.tsx`, `useCerebroStore`, `agentService.ts`, `VendorsPage.tsx`, `RecentCurationsPanel.tsx`, `skillHarvestService.ts`, `supabaseMock.ts`, `kanbanService.ts`, `classificationEfficacy.ts`, `nexus-complete-test-suite.test.ts`, `skillsRegistryService.ts`, `installGuard.ts`, `departmentReclassification.ts`, `sidebar.tsx`, `datahubService.ts`, `securityService.ts`, `knowledgeService.ts`, `tooltip.tsx`, `foldForSearch`, `llmGatewayService.ts`, `basesService.ts`, `ref_node_url`, `MonitoringPage.tsx`, `template-skill-links-restore.test.ts`, `DashboardPage.tsx`, `evaluationsService.ts`, `ErrorBoundary.tsx`, `middlewarePipelineService.ts`, `agentHandoffService.ts`, `skillDraft.ts`, `descriptionEnrichment.ts`, `noteTemplatesService.ts`, `costCalculatorService.ts`, `queueManagerService.ts`, `progressiveSkillLoader.ts`, `openclawDeployService.ts`, `notificationEngineService.ts`, `nlpPipelineService.ts`, `skillReclassificationReviewService.ts`, `agentSchema.ts`, `MCPServersPanel.tsx`, `contextTiersService.ts`, `services.test.ts`, `I18nProvider.tsx`, `VoiceAgentsPage.tsx`, `billingService.ts`, `@testing-library/react`, `DeployModule.tsx`, `batchProcessorService.ts`, `connectorRegistryService.ts`, `installCapLedger.ts`, `cronSchedulerService.ts`, `AgentListPane.tsx`, `promptEvidenceLedger.ts`, `llmClassificationQueue.ts`, `credentialVaultService.ts`, `design-improvements.test.tsx`, `guardrailPolicy.ts`, `WhatsAppWebhookPanel.tsx`, `CitedMarkdown.tsx`, `WorkflowCanvas.tsx`, `skillEnrichmentService.ts`, `memoryService.ts`, `workspaceContextService.ts`, `attribution.ts`, `skill-license-filter.test.ts`, `skillRecommenderService.ts`, `nexus-design.js`, `GuardrailsModule.tsx`, `BrainModule.tsx`, `createSSEEmitter`, `SpanTreeView.tsx`, `queueFailureSummary.ts`, `RichEditor.tsx`, `✅ FASE 5 — FRONTEND REFACTOR (Etapas 36-41) — CONCLUÍDA`, `llm-gateway-providers.test.ts`, `🧪 Simulação Fase 6 — 200 cenários auditados`, `PIIScannerPanel.tsx`, `dialogSchemas.ts`, `jspdf`, `TemplateCanvasPreview.tsx`, `tiers.ts`, `skill-description-parity.test.ts`?**
+- **Why does `vitest` connect `vitest` to `KnowledgePage.tsx`, `logger.ts`, `@tanstack/react-query`, `DbRow`, `requireEnv`, `ref_node_fs`, `agentsService.ts`, `templateSkillLinkService.ts`, `getWorkspaceId`, `client.ts`, `AgentDetailPage.tsx`, `fromTable`, `lib.ts`, `notesService.ts`, `QuickCreateWizard.tsx`, `skillDemand.ts`, `observability.ts`, `RealExamplePreview.tsx`, `skillDepartmentClassifier.ts`, `E2EESyncPanel.tsx`, `templateSkillRegistry.ts`, `promptSimulation.ts`, `package.json`, `SkillClassificationEfficacyCard.tsx`, `TeamPage.tsx`, `ChatWithAgentPage.tsx`, `webhookTriggerService.ts`, `promptContradictions.ts`, `WorkflowTimeTravelPanel.tsx`, `AppLayout.tsx`, `useCerebroStore`, `agentService.ts`, `VendorsPage.tsx`, `RecentCurationsPanel.tsx`, `skillHarvestService.ts`, `supabaseMock.ts`, `kanbanService.ts`, `classificationEfficacy.ts`, `nexus-complete-test-suite.test.ts`, `skillsRegistryService.ts`, `installGuard.ts`, `departmentReclassification.ts`, `sidebar.tsx`, `datahubService.ts`, `securityService.ts`, `knowledgeService.ts`, `tooltip.tsx`, `foldForSearch`, `llmGatewayService.ts`, `basesService.ts`, `ref_node_url`, `MonitoringPage.tsx`, `template-skill-links-restore.test.ts`, `DashboardPage.tsx`, `evaluationsService.ts`, `ErrorBoundary.tsx`, `middlewarePipelineService.ts`, `agentHandoffService.ts`, `skillDraft.ts`, `descriptionEnrichment.ts`, `noteTemplatesService.ts`, `costCalculatorService.ts`, `queueManagerService.ts`, `progressiveSkillLoader.ts`, `openclawDeployService.ts`, `notificationEngineService.ts`, `nlpPipelineService.ts`, `skillReclassificationReviewService.ts`, `agentSchema.ts`, `MCPServersPanel.tsx`, `contextTiersService.ts`, `services.test.ts`, `I18nProvider.tsx`, `VoiceAgentsPage.tsx`, `billingService.ts`, `@testing-library/react`, `DeployModule.tsx`, `batchProcessorService.ts`, `connectorRegistryService.ts`, `installCapLedger.ts`, `cronSchedulerService.ts`, `AgentListPane.tsx`, `promptEvidenceLedger.ts`, `llmClassificationQueue.ts`, `credentialVaultService.ts`, `design-improvements.test.tsx`, `guardrailPolicy.ts`, `WhatsAppWebhookPanel.tsx`, `CitedMarkdown.tsx`, `WorkflowCanvas.tsx`, `skillEnrichmentService.ts`, `memoryService.ts`, `workspaceContextService.ts`, `attribution.ts`, `skill-license-filter.test.ts`, `skillRecommenderService.ts`, `nexus-design.js`, `GuardrailsModule.tsx`, `BrainModule.tsx`, `createSSEEmitter`, `SpanTreeView.tsx`, `queueFailureSummary.ts`, `✅ FASE 5 — FRONTEND REFACTOR (Etapas 36-41) — CONCLUÍDA`, `llm-gateway-providers.test.ts`, `🧪 Simulação Fase 6 — 200 cenários auditados`, `RichEditor.tsx`, `PIIScannerPanel.tsx`, `dialogSchemas.ts`, `jspdf`, `TemplateCanvasPreview.tsx`, `tiers.ts`, `skill-description-parity.test.ts`?**
   _High betweenness centrality (0.065) - this node is a cross-community bridge._
 - **Why does `Badge()` connect `lucide-react` to `Button`, `App.tsx`, `KnowledgePage.tsx`, `react`, `logger.ts`, `BCPPage.tsx`, `@tanstack/react-query`, `DbRow`, `cn`, `client.ts`, `AgentDetailPage.tsx`, `fromTable`, `notesService.ts`, `RestoreVersionDialog.tsx`, `quickAgentSchema.ts`, `RealExamplePreview.tsx`, `ui/index.ts`, `E2EESyncPanel.tsx`, `button.tsx`, `promptSimulation.ts`, `DataBrowser.tsx`, `SkillClassificationEfficacyCard.tsx`, `SuperCerebroPage.tsx`, `promptSanitizer.ts`, `WorkflowTimeTravelPanel.tsx`, `useCerebroStore`, `agentService.ts`, `VendorsPage.tsx`, `useAgentBuilderStore`, `RecentCurationsPanel.tsx`, `supabaseMock.ts`, `kanbanService.ts`, `AgentEvalsPage.tsx`, `SLODashboard.tsx`, `nexus-complete-test-suite.test.ts`, `skillsRegistryService.ts`, `sidebar.tsx`, `datahubService.ts`, `hooks/use-toast.ts`, `DocumentUploadTab.tsx`, `alertRulesService.ts`, `securityService.ts`, `tooltip.tsx`, `llmGatewayService.ts`, `MonitoringPage.tsx`, `DashboardPage.tsx`, `productMockupService.ts`, `noteTemplatesService.ts`, `BillingModule.tsx`, `SearchTab.tsx`, `MCPServersPanel.tsx`, `VoiceAgentsPage.tsx`, `AgentBuilder.tsx`, `ExecutionTimeline.tsx`, `PublicHelpCenterPage.tsx`, `SkillComposerPage.tsx`, `DeployModule.tsx`, `connectorRegistryService.ts`, `AgentListPane.tsx`, `oracleStore.ts`, `ResearchHistoryPanel.tsx`, `promptDiff.ts`, `CitationDialog.tsx`, `WhatsAppWebhookPanel.tsx`, `CitedMarkdown.tsx`, `PromptHistoryPanel.tsx`, `GuardrailsModule.tsx`, `BrainModule.tsx`, `DraftVersionsDialog.tsx`, `SpanTreeView.tsx`, `healthService.ts`, `PublicNoteView.tsx`, `noteVersionsService.ts`, `CompareTracesSheet.tsx`, `PIIScannerPanel.tsx`, `UsageCharts.tsx`, `GenerativeUI.tsx`, `ConsensusMatrix.tsx`?**
   _High betweenness centrality (0.052) - this node is a cross-community bridge._
 - **What connects `session-start.sh script`, `PATH`, `$schema` to the rest of the system?**
-  _3465 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3466 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Button` be split into smaller, more focused modules?**
   _Cohesion score 0.036216415163783586 - nodes in this community are weakly interconnected._
 - **Should `lucide-react` be split into smaller, more focused modules?**

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "81afc708cc224bc5f0bf62cde518e9d0880292b6",
+  "sha": "12be19224248d0864eb3a9c4740cbffecd9829a9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-12 15:21 UTC",
+  "generated_at": "2026-11-12 20:12 UTC",
   "files_total": 1973,
   "code_files": 1779,
-  "code_lines": 345302
+  "code_lines": 345298
  },
  "version": "1.3.2",
- "facts_hash": "6c03aea36e7b0c6a",
+ "facts_hash": "e4509b61ab360e73",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -57384,7 +57384,7 @@
   {
    "module": "src/components",
    "files": 557,
-   "lines": 103701,
+   "lines": 103699,
    "tables": [
     "agent_templates",
     "agent_traces",
@@ -58568,7 +58568,7 @@
   {
    "module": "src/test",
    "files": 191,
-   "lines": 28951,
+   "lines": 28949,
    "tables": [
     "tabela"
    ],
@@ -58590,7 +58590,6 @@
     "@testing-library/user-event",
     "@tiptap/core",
     "@tiptap/extension-image",
-    "@tiptap/extension-link",
     "@tiptap/extension-task-item",
     "@tiptap/extension-task-list",
     "@tiptap/starter-kit",
@@ -148589,7 +148588,7 @@
   },
   "src/components/knowledge/RichEditor.tsx": {
    "path": "src/components/knowledge/RichEditor.tsx",
-   "lines": 85,
+   "lines": 83,
    "exports": [
     "function RichEditor"
    ]
@@ -175718,7 +175717,7 @@
   },
   "src/test/rich-editor.test.tsx": {
    "path": "src/test/rich-editor.test.tsx",
-   "lines": 65,
+   "lines": 63,
    "is_test": true,
    "tests": [
     "contrato do editor com as extensões TipTap instaladas",
@@ -188693,10 +188692,22 @@
   }
  },
  "git": {
-  "sha": "81afc708cc224bc5f0bf62cde518e9d0880292b6",
+  "sha": "12be19224248d0864eb3a9c4740cbffecd9829a9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "12be192",
+    "date": "2026-11-12",
+    "author": "dependabot[bot]",
+    "subject": "fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)",
+    "files": [
+     "package-lock.json",
+     "package.json",
+     "src/components/knowledge/RichEditor.tsx",
+     "src/test/rich-editor.test.tsx"
+    ]
+   },
    {
     "sha": "81afc70",
     "date": "2026-11-12",
@@ -189634,23 +189645,16 @@
     "author": "adm01-debug",
     "subject": "Merge pull request #49 from adm01-debug/dependabot/npm_and_yarn/tiptap/extension-placeholder-3.30.1",
     "files": []
-   },
-   {
-    "sha": "670bc3c",
-    "date": "2026-09-05",
-    "author": "adm01-debug",
-    "subject": "Merge pull request #48 from adm01-debug/dependabot/npm_and_yarn/testing-library/user-event-14.6.4",
-    "files": []
    }
   ],
   "hot_files": [
    [
     "package.json",
-    13
+    14
    ],
    [
     "package-lock.json",
-    12
+    13
    ],
    [
     "supabase/deployment-manifest.json",
@@ -189705,6 +189709,10 @@
     3
    ],
    [
+    "src/test/rich-editor.test.tsx",
+    2
+   ],
+   [
     ".github/workflows/inventario-estado-semanal.yml",
     2
    ],
@@ -189718,10 +189726,6 @@
    ],
    [
     "docs/migration/MATRIZ_EDGE_TABELA.md",
-    2
-   ],
-   [
-    "src/services/widgetService.ts",
     2
    ]
   ]

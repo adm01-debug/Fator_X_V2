@@ -1395,7 +1395,7 @@
   {
    "arquivo": "src/test/rich-editor.test.tsx",
    "tipo": "unit",
-   "linhas": 65,
+   "linhas": 63,
    "testa": [
     "src/components/knowledge/RichEditor.tsx"
    ],

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `81afc708cc224bc5f0bf62cde518e9d0880292b6` (2026-11-12T11:26:05-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `12be19224248d0864eb3a9c4740cbffecd9829a9` (2026-11-12T13:18:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1968 |
 | arquivos_codigo | 1446 |
-| linhas_codigo | 316368 |
+| linhas_codigo | 316364 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -431,14 +431,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13759 nós · 36972 arestas · 877 comunidades · grafo do commit `81afc708`
+- 13759 nós · 36970 arestas · 877 comunidades · grafo do commit `12be1922`
 - comunidades maiores: Button (286), lucide-react (247), App.tsx (165), ref_https (147), KnowledgePage.tsx (144), react (138), logger.ts (120), BCPPage.tsx (119), @tanstack/react-query (118), DbRow (117), cn (111), requireEnv (106)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (18)
-- package.json (18)
+- package-lock.json (19)
+- package.json (19)
 - .github/workflows/ci.yml (6)
 - supabase/deployment-manifest.json (5)
 - AGENTS.md (4)
@@ -573,6 +573,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-12 `12be1922` fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)
 - 2026-11-12 `81afc708` chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates (#72)
 - 2026-11-12 `d41db745` chore(deps)(deps): bump @sentry/react from 10.73.0 to 11.11.0 in the sentry group across 1 directory (#63)
 - 2026-11-12 `ba8344c3` chore(ci): atualiza comentario do SUPABASE_ACCESS_TOKEN no inventario semanal (#79)
@@ -587,7 +588,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-11 `b9162c98` ci(agentes): liga o guard de integridade do AGENTS.md no CI (#70)
 - 2026-11-11 `6ed5defd` chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#73)
 - 2026-11-11 `c8b7ca62` fix(tipos): alinha TipTap e corrige auditoria do login (#74)
-- 2026-11-09 `44448e6f` chore(deps)(deps): bump @supabase/supabase-js (#62)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

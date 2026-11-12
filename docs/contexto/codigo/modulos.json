@@ -1627,7 +1627,7 @@
    "modulo": "components/knowledge",
    "arquivos": 11,
    "testes": 0,
-   "linhas": 1979,
+   "linhas": 1977,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1696,7 +1696,6 @@
    "pacotes_externos": [
     "@tanstack/react-query",
     "@tiptap/extension-image",
-    "@tiptap/extension-link",
     "@tiptap/extension-placeholder",
     "@tiptap/extension-task-item",
     "@tiptap/extension-task-list",
