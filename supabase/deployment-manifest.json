@@ -1605,7 +1605,9 @@
       "entrypoint": "supabase/functions/migrate-helper/index.ts",
       "verify_jwt": false,
       "source_sha256": "e15acbb16a71e08afb90d03ee34977ed0efade37fe183bf6417a1eaf6fd23466",
-      "source_files": ["supabase/functions/migrate-helper/index.ts"]
+      "source_files": [
+        "supabase/functions/migrate-helper/index.ts"
+      ]
     },
     {
       "name": "nlp-pipeline",

@@ -18,3 +18,4 @@ docs/contexto
 # Gerados por script (reformatar faria o --check acusar diferença eterna).
 inventario/estado
 docs/migration/MATRIZ_EDGE_TABELA.md
+supabase/deployment-manifest.json
