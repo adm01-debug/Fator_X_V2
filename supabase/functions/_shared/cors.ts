@@ -1,6 +1,7 @@
 /**
- * Nexus Agents Studio — Shared CORS (HARDENED)
+ * Nexus Agents Studio - Shared CORS (HARDENED)
  * FIX P0-08: whitelist .lovable.app + x-workspace-id header + Vary: Origin
+ * FIX CORS-01: adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS
  */
 const ALLOWED_ORIGINS: string[] = [
   'https://nexus.promobrindes.com.br',
@@ -8,6 +9,7 @@ const ALLOWED_ORIGINS: string[] = [
   'https://promobrindes.com.br',
   'https://lovable.dev',
   'https://supabase.com',
+  'https://fator-x-v2.vercel.app',
 ];
 const ALLOWED_ORIGIN_PATTERNS: RegExp[] = [
   /^https?:\/\/localhost(:\d+)?$/,
@@ -16,6 +18,7 @@ const ALLOWED_ORIGIN_PATTERNS: RegExp[] = [
   /^https:\/\/.*\.lovable\.app$/,
   /^https:\/\/.*\.supabase\.co$/,
   /^https:\/\/.*\.promobrindes\.com\.br$/,
+  /^https:\/\/.*\.vercel\.app$/,
 ];
 const ALLOWED_HEADERS = [
   'authorization',
@@ -32,7 +35,6 @@ const ALLOWED_HEADERS = [
   'x-supabase-client-platform-version',
   'x-supabase-client-runtime',
   'x-supabase-client-runtime-version',
-  // Webhook signature headers for all supported providers
   'x-openclaw-signature',
   'x-openclaw-timestamp',
   'x-hub-signature-256',
