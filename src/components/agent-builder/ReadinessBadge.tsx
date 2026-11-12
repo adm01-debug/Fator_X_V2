@@ -31,7 +31,9 @@ export function ReadinessBadge() {
               <div className="text-meta text-muted-foreground">Score de Prontidão</div>
               <div className={`text-2xl font-bold ${colors.text}`}>{result.score}/10</div>
             </div>
-            <div className={`px-2 py-0.5 rounded-full text-meta font-bold ${colors.text} ${colors.border} border`}>
+            <div
+              className={`px-2 py-0.5 rounded-full text-meta font-bold ${colors.text} ${colors.border} border`}
+            >
               {colors.label.toUpperCase()}
             </div>
           </div>
@@ -60,7 +62,9 @@ export function ReadinessBadge() {
               ) : (
                 <X className="h-3.5 w-3.5 text-destructive shrink-0" />
               )}
-              <span className={`flex-1 ${c.passed ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+              <span
+                className={`flex-1 ${c.passed ? 'text-muted-foreground line-through' : 'text-foreground'}`}
+              >
                 {c.label}
               </span>
               {!c.passed && (

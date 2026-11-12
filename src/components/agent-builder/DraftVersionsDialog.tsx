@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,7 +21,10 @@ import {
   deleteDraftVersion,
 } from '@/services/agentDraftVersionsService';
 import { useAgentBuilderStore } from '@/stores/agentBuilderStore';
-import { validateAgentVersion, type VersionValidationIssue } from '@/lib/validations/agentVersionValidator';
+import {
+  validateAgentVersion,
+  type VersionValidationIssue,
+} from '@/lib/validations/agentVersionValidator';
 import { VersionValidationPanel } from './VersionValidationPanel';
 
 interface DraftVersionsDialogProps {
@@ -77,11 +87,17 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
         break;
       case 'config.rag_no_sources':
         updateAgent({ rag_architecture: 'naive' }); // 'naive' is the simplest architecture
-        toast({ title: 'RAG simplificado', description: 'Arquitetura RAG definida como "naive" por falta de fontes.' });
+        toast({
+          title: 'RAG simplificado',
+          description: 'Arquitetura RAG definida como "naive" por falta de fontes.',
+        });
         break;
       case 'config.react_without_tools':
         updateAgent({ reasoning: 'cot' }); // 'cot' (Chain of Thought) works without tools
-        toast({ title: 'Raciocínio alterado', description: 'Alterado para "cot" pois não há ferramentas.' });
+        toast({
+          title: 'Raciocínio alterado',
+          description: 'Alterado para "cot" pois não há ferramentas.',
+        });
         break;
       case 'config.expensive_for_simple':
         updateAgent({ model: 'claude-haiku-4.5' });
@@ -91,25 +107,28 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
         updateAgent({
           guardrails: [
             ...(agent.guardrails || []),
-            { 
+            {
               id: 'toxicity-guard',
-              name: 'Toxicity', 
+              name: 'Toxicity',
               enabled: true,
               category: 'output_safety',
               description: 'Filtra conteúdo tóxico ou ofensivo',
-              severity: 'block'
+              severity: 'block',
             },
-            { 
+            {
               id: 'pii-guard',
-              name: 'PII Leak', 
+              name: 'PII Leak',
               enabled: true,
               category: 'output_safety',
               description: 'Previne vazamento de dados pessoais',
-              severity: 'block'
+              severity: 'block',
             },
           ],
         });
-        toast({ title: 'Guardrails ativados', description: 'Filtros básicos de segurança foram habilitados.' });
+        toast({
+          title: 'Guardrails ativados',
+          description: 'Filtros básicos de segurança foram habilitados.',
+        });
         break;
       case 'config.long_term_without_short':
         updateAgent({ memory_short_term: true });
@@ -119,10 +138,16 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
         updateAgent({
           system_prompt: `Meu nome é {{name}}.\n\n${agent.system_prompt ?? ''}`,
         });
-        toast({ title: 'Identidade adicionada', description: 'Placeholder de nome inserido no início do prompt.' });
+        toast({
+          title: 'Identidade adicionada',
+          description: 'Placeholder de nome inserido no início do prompt.',
+        });
         break;
       default:
-        toast({ title: 'Ação não disponível', description: 'Este problema requer correção manual.' });
+        toast({
+          title: 'Ação não disponível',
+          description: 'Este problema requer correção manual.',
+        });
     }
   };
 
@@ -165,7 +190,8 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
             Rascunhos de versão
           </DialogTitle>
           <DialogDescription>
-            Snapshots locais (não persistidos no servidor) da configuração atual do agente. Útil para experimentar mudanças sem perder o ponto de partida.
+            Snapshots locais (não persistidos no servidor) da configuração atual do agente. Útil
+            para experimentar mudanças sem perder o ponto de partida.
           </DialogDescription>
         </DialogHeader>
 
@@ -173,7 +199,9 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
         <div className="space-y-2 nexus-card !p-3 border-primary/30 bg-primary/5">
           <div className="flex items-center justify-between">
             <span className="text-meta font-medium text-foreground">Salvar estado atual</span>
-            <Badge variant="outline" className="text-meta">local</Badge>
+            <Badge variant="outline" className="text-meta">
+              local
+            </Badge>
           </div>
           <Input
             placeholder='Ex: "Antes de trocar o prompt"'
@@ -222,7 +250,9 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
         {/* List */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-meta text-muted-foreground">
-            <span>{drafts.length} {drafts.length === 1 ? 'rascunho' : 'rascunhos'}</span>
+            <span>
+              {drafts.length} {drafts.length === 1 ? 'rascunho' : 'rascunhos'}
+            </span>
             <span className="font-mono">limite 20</span>
           </div>
 
@@ -230,7 +260,9 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
             <div className="nexus-card !p-6 flex flex-col items-center text-center gap-2 text-muted-foreground">
               <Inbox className="h-8 w-8 opacity-50" aria-hidden />
               <p className="text-body-sm">Nenhum rascunho salvo ainda</p>
-              <p className="text-meta">Use o formulário acima para salvar uma versão de trabalho.</p>
+              <p className="text-meta">
+                Use o formulário acima para salvar uma versão de trabalho.
+              </p>
             </div>
           ) : (
             <ScrollArea className="h-[280px] pr-2">
@@ -245,14 +277,20 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-body-sm font-medium text-foreground truncate">{d.label}</span>
-                        <Badge variant="secondary" className="text-meta">{formatSize(d.size)}</Badge>
+                        <span className="text-body-sm font-medium text-foreground truncate">
+                          {d.label}
+                        </span>
+                        <Badge variant="secondary" className="text-meta">
+                          {formatSize(d.size)}
+                        </Badge>
                       </div>
                       <p className="text-meta text-muted-foreground mt-0.5">
                         {d.agentName} · {formatRelative(d.createdAt)}
                       </p>
                       {d.note && (
-                        <p className="text-meta text-muted-foreground mt-1 line-clamp-2">{d.note}</p>
+                        <p className="text-meta text-muted-foreground mt-1 line-clamp-2">
+                          {d.note}
+                        </p>
                       )}
                     </div>
                     <div className="flex flex-col gap-1 shrink-0">
@@ -283,7 +321,9 @@ export function DraftVersionsDialog({ open, onOpenChange }: DraftVersionsDialogP
         </div>
 
         <DialogFooter>
-          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Fechar</Button>
+          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+            Fechar
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -33,7 +33,7 @@ export function TabNavigation() {
               'flex items-center gap-1.5 px-3 py-2.5 text-meta font-medium whitespace-nowrap transition-all duration-200 border-b-2 shrink-0',
               isActive
                 ? 'text-primary border-primary bg-primary/5 font-bold'
-                : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-muted/30'
+                : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-muted/30',
             )}
           >
             <span className="text-body-sm">{tab.icon}</span>

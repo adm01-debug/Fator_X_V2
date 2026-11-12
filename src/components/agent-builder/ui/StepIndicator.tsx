@@ -19,7 +19,7 @@ export function StepIndicator({ currentTab, variant = 'text', className }: StepI
             key={tab.id}
             className={cn(
               'h-1.5 rounded-full transition-all duration-300',
-              i === idx ? 'w-4 bg-primary' : i < idx ? 'w-1.5 bg-primary/40' : 'w-1.5 bg-muted'
+              i === idx ? 'w-4 bg-primary' : i < idx ? 'w-1.5 bg-primary/40' : 'w-1.5 bg-muted',
             )}
           />
         ))}

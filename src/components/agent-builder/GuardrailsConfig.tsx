@@ -10,16 +10,45 @@ import { Badge } from '@/components/ui/badge';
 import { Shield, Play, Loader2 } from 'lucide-react';
 
 const RAILS = [
-  { id: 'prompt_injection', name: 'Prompt Injection', icon: '🛡️', description: 'Detecta tentativas de manipulação do prompt do sistema', layer: 'input' },
-  { id: 'pii_detection', name: 'Detecção de PII', icon: '🔒', description: 'Identifica CPF, CNPJ, emails, telefones, cartões de crédito', layer: 'output' },
-  { id: 'toxicity', name: 'Toxicidade', icon: '⚠️', description: 'Detecta linguagem ofensiva ou inapropriada', layer: 'output' },
-  { id: 'secret_leakage', name: 'Vazamento de Secrets', icon: '🔑', description: 'Bloqueia API keys, tokens e senhas na saída', layer: 'output' },
+  {
+    id: 'prompt_injection',
+    name: 'Prompt Injection',
+    icon: '🛡️',
+    description: 'Detecta tentativas de manipulação do prompt do sistema',
+    layer: 'input',
+  },
+  {
+    id: 'pii_detection',
+    name: 'Detecção de PII',
+    icon: '🔒',
+    description: 'Identifica CPF, CNPJ, emails, telefones, cartões de crédito',
+    layer: 'output',
+  },
+  {
+    id: 'toxicity',
+    name: 'Toxicidade',
+    icon: '⚠️',
+    description: 'Detecta linguagem ofensiva ou inapropriada',
+    layer: 'output',
+  },
+  {
+    id: 'secret_leakage',
+    name: 'Vazamento de Secrets',
+    icon: '🔑',
+    description: 'Bloqueia API keys, tokens e senhas na saída',
+    layer: 'output',
+  },
 ];
 
 export function GuardrailsConfig() {
   const [testText, setTestText] = useState('');
   const [testing, setTesting] = useState(false);
-  const [results, setResults] = useState<Array<{ rail: string; action: string; confidence: number; reason: string }> | null>(null);
+  const [results, setResults] = useState<Array<{
+    rail: string;
+    action: string;
+    confidence: number;
+    reason: string;
+  }> | null>(null);
 
   async function testGuardrails() {
     if (!testText.trim()) return;
@@ -44,12 +73,14 @@ export function GuardrailsConfig() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {RAILS.map(r => (
+        {RAILS.map((r) => (
           <div key={r.id} className="bg-background rounded-lg p-3">
             <div className="flex items-center gap-2 mb-1">
               <span>{r.icon}</span>
               <span className="text-meta font-medium text-foreground">{r.name}</span>
-              <Badge variant="outline" className="text-[8px]">{r.layer}</Badge>
+              <Badge variant="outline" className="text-[8px]">
+                {r.layer}
+              </Badge>
             </div>
             <p className="text-meta text-muted-foreground">{r.description}</p>
           </div>
@@ -65,26 +96,54 @@ export function GuardrailsConfig() {
         className="w-full bg-background border border-border rounded-lg p-3 text-body-sm text-foreground placeholder-muted-foreground resize-none focus:border-destructive focus:outline-none"
       />
 
-      <Button onClick={testGuardrails} disabled={testing || !testText.trim()} size="sm" variant="destructive">
-        {testing ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Play className="w-3 h-3 mr-1" />}
+      <Button
+        onClick={testGuardrails}
+        disabled={testing || !testText.trim()}
+        size="sm"
+        variant="destructive"
+      >
+        {testing ? (
+          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+        ) : (
+          <Play className="w-3 h-3 mr-1" />
+        )}
         Testar Guardrails
       </Button>
 
       {results && (
         <div className="space-y-2">
           {results.map((r, i) => (
-            <div key={i} className={`rounded-lg p-3 text-meta ${
-              r.action === 'block' ? 'bg-destructive/10 border border-destructive/30' :
-              r.action === 'warn' ? 'bg-nexus-amber/10 border border-nexus-amber/30' :
-              'bg-nexus-emerald/10 border border-nexus-emerald/30'
-            }`}>
+            <div
+              key={i}
+              className={`rounded-lg p-3 text-meta ${
+                r.action === 'block'
+                  ? 'bg-destructive/10 border border-destructive/30'
+                  : r.action === 'warn'
+                    ? 'bg-nexus-amber/10 border border-nexus-amber/30'
+                    : 'bg-nexus-emerald/10 border border-nexus-emerald/30'
+              }`}
+            >
               <div className="flex items-center justify-between">
                 <span className="font-bold">{r.rail}</span>
-                <Badge className={r.action === 'block' ? 'bg-destructive' : r.action === 'warn' ? 'bg-nexus-amber' : 'bg-nexus-emerald'}>
-                  {r.action === 'block' ? '🚫 Bloqueado' : r.action === 'warn' ? '⚠️ Alerta' : '✅ Permitido'}
+                <Badge
+                  className={
+                    r.action === 'block'
+                      ? 'bg-destructive'
+                      : r.action === 'warn'
+                        ? 'bg-nexus-amber'
+                        : 'bg-nexus-emerald'
+                  }
+                >
+                  {r.action === 'block'
+                    ? '🚫 Bloqueado'
+                    : r.action === 'warn'
+                      ? '⚠️ Alerta'
+                      : '✅ Permitido'}
                 </Badge>
               </div>
-              <p className="text-muted-foreground mt-1">{r.reason} (confiança: {Math.round(r.confidence * 100)}%)</p>
+              <p className="text-muted-foreground mt-1">
+                {r.reason} (confiança: {Math.round(r.confidence * 100)}%)
+              </p>
             </div>
           ))}
         </div>
