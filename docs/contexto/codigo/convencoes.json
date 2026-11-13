@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)",
    "fix(ci): sobe node-version para 22 nos jobs npm (#86)",
    "chore(lint): zerar erros do ESLint (13 → 0) (#85)",
    "fix(edge): corrige erros de tipagem em webhooks (#84)",
-   "fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)",
-   "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates (#72)"
+   "fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

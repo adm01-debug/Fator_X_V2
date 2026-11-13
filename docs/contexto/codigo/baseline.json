@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8e722da77cecf7d256078697d7e1d03bea08de99",
+  "commit": "f61821682b1af42a468414c96b6bd5641b987397",
   "branch": "main",
-  "data_commit": "2026-11-13T18:40:01-03:00",
+  "data_commit": "2026-11-13T18:49:53-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "f6182168",
+    "data": "2026-11-13",
+    "assunto": "feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)"
+   },
    {
     "sha": "8e722da7",
     "data": "2026-11-13",
@@ -126,15 +131,14 @@
     "sha": "43b3ceaf",
     "data": "2026-09-14",
     "assunto": "chore(deps)(deps): bump @sentry/react in the sentry group (#57)"
-   },
-   {
-    "sha": "133852ac",
-    "data": "2026-09-14",
-    "assunto": "chore(deps)(deps): bump @supabase/supabase-js in the supabase group (#56)"
    }
   ],
   "arquivos_mudados_7d": 197,
   "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "supabase/deployment-manifest.json",
+    "mudancas": 8
+   },
    {
     "pasta": "package-lock.json",
     "mudancas": 7
@@ -144,15 +148,15 @@
     "mudancas": 7
    },
    {
-    "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 7
-   },
-   {
     "pasta": ".github/workflows/ci.yml",
     "mudancas": 4
    },
    {
     "pasta": "src/components/admin",
+    "mudancas": 4
+   },
+   {
+    "pasta": "supabase/functions/llm-gateway",
     "mudancas": 4
    },
    {
@@ -165,10 +169,6 @@
    },
    {
     "pasta": "supabase/functions/agent-workflow-runner",
-    "mudancas": 3
-   },
-   {
-    "pasta": "supabase/functions/llm-gateway",
     "mudancas": 3
    },
    {
@@ -206,11 +206,11 @@
     "mudancas": 19
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 7
+    "arquivo": "supabase/deployment-manifest.json",
+    "mudancas": 8
    },
    {
-    "arquivo": "supabase/deployment-manifest.json",
+    "arquivo": ".github/workflows/ci.yml",
     "mudancas": 7
    },
    {
@@ -219,6 +219,10 @@
    },
    {
     "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/llm-gateway/index.ts",
     "mudancas": 4
    },
    {
@@ -262,10 +266,6 @@
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/functions/llm-gateway/index.ts",
-    "mudancas": 3
-   },
-   {
     "arquivo": "supabase/functions/voice-transcribe/index.ts",
     "mudancas": 3
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 17
+    "commits": 18
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1968,
   "arquivos_codigo": 1446,
-  "linhas_codigo": 316374,
+  "linhas_codigo": 316385,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -528,7 +528,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32024
+   "linhas": 32035
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -578,7 +578,7 @@
   },
   {
    "arquivo": "supabase/functions/llm-gateway/index.ts",
-   "linhas": 1616
+   "linhas": 1627
   },
   {
    "arquivo": "src/App.tsx",

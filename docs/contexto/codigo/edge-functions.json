@@ -1375,7 +1375,7 @@
    "nome": "llm-gateway",
    "entrada": "supabase/functions/llm-gateway/index.ts",
    "arquivos": 9,
-   "linhas": 1999,
+   "linhas": 2010,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1409,6 +1409,7 @@
     "ENABLE_PII_ML",
     "ENABLE_TOXICITY_CHECK",
     "HF_API_TOKEN",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],

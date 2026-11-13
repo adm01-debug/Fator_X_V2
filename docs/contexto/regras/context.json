@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8e722da77cecf7d256078697d7e1d03bea08de99",
+  "sha": "f61821682b1af42a468414c96b6bd5641b987397",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-13 22:19 UTC",
+  "generated_at": "2026-11-13 22:58 UTC",
   "files_total": 1973,
   "code_files": 1779,
-  "code_lines": 345308
+  "code_lines": 345319
  },
  "version": "1.3.2",
- "facts_hash": "553b5bc18ea6ede9",
+ "facts_hash": "937be83066a2ebe0",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -53849,6 +53849,7 @@
      "ENABLE_PII_ML",
      "ENABLE_TOXICITY_CHECK",
      "HF_API_TOKEN",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -58750,7 +58751,7 @@
   {
    "module": "supabase/functions",
    "files": 134,
-   "lines": 32024,
+   "lines": 32035,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -62454,6 +62455,9 @@
    ],
    "OPENCLAW_WEBHOOK_SECRET": [
     "supabase/functions/openclaw-webhook/index.ts"
+   ],
+   "OPENROUTER_API_KEY": [
+    "supabase/functions/llm-gateway/index.ts"
    ],
    "PATH": [
     "scripts/ci/inventario-repo.unit.mjs",
@@ -182629,7 +182633,7 @@
   },
   "supabase/functions/llm-gateway/index.ts": {
    "path": "supabase/functions/llm-gateway/index.ts",
-   "lines": 1616,
+   "lines": 1627,
    "tables": [
     {
      "table": "model_pricing",
@@ -182777,6 +182781,7 @@
     "ENABLE_PII_ML",
     "ENABLE_TOXICITY_CHECK",
     "HF_API_TOKEN",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -188692,10 +188697,20 @@
   }
  },
  "git": {
-  "sha": "8e722da77cecf7d256078697d7e1d03bea08de99",
+  "sha": "f61821682b1af42a468414c96b6bd5641b987397",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "f618216",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)",
+    "files": [
+     "supabase/deployment-manifest.json",
+     "supabase/functions/llm-gateway/index.ts"
+    ]
+   },
    {
     "sha": "8e722da",
     "date": "2026-11-13",
@@ -189646,17 +189661,6 @@
      "supabase/migrations/20260804000001_missing_fk_indexes.sql",
      "supabase/migrations/20260905130000_revoke_anon_default_privileges.sql"
     ]
-   },
-   {
-    "sha": "74e79f2",
-    "date": "2026-09-05",
-    "author": "adm01-debug",
-    "subject": "feat(db): Onda 1 — RLS 100% (216/216), anti-escalação e rate-limit distribuído (#52)",
-    "files": [
-     "supabase/migrations/20260401000003_fix_stub_schemas.sql",
-     "supabase/migrations/20260401000004_consolidated_schema_fixes.sql",
-     "supabase/migrations/20260905120000_rls_complete_reconciliation.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -189670,11 +189674,15 @@
    ],
    [
     "supabase/deployment-manifest.json",
-    7
+    8
    ],
    [
     ".github/workflows/ci.yml",
     5
+   ],
+   [
+    "supabase/functions/llm-gateway/index.ts",
+    4
    ],
    [
     "supabase/functions/agent-workflow-runner/index.ts",
@@ -189686,10 +189694,6 @@
    ],
    [
     "supabase/functions/datahub-query/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/llm-gateway/index.ts",
     3
    ],
    [
