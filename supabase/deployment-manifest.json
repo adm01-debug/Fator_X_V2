@@ -155,8 +155,8 @@
     },
     {
       "path": "supabase/functions/agent-workflow-runner/index.ts",
-      "bytes": 9696,
-      "sha256": "102cf760141131487864dd45d0ac4c2018c4e788dca8b4319db26adc699f3fcf"
+      "bytes": 10064,
+      "sha256": "b30a309accef926e963e6f2dd1edc82b27169537eb560522ae3544108f48ebcb"
     },
     {
       "path": "supabase/functions/audio-transcribe/index.ts",
@@ -245,8 +245,8 @@
     },
     {
       "path": "supabase/functions/datahub-query/index.ts",
-      "bytes": 52709,
-      "sha256": "16e9eb802cd94c0473fc8710b8df2bb581c53d5ec65202b04b221a470725205d"
+      "bytes": 52901,
+      "sha256": "8fc3af71e4ce01e1ef9be9cb5bd221e952f5495d3b359e6cdaab3690ceabf939"
     },
     {
       "path": "supabase/functions/doc-ocr/index.ts",
@@ -335,8 +335,8 @@
     },
     {
       "path": "supabase/functions/llm-gateway/index.ts",
-      "bytes": 61875,
-      "sha256": "3d72e0a371dc3340b69f1ae54145c7ea7b3ba825bdaadb65f8664aa7c5b54511"
+      "bytes": 61879,
+      "sha256": "7d06acd7ea97664ae5126b8c0e9482b0e4310aea9ee95c986384da37a5619291"
     },
     {
       "path": "supabase/functions/llm-gateway/providers.ts",
@@ -605,13 +605,13 @@
     },
     {
       "path": "supabase/functions/voice-synthesize/index.ts",
-      "bytes": 6247,
-      "sha256": "ede83c641575ea657be58b17b9442e5731debaf10ca0f5f96f705e21723f143a"
+      "bytes": 6439,
+      "sha256": "a29494cfbb9b9176b4310577d45c13e16547956d4c15cb2e1ce752e41f8e7658"
     },
     {
       "path": "supabase/functions/voice-transcribe/index.ts",
-      "bytes": 5212,
-      "sha256": "5a1fa47de731c3bec7e24dcd9d9241bfcbb42331d6bad80952019a86f46f5cd2"
+      "bytes": 5214,
+      "sha256": "1eab92dbb0264fac6eab92afefb9133ade1903aa15dbae3f2e83ef4a87bd0ce8"
     },
     {
       "path": "supabase/functions/webhook-receiver/index.ts",
@@ -635,8 +635,8 @@
     },
     {
       "path": "supabase/functions/workflow-engine-v2/index.ts",
-      "bytes": 20418,
-      "sha256": "8d35f0db976f7ac0bbc261cf47f319e69c29ede8d7fb4a42a1a7190c2815bd2e"
+      "bytes": 20420,
+      "sha256": "1d77debb79eed4594d6d29926cbe70f81e332e3e5775239da602a236d97b008d"
     }
   ],
   "functions": [
@@ -713,7 +713,7 @@
       "name": "agent-workflow-runner",
       "entrypoint": "supabase/functions/agent-workflow-runner/index.ts",
       "verify_jwt": true,
-      "source_sha256": "e97ddd66ae2f304145907f1071174a04cd01c646ea0f6d4e3c506e0d887d21a9",
+      "source_sha256": "c4c68f1475ee912072d92e9439134af34a81dc0c6da5205b6586a410ef7f77f9",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1120,7 +1120,7 @@
       "name": "datahub-query",
       "entrypoint": "supabase/functions/datahub-query/index.ts",
       "verify_jwt": true,
-      "source_sha256": "56a0fb713609080a7577f600259c89f21926677784a71fb63c137fad2af64dd9",
+      "source_sha256": "770842364c6b86302588b8084ddb8e58c0d28a47def2eb3ce0328a78c185cc55",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -1524,7 +1524,7 @@
       "name": "llm-gateway",
       "entrypoint": "supabase/functions/llm-gateway/index.ts",
       "verify_jwt": true,
-      "source_sha256": "3fbd249d98bbdf6a62ededb0806d2a795fc3cf21cf39b5fb1e0899908dc8e12e",
+      "source_sha256": "726014a347ee001672c556bd39869d1367735f408c8f4e7375bb7b9a1400804c",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -2442,7 +2442,7 @@
       "name": "voice-synthesize",
       "entrypoint": "supabase/functions/voice-synthesize/index.ts",
       "verify_jwt": true,
-      "source_sha256": "7dc4498927ad190fa86ada3fa9d5b94502bf41a9ce696cd55ff967ab4fee00c0",
+      "source_sha256": "4a34f381fa66e9c1f6dac886b5b61702b9ea1e55edfd0351e98c2a7e9766d93f",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -2465,7 +2465,7 @@
       "name": "voice-transcribe",
       "entrypoint": "supabase/functions/voice-transcribe/index.ts",
       "verify_jwt": true,
-      "source_sha256": "a7b5570d596005fdc4fef6d2d3725337a992a139bc7ae601e0627fd800dabd7d",
+      "source_sha256": "7728d39b90987edb2538e47b4515ae5e2f6db4da8e5eb061acd352f8c8fe77aa",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2579,7 +2579,7 @@
       "name": "workflow-engine-v2",
       "entrypoint": "supabase/functions/workflow-engine-v2/index.ts",
       "verify_jwt": true,
-      "source_sha256": "56ef695a2507529950e3aab4cc93004d06347450d24a57a4cd890fe742c744dd",
+      "source_sha256": "0d58ed78f147ebff48e6b4cf39aeaf39d32ba19db12d67ebb1fe7c86ea62b4b6",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2598,5 +2598,5 @@
       ]
     }
   ],
-  "manifest_sha256": "f7082d266233ab7e8d38e165a5fe304ca0af1c6d6fc51ef527d448e4a97a8afc"
+  "manifest_sha256": "4e05c9007471551e319c9293ca953ce2ffa2a6f6a8089690bc1f9b83e674b2af"
 }
