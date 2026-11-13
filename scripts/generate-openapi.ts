@@ -5,8 +5,8 @@ const FUNCTIONS_DIR = join(process.cwd(), 'supabase/functions');
 const OUTPUT_FILE = join(process.cwd(), 'docs/api/openapi.yaml');
 
 function generateOpenAPI() {
-  const functions = readdirSync(FUNCTIONS_DIR).filter(f => 
-    !f.startsWith('_') && !f.includes('.')
+  const functions = readdirSync(FUNCTIONS_DIR).filter(
+    (f) => !f.startsWith('_') && !f.includes('.'),
   );
 
   let yaml = `openapi: 3.0.0
@@ -23,7 +23,10 @@ paths:
   for (const func of functions) {
     yaml += `  /${func}:
     post:
-      summary: ${func.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+      summary: ${func
+        .split('-')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ')}
       description: Execution of the ${func} agentic component.
       responses:
         '200':
@@ -40,7 +43,6 @@ paths:
   }
 
   writeFileSync(OUTPUT_FILE, yaml);
-  // eslint-disable-next-line no-console -- script de build/CI, output para stdout é o comportamento esperado.
   console.log(`Generated OpenAPI spec for ${functions.length} functions at ${OUTPUT_FILE}`);
 }
 

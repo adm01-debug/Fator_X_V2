@@ -255,8 +255,8 @@ async function checkGuardrails(
 }
 
 // ═══ Budget Check (legacy `budgets` + new `workspace_budgets` enforcement) ═══
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function checkBudget(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   supabase: any,
   workspaceId: string | undefined,
   agentId: string | undefined,
@@ -321,8 +321,8 @@ async function checkBudget(
 }
 
 // ═══ Record Trace + Usage (non-blocking) ═══
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
 async function recordTrace(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   supabase: any,
   p: {
     workspaceId?: string;
@@ -336,9 +336,9 @@ async function recordTrace(
     promptTokens: number;
     completionTokens: number;
     totalTokens: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     costUsd: number;
     latencyMs: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     guardrailsTriggered: any[];
     event: string;
     level: string;

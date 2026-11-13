@@ -1301,12 +1301,13 @@ serve(async (req) => {
         try {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           const client = getExternalClient((mapping as any).primary.connection);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           let q = client
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             .from((mapping as any).primary.table)
             .select('id', { count: 'exact', head: true });
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
           if ((mapping as any).primary.filter)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
             q = applyStaticFilter(q, (mapping as any).primary.filter);
           const { count } = await q;
           totalRecords += count ?? 0;
@@ -1350,9 +1351,9 @@ serve(async (req) => {
     );
   } catch (error: unknown) {
     console.error('datahub-query error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
-    );
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+    });
   }
 });
