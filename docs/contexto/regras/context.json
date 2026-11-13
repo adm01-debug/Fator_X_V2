@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "c1ba21381499f8e3cd10b88286b83af538a4437e",
+  "sha": "8e722da77cecf7d256078697d7e1d03bea08de99",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-13 18:00 UTC",
+  "generated_at": "2026-11-13 22:19 UTC",
   "files_total": 1973,
   "code_files": 1779,
   "code_lines": 345308
@@ -188692,10 +188692,19 @@
   }
  },
  "git": {
-  "sha": "c1ba21381499f8e3cd10b88286b83af538a4437e",
+  "sha": "8e722da77cecf7d256078697d7e1d03bea08de99",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "8e722da",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(ci): sobe node-version para 22 nos jobs npm (#86)",
+    "files": [
+     ".github/workflows/ci.yml"
+    ]
+   },
    {
     "sha": "c1ba213",
     "date": "2026-11-13",
@@ -189648,27 +189657,16 @@
      "supabase/migrations/20260401000004_consolidated_schema_fixes.sql",
      "supabase/migrations/20260905120000_rls_complete_reconciliation.sql"
     ]
-   },
-   {
-    "sha": "c1931e1",
-    "date": "2026-09-05",
-    "author": "adm01-debug",
-    "subject": "fix(deps): reverter @tiptap/extension-placeholder para v2.27.3 e destravar CI (#51)",
-    "files": [
-     ".github/workflows/ci.yml",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    14
+    13
    ],
    [
     "package-lock.json",
-    13
+    12
    ],
    [
     "supabase/deployment-manifest.json",

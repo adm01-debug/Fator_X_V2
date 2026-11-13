@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c1ba21381499f8e3cd10b88286b83af538a4437e` (2026-11-13T13:48:10-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8e722da77cecf7d256078697d7e1d03bea08de99` (2026-11-13T18:40:01-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -431,7 +431,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13759 nós · 36970 arestas · 877 comunidades · grafo do commit `c1ba2138`
+- 13759 nós · 36970 arestas · 877 comunidades · grafo do commit `8e722da7`
 - comunidades maiores: Button (286), lucide-react (247), App.tsx (165), ref_https (147), KnowledgePage.tsx (144), react (138), logger.ts (120), BCPPage.tsx (119), @tanstack/react-query (118), DbRow (117), cn (111), requireEnv (106)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -439,8 +439,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (19)
 - package.json (19)
+- .github/workflows/ci.yml (7)
 - supabase/deployment-manifest.json (7)
-- .github/workflows/ci.yml (6)
 - AGENTS.md (4)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/voice-synthesize/index.ts (4)
@@ -573,6 +573,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-13 `8e722da7` fix(ci): sobe node-version para 22 nos jobs npm (#86)
 - 2026-11-13 `c1ba2138` chore(lint): zerar erros do ESLint (13 → 0) (#85)
 - 2026-11-12 `46af5baa` fix(edge): corrige erros de tipagem em webhooks (#84)
 - 2026-11-12 `12be1922` fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)
@@ -587,7 +588,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-11 `898e6abc` fix(config): aponta todas as referências de projeto Supabase para qdlnzopxrlsoljcrcmzv (#80)
 - 2026-11-11 `e8510396` fix(contexto): autentica o fetch da branch contexto em repo privado (#75)
 - 2026-11-11 `531aa687` feat(automacao): porta os scripts autônomos de estado real do Zapp Web V2 (#71)
-- 2026-11-11 `b9162c98` ci(agentes): liga o guard de integridade do AGENTS.md no CI (#70)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

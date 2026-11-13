@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c1ba21381499f8e3cd10b88286b83af538a4437e",
+  "commit": "8e722da77cecf7d256078697d7e1d03bea08de99",
   "branch": "main",
-  "data_commit": "2026-11-13T13:48:10-03:00",
+  "data_commit": "2026-11-13T18:40:01-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "8e722da7",
+    "data": "2026-11-13",
+    "assunto": "fix(ci): sobe node-version para 22 nos jobs npm (#86)"
+   },
    {
     "sha": "c1ba2138",
     "data": "2026-11-13",
@@ -126,11 +131,6 @@
     "sha": "133852ac",
     "data": "2026-09-14",
     "assunto": "chore(deps)(deps): bump @supabase/supabase-js in the supabase group (#56)"
-   },
-   {
-    "sha": "8e0b2996",
-    "data": "2026-09-14",
-    "assunto": "chore(deps)(deps): bump react-router-dom in the react group (#55)"
    }
   ],
   "arquivos_mudados_7d": 197,
@@ -148,12 +148,12 @@
     "mudancas": 7
    },
    {
-    "pasta": "src/components/admin",
+    "pasta": ".github/workflows/ci.yml",
     "mudancas": 4
    },
    {
-    "pasta": ".github/workflows/ci.yml",
-    "mudancas": 3
+    "pasta": "src/components/admin",
+    "mudancas": 4
    },
    {
     "pasta": "AGENTS.md",
@@ -206,12 +206,12 @@
     "mudancas": 19
    },
    {
-    "arquivo": "supabase/deployment-manifest.json",
+    "arquivo": ".github/workflows/ci.yml",
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 6
+    "arquivo": "supabase/deployment-manifest.json",
+    "mudancas": 7
    },
    {
     "arquivo": "AGENTS.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 16
+    "commits": 17
    },
    {
     "autor": "dependabot[bot]",
