@@ -601,7 +601,7 @@ async function resolveFallbackChain(
     chain.push({
       apiKey: openrouterApiKey,
       provider: 'openrouter',
-      model: aiModel(requestedModel),
+      model: requestedModel,
       priority: 5,
     });
   }
