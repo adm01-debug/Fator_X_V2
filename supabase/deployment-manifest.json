@@ -415,8 +415,8 @@
     },
     {
       "path": "supabase/functions/openclaw-webhook/index.ts",
-      "bytes": 7120,
-      "sha256": "10a3b5f0aec9e2ec46425ce7bb82d91847963653b17a5f20e0f73bf42354e210"
+      "bytes": 7274,
+      "sha256": "df50ce980ee102e1429c55727c2e6b20007db19d490553616b43edd2ab807f7c"
     },
     {
       "path": "supabase/functions/oracle-council/index.ts",
@@ -550,8 +550,8 @@
     },
     {
       "path": "supabase/functions/slack-events-webhook/index.ts",
-      "bytes": 6645,
-      "sha256": "f890268b76c40982aadf2eed679dc9154cdd78af022c1092717a5f0a6631a213"
+      "bytes": 6651,
+      "sha256": "c4e245839df756ac23cf00b91ba1e4e75aa6c4dceca6fd1538348267dbbe54f6"
     },
     {
       "path": "supabase/functions/slack-rag-sync/index.ts",
@@ -615,8 +615,8 @@
     },
     {
       "path": "supabase/functions/webhook-receiver/index.ts",
-      "bytes": 7461,
-      "sha256": "8a568bb9ca46844fab86ad9e5439dd396c6289b5ef794cc6fe74da5e2808d115"
+      "bytes": 7612,
+      "sha256": "cfa2c41cd58eddbee0f3f1dc60637157d4edefda97ba4ca5c0228ba8e78af4b2"
     },
     {
       "path": "supabase/functions/whatsapp-router/index.ts",
@@ -1703,7 +1703,7 @@
       "name": "openclaw-webhook",
       "entrypoint": "supabase/functions/openclaw-webhook/index.ts",
       "verify_jwt": false,
-      "source_sha256": "47c26d02ffb34ceda0e373cccea24509e74bb671ded0ea298c909c9d3b862723",
+      "source_sha256": "db6df3829618c98c40617ca0860b443230e816051f1c9b6463d323ee3dfd6134",
       "source_files": [
         "supabase/functions/_shared/contracts.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2193,7 +2193,7 @@
       "name": "slack-events-webhook",
       "entrypoint": "supabase/functions/slack-events-webhook/index.ts",
       "verify_jwt": false,
-      "source_sha256": "d2d02bc9d3238303ff0fefe56db2bcef2f32f1b90def514a0ee468dddbacf4e2",
+      "source_sha256": "8b24bcd03c1354e3f2719b0972e16bf2117ce995267d5b3428a74078f8755b4c",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/circuitBreaker.ts",
@@ -2487,7 +2487,7 @@
       "name": "webhook-receiver",
       "entrypoint": "supabase/functions/webhook-receiver/index.ts",
       "verify_jwt": true,
-      "source_sha256": "2bde711e3b9d4805e21584207bd598cce7c6e188bdb4b0f9de67dbe9c119117a",
+      "source_sha256": "259957325df31e635bd4d38d6bf96fe5c49a7d1979fd0787f3bc781b95208fb8",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/contracts.ts",
@@ -2598,5 +2598,5 @@
       ]
     }
   ],
-  "manifest_sha256": "5ebae01bb9d4999ad52048307314276af9820231115414a49adbf57d1d0c073e"
+  "manifest_sha256": "f7082d266233ab7e8d38e165a5fe304ca0af1c6d6fc51ef527d448e4a97a8afc"
 }
