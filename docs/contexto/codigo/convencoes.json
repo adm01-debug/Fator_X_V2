@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(edge): corrige erros de tipagem em webhooks (#84)",
    "fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)",
    "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates (#72)",
    "chore(deps)(deps): bump @sentry/react from 10.73.0 to 11.11.0 in the sentry group across 1 directory (#63)",
-   "chore(ci): atualiza comentario do SUPABASE_ACCESS_TOKEN no inventario semanal (#79)",
-   "fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS"
+   "chore(ci): atualiza comentario do SUPABASE_ACCESS_TOKEN no inventario semanal (#79)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "12be19224248d0864eb3a9c4740cbffecd9829a9",
+  "commit": "46af5baafa85194b7f5e4e3d6b0e452eaa9b9e87",
   "branch": "main",
-  "data_commit": "2026-11-12T13:18:12-03:00",
+  "data_commit": "2026-11-12T22:01:32-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "46af5baa",
+    "data": "2026-11-12",
+    "assunto": "fix(edge): corrige erros de tipagem em webhooks (#84)"
+   },
    {
     "sha": "12be1922",
     "data": "2026-11-12",
@@ -126,14 +131,9 @@
     "sha": "4de77145",
     "data": "2026-09-05",
     "assunto": "fix(qa): corrigir bugs reais e estabilizar a suíte de testes [resolved] (#19)"
-   },
-   {
-    "sha": "2fa2e7b5",
-    "data": "2026-09-05",
-    "assunto": "security(db): Onda 2.5 — hotfix da validação red-team (exec_sql, IDOR, policies, grants) (#54)"
    }
   ],
-  "arquivos_mudados_7d": 195,
+  "arquivos_mudados_7d": 197,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "package-lock.json",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 5
+    "mudancas": 6
    },
    {
     "pasta": "src/components/admin",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 5
+    "mudancas": 6
    },
    {
     "arquivo": "AGENTS.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 14
+    "commits": 15
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1968,
   "arquivos_codigo": 1446,
-  "linhas_codigo": 316364,
+  "linhas_codigo": 316368,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -528,7 +528,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32016
+   "linhas": 32020
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -662,7 +662,7 @@
   }
  ],
  "qualidade": {
-  "any": 110,
+  "any": 111,
   "console_log": 87,
   "ts_ignore": 0,
   "eslint_disable": 3,

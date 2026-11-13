@@ -1689,7 +1689,7 @@
    "nome": "openclaw-webhook",
    "entrada": "supabase/functions/openclaw-webhook/index.ts",
    "arquivos": 1,
-   "linhas": 216,
+   "linhas": 217,
    "verify_jwt": false,
    "metodos": [
     "OPTIONS",
@@ -2860,7 +2860,7 @@
    "nome": "webhook-receiver",
    "entrada": "supabase/functions/webhook-receiver/index.ts",
    "arquivos": 1,
-   "linhas": 257,
+   "linhas": 260,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
