@@ -148,7 +148,7 @@
    "nome": "agent-workflow-runner",
    "entrada": "supabase/functions/agent-workflow-runner/index.ts",
    "arquivos": 1,
-   "linhas": 263,
+   "linhas": 265,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -769,7 +769,7 @@
    "nome": "datahub-query",
    "entrada": "supabase/functions/datahub-query/index.ts",
    "arquivos": 1,
-   "linhas": 1359,
+   "linhas": 1360,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2796,7 +2796,7 @@
    "nome": "voice-synthesize",
    "entrada": "supabase/functions/voice-synthesize/index.ts",
    "arquivos": 1,
-   "linhas": 156,
+   "linhas": 157,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

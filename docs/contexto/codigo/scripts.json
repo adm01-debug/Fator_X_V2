@@ -272,7 +272,7 @@
   {
    "arquivo": "scripts/generate-openapi.ts",
    "descricao": null,
-   "linhas": 48,
+   "linhas": 50,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

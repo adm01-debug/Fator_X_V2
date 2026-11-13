@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "46af5baafa85194b7f5e4e3d6b0e452eaa9b9e87",
+  "commit": "c1ba21381499f8e3cd10b88286b83af538a4437e",
   "branch": "main",
-  "data_commit": "2026-11-12T22:01:32-03:00",
+  "data_commit": "2026-11-13T13:48:10-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "c1ba2138",
+    "data": "2026-11-13",
+    "assunto": "chore(lint): zerar erros do ESLint (13 → 0) (#85)"
+   },
    {
     "sha": "46af5baa",
     "data": "2026-11-12",
@@ -126,11 +131,6 @@
     "sha": "8e0b2996",
     "data": "2026-09-14",
     "assunto": "chore(deps)(deps): bump react-router-dom in the react group (#55)"
-   },
-   {
-    "sha": "4de77145",
-    "data": "2026-09-05",
-    "assunto": "fix(qa): corrigir bugs reais e estabilizar a suíte de testes [resolved] (#19)"
    }
   ],
   "arquivos_mudados_7d": 197,
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 6
+    "mudancas": 7
    },
    {
     "pasta": "src/components/admin",
@@ -161,6 +161,18 @@
    },
    {
     "pasta": "supabase/functions/_shared",
+    "mudancas": 3
+   },
+   {
+    "pasta": "supabase/functions/agent-workflow-runner",
+    "mudancas": 3
+   },
+   {
+    "pasta": "supabase/functions/llm-gateway",
+    "mudancas": 3
+   },
+   {
+    "pasta": "supabase/functions/voice-synthesize",
     "mudancas": 3
    },
    {
@@ -182,18 +194,6 @@
    {
     "pasta": ".prettierignore",
     "mudancas": 2
-   },
-   {
-    "pasta": "docs/agentes/banco.md",
-    "mudancas": 2
-   },
-   {
-    "pasta": "docs/agentes/deploy.md",
-    "mudancas": 2
-   },
-   {
-    "pasta": "docs/agentes/github-ci.md",
-    "mudancas": 2
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -206,15 +206,23 @@
     "mudancas": 19
    },
    {
+    "arquivo": "supabase/deployment-manifest.json",
+    "mudancas": 7
+   },
+   {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 6
+    "arquivo": "AGENTS.md",
+    "mudancas": 4
    },
    {
-    "arquivo": "AGENTS.md",
+    "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/voice-synthesize/index.ts",
     "mudancas": 4
    },
    {
@@ -226,15 +234,15 @@
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
-    "mudancas": 3
-   },
-   {
     "arquivo": "supabase/functions/code-interpreter-execute/index.ts",
     "mudancas": 3
    },
    {
     "arquivo": "supabase/functions/crm-enrich/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/datahub-query/index.ts",
     "mudancas": 3
    },
    {
@@ -254,7 +262,15 @@
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/functions/voice-synthesize/index.ts",
+    "arquivo": "supabase/functions/llm-gateway/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/voice-transcribe/index.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/functions/workflow-engine-v2/index.ts",
     "mudancas": 3
    },
    {
@@ -280,28 +296,12 @@
    {
     "arquivo": "docs/agentes/github-ci.md",
     "mudancas": 2
-   },
-   {
-    "arquivo": "docs/agentes/integracoes.md",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "docs/agentes/mapa-repo.md",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "docs/auditoria-estado-2026-08/02-services.md",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "docs/auditoria-estado-2026-08/03-edge-functions.md",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 15
+    "commits": 16
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1968,
   "arquivos_codigo": 1446,
-  "linhas_codigo": 316368,
+  "linhas_codigo": 316374,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -424,7 +424,7 @@
   },
   "scripts/generate-openapi.ts": {
    "arquivos": 1,
-   "linhas": 48
+   "linhas": 50
   },
   "scripts/graphify-local.mjs": {
    "arquivos": 1,
@@ -528,7 +528,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32020
+   "linhas": 32024
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -594,7 +594,7 @@
   },
   {
    "arquivo": "supabase/functions/datahub-query/index.ts",
-   "linhas": 1359
+   "linhas": 1360
   },
   {
    "arquivo": "src/services/skillsSimulationService.ts",
