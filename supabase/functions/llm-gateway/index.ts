@@ -595,6 +595,17 @@ async function resolveFallbackChain(
     });
   }
 
+  // OpenRouter via env (OPENROUTER_API_KEY) - ultimo recurso quando o workspace nao define chave
+  const openrouterApiKey = Deno.env.get('OPENROUTER_API_KEY');
+  if (openrouterApiKey) {
+    chain.push({
+      apiKey: openrouterApiKey,
+      provider: 'openrouter',
+      model: requestedModel,
+      priority: 5,
+    });
+  }
+
   return chain.sort((a, b) => a.priority - b.priority);
 }
 
