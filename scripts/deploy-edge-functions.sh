@@ -20,7 +20,7 @@ for fn_dir in supabase/functions/*/; do
   [ "$fn" = "_shared" ] && continue
 
   echo -n "  → $fn ... "
-  if npx supabase functions deploy "$fn" --no-verify-jwt 2>/dev/null; then
+  if npx supabase functions deploy "$fn" --no-verify-jwt 2>&1; then
     echo "✅"
     DEPLOYED=$((DEPLOYED + 1))
   else
@@ -33,3 +33,7 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "✅ Deployed: $DEPLOYED | ❌ Failed: $FAILED"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [ "$FAILED" -gt 0 ]; then
+  exit 1
+fi
