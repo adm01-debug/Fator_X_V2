@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "557f1f6c60e2c5e01599d4c23572d34a985fc82a",
+  "sha": "9d6d1f42c8b1067b84df271f6534d688b108fdd9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-14 14:59 UTC",
-  "files_total": 1975,
+  "generated_at": "2026-11-14 16:36 UTC",
+  "files_total": 1976,
   "code_files": 1780,
   "code_lines": 345494
  },
  "version": "1.3.2",
- "facts_hash": "6eef5b157792ecf1",
+ "facts_hash": "265edc181640a4c0",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -181,6 +181,14 @@
     "triggers": [
      "push",
      "schedule",
+     "workflow_dispatch"
+    ]
+   },
+   {
+    "file": ".github/workflows/edge-deploy.yml",
+    "name": "Edge Deploy",
+    "triggers": [
+     "push",
      "workflow_dispatch"
     ]
    },
@@ -188840,10 +188848,19 @@
   }
  },
  "git": {
-  "sha": "557f1f6c60e2c5e01599d4c23572d34a985fc82a",
+  "sha": "9d6d1f42c8b1067b84df271f6534d688b108fdd9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "9d6d1f4",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "infra: workflow de deploy automatico das Edge Functions (#95)",
+    "files": [
+     ".github/workflows/edge-deploy.yml"
+    ]
+   },
    {
     "sha": "557f1f6",
     "date": "2026-11-14",
@@ -189339,29 +189356,19 @@
     "files": [
      "package-lock.json"
     ]
-   },
-   {
-    "sha": "133852a",
-    "date": "2026-09-14",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @supabase/supabase-js in the supabase group (#56)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    10
-   ],
-   [
-    "package.json",
     9
    ],
    [
     "supabase/deployment-manifest.json",
+    8
+   ],
+   [
+    "package.json",
     8
    ],
    [

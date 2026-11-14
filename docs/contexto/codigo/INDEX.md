@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `557f1f6c60e2c5e01599d4c23572d34a985fc82a` (2026-11-14T11:37:22-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9d6d1f42c8b1067b84df271f6534d688b108fdd9` (2026-11-14T12:25:09-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1391), SQL (332), Markdown (114), JavaScript (52), JSON (24), YAML (13), Shell (10), Python (5)
+- linguagens: TypeScript (1391), SQL (332), Markdown (114), JavaScript (52), JSON (24), YAML (14), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1970 |
+| arquivos_total | 1971 |
 | arquivos_codigo | 1447 |
 | linhas_codigo | 316560 |
 | rotas | 151 |
@@ -49,7 +49,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | migrations | 329 |
 | cron_jobs | 37 |
 | testes | 239 |
-| workflows | 7 |
+| workflows | 8 |
 | scripts | 43 |
 | docs_md | 114 |
 
@@ -431,33 +431,34 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13781 nós · 36998 arestas · 894 comunidades · grafo do commit `557f1f6c`
+- 13781 nós · 36998 arestas · 894 comunidades · grafo do commit `9d6d1f42`
 - comunidades maiores: button.tsx (334), lucide-react (324), PageHeader.tsx (163), App.tsx (154), logger.ts (147), cn (132), ref_https (124), checkRateLimit (121), templateSkillLinkService.ts (117), SkillHarvestPage.tsx (113), 🚀 Nexus Agents Studio — Análise Exaustiva de Funcionalidades (110), skillEnrichmentService.ts (98)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (19)
-- package.json (19)
+- package-lock.json (18)
+- package.json (18)
 - supabase/deployment-manifest.json (8)
-- .github/workflows/ci.yml (7)
+- .github/workflows/ci.yml (6)
 - AGENTS.md (4)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/llm-gateway/index.ts (4)
 - supabase/functions/voice-synthesize/index.ts (4)
 - CHANGELOG.md (3)
-- ESTADO-ATUAL.md (3)
 - supabase/functions/code-interpreter-execute/index.ts (3)
 - supabase/functions/crm-enrich/index.ts (3)
 - supabase/functions/datahub-query/index.ts (3)
 - supabase/functions/global-search/index.ts (3)
 - supabase/functions/graph-execute/index.ts (3)
+- supabase/functions/kb-analyze-gaps/index.ts (3)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
 - `ci.yml` — Nexus CI (pull_request, push, workflow_dispatch)
 - `codeql.yml` — CodeQL (pull_request, push, schedule; cron 17 5 * * 1)
 - `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3-59/10 * * * *)
+- `edge-deploy.yml` — Edge Deploy (push, workflow_dispatch)
 - `guards.yml` — Guards (pull_request, push, workflow_dispatch)
 - `inventario-estado-semanal.yml` — Inventário do estado real (semanal) (schedule, workflow_dispatch; cron 23 10 * * 1)
 - `release-drafter.yml` — release-drafter (pull_request, push)
@@ -574,6 +575,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-14 `9d6d1f42` infra: workflow de deploy automatico das Edge Functions (#95)
 - 2026-11-14 `557f1f6c` chore(coverage): sobe thresholds para o nivel medido na CI (#90)
 - 2026-11-14 `f6a5b20d` feat(validacao): adiciona zod as rotas de entrada do auth (#92)
 - 2026-11-14 `715e9cd5` fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)
@@ -588,7 +590,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-12 `ba8344c3` chore(ci): atualiza comentario do SUPABASE_ACCESS_TOKEN no inventario semanal (#79)
 - 2026-11-12 `1033b2fe` fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS
 - 2026-11-11 `60e36b81` feat(notificacao): envio real de e-mail via Resend no notification-sender (#82)
-- 2026-11-11 `d53c9e3c` fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

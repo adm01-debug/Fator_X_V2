@@ -8,7 +8,7 @@
    "Markdown (114)",
    "JavaScript (52)",
    "JSON (24)",
-   "YAML (13)",
+   "YAML (14)",
    "Shell (10)",
    "Python (5)"
   ],
@@ -283,6 +283,42 @@
     "actions/download-artifact",
     "actions/setup-node",
     "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/edge-deploy.yml",
+   "nome": "Edge Deploy",
+   "gatilhos": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "deploy"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/deploy-edge-functions.sh"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "DEEPSEEK_API_KEY",
+    "LOVABLE_API_KEY",
+    "OPENCLAW_WEBHOOK_SECRET",
+    "OPENROUTER_API_KEY",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
    ]
   },
   {
@@ -892,7 +928,11 @@
   ],
   "secrets_em_workflows": [
    "DB_MCP_URL",
+   "DEEPSEEK_API_KEY",
    "GITHUB_TOKEN",
+   "LOVABLE_API_KEY",
+   "OPENCLAW_WEBHOOK_SECRET",
+   "OPENROUTER_API_KEY",
    "SLACK_WEBHOOK_URL",
    "SUPABASE_ACCESS_TOKEN",
    "SUPABASE_ANON_KEY",

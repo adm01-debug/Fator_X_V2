@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "infra: workflow de deploy automatico das Edge Functions (#95)",
    "chore(coverage): sobe thresholds para o nivel medido na CI (#90)",
    "feat(validacao): adiciona zod as rotas de entrada do auth (#92)",
    "fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)",
-   "docs: adiciona inventario de prontidao de producao (main f618216) (#89)",
-   "feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)"
+   "docs: adiciona inventario de prontidao de producao (main f618216) (#89)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

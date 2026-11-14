@@ -235,7 +235,9 @@
    "linhas": 36,
    "env": [],
    "npm_scripts": [],
-   "workflows": [],
+   "workflows": [
+    "edge-deploy.yml"
+   ],
    "orfao": false
   },
   {

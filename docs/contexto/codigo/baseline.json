@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "557f1f6c60e2c5e01599d4c23572d34a985fc82a",
+  "commit": "9d6d1f42c8b1067b84df271f6534d688b108fdd9",
   "branch": "main",
-  "data_commit": "2026-11-14T11:37:22-03:00",
+  "data_commit": "2026-11-14T12:25:09-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "9d6d1f42",
+    "data": "2026-11-14",
+    "assunto": "infra: workflow de deploy automatico das Edge Functions (#95)"
+   },
    {
     "sha": "557f1f6c",
     "data": "2026-11-14",
@@ -126,14 +131,9 @@
     "sha": "44448e6f",
     "data": "2026-11-09",
     "assunto": "chore(deps)(deps): bump @supabase/supabase-js (#62)"
-   },
-   {
-    "sha": "c5f36893",
-    "data": "2026-11-09",
-    "assunto": "chore(deps)(deps): bump react-router-dom (#61)"
    }
   ],
-  "arquivos_mudados_7d": 204,
+  "arquivos_mudados_7d": 205,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 19
+    "mudancas": 18
    },
    {
     "arquivo": "package.json",
-    "mudancas": 19
+    "mudancas": 18
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 7
+    "mudancas": 6
    },
    {
     "arquivo": "AGENTS.md",
@@ -231,10 +231,6 @@
    },
    {
     "arquivo": "CHANGELOG.md",
-    "mudancas": 3
-   },
-   {
-    "arquivo": "ESTADO-ATUAL.md",
     "mudancas": 3
    },
    {
@@ -296,12 +292,16 @@
    {
     "arquivo": "docs/agentes/github-ci.md",
     "mudancas": 2
+   },
+   {
+    "arquivo": "docs/agentes/integracoes.md",
+    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 22
+    "commits": 23
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1970,
+  "arquivos_total": 1971,
   "arquivos_codigo": 1447,
   "linhas_codigo": 316560,
   "rotas": 151,
@@ -325,7 +325,7 @@
   "migrations": 329,
   "cron_jobs": 37,
   "testes": 239,
-  "workflows": 7,
+  "workflows": 8,
   "scripts": 43,
   "docs_md": 114
  },
