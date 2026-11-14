@@ -20,7 +20,7 @@ for fn_dir in supabase/functions/*/; do
   [ "$fn" = "_shared" ] && continue
 
   echo -n "  → $fn ... "
-  if npx supabase functions deploy "$fn" --no-verify-jwt 2>&1; then
+  if npx --yes supabase functions deploy "$fn" --no-verify-jwt --yes 2>&1; then
     echo "✅"
     DEPLOYED=$((DEPLOYED + 1))
   else
