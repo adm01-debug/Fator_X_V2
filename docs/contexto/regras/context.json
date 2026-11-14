@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "f61821682b1af42a468414c96b6bd5641b987397",
+  "sha": "067d56561cad4fa83fcd0d966c5b9623ad10fe8f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-13 22:58 UTC",
-  "files_total": 1973,
+  "generated_at": "2026-11-14 11:37 UTC",
+  "files_total": 1974,
   "code_files": 1779,
   "code_lines": 345319
  },
@@ -188697,10 +188697,19 @@
   }
  },
  "git": {
-  "sha": "f61821682b1af42a468414c96b6bd5641b987397",
+  "sha": "067d56561cad4fa83fcd0d966c5b9623ad10fe8f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "067d565",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "docs: adiciona inventario de prontidao de producao (main f618216) (#89)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "f618216",
     "date": "2026-11-13",
@@ -189646,30 +189655,15 @@
      "package.json",
      "supabase/migrations/20260905140000_security_hotfix_validation.sql"
     ]
-   },
-   {
-    "sha": "0db06c7",
-    "date": "2026-09-05",
-    "author": "adm01-debug",
-    "subject": "feat(ci): Onda 2 — DB Drift Check no CI + DEFAULT PRIVILEGES sem escrita anon + docs/semver 1.6.0 (#53)",
-    "files": [
-     ".github/workflows/ci.yml",
-     "CHANGELOG.md",
-     "docs/adr/README.md",
-     "package.json",
-     "scripts/db-drift-check.mjs",
-     "supabase/migrations/20260804000001_missing_fk_indexes.sql",
-     "supabase/migrations/20260905130000_revoke_anon_default_privileges.sql"
-    ]
    }
   ],
   "hot_files": [
    [
-    "package.json",
-    13
+    "package-lock.json",
+    12
    ],
    [
-    "package-lock.json",
+    "package.json",
     12
    ],
    [
@@ -189677,11 +189671,11 @@
     8
    ],
    [
-    ".github/workflows/ci.yml",
-    5
+    "supabase/functions/llm-gateway/index.ts",
+    4
    ],
    [
-    "supabase/functions/llm-gateway/index.ts",
+    ".github/workflows/ci.yml",
     4
    ],
    [
@@ -189737,11 +189731,11 @@
     3
    ],
    [
-    "CHANGELOG.md",
-    3
+    "scripts/generate-openapi.ts",
+    2
    ],
    [
-    "scripts/generate-openapi.ts",
+    "supabase/functions/slack-events-webhook/index.ts",
     2
    ]
   ]

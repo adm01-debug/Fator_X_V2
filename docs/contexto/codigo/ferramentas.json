@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1390)",
    "SQL (332)",
-   "Markdown (113)",
+   "Markdown (114)",
    "JavaScript (52)",
    "JSON (24)",
    "YAML (13)",
@@ -739,6 +739,11 @@
    "arquivo": "docs/TYPOGRAPHY-MIGRATION-REPORT.md",
    "titulo": "Relatório da Migração de Tipografia — Fator X",
    "linhas": 79
+  },
+  {
+   "arquivo": "docs/prod-readiness.md",
+   "titulo": null,
+   "linhas": 59
   }
  ],
  "docs_em_subpastas": [

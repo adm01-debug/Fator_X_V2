@@ -33,7 +33,7 @@
    "scripts/maintenance (4)"
   ],
   "docs": [
-   "docs (40)",
+   "docs (41)",
    "(raiz) (24)",
    ".github (2)"
   ]
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "docs: adiciona inventario de prontidao de producao (main f618216) (#89)",
    "feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)",
    "fix(ci): sobe node-version para 22 nos jobs npm (#86)",
    "chore(lint): zerar erros do ESLint (13 → 0) (#85)",
-   "fix(edge): corrige erros de tipagem em webhooks (#84)",
-   "fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)"
+   "fix(edge): corrige erros de tipagem em webhooks (#84)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
