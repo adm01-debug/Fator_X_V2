@@ -11,6 +11,11 @@ import { FatorXLogo } from '@/components/shared/FatorXLogo';
 import { PasswordStrength } from '@/components/auth/PasswordStrength';
 import { AuthBrandingPanel, GridBackground, GoogleIcon } from '@/components/auth/AuthBrandingPanel';
 import { usePasswordBreachCheck } from '@/hooks/usePasswordBreachCheck';
+import {
+  loginSchema,
+  signUpSchema,
+  resetPasswordRequestSchema,
+} from '@/lib/validations/authSchemas';
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 60_000;
@@ -44,19 +49,23 @@ export default function AuthPage() {
 
   const validate = useCallback(() => {
     const errs: { email?: string; password?: string } = {};
-    if (!email) errs.email = 'E-mail é obrigatório';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = 'E-mail inválido';
-    if (!password) errs.password = 'Senha é obrigatória';
-    else if (password.length < 6) errs.password = 'Mínimo 6 caracteres';
-    else if (!isLogin && password.length < 8) errs.password = 'Mínimo 8 caracteres para nova conta';
+    const schema = isLogin ? loginSchema : signUpSchema;
+    const result = schema.safeParse({ email, password });
+    if (!result.success) {
+      for (const issue of result.error.issues) {
+        if (issue.path[0] === 'email') errs.email = issue.message;
+        else if (issue.path[0] === 'password') errs.password = issue.message;
+      }
+    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }, [email, password, isLogin]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setErrors({ email: 'E-mail inválido' });
+    const result = resetPasswordRequestSchema.safeParse({ email });
+    if (!result.success) {
+      setErrors({ email: result.error.issues[0]?.message ?? 'E-mail inválido' });
       return;
     }
     setLoading(true);
