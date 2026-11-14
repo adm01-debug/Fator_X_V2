@@ -13,6 +13,7 @@ export const emailSchema = z
 
 export const loginPasswordSchema = z
   .string()
+  .min(1, 'Senha é obrigatória')
   .min(6, 'Mínimo 6 caracteres')
   .max(128, 'Senha muito longa');
 
