@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "067d56561cad4fa83fcd0d966c5b9623ad10fe8f",
+  "commit": "715e9cd5d66547a4d44be4fbc6d923e870d822ff",
   "branch": "main",
-  "data_commit": "2026-11-14T08:27:02-03:00",
+  "data_commit": "2026-11-14T10:03:13-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "715e9cd5",
+    "data": "2026-11-14",
+    "assunto": "fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)"
+   },
    {
     "sha": "067d5656",
     "data": "2026-11-14",
@@ -126,14 +131,9 @@
     "sha": "b0a3cb55",
     "data": "2026-11-08",
     "assunto": "fix(deps): Security Audit da main volta a passar (0 critical em prod) (#68)"
-   },
-   {
-    "sha": "e7a2c896",
-    "data": "2026-09-14",
-    "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 6 updates (#60)"
    }
   ],
-  "arquivos_mudados_7d": 198,
+  "arquivos_mudados_7d": 199,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 19
+    "commits": 20
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1969,
   "arquivos_codigo": 1446,
-  "linhas_codigo": 316385,
+  "linhas_codigo": 316390,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -540,7 +540,7 @@
   },
   "tests/load": {
    "arquivos": 1,
-   "linhas": 126
+   "linhas": 131
   },
   "tests/rls": {
    "arquivos": 2,

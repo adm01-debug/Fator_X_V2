@@ -2249,7 +2249,7 @@
   {
    "arquivo": "tests/load/llm-gateway.k6.js",
    "tipo": "unit",
-   "linhas": 126,
+   "linhas": 131,
    "testa": [],
    "casos": 0
   },

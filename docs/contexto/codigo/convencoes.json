@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)",
    "docs: adiciona inventario de prontidao de producao (main f618216) (#89)",
    "feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)",
    "fix(ci): sobe node-version para 22 nos jobs npm (#86)",
-   "chore(lint): zerar erros do ESLint (13 → 0) (#85)",
-   "fix(edge): corrige erros de tipagem em webhooks (#84)"
+   "chore(lint): zerar erros do ESLint (13 → 0) (#85)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
