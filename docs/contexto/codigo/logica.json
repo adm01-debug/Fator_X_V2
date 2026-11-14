@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 290,
+ "total": 291,
  "por_camada": {
   "config": 10,
   "data": 5,
   "integrations": 5,
-  "lib": 89,
+  "lib": 90,
   "python": 3,
   "services": 166,
   "stores": 12
@@ -3346,6 +3346,41 @@
    "usado_por": 2,
    "usado_por_modulos": [
     "components/agent-builder"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/validations/authSchemas.ts",
+   "camada": "lib",
+   "exports": [
+    "LoginInput",
+    "ResetPasswordInput",
+    "ResetPasswordRequestInput",
+    "SignUpInput",
+    "emailSchema",
+    "loginPasswordSchema",
+    "loginSchema",
+    "resetPasswordRequestSchema",
+    "resetPasswordSchema",
+    "signUpPasswordSchema",
+    "signUpSchema"
+   ],
+   "export_default": null,
+   "linhas": 52,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages"
    ],
    "coberto_por_testes": 0,
    "orfao": false
@@ -7962,7 +7997,7 @@
     "registerManagedSecret"
    ],
    "export_default": null,
-   "linhas": 168,
+   "linhas": 222,
    "tabelas": [
     "managed_secrets",
     "secret_rotation_events"
@@ -7976,8 +8011,10 @@
    ],
    "edges": [],
    "env": [],
-   "externos": [],
-   "zod_schemas": 0,
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
    "flags": [],
    "papeis": [],
    "usado_por": 1,

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `715e9cd5d6` · branch `main` · 2026-11-14 13:23 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f6a5b20d99` · branch `main` · 2026-11-14 14:32 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1749,6 +1749,31 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
   ```ts
   { reason: z.string().min(5, 'Motivo deve ter pelo menos 5 caracteres').max(1000), }
   ```
+- **emailSchema** (`src/lib/validations/authSchemas.ts`, z.string):
+  ```ts
+  
+  ```
+- **loginPasswordSchema** (`src/lib/validations/authSchemas.ts`, z.string):
+  ```ts
+  
+  ```
+- **loginSchema** (`src/lib/validations/authSchemas.ts`, z.object):
+  ```ts
+  { email: emailSchema, password: loginPasswordSchema, }
+  ```
+- **signUpSchema** (`src/lib/validations/authSchemas.ts`, z.object):
+  ```ts
+  { email: emailSchema, password: signUpPasswordSchema, }
+  ```
+- **resetPasswordRequestSchema** (`src/lib/validations/authSchemas.ts`, z.object):
+  ```ts
+  { email: emailSchema, }
+  ```
+- **resetPasswordSchema** (`src/lib/validations/authSchemas.ts`, z.object, encadeia refine):
+  ```ts
+  { password: signUpPasswordSchema, confirmPassword: z.string().min(1, 'Confirme a nova senha'), }
+  ```
+  - Regras cruzadas (refine): “As senhas não coincidem”
 - **cpfSchema** (`src/lib/validations/brazilianDocuments.ts`, z.string, encadeia refine, transform):
   ```ts
   
@@ -1833,6 +1858,10 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 - **candidateReviewSchema** (`src/lib/validations/skillImport.ts`, z.object):
   ```ts
   { ids: z.array(z.string().uuid()).min(1).max(100), action: z.enum(['approve', 'reject', 'reclassify']), department: z.enum(SKILL_DEPARTMENTS).optional(), tags: z.array(z.string().trim().min(1).max(40)).max(20).optional(), }
+  ```
+- **registerSecretInputSchema** (`src/services/secretsRotationService.ts`, z.object):
+  ```ts
+  { name: z.string().trim().min(1, 'Nome é obrigatório').max(200, 'Nome muito longo'), category: z.enum([ 'api_key', 'oauth_client', 'db_password', 'jwt_signing', 'webhook_secret', 'encryption_key', 'ssh_key', 'certificate', ]), provider: z.string().max(100, 'Provedor muito longo').optional(), environment: z.enum(['prod', 'staging', 'dev']).optional(), rotation_interval_days: z .number() .int() .min(1, 'Mínimo 1 dia') .max(3650, 'Máximo 10 anos') .optional(), notes: z.string().max(2000, 'Notas muito longas').optional(), }
   ```
 - **ErrorResponseContract** (`supabase/functions/_shared/contracts.ts`, z.object):
   ```ts
@@ -3367,7 +3396,7 @@ _nenhum item encontrado_
 | `setTimeout(() => setCopied(null), 2000);` | `src/pages/DeploymentsPage.tsx` |
 | `scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16),` | `src/pages/GameDaysPage.tsx` |
 | `(b) => Date.now() - new Date(b.created_at).getTime() < 24 * 60 * 60 * 1000,` | `src/pages/GovernancePage.tsx` |
-| `setTimeout(() => navigate("/"), 2000);` | `src/pages/ResetPasswordPage.tsx` |
+| `setTimeout(() => navigate('/'), 2000);` | `src/pages/ResetPasswordPage.tsx` |
 | `const to = new Date(from.getTime() + 60 * 60 * 1000);` | `src/pages/SLODashboard.tsx` |
 | `await new Promise((r) => setTimeout(r, 1400));` | `src/pages/VisionAgentsPage.tsx` |
 | `return sum + d / (1000 * 60 * 60);` | `src/pages/VulnerabilitiesPage.tsx` |
@@ -3938,7 +3967,7 @@ _nenhum item encontrado_
 | Não foi possível copiar a URL | `src/components/slo/DrilldownAuditPanel.tsx` |
 | Não foi possível ler a área de transferência | `src/components/super-cerebro/AutoExtractionTab.tsx` |
 |                className= | `src/components/super-cerebro/CitationDialog.tsx` |
-| … +513 linhas — lista completa em `context.json` | |
+| … +512 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4568,6 +4597,8 @@ _nenhum item encontrado_
 | - Tamanho mínimo/máximo de prompt, label e nota. | `src/lib/validations/agentVersionValidator.ts` |
 | ─── Prompt: tamanho mínimo / máximo / linhas ──────────── | `src/lib/validations/agentVersionValidator.ts` |
 | ─── Inconsistências (apenas warnings) ────────────────── | `src/lib/validations/agentVersionValidator.ts` |
+| * Zod validation schemas for authentication routes. | `src/lib/validations/authSchemas.ts` |
+| Centralised validation = same rules in AuthPage and ResetPasswordPage. | `src/lib/validations/authSchemas.ts` |
 | Cobre validação de dígito verificador + formatação padronizada. | `src/lib/validations/brazilianDocuments.ts` |
 | * Suggestion generator for the rule-conflict cards in the preflight review. | `src/lib/validations/contradictionSuggestions.ts` |
 | * Single unified rule line that replaces both conflicting lines. */ | `src/lib/validations/contradictionSuggestions.ts` |
@@ -4659,6 +4690,4 @@ _nenhum item encontrado_
 | 2 hits = fit máximo | `src/services/skillRecommenderService.ts` |
 | quando o ranking semântico devolve menos que `limit`. Desligado por padrão | `src/services/skillRecommenderService.ts` |
 | para preservar determinismo em fluxos que exigem apenas matches reais. | `src/services/skillRecommenderService.ts` |
-| limit, page * limit - 1); | `src/services/skillsRegistryService.ts` |
-| * Limite defensivo de ids por lote (evita payloads absurdos vindos de drafts). */ | `src/services/skillsRegistryService.ts` |
-| … +159 linhas — lista completa em `context.json` | |
+| … +161 linhas — lista completa em `context.json` | |

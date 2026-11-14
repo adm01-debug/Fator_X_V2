@@ -8525,7 +8525,7 @@
     "AuthPage"
    ],
    "export_default": "AuthPage",
-   "linhas": 327,
+   "linhas": 336,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -9781,7 +9781,7 @@
     "ResetPasswordPage"
    ],
    "export_default": "ResetPasswordPage",
-   "linhas": 217,
+   "linhas": 272,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

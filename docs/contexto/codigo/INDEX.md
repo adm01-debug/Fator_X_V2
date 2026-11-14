@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `715e9cd5d66547a4d44be4fbc6d923e870d822ff` (2026-11-14T10:03:13-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f6a5b20d9954767d6694620903f5ecea83c002ca` (2026-11-14T11:11:36-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1390), SQL (332), Markdown (114), JavaScript (52), JSON (24), YAML (13), Shell (10), Python (5)
+- linguagens: TypeScript (1391), SQL (332), Markdown (114), JavaScript (52), JSON (24), YAML (13), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1969 |
-| arquivos_codigo | 1446 |
-| linhas_codigo | 316390 |
+| arquivos_total | 1970 |
+| arquivos_codigo | 1447 |
+| linhas_codigo | 316560 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -57,7 +57,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - telas: src/pages (140)
 - componentes: src/components (516), src/pages (141), src/App.tsx (1)
 - hooks: src/hooks (43), src/components (9), src/services (9)
-- servicos_logica: src/services (166), src/lib (89), src/stores (12)
+- servicos_logica: src/services (166), src/lib (90), src/stores (12)
 - testes: co-localizado (*.test) (196), outro (23), e2e/ (9)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
@@ -96,7 +96,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 0 | 0 | 44 | 67 | 14 | 33 |
 | lib | 0 | 0 | 45 | 85 | 62 | 119 |
 | lib/skills | 0 | 0 | 19 | 0 | 0 | 2 |
-| lib/validations | 0 | 0 | 11 | 0 | 0 | 0 |
+| lib/validations | 0 | 0 | 12 | 0 | 0 | 0 |
 | pages | 114 | 151 | 141 | 95 | 74 | 151 |
 | services | 0 | 0 | 146 | 28 | 58 | 118 |
 | services/presets | 0 | 0 | 5 | 0 | 0 | 0 |
@@ -431,8 +431,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13768 nós · 36978 arestas · 872 comunidades · grafo do commit `715e9cd5`
-- comunidades maiores: badge.tsx (289), lucide-react (274), react (209), agentTypes.ts (170), textarea.tsx (163), cn (158), logger.ts (153), checkRateLimit (151), SuperCerebroPage.tsx (150), App.tsx (131), react-router-dom (98), useAgentBuilderStore (96)
+- 13781 nós · 36998 arestas · 894 comunidades · grafo do commit `f6a5b20d`
+- comunidades maiores: button.tsx (334), lucide-react (324), PageHeader.tsx (163), App.tsx (154), logger.ts (147), cn (132), ref_https (124), checkRateLimit (121), templateSkillLinkService.ts (117), SkillHarvestPage.tsx (113), 🚀 Nexus Agents Studio — Análise Exaustiva de Funcionalidades (110), skillEnrichmentService.ts (98)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -574,6 +574,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-14 `f6a5b20d` feat(validacao): adiciona zod as rotas de entrada do auth (#92)
 - 2026-11-14 `715e9cd5` fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)
 - 2026-11-14 `067d5656` docs: adiciona inventario de prontidao de producao (main f618216) (#89)
 - 2026-11-13 `f6182168` feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)
@@ -588,7 +589,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-11 `60e36b81` feat(notificacao): envio real de e-mail via Resend no notification-sender (#82)
 - 2026-11-11 `d53c9e3c` fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)
 - 2026-11-11 `b8f1e832` feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)
-- 2026-11-11 `fd6c7ffc` style(manutencao): aplica correcoes locais verificadas (#77)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

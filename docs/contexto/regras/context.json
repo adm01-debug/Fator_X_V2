@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "715e9cd5d66547a4d44be4fbc6d923e870d822ff",
+  "sha": "f6a5b20d9954767d6694620903f5ecea83c002ca",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-14 13:23 UTC",
-  "files_total": 1974,
-  "code_files": 1779,
-  "code_lines": 345324
+  "generated_at": "2026-11-14 14:32 UTC",
+  "files_total": 1975,
+  "code_files": 1780,
+  "code_lines": 345494
  },
  "version": "1.3.2",
- "facts_hash": "4ec9cb7efb45a931",
+ "facts_hash": "6eef5b157792ecf1",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -213,7 +213,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 699,
-   ".ts": 691,
+   ".ts": 692,
    ".sql": 332,
    ".mjs": 47,
    ".js": 5,
@@ -50741,7 +50741,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 15
+    "deps_count": 16
    },
    {
     "path": "",
@@ -52073,7 +52073,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 11
+    "deps_count": 12
    },
    {
     "path": "",
@@ -57877,8 +57877,8 @@
   },
   {
    "module": "src/lib",
-   "files": 92,
-   "lines": 15487,
+   "files": 93,
+   "lines": 15539,
    "tables": [
     "agents",
     "documents",
@@ -58046,7 +58046,7 @@
   {
    "module": "src/pages",
    "files": 141,
-   "lines": 49621,
+   "lines": 49685,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -58241,7 +58241,7 @@
   {
    "module": "src/services",
    "files": 166,
-   "lines": 33159,
+   "lines": 33213,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -58415,7 +58415,8 @@
    "deps": [
     "@tanstack/react-query",
     "jszip",
-    "react"
+    "react",
+    "zod"
    ],
    "imports_modules": [
     "src/components",
@@ -64406,6 +64407,58 @@
     "chain": []
    },
    {
+    "file": "src/lib/validations/authSchemas.ts",
+    "name": "emailSchema",
+    "kind": "string",
+    "body": "",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/lib/validations/authSchemas.ts",
+    "name": "loginPasswordSchema",
+    "kind": "string",
+    "body": "",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/lib/validations/authSchemas.ts",
+    "name": "loginSchema",
+    "kind": "object",
+    "body": "{ email: emailSchema, password: loginPasswordSchema, }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/lib/validations/authSchemas.ts",
+    "name": "signUpSchema",
+    "kind": "object",
+    "body": "{ email: emailSchema, password: signUpPasswordSchema, }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/lib/validations/authSchemas.ts",
+    "name": "resetPasswordRequestSchema",
+    "kind": "object",
+    "body": "{ email: emailSchema, }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/lib/validations/authSchemas.ts",
+    "name": "resetPasswordSchema",
+    "kind": "object",
+    "body": "{ password: signUpPasswordSchema, confirmPassword: z.string().min(1, 'Confirme a nova senha'), }",
+    "refines": [
+     "As senhas não coincidem"
+    ],
+    "chain": [
+     "refine"
+    ]
+   },
+   {
     "file": "src/lib/validations/brazilianDocuments.ts",
     "name": "cpfSchema",
     "kind": "string",
@@ -64578,6 +64631,14 @@
     "name": "candidateReviewSchema",
     "kind": "object",
     "body": "{ ids: z.array(z.string().uuid()).min(1).max(100), action: z.enum(['approve', 'reject', 'reclassify']), department: z.enum(SKILL_DEPARTMENTS).optional(), tags: z.array(z.string().trim().min(1).max(40)).max(20).optional(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "src/services/secretsRotationService.ts",
+    "name": "registerSecretInputSchema",
+    "kind": "object",
+    "body": "{ name: z.string().trim().min(1, 'Nome é obrigatório').max(200, 'Nome muito longo'), category: z.enum([ 'api_key', 'oauth_client', 'db_password', 'jwt_signing', 'webhook_secret', 'encryption_key', 'ssh_key', 'certificate', ]), provider: z.string().max(100, 'Provedor muito longo').optional(), environment: z.enum(['prod', 'staging', 'dev']).optional(), rotation_interval_days: z .number() .int() .min(1, 'Mínimo 1 dia') .max(3650, 'Máximo 10 anos') .optional(), notes: z.string().max(2000, 'Notas muito longas').optional(), }",
     "refines": [],
     "chain": []
    },
@@ -69116,11 +69177,7 @@
    },
    {
     "file": "src/pages/ResetPasswordPage.tsx",
-    "msg": ">{errors.confirm}</p>}\n            </div>\n          </div>\n\n          <Button type="
-   },
-   {
-    "file": "src/pages/ResetPasswordPage.tsx",
-    "msg": ">{errors.password}</p>}\n              <PasswordStrength password={password} />\n            </div>\n\n            <div>\n              <Label htmlFor="
+    "msg": ">\n                  {errors.confirm}\n                </p>\n              )}\n            </div>\n          </div>\n\n          <Button\n            type="
    },
    {
     "file": "src/pages/ResetPasswordPage.tsx",
@@ -71133,6 +71190,14 @@
    {
     "file": "src/lib/validations/agentVersionValidator.ts",
     "text": "─── Inconsistências (apenas warnings) ──────────────────"
+   },
+   {
+    "file": "src/lib/validations/authSchemas.ts",
+    "text": "* Zod validation schemas for authentication routes."
+   },
+   {
+    "file": "src/lib/validations/authSchemas.ts",
+    "text": "Centralised validation = same rules in AuthPage and ResetPasswordPage."
    },
    {
     "file": "src/lib/validations/brazilianDocuments.ts",
@@ -99488,7 +99553,7 @@
    },
    {
     "file": "src/pages/ResetPasswordPage.tsx",
-    "line": "setTimeout(() => navigate(\"/\"), 2000);"
+    "line": "setTimeout(() => navigate('/'), 2000);"
    },
    {
     "file": "src/pages/SLODashboard.tsx",
@@ -158088,6 +158153,76 @@
     }
    ]
   },
+  "src/lib/validations/authSchemas.ts": {
+   "path": "src/lib/validations/authSchemas.ts",
+   "lines": 52,
+   "exports": [
+    "const emailSchema",
+    "const loginPasswordSchema",
+    "const signUpPasswordSchema",
+    "const loginSchema",
+    "const signUpSchema",
+    "const resetPasswordRequestSchema",
+    "const resetPasswordSchema",
+    "type LoginInput",
+    "type SignUpInput",
+    "type ResetPasswordRequestInput",
+    "type ResetPasswordInput"
+   ],
+   "zod": [
+    {
+     "name": "emailSchema",
+     "kind": "string",
+     "body": "",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "loginPasswordSchema",
+     "kind": "string",
+     "body": "",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "loginSchema",
+     "kind": "object",
+     "body": "{ email: emailSchema, password: loginPasswordSchema, }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "signUpSchema",
+     "kind": "object",
+     "body": "{ email: emailSchema, password: signUpPasswordSchema, }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "resetPasswordRequestSchema",
+     "kind": "object",
+     "body": "{ email: emailSchema, }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "resetPasswordSchema",
+     "kind": "object",
+     "body": "{ password: signUpPasswordSchema, confirmPassword: z.string().min(1, 'Confirme a nova senha'), }",
+     "refines": [
+      "As senhas não coincidem"
+     ],
+     "chain": [
+      "refine"
+     ]
+    }
+   ],
+   "rule_comments": [
+    "* Zod validation schemas for authentication routes.",
+    "Centralised validation = same rules in AuthPage and ResetPasswordPage."
+   ],
+   "doc": "Zod validation schemas for authentication routes. Centralised validation = same rules in AuthPage and ResetPasswordPage."
+  },
   "src/lib/validations/brazilianDocuments.ts": {
    "path": "src/lib/validations/brazilianDocuments.ts",
    "lines": 94,
@@ -159373,7 +159508,7 @@
   },
   "src/pages/AuthPage.tsx": {
    "path": "src/pages/AuthPage.tsx",
-   "lines": 327,
+   "lines": 336,
    "exports": [
     "function AuthPage"
    ],
@@ -161847,7 +161982,7 @@
   },
   "src/pages/ResetPasswordPage.tsx": {
    "path": "src/pages/ResetPasswordPage.tsx",
-   "lines": 217,
+   "lines": 272,
    "exports": [
     "function ResetPasswordPage"
    ],
@@ -161856,13 +161991,12 @@
     "/auth"
    ],
    "errors": [
-    ">{errors.confirm}</p>}\n            </div>\n          </div>\n\n          <Button type=",
-    ">{errors.password}</p>}\n              <PasswordStrength password={password} />\n            </div>\n\n            <div>\n              <Label htmlFor=",
+    ">\n                  {errors.confirm}\n                </p>\n              )}\n            </div>\n          </div>\n\n          <Button\n            type=",
     "Erro ao redefinir senha",
     "Senha comprometida"
    ],
    "temporal": [
-    "setTimeout(() => navigate(\"/\"), 2000);"
+    "setTimeout(() => navigate('/'), 2000);"
    ]
   },
   "src/pages/RiskRegisterPage.tsx": {
@@ -169849,7 +169983,7 @@
   },
   "src/services/secretsRotationService.ts": {
    "path": "src/services/secretsRotationService.ts",
-   "lines": 168,
+   "lines": 222,
    "exports": [
     "type SecretCategory",
     "type SecretEnvironment",
@@ -169896,6 +170030,15 @@
     "record_secret_rotation",
     "refresh_secrets_status",
     "register_managed_secret"
+   ],
+   "zod": [
+    {
+     "name": "registerSecretInputSchema",
+     "kind": "object",
+     "body": "{ name: z.string().trim().min(1, 'Nome é obrigatório').max(200, 'Nome muito longo'), category: z.enum([ 'api_key', 'oauth_client', 'db_password', 'jwt_signing', 'webhook_secret', 'encryption_key', 'ssh_key', 'certificate', ]), provider: z.string().max(100, 'Provedor muito longo').optional(), environment: z.enum(['prod', 'staging', 'dev']).optional(), rotation_interval_days: z .number() .int() .min(1, 'Mínimo 1 dia') .max(3650, 'Máximo 10 anos') .optional(), notes: z.string().max(2000, 'Notas muito longas').optional(), }",
+     "refines": [],
+     "chain": []
+    }
    ],
    "enums": [
     {
@@ -188697,10 +188840,22 @@
   }
  },
  "git": {
-  "sha": "715e9cd5d66547a4d44be4fbc6d923e870d822ff",
+  "sha": "f6a5b20d9954767d6694620903f5ecea83c002ca",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "f6a5b20",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "feat(validacao): adiciona zod as rotas de entrada do auth (#92)",
+    "files": [
+     "src/lib/validations/authSchemas.ts",
+     "src/pages/AuthPage.tsx",
+     "src/pages/ResetPasswordPage.tsx",
+     "src/services/secretsRotationService.ts"
+    ]
+   },
    {
     "sha": "715e9cd",
     "date": "2026-11-14",
@@ -189195,526 +189350,35 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "4de7714",
-    "date": "2026-09-05",
-    "author": "adm01-debug",
-    "subject": "fix(qa): corrigir bugs reais e estabilizar a suíte de testes [resolved] (#19)",
-    "files": [
-     ".github/PULL_REQUEST_TEMPLATE.md",
-     ".gitignore",
-     ".hermes.md",
-     "CHANGELOG.md",
-     "docs/ARQUITETURA-BIBLIOTECA-SKILLS.md",
-     "docs/adr/README.md",
-     "docs/auditoria-estado-2026-08/02-services.md",
-     "docs/auditoria-estado-2026-08/03-edge-functions.md",
-     "docs/auditoria-estado-2026-08/10-testes-e-ci.md",
-     "eslint.config.js",
-     "package-lock.json",
-     "package.json",
-     "scripts/template-link-coverage.ts",
-     "src/components/agent-builder/AgentBuilderLayout.tsx",
-     "src/components/agent-builder/modules/BillingModule.tsx",
-     "src/components/agent-builder/modules/BlueprintModule.tsx",
-     "src/components/agent-builder/modules/BrainModule.tsx",
-     "src/components/agent-builder/modules/DeployModule.tsx",
-     "src/components/agent-builder/modules/EvalsModule.tsx",
-     "src/components/agent-builder/modules/IdentityModule.tsx",
-     "src/components/agent-builder/modules/ObservabilityModule.tsx",
-     "src/components/agent-builder/modules/OrchestratorModule.tsx",
-     "src/components/agent-builder/modules/PromptModule.tsx",
-     "src/components/agent-builder/modules/RAGModule.tsx",
-     "src/components/agent-builder/modules/ReadinessModule.tsx",
-     "src/components/agent-builder/modules/SkillsModule.tsx",
-     "src/components/agent-builder/modules/ToolsModule.tsx",
-     "src/components/agent-builder/orchestrator/nodes/CustomNodes.tsx",
-     "src/components/agents/AgentCard.tsx",
-     "src/components/agents/AgentCardGrid.tsx",
-     "src/components/agents/CreateAgentWizard.tsx",
-     "src/components/agents/RecentCurationsPanel.tsx",
-     "src/components/agents/TemplateRecommenderCard.tsx",
-     "src/components/agents/VersionDiffDialog.tsx",
-     "src/components/agents/detail/RestoreChangelogEditor.tsx",
-     "src/components/agents/detail/RestoreHistorySection.tsx",
-     "src/components/agents/detail/RestorePresetMenu.tsx",
-     "src/components/agents/detail/SLOViolationTimeline.tsx",
-     "src/components/agents/traces/BookmarkButton.tsx",
-     "src/components/agents/traces/ClearFiltersConfirm.tsx",
-     "src/components/agents/traces/ClearFiltersToast.tsx",
-     "src/components/agents/traces/ExecutionTimeline.tsx",
-     "src/components/agents/traces/ReplayDialog.tsx",
-     "src/components/agents/versioning/NewVersionDialog.tsx",
-     "src/components/agents/versioning/TimelineRangeFilter.tsx",
-     "src/components/agents/wizard/DraftRecoveryBanner.tsx",
-     "src/components/agents/wizard/QuickCreateWizard.tsx",
-     "src/components/agents/wizard/WizardStepComponents.tsx",
-     "src/components/agents/wizard/draftStore.ts",
-     "src/components/agents/wizard/quickSteps/PreflightReviewSummary.tsx",
-     "src/components/agents/wizard/quickSteps/PromptHistoryPanel.tsx",
-     "src/components/agents/wizard/quickSteps/PromptSectionChecklist.tsx",
-     "src/components/agents/wizard/quickSteps/QuickAgentTestPanel.tsx",
-     "src/components/agents/wizard/quickSteps/StepQuickPrompt.tsx",
-     "src/components/agents/wizard/quickSteps/StepQuickSkills.tsx",
-     "src/components/automation/BatchProcessorPanel.tsx",
-     "src/components/automation/ConnectorRegistryPanel.tsx",
-     "src/components/automation/CredentialVaultPanel.tsx",
-     "src/components/automation/CronSchedulerPanel.tsx",
-     "src/components/automation/CronVisualEditor.tsx",
-     "src/components/automation/ExecutionHistoryPanel.tsx",
-     "src/components/automation/NotificationCenterPanel.tsx",
-     "src/components/automation/QueueMonitorPanel.tsx",
-     "src/components/automation/WebhookManagerPanel.tsx",
-     "src/components/billing/CostCalculatorPanel.tsx",
-     "src/components/billing/CostOptimizationPanel.tsx",
-     "src/components/billing/RealTimeCostStream.tsx",
-     "src/components/charts/ChartAnnotation.tsx",
-     "src/components/charts/ComparisonToggle.tsx",
-     "src/components/charts/LightAreaChart.tsx",
-     "src/components/charts/LightBarChart.tsx",
-     "src/components/charts/LightLineChart.tsx",
-     "src/components/crm/CadenceStepsEditor.tsx",
-     "src/components/crm/CadencesPanel.tsx",
-     "src/components/crm/ContactsTable.tsx",
-     "src/components/crm/CrmSummaryCards.tsx",
-     "src/components/crm/IcpProfilePanel.tsx",
-     "src/components/crm/LeadScoreBadge.tsx",
-     "src/components/crm/LeadScoreSimulator.tsx",
-     "src/components/dashboard/ActivityFeed.tsx",
-     "src/components/dashboard/DashboardAlerts.tsx",
-     "src/components/dashboard/DateRangePicker.tsx",
-     "src/components/dashboard/UsageCharts.tsx",
-     "src/components/datahub/BulkEditDialog.tsx",
-     "src/components/datahub/ConnectionCard.tsx",
-     "src/components/datahub/DataBrowser.tsx",
-     "src/components/datahub/DataHubExplorerTab.tsx",
-     "src/components/datahub/EntityDetailPanel.tsx",
-     "src/components/datahub/RecordFieldRenderers.tsx",
-     "src/components/datahub/RecordSubComponents.tsx",
-     "src/components/deployments/WhatsAppInboxPanel.tsx",
-     "src/components/deployments/WhatsAppSendDialog.tsx",
-     "src/components/evaluations/AuditReportDialog.tsx",
-     "src/components/evaluations/EvaluationDatasetsPanel.tsx",
-     "src/components/evaluations/RAGASMetricsPanel.tsx",
-     "src/components/integrations/Bitrix24Connect.tsx",
-     "src/components/knowledge/IngestionLogsPanel.tsx",
-     "src/components/knowledge/KnowledgeBaseDetail.tsx",
-     "src/components/layout/AppSidebar.tsx",
-     "src/components/monitoring/AdvancedTraceFilters.tsx",
-     "src/components/monitoring/AlertRulesPanel.tsx",
-     "src/components/oracle/ModelCard.tsx",
-     "src/components/oracle/OracleComparisonPanel.tsx",
-     "src/components/oracle/OracleHistory.tsx",
-     "src/components/oracle/OracleInputArea.tsx",
-     "src/components/orchestration/GraphCanvas.tsx",
-     "src/components/orchestration/NodeConfigPanel.tsx",
-     "src/components/prompts/PromptDiff.tsx",
-     "src/components/rbac/AccessControl.tsx",
-     "src/components/routing/RoutingEventsMonitor.tsx",
-     "src/components/sandbox/SandboxConfigTab.tsx",
-     "src/components/sandbox/SandboxExecuteTab.tsx",
-     "src/components/sandbox/SandboxSecurityTab.tsx",
-     "src/components/security/AuditLogSection.tsx",
-     "src/components/security/ComplianceFrameworks.tsx",
-     "src/components/security/GuardrailPolicies.tsx",
-     "src/components/security/GuardrailsSimulator.tsx",
-     "src/components/security/SecurityMonitoringPanel.test.tsx",
-     "src/components/security/SecurityMonitoringPanel.tsx",
-     "src/components/shared/Breadcrumbs.tsx",
-     "src/components/shared/CitationRenderer.tsx",
-     "src/components/shared/CommandPalette.tsx",
-     "src/components/shared/DirectionalTransition.tsx",
-     "src/components/shared/KeyboardShortcutsDialog.tsx",
-     "src/components/shared/NotificationBell.tsx",
-     "src/components/shared/NotificationsDrawer.tsx",
-     "src/components/shared/OnboardingTour.tsx",
-     "src/components/skills/SkillAttributionBadge.tsx",
-     "src/components/skills/SkillAutoRecommendationsPanel.tsx",
-     "src/components/skills/SkillClassificationEfficacyCard.tsx",
-     "src/components/skills/SkillDemandPanel.tsx",
-     "src/components/skills/SkillDescriptionEnrichPanel.tsx",
-     "src/components/skills/SkillOverflowAlertCard.tsx",
-     "src/components/skills/SkillPromptSimulator.tsx",
-     "src/components/skills/SkillPromptSimulatorReport.tsx",
-     "src/components/skills/SkillReclassificationReviewPanel.tsx",
-     "src/components/skills/SkillReclassifyDialog.tsx",
-     "src/components/super-cerebro/AutoExtractionTab.tsx",
-     "src/components/super-cerebro/BrainSandboxTab.tsx",
-     "src/components/super-cerebro/CerebroTabNav.tsx",
-     "src/components/super-cerebro/SearchTab.tsx",
-     "src/components/super-cerebro/TemporalGraphTab.tsx",
-     "src/components/ui/alert.tsx",
-     "src/components/ui/badge.tsx",
-     "src/components/ui/button.tsx",
-     "src/components/ui/card.tsx",
-     "src/components/ui/form.tsx",
-     "src/components/ui/navigation-menu.tsx",
-     "src/components/ui/pagination.tsx",
-     "src/components/ui/sidebar.tsx",
-     "src/components/ui/sonner.tsx",
-     "src/components/ui/toggle.tsx",
-     "src/components/workflows/SandboxExecutionPanel.tsx",
-     "src/components/workflows/WorkflowHandoffVisualizer.tsx",
-     "src/components/workflows/WorkflowTemplatesGallery.tsx",
-     "src/components/workflows/WorkflowTimeTravelPanel.tsx",
-     "src/components/workflows/sandbox/SandboxFields.tsx",
-     "src/config/department-bridge.ts",
-     "src/config/huggingface.ts",
-     "src/config/skill-departments.ts",
-     "src/data/agentBuilderData.ts",
-     "src/data/agentTemplates.ts",
-     "src/data/curatedSkills.ts",
-     "src/hooks/use-network-status.ts",
-     "src/hooks/use-paginated-query.ts",
-     "src/hooks/use-toast.ts",
-     "src/hooks/use-unsaved-changes.tsx",
-     "src/hooks/use-workflow-persistence.ts",
-     "src/hooks/useAgentWorkflows.ts",
-     "src/hooks/useCurationRealtime.ts",
-     "src/hooks/useRBAC.ts",
-     "src/hooks/useRetryAction.ts",
-     "src/i18n/I18nProvider.tsx",
-     "src/lib/a11y.ts",
-     "src/lib/agentReadiness.ts",
-     "src/lib/auditService.ts",
-     "src/lib/curationHighlight.ts",
-     "src/lib/oracleExport.ts",
-     "src/lib/promptCompiler.ts",
-     "src/lib/skillComposer/skillDraft.ts",
-     "src/lib/skills/attribution.ts",
-     "src/lib/skills/calibrationCsv.ts",
-     "src/lib/skills/calibrationGovernance.ts",
-     "src/lib/skills/classificationEfficacy.ts",
-     "src/lib/skills/departmentReclassification.ts",
-     "src/lib/skills/descriptionEnrichment.ts",
-     "src/lib/skills/installCapAudit.ts",
-     "src/lib/skills/installCapLedger.ts",
-     "src/lib/skills/llmClassificationQueue.ts",
-     "src/lib/skills/observability.ts",
-     "src/lib/skills/promptAuditArtifact.ts",
-     "src/lib/skills/promptDiff.ts",
-     "src/lib/skills/promptEvidenceLedger.ts",
-     "src/lib/skills/promptSimulation.ts",
-     "src/lib/skills/queueFailureSummary.ts",
-     "src/lib/skills/skillDemand.ts",
-     "src/lib/skills/thresholdCalibration.ts",
-     "src/lib/tracing/tracingExporters.ts",
-     "src/lib/validations/promptSanitizer.ts",
-     "src/lib/validations/skillImport.ts",
-     "src/pages/AgentAlertsPage.tsx",
-     "src/pages/AgentArenaPage.tsx",
-     "src/pages/AgentBuilder.tsx",
-     "src/pages/AgentDetailPage.tsx",
-     "src/pages/AgentOrchestrationPage.tsx",
-     "src/pages/AgentTemplatesPage.tsx",
-     "src/pages/AgentVersioningPage.tsx",
-     "src/pages/AgentsPage.tsx",
-     "src/pages/ApprovalQueuePage.tsx",
-     "src/pages/BCPPage.tsx",
-     "src/pages/BrowserAgentPage.tsx",
-     "src/pages/ChangeManagementPage.tsx",
-     "src/pages/ChaosExperimentsPage.tsx",
-     "src/pages/ChatWithAgentPage.tsx",
-     "src/pages/CodeInterpreterPage.tsx",
-     "src/pages/ComplianceReportsPage.tsx",
-     "src/pages/CrmPage.tsx",
-     "src/pages/DashboardPage.tsx",
-     "src/pages/DataHubPage.tsx",
-     "src/pages/DeploymentsPage.tsx",
-     "src/pages/EvaluationsPage.tsx",
-     "src/pages/FreezeWindowsPage.tsx",
-     "src/pages/GameDayLivePage.tsx",
-     "src/pages/GovernancePage.tsx",
-     "src/pages/IRPlaybooksPage.tsx",
-     "src/pages/IncidentPlaybooksPage.tsx",
-     "src/pages/KnowledgeManagementPage.tsx",
-     "src/pages/KnowledgePage.tsx",
-     "src/pages/LGPDCompliancePage.tsx",
-     "src/pages/MonitoringPage.tsx",
-     "src/pages/NLPPipelinePage.tsx",
-     "src/pages/ObservabilityOTelPage.tsx",
-     "src/pages/PentestPage.tsx",
-     "src/pages/PromptEditorPage.tsx",
-     "src/pages/PromptExperimentsPage.tsx",
-     "src/pages/PromptsPage.tsx",
-     "src/pages/PublicForumPage.tsx",
-     "src/pages/RiskRegisterPage.tsx",
-     "src/pages/RoutingConfigPage.tsx",
-     "src/pages/SLODashboard.tsx",
-     "src/pages/SkillHarvestPage.tsx",
-     "src/pages/SkillbookAuditPage.tsx",
-     "src/pages/SkillsMarketplacePage.tsx",
-     "src/pages/SwarmOrchestrationPage.tsx",
-     "src/pages/VisionAgentsPage.tsx",
-     "src/pages/VoiceAgentsPage.tsx",
-     "src/security.test.ts",
-     "src/services/agentCardService.ts",
-     "src/services/agentGraphService.ts",
-     "src/services/agentHandoffService.ts",
-     "src/services/agentsService.ts",
-     "src/services/automationTemplateService.ts",
-     "src/services/batchProcessorService.ts",
-     "src/services/billingService.ts",
-     "src/services/canvasesService.ts",
-     "src/services/chatThreadService.ts",
-     "src/services/codeInterpreterService.ts",
-     "src/services/complianceService.ts",
-     "src/services/costCalculatorService.ts",
-     "src/services/credentialVaultService.ts",
-     "src/services/crmCadenceService.ts",
-     "src/services/crmScoringService.ts",
-     "src/services/crmService.ts",
-     "src/services/cronSchedulerService.ts",
-     "src/services/dashboardService.ts",
-     "src/services/datahubService.ts",
-     "src/services/deploymentsService.ts",
-     "src/services/evaluationsService.ts",
-     "src/services/executionHistoryService.ts",
-     "src/services/knowledgeManagementService.ts",
-     "src/services/llmGatewayService.ts",
-     "src/services/notificationEngineService.ts",
-     "src/services/queueManagerService.ts",
-     "src/services/ragPipelineService.ts",
-     "src/services/rbacService.ts",
-     "src/services/retryEngineService.ts",
-     "src/services/securityService.ts",
-     "src/services/settingsService.ts",
-     "src/services/skillDemandService.ts",
-     "src/services/skillDepartmentClassifier.ts",
-     "src/services/skillEnrichmentService.ts",
-     "src/services/skillHarvestService.ts",
-     "src/services/skillLibraryService.ts",
-     "src/services/skillObservabilityService.ts",
-     "src/services/skillReclassificationReviewService.ts",
-     "src/services/skillReclassificationService.ts",
-     "src/services/skillRecommenderService.ts",
-     "src/services/skillsRegistryService.ts",
-     "src/services/skillsSimulationService.ts",
-     "src/services/templateSkillRegistry.ts",
-     "src/services/userFilterPreferencesService.ts",
-     "src/services/webhookTriggerService.ts",
-     "src/services/whatsappWebhookService.ts",
-     "src/services/workflowCheckpointService.ts",
-     "src/services/workflowsService.ts",
-     "src/stores/agentBuilderStore.ts",
-     "src/stores/oracleStore.ts",
-     "src/test/agent-routing.test.ts",
-     "src/test/agents-service.test.ts",
-     "src/test/app-sidebar.test.tsx",
-     "src/test/bitrix24-webhook.test.ts",
-     "src/test/calibration-csv-export.test.ts",
-     "src/test/calibration-governance.test.ts",
-     "src/test/chat-thread-service.test.ts",
-     "src/test/cost-calculator.test.ts",
-     "src/test/crm-scoring-service.test.ts",
-     "src/test/crm-service.test.ts",
-     "src/test/curation-feed-pagination.test.ts",
-     "src/test/curation-feed.test.ts",
-     "src/test/curation-realtime-pending.test.ts",
-     "src/test/curation-realtime.test.ts",
-     "src/test/datahub-service.test.ts",
-     "src/test/deployments-service.test.ts",
-     "src/test/design-improvements.test.tsx",
-     "src/test/draft-store-skills.test.ts",
-     "src/test/edge-runtime-contract.test.ts",
-     "src/test/edge-shared-skills.test.ts",
-     "src/test/embedding-dimension-contract.test.ts",
-     "src/test/evaluations-scoring.test.ts",
-     "src/test/freeze-window-service.test.ts",
-     "src/test/harvest-checkpoint-purge.test.ts",
-     "src/test/llm-gateway-providers.test.ts",
-     "src/test/llm-gateway-service.test.ts",
-     "src/test/memory-service.test.ts",
-     "src/test/notification-and-middleware.test.ts",
-     "src/test/observability-governance-alerts.test.ts",
-     "src/test/queue-failure-summary.test.ts",
-     "src/test/quick-type-template-map.test.ts",
-     "src/test/rag-pipeline-service.test.ts",
-     "src/test/security-service.test.ts",
-     "src/test/setup.ts",
-     "src/test/silent-error-guard.test.ts",
-     "src/test/skill-attribution.test.ts",
-     "src/test/skill-classification-efficacy.test.ts",
-     "src/test/skill-classifier-parity.test.ts",
-     "src/test/skill-composer.test.ts",
-     "src/test/skill-demand-department-filter.test.ts",
-     "src/test/skill-demand-department-provenance.test.ts",
-     "src/test/skill-demand-needs-review-filter.test.ts",
-     "src/test/skill-demand-source-filter.test.ts",
-     "src/test/skill-demand.test.ts",
-     "src/test/skill-department-classifier-invariants.test.ts",
-     "src/test/skill-department-provenance-chain.test.ts",
-     "src/test/skill-department-reclassification.test.ts",
-     "src/test/skill-departments-parity.test.ts",
-     "src/test/skill-description-enrichment.test.ts",
-     "src/test/skill-description-parity.test.ts",
-     "src/test/skill-install-cap-audit.test.ts",
-     "src/test/skill-install-cap-ledger.test.ts",
-     "src/test/skill-install-guard.test.ts",
-     "src/test/skill-observability.test.ts",
-     "src/test/skill-platform-tier.test.ts",
-     "src/test/skill-prompt-diff.test.ts",
-     "src/test/skill-prompt-evidence-ledger.test.ts",
-     "src/test/skill-prompt-evidence.test.ts",
-     "src/test/skill-prompt-overflow-alert.test.ts",
-     "src/test/skill-prompt-simulation.test.ts",
-     "src/test/skill-reclassification-review.test.ts",
-     "src/test/skill-recommender-pending.test.ts",
-     "src/test/skill-recommender.test.ts",
-     "src/test/skills-registry-bulk-install.test.ts",
-     "src/test/supabase-mock-simulation.test.ts",
-     "src/test/template-department-coverage.test.ts",
-     "src/test/template-link-coverage.test.ts",
-     "src/test/template-skill-links-merge.test.ts",
-     "src/test/template-skill-links-restore-all.test.ts",
-     "src/test/template-skill-links-restore.test.ts",
-     "src/test/template-skill-links.test.ts",
-     "src/test/template-skill-registry.test.ts",
-     "src/test/threshold-calibration-instability.test.ts",
-     "src/test/threshold-calibration-scale.test.ts",
-     "src/test/threshold-calibration.test.ts",
-     "src/test/utils/supabaseMock.ts",
-     "src/test/whatsapp-webhook.test.ts",
-     "src/test/workflow-tracer.test.ts",
-     "src/tests/nexus-complete-test-suite.test.ts",
-     "supabase/functions/_shared/breakerEvents.ts",
-     "supabase/functions/_shared/contracts.ts",
-     "supabase/functions/_shared/crmNormalize.ts",
-     "supabase/functions/_shared/idempotency.ts",
-     "supabase/functions/_shared/json.ts",
-     "supabase/functions/_shared/mod.ts",
-     "supabase/functions/_shared/otel-edge.ts",
-     "supabase/functions/_shared/otel.ts",
-     "supabase/functions/_shared/rate-limiter.ts",
-     "supabase/functions/_shared/requireEnv.ts",
-     "supabase/functions/_shared/runtimeAlerts.ts",
-     "supabase/functions/_shared/skills.ts",
-     "supabase/functions/agent-eval-runner/index.ts",
-     "supabase/functions/agent-workflow-runner/index.ts",
-     "supabase/functions/automation-pipeline/index.ts",
-     "supabase/functions/browser-agent-run/index.ts",
-     "supabase/functions/browser-session-cancel/index.ts",
-     "supabase/functions/cerebro-brain/index.ts",
-     "supabase/functions/cerebro-query/index.ts",
-     "supabase/functions/code-interpreter-execute/index.ts",
-     "supabase/functions/crm-bitrix-sync/index.ts",
-     "supabase/functions/crm-cadence-runner/index.ts",
-     "supabase/functions/crm-enrich/index.ts",
-     "supabase/functions/datahub-query/index.ts",
-     "supabase/functions/doc-parse/index.ts",
-     "supabase/functions/doc-rechunk/index.ts",
-     "supabase/functions/dr-orchestrator/index.ts",
-     "supabase/functions/eval-judge/index.ts",
-     "supabase/functions/global-search/index.ts",
-     "supabase/functions/graph-execute/index.ts",
-     "supabase/functions/incident-orchestrator/index.ts",
-     "supabase/functions/kb-analyze-gaps/index.ts",
-     "supabase/functions/kb-translate-article/index.ts",
-     "supabase/functions/lgpd-manager/index.ts",
-     "supabase/functions/llm-gateway/index.ts",
-     "supabase/functions/memory-tools/index.ts",
-     "supabase/functions/migrate-helper/index.ts",
-     "supabase/functions/notebook-podcast-generate/index.ts",
-     "supabase/functions/product-mockup/index.ts",
-     "supabase/functions/quick-agent-test/index.ts",
-     "supabase/functions/rag-embed-backfill/index.ts",
-     "supabase/functions/rag-embed-v2/index.test.ts",
-     "supabase/functions/rag-embed-v2/index.ts",
-     "supabase/functions/replay-fork-execute/index.ts",
-     "supabase/functions/sbom-scanner/index.ts",
-     "supabase/functions/semantic-search/index.ts",
-     "supabase/functions/skill-classify-llm/index.ts",
-     "supabase/functions/skill-describe-llm/index.ts",
-     "supabase/functions/skill-harvester/departments.ts",
-     "supabase/functions/skill-harvester/github.ts",
-     "supabase/functions/skill-harvester/index.ts",
-     "supabase/functions/skill-harvester/lib.ts",
-     "supabase/functions/slack-agent-notify/index.ts",
-     "supabase/functions/slack-alert-dispatcher/index.ts",
-     "supabase/functions/slack-dlq-discard/index.ts",
-     "supabase/functions/slack-dlq-retry/index.ts",
-     "supabase/functions/slack-events-webhook/index.ts",
-     "supabase/functions/slack-rag-sync/index.ts",
-     "supabase/functions/slack-verify-connection/index.ts",
-     "supabase/functions/smolagent-runtime/index.ts",
-     "supabase/functions/synthetic-runner/index.ts",
-     "supabase/functions/test-runner/contract_test.ts",
-     "supabase/functions/test-runner/versioning_contract_test.ts",
-     "supabase/functions/text-to-speech/index.ts",
-     "supabase/functions/validate-access/index.ts",
-     "supabase/functions/visual-search/index.ts",
-     "supabase/functions/voice-session/index.ts",
-     "supabase/functions/voice-synthesize/index.ts",
-     "supabase/functions/voice-transcribe/index.ts",
-     "supabase/functions/whatsapp-router/index.ts",
-     "supabase/functions/workflow-engine-v2/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    12
+    11
    ],
    [
     "package.json",
-    11
+    10
    ],
    [
     "supabase/deployment-manifest.json",
     8
    ],
    [
-    "supabase/functions/llm-gateway/index.ts",
-    4
-   ],
-   [
     ".github/workflows/ci.yml",
     4
    ],
    [
+    "supabase/functions/llm-gateway/index.ts",
+    3
+   ],
+   [
     "supabase/functions/agent-workflow-runner/index.ts",
-    4
+    3
    ],
    [
     "supabase/functions/voice-synthesize/index.ts",
-    4
-   ],
-   [
-    "supabase/functions/datahub-query/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/voice-transcribe/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/workflow-engine-v2/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/code-interpreter-execute/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/crm-enrich/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/global-search/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/graph-execute/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/kb-analyze-gaps/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/kb-translate-article/index.ts",
     3
    ],
    [
@@ -189722,15 +189386,51 @@
     3
    ],
    [
-    ".gitignore",
-    3
-   ],
-   [
     "scripts/generate-openapi.ts",
     2
    ],
    [
-    "supabase/functions/slack-events-webhook/index.ts",
+    "supabase/functions/datahub-query/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/voice-transcribe/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/workflow-engine-v2/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/webhook-receiver/index.ts",
+    2
+   ],
+   [
+    "src/test/rich-editor.test.tsx",
+    2
+   ],
+   [
+    ".github/workflows/inventario-estado-semanal.yml",
+    2
+   ],
+   [
+    ".prettierignore",
+    2
+   ],
+   [
+    "supabase/functions/notification-sender/index.ts",
+    2
+   ],
+   [
+    "docs/migration/MATRIZ_EDGE_TABELA.md",
+    2
+   ],
+   [
+    "src/services/widgetService.ts",
+    2
+   ],
+   [
+    "supabase/functions/widget-proxy/index.ts",
     2
    ]
   ]

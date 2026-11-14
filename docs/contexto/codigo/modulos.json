@@ -5135,9 +5135,9 @@
   },
   {
    "modulo": "lib/validations",
-   "arquivos": 11,
+   "arquivos": 12,
    "testes": 2,
-   "linhas": 2092,
+   "linhas": 2144,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5227,7 +5227,7 @@
    "modulo": "pages",
    "arquivos": 141,
    "testes": 0,
-   "linhas": 49621,
+   "linhas": 49685,
    "itens_menu": [
     "A/B Test Prompts",
     "Admin BD",
@@ -6092,7 +6092,7 @@
    "modulo": "services",
    "arquivos": 146,
    "testes": 0,
-   "linhas": 31914,
+   "linhas": 31968,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6724,7 +6724,8 @@
    "pacotes_externos": [
     "@tanstack/react-query",
     "jszip",
-    "pdfjs-dist"
+    "pdfjs-dist",
+    "zod"
    ]
   },
   {
