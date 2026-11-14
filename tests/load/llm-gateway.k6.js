@@ -31,6 +31,11 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SERVICE_ROLE_KEY) {
   );
 }
 
+// O teste é "auth-only": o check aceita 200 e 4xx (o gateway pode recusar a service role por cota ou
+// autorização). Sem isto o k6 conta todo 4xx em http_req_failed e o threshold rate<0.01 NUNCA passava
+// (13/11: "Checks passed 100%" com "Failed requests 100%"). Falha = 5xx ou erro de rede.
+http.setResponseCallback(http.expectedStatuses({ min: 200, max: 499 }));
+
 const llmLatency = new Trend("llm_gateway_latency_ms", true);
 const llmSuccess = new Rate("llm_gateway_success");
 
