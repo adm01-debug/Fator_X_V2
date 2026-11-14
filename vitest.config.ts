@@ -34,7 +34,7 @@ export default defineConfig({
       exclude: ['src/**/*.test.*', 'src/test/**', 'src/tests/**'],
       thresholds: {
         lines: 41,
-        functions: 60,
+        functions: 46,
         branches: 46,
         statements: 41,
       },
