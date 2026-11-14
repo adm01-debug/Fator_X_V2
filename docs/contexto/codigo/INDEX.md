@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f6a5b20d9954767d6694620903f5ecea83c002ca` (2026-11-14T11:11:36-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `557f1f6c60e2c5e01599d4c23572d34a985fc82a` (2026-11-14T11:37:22-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -431,7 +431,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13781 nós · 36998 arestas · 894 comunidades · grafo do commit `f6a5b20d`
+- 13781 nós · 36998 arestas · 894 comunidades · grafo do commit `557f1f6c`
 - comunidades maiores: button.tsx (334), lucide-react (324), PageHeader.tsx (163), App.tsx (154), logger.ts (147), cn (132), ref_https (124), checkRateLimit (121), templateSkillLinkService.ts (117), SkillHarvestPage.tsx (113), 🚀 Nexus Agents Studio — Análise Exaustiva de Funcionalidades (110), skillEnrichmentService.ts (98)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -574,6 +574,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-14 `557f1f6c` chore(coverage): sobe thresholds para o nivel medido na CI (#90)
 - 2026-11-14 `f6a5b20d` feat(validacao): adiciona zod as rotas de entrada do auth (#92)
 - 2026-11-14 `715e9cd5` fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)
 - 2026-11-14 `067d5656` docs: adiciona inventario de prontidao de producao (main f618216) (#89)
@@ -588,7 +589,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-12 `1033b2fe` fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS
 - 2026-11-11 `60e36b81` feat(notificacao): envio real de e-mail via Resend no notification-sender (#82)
 - 2026-11-11 `d53c9e3c` fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)
-- 2026-11-11 `b8f1e832` feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

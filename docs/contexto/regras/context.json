@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f6a5b20d9954767d6694620903f5ecea83c002ca",
+  "sha": "557f1f6c60e2c5e01599d4c23572d34a985fc82a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-14 14:32 UTC",
+  "generated_at": "2026-11-14 14:59 UTC",
   "files_total": 1975,
   "code_files": 1780,
   "code_lines": 345494
@@ -188840,10 +188840,19 @@
   }
  },
  "git": {
-  "sha": "f6a5b20d9954767d6694620903f5ecea83c002ca",
+  "sha": "557f1f6c60e2c5e01599d4c23572d34a985fc82a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "557f1f6",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "chore(coverage): sobe thresholds para o nivel medido na CI (#90)",
+    "files": [
+     "vitest.config.ts"
+    ]
+   },
    {
     "sha": "f6a5b20",
     "date": "2026-11-14",
@@ -189340,26 +189349,16 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "8e0b299",
-    "date": "2026-09-14",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump react-router-dom in the react group (#55)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    11
+    10
    ],
    [
     "package.json",
-    10
+    9
    ],
    [
     "supabase/deployment-manifest.json",

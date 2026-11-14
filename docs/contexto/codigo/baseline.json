@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f6a5b20d9954767d6694620903f5ecea83c002ca",
+  "commit": "557f1f6c60e2c5e01599d4c23572d34a985fc82a",
   "branch": "main",
-  "data_commit": "2026-11-14T11:11:36-03:00",
+  "data_commit": "2026-11-14T11:37:22-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "557f1f6c",
+    "data": "2026-11-14",
+    "assunto": "chore(coverage): sobe thresholds para o nivel medido na CI (#90)"
+   },
    {
     "sha": "f6a5b20d",
     "data": "2026-11-14",
@@ -126,14 +131,9 @@
     "sha": "c5f36893",
     "data": "2026-11-09",
     "assunto": "chore(deps)(deps): bump react-router-dom (#61)"
-   },
-   {
-    "sha": "04f626e1",
-    "data": "2026-11-08",
-    "assunto": "chore(agentes): adota o padrão AGENTS.md + docs/agentes do Zapp Web V2 (#69)"
    }
   ],
-  "arquivos_mudados_7d": 203,
+  "arquivos_mudados_7d": 204,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 21
+    "commits": 22
    },
    {
     "autor": "dependabot[bot]",
