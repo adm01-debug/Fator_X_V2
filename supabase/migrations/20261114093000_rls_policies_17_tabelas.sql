@@ -10,6 +10,7 @@
 --   INSERT : membro do workspace (WITH CHECK)
 --   UPDATE : linha própria OU admin do workspace
 --   DELETE : linha própria OU admin do workspace
+--   (exceção: audit_log é só leitura para usuários; ver bloco dela)
 -- service_role mantém BYPASSRLS (Edge Functions não afetadas).
 -- ═══════════════════════════════════════════════════════════════════════════════
 
@@ -30,20 +31,13 @@ CREATE POLICY assets_member_delete ON public.assets
   FOR DELETE TO authenticated
   USING (owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id));
 
--- audit_log (linha própria = user_id; escrita em massa vem de Edge Functions com service_role)
+-- audit_log: trilha de auditoria (LGPD). Usuário só LÊ (próprias entradas ou do
+-- workspace). Sem policy de INSERT/UPDATE/DELETE: gravar só pelo RPC
+-- log_audit_entry (SECURITY DEFINER, user_id = auth.uid()) ou service_role; ninguém
+-- apaga ou reescreve o rastro. tests/rls/personas.test.ts exige o INSERT direto bloqueado.
 CREATE POLICY audit_log_member_select ON public.audit_log
   FOR SELECT TO authenticated
   USING (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid());
-CREATE POLICY audit_log_member_insert ON public.audit_log
-  FOR INSERT TO authenticated
-  WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid());
-CREATE POLICY audit_log_member_update ON public.audit_log
-  FOR UPDATE TO authenticated
-  USING (user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id))
-  WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid());
-CREATE POLICY audit_log_member_delete ON public.audit_log
-  FOR DELETE TO authenticated
-  USING (user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id));
 
 -- business_systems (linha própria = owner_id)
 CREATE POLICY business_systems_member_select ON public.business_systems
