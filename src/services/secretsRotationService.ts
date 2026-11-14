@@ -1,12 +1,20 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
 
 export type SecretCategory =
-  | 'api_key' | 'oauth_client' | 'db_password' | 'jwt_signing'
-  | 'webhook_secret' | 'encryption_key' | 'ssh_key' | 'certificate';
+  | 'api_key'
+  | 'oauth_client'
+  | 'db_password'
+  | 'jwt_signing'
+  | 'webhook_secret'
+  | 'encryption_key'
+  | 'ssh_key'
+  | 'certificate';
 
 export type SecretEnvironment = 'prod' | 'staging' | 'dev';
 export type SecretStatus = 'active' | 'pending_rotation' | 'overdue' | 'retired';
-export type RotationReason = 'scheduled' | 'compromised' | 'employee_offboarding' | 'manual' | 'policy_change';
+export type RotationReason =
+  'scheduled' | 'compromised' | 'employee_offboarding' | 'manual' | 'policy_change';
 
 export interface ManagedSecret {
   id: string;
@@ -58,6 +66,29 @@ export interface RegisterSecretInput {
   last_rotated_at?: string;
 }
 
+const registerSecretInputSchema = z.object({
+  name: z.string().trim().min(1, 'Nome é obrigatório').max(200, 'Nome muito longo'),
+  category: z.enum([
+    'api_key',
+    'oauth_client',
+    'db_password',
+    'jwt_signing',
+    'webhook_secret',
+    'encryption_key',
+    'ssh_key',
+    'certificate',
+  ]),
+  provider: z.string().max(100, 'Provedor muito longo').optional(),
+  environment: z.enum(['prod', 'staging', 'dev']).optional(),
+  rotation_interval_days: z
+    .number()
+    .int()
+    .min(1, 'Mínimo 1 dia')
+    .max(3650, 'Máximo 10 anos')
+    .optional(),
+  notes: z.string().max(2000, 'Notas muito longas').optional(),
+});
+
 export async function listManagedSecrets(workspaceId: string): Promise<ManagedSecret[]> {
   const { data, error } = await supabase
     .from('managed_secrets')
@@ -69,12 +100,15 @@ export async function listManagedSecrets(workspaceId: string): Promise<ManagedSe
 }
 
 export async function getSecretsSummary(workspaceId: string): Promise<SecretsSummary> {
-  const { data, error } = await supabase.rpc('get_secrets_status_summary', { p_workspace_id: workspaceId });
+  const { data, error } = await supabase.rpc('get_secrets_status_summary', {
+    p_workspace_id: workspaceId,
+  });
   if (error) throw error;
   return data as unknown as SecretsSummary;
 }
 
 export async function registerManagedSecret(input: RegisterSecretInput): Promise<string> {
+  registerSecretInputSchema.parse(input);
   const { data, error } = await supabase.rpc('register_managed_secret', {
     p_workspace_id: input.workspace_id,
     p_name: input.name,
@@ -90,7 +124,11 @@ export async function registerManagedSecret(input: RegisterSecretInput): Promise
   return data as string;
 }
 
-export async function recordSecretRotation(secretId: string, reason: RotationReason, notes?: string): Promise<string> {
+export async function recordSecretRotation(
+  secretId: string,
+  reason: RotationReason,
+  notes?: string,
+): Promise<string> {
   const { data, error } = await supabase.rpc('record_secret_rotation', {
     p_secret_id: secretId,
     p_reason: reason,
@@ -118,7 +156,10 @@ export async function listRotationEvents(secretId: string): Promise<SecretRotati
   return (data ?? []) as SecretRotationEvent[];
 }
 
-export async function refreshSecretsStatus(): Promise<{ marked_overdue: number; marked_pending: number }> {
+export async function refreshSecretsStatus(): Promise<{
+  marked_overdue: number;
+  marked_pending: number;
+}> {
   const { data, error } = await supabase.rpc('refresh_secrets_status');
   if (error) throw error;
   return data as unknown as { marked_overdue: number; marked_pending: number };
@@ -143,9 +184,19 @@ export const ROTATION_REASON_LABELS: Record<RotationReason, string> = {
   policy_change: 'Mudança de Política',
 };
 
-export const SECRET_TEMPLATES: Array<{ name: string; category: SecretCategory; rotation_interval_days: number; provider?: string }> = [
+export const SECRET_TEMPLATES: Array<{
+  name: string;
+  category: SecretCategory;
+  rotation_interval_days: number;
+  provider?: string;
+}> = [
   { name: 'OpenAI API Key', category: 'api_key', rotation_interval_days: 90, provider: 'OpenAI' },
-  { name: 'Anthropic API Key', category: 'api_key', rotation_interval_days: 90, provider: 'Anthropic' },
+  {
+    name: 'Anthropic API Key',
+    category: 'api_key',
+    rotation_interval_days: 90,
+    provider: 'Anthropic',
+  },
   { name: 'Database Password (prod)', category: 'db_password', rotation_interval_days: 180 },
   { name: 'JWT Signing Key', category: 'jwt_signing', rotation_interval_days: 30 },
   { name: 'OAuth Client Secret', category: 'oauth_client', rotation_interval_days: 365 },
@@ -158,7 +209,10 @@ export function getDaysUntilRotation(nextDue: string | null): number | null {
   return Math.floor(ms / (1000 * 60 * 60 * 24));
 }
 
-export function getStatusVariant(status: SecretStatus, daysUntil: number | null): 'overdue' | 'urgent' | 'soon' | 'ok' | 'retired' {
+export function getStatusVariant(
+  status: SecretStatus,
+  daysUntil: number | null,
+): 'overdue' | 'urgent' | 'soon' | 'ok' | 'retired' {
   if (status === 'retired') return 'retired';
   if (status === 'overdue' || (daysUntil !== null && daysUntil < 0)) return 'overdue';
   if (daysUntil !== null && daysUntil < 7) return 'urgent';
