@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "797877958aaf91d186e06601ae65a8619ec2db3d",
+  "sha": "c3d5146477df93ace6f6072a6a4320497ac0279c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-19 22:03 UTC",
-  "files_total": 1976,
+  "generated_at": "2026-11-19 22:56 UTC",
+  "files_total": 1977,
   "code_files": 1780,
-  "code_lines": 345494
+  "code_lines": 345517
  },
  "version": "1.3.2",
- "facts_hash": "265edc181640a4c0",
+ "facts_hash": "843299130f160d8a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -182,6 +182,13 @@
      "push",
      "schedule",
      "workflow_dispatch"
+    ]
+   },
+   {
+    "file": ".github/workflows/dependency-review.yml",
+    "name": "Dependency Review",
+    "triggers": [
+     "pull_request"
     ]
    },
    {
@@ -57393,7 +57400,7 @@
   {
    "module": "src/components",
    "files": 557,
-   "lines": 103699,
+   "lines": 103720,
    "tables": [
     "agent_templates",
     "agent_traces",
@@ -58054,7 +58061,7 @@
   {
    "module": "src/pages",
    "files": 141,
-   "lines": 49685,
+   "lines": 49687,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -150363,7 +150370,7 @@
   },
   "src/components/shared/NotificationBell.tsx": {
    "path": "src/components/shared/NotificationBell.tsx",
-   "lines": 112,
+   "lines": 117,
    "exports": [
     "function NotificationBell"
    ],
@@ -150530,7 +150537,7 @@
   },
   "src/components/shared/OnboardingTour.tsx": {
    "path": "src/components/shared/OnboardingTour.tsx",
-   "lines": 236,
+   "lines": 244,
    "exports": [
     "function OnboardingTour"
    ],
@@ -150707,7 +150714,7 @@
   },
   "src/components/shared/SystemStatusIndicator.tsx": {
    "path": "src/components/shared/SystemStatusIndicator.tsx",
-   "lines": 80,
+   "lines": 88,
    "exports": [
     "function SystemStatusIndicator"
    ]
@@ -159516,7 +159523,7 @@
   },
   "src/pages/AuthPage.tsx": {
    "path": "src/pages/AuthPage.tsx",
-   "lines": 336,
+   "lines": 338,
    "exports": [
     "function AuthPage"
    ],
@@ -188848,10 +188855,33 @@
   }
  },
  "git": {
-  "sha": "797877958aaf91d186e06601ae65a8619ec2db3d",
+  "sha": "c3d5146477df93ace6f6072a6a4320497ac0279c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "c3d5146",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(auth,a11y): mensagem certa na validação e 3 violações do axe na área logada (#97)",
+    "files": [
+     "src/components/layout/AppSidebar.tsx",
+     "src/components/shared/NotificationBell.tsx",
+     "src/components/shared/OnboardingTour.tsx",
+     "src/components/shared/SystemStatusIndicator.tsx",
+     "src/pages/AuthPage.tsx",
+     "src/pages/ResetPasswordPage.tsx"
+    ]
+   },
+   {
+    "sha": "8c28187",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "ci(security): dependency review barra CVE novo high/critical nos PRs (#107)",
+    "files": [
+     ".github/workflows/dependency-review.yml"
+    ]
+   },
    {
     "sha": "7978779",
     "date": "2026-11-14",
@@ -189336,26 +189366,6 @@
      "scripts/check-agents-md-integrity.mjs",
      "scripts/graphify/setup.sh"
     ]
-   },
-   {
-    "sha": "b0a3cb5",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix(deps): Security Audit da main volta a passar (0 critical em prod) (#68)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "e7a2c89",
-    "date": "2026-09-14",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 6 updates (#60)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -189365,11 +189375,11 @@
    ],
    [
     "package-lock.json",
-    8
+    6
    ],
    [
     "package.json",
-    8
+    6
    ],
    [
     ".github/workflows/ci.yml",
@@ -189390,6 +189400,14 @@
    [
     "AGENTS.md",
     3
+   ],
+   [
+    "src/pages/AuthPage.tsx",
+    2
+   ],
+   [
+    "src/pages/ResetPasswordPage.tsx",
+    2
    ],
    [
     "scripts/deploy-edge-functions.sh",
@@ -189429,14 +189447,6 @@
    ],
    [
     "supabase/functions/notification-sender/index.ts",
-    2
-   ],
-   [
-    "docs/migration/MATRIZ_EDGE_TABELA.md",
-    2
-   ],
-   [
-    "src/services/widgetService.ts",
     2
    ]
   ]

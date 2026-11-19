@@ -8,7 +8,7 @@
    "Markdown (114)",
    "JavaScript (52)",
    "JSON (24)",
-   "YAML (14)",
+   "YAML (15)",
    "Shell (10)",
    "Python (5)"
   ],
@@ -283,6 +283,30 @@
     "actions/download-artifact",
     "actions/setup-node",
     "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/dependency-review.yml",
+   "nome": "Dependency Review",
+   "gatilhos": [
+    "pull_request"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "dependency-review"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/dependency-review-action"
    ]
   },
   {
@@ -1297,7 +1321,7 @@
    },
    {
     "papel": "button",
-    "ocorrencias": 46
+    "ocorrencias": 45
    },
    {
     "papel": "system",
@@ -1380,6 +1404,10 @@
     "ocorrencias": 2
    },
    {
+    "papel": "presentation",
+    "ocorrencias": 2
+   },
+   {
     "papel": "service_role",
     "ocorrencias": 2
    },
@@ -1429,10 +1457,6 @@
    },
    {
     "papel": "menuitem",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "presentation",
     "ocorrencias": 1
    },
    {

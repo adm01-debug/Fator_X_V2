@@ -5203,7 +5203,7 @@
     "NotificationBell"
    ],
    "export_default": null,
-   "linhas": 112,
+   "linhas": 117,
    "dominio": "components/shared",
    "hooks_locais": [
     "useNotifications"
@@ -5238,7 +5238,7 @@
     "OnboardingTour"
    ],
    "export_default": null,
-   "linhas": 236,
+   "linhas": 244,
    "dominio": "components/shared",
    "hooks_locais": [
     "useUIStore"
@@ -5414,7 +5414,7 @@
     "SystemStatusIndicator"
    ],
    "export_default": null,
-   "linhas": 80,
+   "linhas": 88,
    "dominio": "components/shared",
    "hooks_locais": [
     "useNetworkStatus"
@@ -8525,7 +8525,7 @@
     "AuthPage"
    ],
    "export_default": "AuthPage",
-   "linhas": 336,
+   "linhas": 338,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

@@ -2092,6 +2092,7 @@
     "manager",
     "navigation",
     "option",
+    "presentation",
     "progressbar",
     "purchasing",
     "radio",
@@ -2935,7 +2936,7 @@
    "modulo": "components/shared",
    "arquivos": 45,
    "testes": 0,
-   "linhas": 4261,
+   "linhas": 4282,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3009,6 +3010,7 @@
     "assistant",
     "button",
     "dialog",
+    "presentation",
     "status",
     "toolbar",
     "user"
@@ -5227,7 +5229,7 @@
    "modulo": "pages",
    "arquivos": 141,
    "testes": 0,
-   "linhas": 49685,
+   "linhas": 49687,
    "itens_menu": [
     "A/B Test Prompts",
     "Admin BD",

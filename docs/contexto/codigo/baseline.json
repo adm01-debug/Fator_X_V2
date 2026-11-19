@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "797877958aaf91d186e06601ae65a8619ec2db3d",
+  "commit": "c3d5146477df93ace6f6072a6a4320497ac0279c",
   "branch": "main",
-  "data_commit": "2026-11-14T14:23:48-03:00",
+  "data_commit": "2026-11-19T19:18:17-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "c3d51464",
+    "data": "2026-11-19",
+    "assunto": "fix(auth,a11y): mensagem certa na validação e 3 violações do axe na área logada (#97)"
+   },
+   {
+    "sha": "8c281873",
+    "data": "2026-11-19",
+    "assunto": "ci(security): dependency review barra CVE novo high/critical nos PRs (#107)"
+   },
    {
     "sha": "79787795",
     "data": "2026-11-14",
@@ -121,19 +131,9 @@
     "sha": "b9162c98",
     "data": "2026-11-11",
     "assunto": "ci(agentes): liga o guard de integridade do AGENTS.md no CI (#70)"
-   },
-   {
-    "sha": "6ed5defd",
-    "data": "2026-11-11",
-    "assunto": "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#73)"
-   },
-   {
-    "sha": "c8b7ca62",
-    "data": "2026-11-11",
-    "assunto": "fix(tipos): alinha TipTap e corrige auditoria do login (#74)"
    }
   ],
-  "arquivos_mudados_7d": 21,
+  "arquivos_mudados_7d": 26,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -164,6 +164,10 @@
     "mudancas": 3
    },
    {
+    "pasta": "src/components/shared",
+    "mudancas": 3
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 3
    },
@@ -189,10 +193,6 @@
    },
    {
     "pasta": ".gitignore",
-    "mudancas": 2
-   },
-   {
-    "pasta": ".prettierignore",
     "mudancas": 2
    }
   ],
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 24
+    "commits": 26
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1971,
+  "arquivos_total": 1972,
   "arquivos_codigo": 1447,
-  "linhas_codigo": 316560,
+  "linhas_codigo": 316583,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -325,7 +325,7 @@
   "migrations": 329,
   "cron_jobs": 37,
   "testes": 239,
-  "workflows": 8,
+  "workflows": 9,
   "scripts": 43,
   "docs_md": 114
  },
@@ -464,7 +464,7 @@
   },
   "src/components": {
    "arquivos": 557,
-   "linhas": 103699
+   "linhas": 103720
   },
   "src/config": {
    "arquivos": 10,
@@ -500,7 +500,7 @@
   },
   "src/pages": {
    "arquivos": 141,
-   "linhas": 49685
+   "linhas": 49687
   },
   "src/security.test.ts": {
    "arquivos": 1,
