@@ -232,7 +232,7 @@
   {
    "arquivo": "scripts/deploy-edge-functions.sh",
    "descricao": "═══════════════════════════════════════════════════════════ Nexus — Deploy All Edge Functions to Supabase",
-   "linhas": 36,
+   "linhas": 40,
    "env": [],
    "npm_scripts": [],
    "workflows": [

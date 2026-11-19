@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9d6d1f42c8b1067b84df271f6534d688b108fdd9",
+  "commit": "797877958aaf91d186e06601ae65a8619ec2db3d",
   "branch": "main",
-  "data_commit": "2026-11-14T12:25:09-03:00",
+  "data_commit": "2026-11-14T14:23:48-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "79787795",
+    "data": "2026-11-14",
+    "assunto": "fix(infra): expoe falha no deploy das edge functions (#96)"
+   },
    {
     "sha": "9d6d1f42",
     "data": "2026-11-14",
@@ -126,14 +131,9 @@
     "sha": "c8b7ca62",
     "data": "2026-11-11",
     "assunto": "fix(tipos): alinha TipTap e corrige auditoria do login (#74)"
-   },
-   {
-    "sha": "44448e6f",
-    "data": "2026-11-09",
-    "assunto": "chore(deps)(deps): bump @supabase/supabase-js (#62)"
    }
   ],
-  "arquivos_mudados_7d": 205,
+  "arquivos_mudados_7d": 21,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 18
+    "mudancas": 15
    },
    {
     "arquivo": "package.json",
-    "mudancas": 18
+    "mudancas": 15
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
@@ -212,10 +212,6 @@
    {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 6
-   },
-   {
-    "arquivo": "AGENTS.md",
-    "mudancas": 4
    },
    {
     "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
@@ -228,6 +224,10 @@
    {
     "arquivo": "supabase/functions/voice-synthesize/index.ts",
     "mudancas": 4
+   },
+   {
+    "arquivo": "AGENTS.md",
+    "mudancas": 3
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 23
+    "commits": 24
    },
    {
     "autor": "dependabot[bot]",

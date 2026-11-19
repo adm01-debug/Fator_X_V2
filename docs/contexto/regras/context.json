@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "9d6d1f42c8b1067b84df271f6534d688b108fdd9",
+  "sha": "797877958aaf91d186e06601ae65a8619ec2db3d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-14 16:36 UTC",
+  "generated_at": "2026-11-19 22:03 UTC",
   "files_total": 1976,
   "code_files": 1780,
   "code_lines": 345494
@@ -188848,10 +188848,19 @@
   }
  },
  "git": {
-  "sha": "9d6d1f42c8b1067b84df271f6534d688b108fdd9",
+  "sha": "797877958aaf91d186e06601ae65a8619ec2db3d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "7978779",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "fix(infra): expoe falha no deploy das edge functions (#96)",
+    "files": [
+     "scripts/deploy-edge-functions.sh"
+    ]
+   },
    {
     "sha": "9d6d1f4",
     "date": "2026-11-14",
@@ -189347,24 +189356,15 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "43b3cea",
-    "date": "2026-09-14",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @sentry/react in the sentry group (#57)",
-    "files": [
-     "package-lock.json"
-    ]
    }
   ],
   "hot_files": [
    [
-    "package-lock.json",
-    9
+    "supabase/deployment-manifest.json",
+    8
    ],
    [
-    "supabase/deployment-manifest.json",
+    "package-lock.json",
     8
    ],
    [
@@ -189390,6 +189390,10 @@
    [
     "AGENTS.md",
     3
+   ],
+   [
+    "scripts/deploy-edge-functions.sh",
+    2
    ],
    [
     "scripts/generate-openapi.ts",
@@ -189433,10 +189437,6 @@
    ],
    [
     "src/services/widgetService.ts",
-    2
-   ],
-   [
-    "supabase/functions/widget-proxy/index.ts",
     2
    ]
   ]
