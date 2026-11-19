@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c3d5146477df93ace6f6072a6a4320497ac0279c",
+  "sha": "4775646737cb81718ea7fc0997c0c5a0385349a6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-19 22:56 UTC",
-  "files_total": 1977,
-  "code_files": 1780,
-  "code_lines": 345517
+  "generated_at": "2026-11-19 23:37 UTC",
+  "files_total": 1979,
+  "code_files": 1782,
+  "code_lines": 346660
  },
  "version": "1.3.2",
- "facts_hash": "843299130f160d8a",
+ "facts_hash": "c278ffd161644d34",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -232,7 +232,8 @@
    ".sql": 332,
    ".mjs": 47,
    ".js": 5,
-   ".py": 5
+   ".py": 5,
+   ".cjs": 2
   },
   "monorepo_packages": [],
   "supabase_config": {
@@ -57198,8 +57199,8 @@
   },
   {
    "module": "scripts",
-   "files": 57,
-   "lines": 20642,
+   "files": 59,
+   "lines": 21785,
    "tables": [
     "a",
     "contacts",
@@ -57343,6 +57344,8 @@
     "scripts/edge-deploy/generate-manifest.mjs",
     "scripts/edge-deploy/manifest-lib.mjs",
     "scripts/edge-deploy/manifest.unit.mjs",
+    "scripts/edge-validation/test-exaustivo.cjs",
+    "scripts/edge-validation/validacao-exaustiva.cjs",
     "scripts/inventario/banco.sql",
     "scripts/inventario/gerar-banco.mjs",
     "scripts/inventario/gerar-repo.mjs",
@@ -132869,6 +132872,7 @@
    "scripts/ci/check-bundle-secrets.mjs",
    "scripts/ci/check-bundle-secrets.unit.mjs",
    "scripts/ci/check-pr-workflow-secrets.unit.mjs",
+   "scripts/edge-validation/test-exaustivo.cjs",
    "scripts/inventario/gerar-banco.mjs",
    "scripts/regras_negocio/generate.py",
    "scripts/supabase_snapshot/snapshot.py",
@@ -141690,6 +141694,42 @@
    "rule_comments": [
     "Known orphan must NOT throw"
    ]
+  },
+  "scripts/edge-validation/test-exaustivo.cjs": {
+   "path": "scripts/edge-validation/test-exaustivo.cjs",
+   "lines": 519,
+   "params": [
+    {
+     "name": "DIR",
+     "value": "'supabase/functions'"
+    }
+   ],
+   "rule_comments": [
+    "─── S1: Broken rate limit var names ────────────────────────────────────────",
+    "─── S5: Rate limit with always-truthy object check ────────────────────────────",
+    "─── S8: Zod .success ambiguous with rate limit var ────────────────────────────",
+    "Flag ONLY if requireEnv appears both OUTSIDE and INSIDE serve (duplicate — real bug)"
+   ],
+   "doc": "SIMULAÇÃO EXAUSTIVA V2 — Edge Functions — Fator X V2 Classificado: TRUE = real issue | FALSE = false positive",
+   "side_effects": [
+    "notify",
+    "sendNotification"
+   ],
+   "uses_service_role": true
+  },
+  "scripts/edge-validation/validacao-exaustiva.cjs": {
+   "path": "scripts/edge-validation/validacao-exaustiva.cjs",
+   "lines": 624,
+   "params": [
+    {
+     "name": "DIR",
+     "value": "'supabase/functions'"
+    }
+   ],
+   "rule_comments": [
+    "* VALIDAÇÃO EXAUSTIVA — Deep verification of all fixes"
+   ],
+   "doc": "VALIDAÇÃO EXAUSTIVA — Deep verification of all fixes 500+ cenários simulados"
   },
   "scripts/inventario/banco.sql": {
    "path": "scripts/inventario/banco.sql",
@@ -188855,10 +188895,21 @@
   }
  },
  "git": {
-  "sha": "c3d5146477df93ace6f6072a6a4320497ac0279c",
+  "sha": "4775646737cb81718ea7fc0997c0c5a0385349a6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "4775646",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "feat(automacao): preserva scripts de validacao exaustiva de edge functions (pr19-resolved) (#114)",
+    "files": [
+     "scripts/automation.config.json",
+     "scripts/edge-validation/test-exaustivo.cjs",
+     "scripts/edge-validation/validacao-exaustiva.cjs"
+    ]
+   },
    {
     "sha": "c3d5146",
     "date": "2026-11-19",
@@ -189335,37 +189386,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "04f626e",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "chore(agentes): adota o padrão AGENTS.md + docs/agentes do Zapp Web V2 (#69)",
-    "files": [
-     ".agents/skills/fator-x-v2/SKILL.md",
-     ".agents/skills/fator-x-v2/agents/openai.yaml",
-     ".claude/hooks/session-start.sh",
-     ".claude/identity.json",
-     ".claude/settings.json",
-     ".claude/skills/fator-x-v2/SKILL.md",
-     ".codex/AGENTS.md",
-     ".codex/agents/docs-researcher.toml",
-     ".codex/agents/explorer.toml",
-     ".codex/agents/reviewer.toml",
-     ".codex/config.toml",
-     ".gitignore",
-     ".graphifyignore",
-     "AGENTS.md",
-     "CLAUDE.md",
-     "docs/agentes/banco.md",
-     "docs/agentes/deploy.md",
-     "docs/agentes/github-ci.md",
-     "docs/agentes/integracoes.md",
-     "docs/agentes/mapa-repo.md",
-     "docs/agentes/regras-dominio.md",
-     "scripts/check-agents-md-integrity.mjs",
-     "scripts/graphify/setup.sh"
-    ]
    }
   ],
   "hot_files": [
@@ -189386,6 +189406,10 @@
     4
    ],
    [
+    "scripts/automation.config.json",
+    3
+   ],
+   [
     "supabase/functions/llm-gateway/index.ts",
     3
    ],
@@ -189395,10 +189419,6 @@
    ],
    [
     "supabase/functions/voice-synthesize/index.ts",
-    3
-   ],
-   [
-    "AGENTS.md",
     3
    ],
    [

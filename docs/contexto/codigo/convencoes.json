@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(automacao): preserva scripts de validacao exaustiva de edge functions (pr19-resolved) (#114)",
    "fix(auth,a11y): mensagem certa na validação e 3 violações do axe na área logada (#97)",
    "ci(security): dependency review barra CVE novo high/critical nos PRs (#107)",
    "fix(infra): expoe falha no deploy das edge functions (#96)",
-   "infra: workflow de deploy automatico das Edge Functions (#95)",
-   "chore(coverage): sobe thresholds para o nivel medido na CI (#90)"
+   "infra: workflow de deploy automatico das Edge Functions (#95)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 43,
+ "total": 45,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -255,6 +255,24 @@
    "arquivo": "scripts/edge-deploy/manifest-lib.mjs",
    "descricao": null,
    "linhas": 359,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/edge-validation/test-exaustivo.cjs",
+   "descricao": "* SIMULAÇÃO EXAUSTIVA V2 — Edge Functions — Fator X V2",
+   "linhas": 519,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/edge-validation/validacao-exaustiva.cjs",
+   "descricao": "* VALIDAÇÃO EXAUSTIVA — Deep verification of all fixes",
+   "linhas": 624,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

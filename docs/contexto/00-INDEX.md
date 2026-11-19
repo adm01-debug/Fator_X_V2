@@ -1,6 +1,6 @@
 # CONTEXTO PARA AGENTES DE IA — ÍNDICE ÚNICO
 
-> Gerado automaticamente por indice.py · 2026-11-19 22:57 UTC · HEAD `c3d5146477` · Não edite à mão.
+> Gerado automaticamente por indice.py · 2026-11-19 23:38 UTC · HEAD `4775646737` · Não edite à mão.
 
 Um sistema, três fontes de verdade, três produtores independentes. **Leia este arquivo e vá direto à fonte certa.** Cada fato tem um dono: se duas fontes discordarem, vale o dono.
 
