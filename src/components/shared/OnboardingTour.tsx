@@ -181,7 +181,7 @@ export function OnboardingTour() {
           </p>
 
           {current.tip && (
-            <p className="text-meta text-primary/70 mt-2 flex items-center gap-1">
+            <p className="text-meta text-primary mt-2 flex items-center gap-1">
               <Sparkles className="h-3 w-3 shrink-0" aria-hidden="true" />
               {current.tip}
             </p>
