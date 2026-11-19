@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4775646737cb81718ea7fc0997c0c5a0385349a6",
+  "commit": "0f9c748c3656127030fbf62642a55e14020001df",
   "branch": "main",
-  "data_commit": "2026-11-19T20:29:47-03:00",
+  "data_commit": "2026-11-19T20:37:31-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "0f9c748c",
+    "data": "2026-11-19",
+    "assunto": "fix(a11y): contraste do tip do tour 6.95:1 (#108)"
+   },
    {
     "sha": "47756467",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "e8510396",
     "data": "2026-11-11",
     "assunto": "fix(contexto): autentica o fetch da branch contexto em repo privado (#75)"
-   },
-   {
-    "sha": "531aa687",
-    "data": "2026-11-11",
-    "assunto": "feat(automacao): porta os scripts autônomos de estado real do Zapp Web V2 (#71)"
    }
   ],
   "arquivos_mudados_7d": 29,
@@ -156,6 +156,10 @@
     "mudancas": 4
    },
    {
+    "pasta": "src/components/shared",
+    "mudancas": 4
+   },
+   {
     "pasta": "supabase/functions/llm-gateway",
     "mudancas": 4
    },
@@ -165,10 +169,6 @@
    },
    {
     "pasta": "scripts/automation.config.json",
-    "mudancas": 3
-   },
-   {
-    "pasta": "src/components/shared",
     "mudancas": 3
    },
    {
@@ -238,6 +238,10 @@
     "mudancas": 3
    },
    {
+    "arquivo": "src/components/shared/OnboardingTour.tsx",
+    "mudancas": 3
+   },
+   {
     "arquivo": "supabase/functions/code-interpreter-execute/index.ts",
     "mudancas": 3
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "docs/agentes/deploy.md",
     "mudancas": 2
-   },
-   {
-    "arquivo": "docs/agentes/github-ci.md",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 27
+    "commits": 28
    },
    {
     "autor": "dependabot[bot]",

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "4775646737cb81718ea7fc0997c0c5a0385349a6",
+  "sha": "0f9c748c3656127030fbf62642a55e14020001df",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-19 23:37 UTC",
+  "generated_at": "2026-11-19 23:39 UTC",
   "files_total": 1979,
   "code_files": 1782,
   "code_lines": 346660
@@ -188895,10 +188895,19 @@
   }
  },
  "git": {
-  "sha": "4775646737cb81718ea7fc0997c0c5a0385349a6",
+  "sha": "0f9c748c3656127030fbf62642a55e14020001df",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "0f9c748",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(a11y): contraste do tip do tour 6.95:1 (#108)",
+    "files": [
+     "src/components/shared/OnboardingTour.tsx"
+    ]
+   },
    {
     "sha": "4775646",
     "date": "2026-11-19",
@@ -189376,16 +189385,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "c5f3689",
-    "date": "2026-11-09",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump react-router-dom (#61)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -189395,11 +189394,11 @@
    ],
    [
     "package-lock.json",
-    6
+    5
    ],
    [
     "package.json",
-    6
+    5
    ],
    [
     ".github/workflows/ci.yml",
@@ -189420,6 +189419,10 @@
    [
     "supabase/functions/voice-synthesize/index.ts",
     3
+   ],
+   [
+    "src/components/shared/OnboardingTour.tsx",
+    2
    ],
    [
     "src/pages/AuthPage.tsx",
@@ -189463,10 +189466,6 @@
    ],
    [
     ".prettierignore",
-    2
-   ],
-   [
-    "supabase/functions/notification-sender/index.ts",
     2
    ]
   ]
