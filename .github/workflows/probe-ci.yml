@@ -1,0 +1,9 @@
+﻿name: Probe CI
+on:
+  push:
+    branches: [claude/teste-actions-*]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "probe ok"
