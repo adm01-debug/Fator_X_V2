@@ -347,7 +347,7 @@ export function AppSidebar() {
               >
                 Fator<span className="text-primary">X</span>
               </span>
-              <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mt-1">
+              <span className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1">
                 Industrial Intelligence
               </span>
             </div>
@@ -367,7 +367,7 @@ export function AppSidebar() {
                   aria-expanded={!isCollapsedSection}
                   aria-controls={`nav-section-${section.key}`}
                 >
-                  <SidebarGroupLabel className="text-meta font-black uppercase tracking-[0.2em] text-muted-foreground/60 pointer-events-none p-0 h-auto">
+                  <SidebarGroupLabel className="text-meta font-black uppercase tracking-[0.2em] text-muted-foreground pointer-events-none p-0 h-auto">
                     {section.label}
                   </SidebarGroupLabel>
                   <ChevronDown
@@ -511,12 +511,12 @@ export function AppSidebar() {
               </div>
             )}
             <div className="flex items-center justify-between px-3 pt-1">
-              <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] select-none">
+              <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] select-none">
                 Fator X Core v1.0
               </p>
               <button
                 onClick={() => setLocale(locale === 'pt-BR' ? 'en' : 'pt-BR')}
-                className="text-[9px] font-black text-muted-foreground/60 hover:text-primary transition-colors uppercase tracking-widest"
+                className="text-[9px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
                 aria-label="Alternar idioma"
               >
                 {locale === 'pt-BR' ? 'EN' : 'PT'}
