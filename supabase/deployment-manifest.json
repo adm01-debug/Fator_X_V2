@@ -625,8 +625,8 @@
     },
     {
       "path": "supabase/functions/whatsapp-webhook/index.ts",
-      "bytes": 20963,
-      "sha256": "f37cd46ae910fbdbb142495c02aede9f9c6c70942a66b0ddb74c384bd8f9e28c"
+      "bytes": 20979,
+      "sha256": "d607b019ed5845016a8b6c1c5bd217cf70b32349e83c90cc0aed989f17980553"
     },
     {
       "path": "supabase/functions/widget-proxy/index.ts",
@@ -2533,7 +2533,7 @@
       "name": "whatsapp-webhook",
       "entrypoint": "supabase/functions/whatsapp-webhook/index.ts",
       "verify_jwt": true,
-      "source_sha256": "fc539fbc9c39b963e07eb3ac6b66c407e1f0e0c933d8114a3679c4be2fd101ef",
+      "source_sha256": "d095efaea734ac47d246361e64f1578f8107fbaf3623c988715e44c42bce1477",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/contracts.ts",
@@ -2598,5 +2598,5 @@
       ]
     }
   ],
-  "manifest_sha256": "13a37bce28d4352e4cf6a95685a49d9d30fb378e4e192d6166de2147d71b0d99"
+  "manifest_sha256": "aae368013d372444322aa494e14756f5c18c1050d4af11361950c11bd06a6968"
 }
