@@ -484,6 +484,22 @@
             "manual": ["python3", "scripts/supabase_snapshot/test_snapshot.py"],
             "triggers": ["manual"],
             "reason": "Teste manual sem chamador literal no inventário; mantido para execução manual controlada e verificação local do snapshot. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "edge-validation",
+      "kind": "legacy",
+      "files": [
+        "scripts/edge-validation/test-exaustivo.cjs",
+        "scripts/edge-validation/validacao-exaustiva.cjs"
+      ],
+      "manual": [
+        "node",
+        "scripts/edge-validation/validacao-exaustiva.cjs"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Preservacao do agente pr19-resolved: simulacao exaustiva S1-S30 (29/30) de supabase/functions. Auditoria manual - reporta FAIL sem exit code, nao gate CI."
     }
   ],
   "ci": [
