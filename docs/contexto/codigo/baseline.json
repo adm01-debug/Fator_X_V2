@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "849d83ced262607712f1c8844ab28ced49d7d412",
+  "commit": "33249304c2385549d1d02ac13cc5b573a58f114c",
   "branch": "main",
-  "data_commit": "2026-11-20T10:08:43-03:00",
+  "data_commit": "2026-11-20T10:53:40-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "33249304",
+    "data": "2026-11-20",
+    "assunto": "chore(ci)(deps): bump peter-evans/create-pull-request (#99)"
+   },
    {
     "sha": "849d83ce",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "715e9cd5",
     "data": "2026-11-14",
     "assunto": "fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)"
-   },
-   {
-    "sha": "067d5656",
-    "data": "2026-11-14",
-    "assunto": "docs: adiciona inventario de prontidao de producao (main f618216) (#89)"
    }
   ],
-  "arquivos_mudados_7d": 71,
+  "arquivos_mudados_7d": 72,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -172,6 +172,10 @@
     "mudancas": 3
    },
    {
+    "pasta": ".github/workflows/inventario-estado-semanal.yml",
+    "mudancas": 3
+   },
+   {
     "pasta": "AGENTS.md",
     "mudancas": 3
    },
@@ -189,10 +193,6 @@
    },
    {
     "pasta": "supabase/functions/agent-conversational-builder",
-    "mudancas": 3
-   },
-   {
-    "pasta": "supabase/functions/agent-workflow-runner",
     "mudancas": 3
    }
   ],
@@ -235,6 +235,10 @@
    },
    {
     "arquivo": ".github/workflows/guards.yml",
+    "mudancas": 3
+   },
+   {
+    "arquivo": ".github/workflows/inventario-estado-semanal.yml",
     "mudancas": 3
    },
    {
@@ -292,10 +296,6 @@
    {
     "arquivo": "supabase/functions/kb-analyze-gaps/index.ts",
     "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/kb-translate-article/index.ts",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 11
+    "commits": 12
    }
   ]
  },

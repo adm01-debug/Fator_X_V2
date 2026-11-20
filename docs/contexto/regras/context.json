@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "849d83ced262607712f1c8844ab28ced49d7d412",
+  "sha": "33249304c2385549d1d02ac13cc5b573a58f114c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 13:14 UTC",
+  "generated_at": "2026-11-20 13:54 UTC",
   "files_total": 1982,
   "code_files": 1785,
   "code_lines": 347250
@@ -190476,10 +190476,19 @@
   }
  },
  "git": {
-  "sha": "849d83ced262607712f1c8844ab28ced49d7d412",
+  "sha": "33249304c2385549d1d02ac13cc5b573a58f114c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "3324930",
+    "date": "2026-11-20",
+    "author": "dependabot[bot]",
+    "subject": "chore(ci)(deps): bump peter-evans/create-pull-request (#99)",
+    "files": [
+     ".github/workflows/inventario-estado-semanal.yml"
+    ]
+   },
    {
     "sha": "849d83c",
     "date": "2026-11-20",
@@ -190806,18 +190815,6 @@
      "supabase/functions/slack-events-webhook/index.ts",
      "supabase/functions/webhook-receiver/index.ts"
     ]
-   },
-   {
-    "sha": "12be192",
-    "date": "2026-11-12",
-    "author": "dependabot[bot]",
-    "subject": "fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)",
-    "files": [
-     "package-lock.json",
-     "package.json",
-     "src/components/knowledge/RichEditor.tsx",
-     "src/test/rich-editor.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -190827,11 +190824,11 @@
    ],
    [
     "package-lock.json",
-    6
+    5
    ],
    [
     "package.json",
-    5
+    4
    ],
    [
     ".github/workflows/ci.yml",
@@ -190866,6 +190863,10 @@
     2
    ],
    [
+    ".github/workflows/inventario-estado-semanal.yml",
+    1
+   ],
+   [
     ".github/workflows/automation-local.yml",
     1
    ],
@@ -190895,10 +190896,6 @@
    ],
    [
     "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
     1
    ]
   ]

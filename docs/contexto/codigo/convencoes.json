@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "chore(ci)(deps): bump peter-evans/create-pull-request (#99)",
    "chore(deps)(deps): bump otpauth from 9.5.1 to 9.6.0 (#106)",
    "chore(deps)(deps): bump @tanstack/react-query from 5.83.0 to 5.107.1 (#105)",
    "chore(deps)(deps): bump the radix group across 1 directory with 27 updates (#103)",
-   "chore(deps)(deps): bump @sentry/react (#102)",
-   "chore(ci)(deps): bump actions/setup-node from 6.5.0 to 7.1.0 (#101)"
+   "chore(deps)(deps): bump @sentry/react (#102)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
