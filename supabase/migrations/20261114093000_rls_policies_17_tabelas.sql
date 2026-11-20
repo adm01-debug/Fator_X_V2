@@ -195,6 +195,7 @@ CREATE POLICY audit_events_member_delete ON public.audit_events
 
 -- ---------- 3. skill_registry (catálogo global: is_public=true lido por todos) ----------
 
+DROP POLICY IF EXISTS skill_registry_public_read ON public.skill_registry;
 CREATE POLICY skill_registry_public_read ON public.skill_registry
   FOR SELECT TO authenticated
   USING (is_public = true OR workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid());
