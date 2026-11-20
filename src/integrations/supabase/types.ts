@@ -3531,6 +3531,7 @@ export type Database = {
       }
       chat_messages: {
         Row: {
+          attachments: Json | null
           content: string
           created_at: string
           failed: boolean
@@ -3544,6 +3545,7 @@ export type Database = {
           tokens_out: number | null
         }
         Insert: {
+          attachments?: Json | null
           content: string
           created_at?: string
           failed?: boolean
@@ -3557,6 +3559,7 @@ export type Database = {
           tokens_out?: number | null
         }
         Update: {
+          attachments?: Json | null
           content?: string
           created_at?: string
           failed?: boolean

@@ -23,7 +23,8 @@
  */
 import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { logger } from '@/lib/logger';
-import type { ChatMessage } from '@/components/chat/MessageBubble';
+import type { Json } from '@/integrations/supabase/types';
+import type { ChatAttachment, ChatMessage } from '@/components/chat/MessageBubble';
 
 /** Chave legada do localStorage, usada apenas na migração única. */
 const LEGACY_STORAGE_PREFIX = 'nexus:chat:v1:';
@@ -47,6 +48,22 @@ interface ChatMessageRow {
   content: string;
   failed: boolean;
   created_at: string;
+  /** JSONB com [{name, size, mime, storagePath}]. */
+  attachments?: Json | null;
+}
+
+function rowAttachments(raw: Json | null | undefined) {
+  if (!Array.isArray(raw)) return undefined;
+  const items = raw as unknown[];
+  return items
+    .filter((a): a is Record<string, unknown> => typeof a === 'object' && a !== null)
+    .map((a) => ({
+      name: String(a.name ?? 'anexo'),
+      size: Number(a.size ?? 0),
+      mime: String(a.mime ?? 'application/octet-stream'),
+      storagePath: typeof a.storagePath === 'string' ? a.storagePath : undefined,
+      url: typeof a.url === 'string' ? a.url : undefined,
+    }));
 }
 
 function rowToMessage(row: ChatMessageRow): ChatMessage {
@@ -59,6 +76,7 @@ function rowToMessage(row: ChatMessageRow): ChatMessage {
     failed: row.failed,
     delivered: !row.failed,
     read: !row.failed,
+    attachments: rowAttachments(row.attachments),
   };
 }
 
@@ -128,7 +146,7 @@ export async function fetchMessages(threadId: string): Promise<ChatMessage[]> {
   try {
     const { data, error } = await supabaseExternal
       .from('chat_messages')
-      .select('id, role, content, failed, created_at')
+      .select('id, role, content, failed, created_at, attachments')
       .eq('thread_id', threadId)
       .order('created_at', { ascending: false })
       .limit(MESSAGE_PAGE_SIZE);
@@ -150,6 +168,7 @@ export interface AppendMessageInput {
   model?: string | null;
   latencyMs?: number | null;
   failed?: boolean;
+  attachments?: ChatAttachment[];
 }
 
 /**
@@ -170,6 +189,13 @@ export async function appendMessage(input: AppendMessageInput): Promise<string |
         model: input.model ?? null,
         latency_ms: input.latencyMs ?? null,
         failed: input.failed ?? false,
+        attachments:
+          input.attachments?.map((a) => ({
+            name: a.name,
+            size: a.size,
+            mime: a.mime,
+            storagePath: a.storagePath,
+          })) ?? [],
       })
       .select('id')
       .single();

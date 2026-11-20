@@ -44,6 +44,63 @@ describe('chatThreadService — ordenação do histórico', () => {
     localStorage.clear();
   });
 
+  it('mapeia attachments JSONB para a UI quando existem', async () => {
+    db.setTableResult('chat_messages', {
+      data: [
+        {
+          id: 'm1',
+          role: 'user',
+          content: 'veja o anexo',
+          failed: false,
+          created_at: '2026-01-01T00:00:01Z',
+          attachments: [
+            {
+              name: 'relatorio.pdf',
+              size: 1024,
+              mime: 'application/pdf',
+              storagePath: 'u-1/t-1/0-relatorio.pdf',
+            },
+            { name: 'nao.pdf', size: 999, mime: 'duvida', storagePath: 42 },
+          ],
+        },
+      ],
+      error: null,
+    });
+
+    const [msg] = await fetchMessages('t-1');
+
+    expect(msg.attachments).toHaveLength(2);
+    expect(msg.attachments?.[0]).toEqual({
+      name: 'relatorio.pdf',
+      size: 1024,
+      mime: 'application/pdf',
+      storagePath: 'u-1/t-1/0-relatorio.pdf',
+      url: undefined,
+    });
+    // storagePath numérico inválido não quebra o mapeamento.
+    expect(msg.attachments?.[1].storagePath).toBeUndefined();
+  });
+
+  it('deixa attachments undefined quando a coluna vem nula', async () => {
+    db.setTableResult('chat_messages', {
+      data: [
+        {
+          id: 'm1',
+          role: 'user',
+          content: 'sem anexo',
+          failed: false,
+          created_at: '2026-01-01T00:00:01Z',
+          attachments: null,
+        },
+      ],
+      error: null,
+    });
+
+    const [msg] = await fetchMessages('t-1');
+
+    expect(msg.attachments).toBeUndefined();
+  });
+
   it('devolve as mensagens em ordem cronológica ainda que o banco responda DESC', async () => {
     // O serviço consulta `order(created_at, desc)` + `limit` para pegar as
     // mais recentes; a UI precisa do inverso.
