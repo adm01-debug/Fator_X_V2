@@ -5,13 +5,13 @@
 #   falha: o job fica vermelho e as PRs dependabot continuam abrindo com DB Drift
 name: Anti-stale dependabot
 
-# PRs dependabot abrem com base na versão lock no momento do bump; quando o supabase/ gerou
+# PRs dependabot abrem com base na versão lock no momento do bump; quando supabase/ gerou
 # migration nova na main nesse intervalo, o DB Drift Check falha porque a base da PR não tem
-# o arquivo. Rodar `gh pr update-branch` traz a main pra base e destrava os checks sem abrir
-# PR por cima nem tocar no diff do dependabot.
+# o arquivo. `gh pr update-branch` traz a main pra base e destrava os checks sem abrir PR por
+# cima nem tocar no diff do dependabot.
 #
-# Secrets: nenhum. Usa ${{ github.token }} (permissions contents: write) e gh executável.
-# Depois dessa atualização o dependabot re-diffa e os checks (inclusive DB Drift) disparam normal.
+# Secrets: nenhum. Usa ${{ github.token }} (permissions contents: write) e gh do runner.
+# Depois da atualização o dependabot re-diffa e os checks (inclusive DB Drift) disparam normal.
 
 on:
   schedule:
@@ -31,36 +31,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
-      - name: Listar PRs dependabot com base atrasada
-        id: lista
+      - name: Atualizar base das PRs dependabot atrás da main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cd "$GITHUB_WORKSPACE"
-          # gh pr view devolve o head ref para cada PR — mas atualizar a base só vale quando
-          # a PR está atrás da main. Compara os OIDs via git ls-remote (barato, sem clone).
-          mapfile -t PRS < <(gh pr list --author app/dependabot --state open --json number,baseRefName --jq '.[] | select(.baseRefName == "main") | .number')
-          echo "count=${#PRS[@]}" >> "$GITHUB_OUTPUT"
-          lista=""
+          # mergeStateStatus == BEHIND: a branch head da PR não contém a main (base atrasada) —
+          # mesma condição que faz o DB Drift Check falhar. Filtrar BEHIND evita mexer em
+          # CONFLICTING (update-branch não resolve) e em CLEAN (desnecessário).
+          mapfile -t PRS < <(gh pr list --repo "$GITHUB_REPOSITORY" --author app/dependabot \
+            --state open --json number,baseRefName,mergeStateStatus \
+            --jq '.[] | select(.baseRefName == "main") | select(.mergeStateStatus == "BEHIND") | .number')
+          if [ "${#PRS[@]}" -eq 0 ]; then
+            echo "Nenhuma PR dependabot com base atrasada."
+            exit 0
+          fi
           for n in "${PRS[@]}"; do
-            head_ref="$(gh pr view "$n" --repo "$GITHUB_REPOSITORY" --json headRefName --jq .headRefName)"
-            mergeable="$(gh pr view "$n" --repo "$GITHUB_REPOSITORY" --json mergeable --jq .mergeable)"
-            # mergeable == false (conflito) ou base atrasada: update-branch só resolve base atrasada
-            main_oid="$(git ls-remote origin refs/heads/main | cut -f1)"
-            head_oid="$(git ls-remote origin "refs/heads/$head_ref" | cut -f1)"
-            behind="não"
-            if [ -n "$head_oid" ] && git merge-base --is-ancestor "$main_oid" "$head_oid" >/dev/null 2>&1; then behind="sim"; fi
-            echo "PR #$n head=$head_ref mergeable=$mergeable behind-main=$behind"
-            if [ "$behind" = "não" ] && [ -z "$head_oid" ]; then continue; fi
-            lista="$lista $n"
-          done
-          echo "prs=${lista# }" >> "$GITHUB_OUTPUT"
-      - name: Atualizar base das PRs atrasadas
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          for n in ${{ steps.lista.outputs.prs }}; do
             echo "update-branch PR #$n"
-            gh pr update-branch "$n" --repo "$GITHUB_REPOSITORY" || echo "::warning::não foi possível atualizar a base da PR #$n"
+            gh pr update-branch "$n" --repo "$GITHUB_REPOSITORY" \
+              || echo "::warning::não foi possível atualizar a base da PR #$n"
           done
