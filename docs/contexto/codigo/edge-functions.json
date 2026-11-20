@@ -2929,7 +2929,7 @@
    "nome": "whatsapp-webhook",
    "entrada": "supabase/functions/whatsapp-webhook/index.ts",
    "arquivos": 1,
-   "linhas": 597,
+   "linhas": 599,
    "verify_jwt": true,
    "metodos": [
     "GET",

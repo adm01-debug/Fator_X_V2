@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0f9c748c3656127030fbf62642a55e14020001df",
+  "commit": "b983db1e3b237601b74b422e4db91c950832e80f",
   "branch": "main",
-  "data_commit": "2026-11-19T20:37:31-03:00",
+  "data_commit": "2026-11-19T21:08:00-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "b983db1e",
+    "data": "2026-11-19",
+    "assunto": "fix(edge): whatsapp-webhook GET sem token retorna 403, nao 500 (#115)"
+   },
    {
     "sha": "0f9c748c",
     "data": "2026-11-19",
@@ -126,18 +131,13 @@
     "sha": "898e6abc",
     "data": "2026-11-11",
     "assunto": "fix(config): aponta todas as referências de projeto Supabase para qdlnzopxrlsoljcrcmzv (#80)"
-   },
-   {
-    "sha": "e8510396",
-    "data": "2026-11-11",
-    "assunto": "fix(contexto): autentica o fetch da branch contexto em repo privado (#75)"
    }
   ],
-  "arquivos_mudados_7d": 29,
+  "arquivos_mudados_7d": 30,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 8
+    "mudancas": 9
    },
    {
     "pasta": "package-lock.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 8
+    "mudancas": 9
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 28
+    "commits": 29
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1974,
   "arquivos_codigo": 1449,
-  "linhas_codigo": 317726,
+  "linhas_codigo": 317728,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -532,7 +532,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32035
+   "linhas": 32037
   },
   "tailwind.config.ts": {
    "arquivos": 1,

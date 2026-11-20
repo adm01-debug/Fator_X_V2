@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "0f9c748c3656127030fbf62642a55e14020001df",
+  "sha": "b983db1e3b237601b74b422e4db91c950832e80f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-19 23:39 UTC",
+  "generated_at": "2026-11-20 00:08 UTC",
   "files_total": 1979,
   "code_files": 1782,
-  "code_lines": 346660
+  "code_lines": 346662
  },
  "version": "1.3.2",
- "facts_hash": "c278ffd161644d34",
+ "facts_hash": "5d2a4babf8e03928",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -58770,7 +58770,7 @@
   {
    "module": "supabase/functions",
    "files": 134,
-   "lines": 32035,
+   "lines": 32037,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -186518,7 +186518,7 @@
   },
   "supabase/functions/whatsapp-webhook/index.ts": {
    "path": "supabase/functions/whatsapp-webhook/index.ts",
-   "lines": 597,
+   "lines": 599,
    "tables": [
     {
      "table": "whatsapp_webhook_events",
@@ -188895,10 +188895,20 @@
   }
  },
  "git": {
-  "sha": "0f9c748c3656127030fbf62642a55e14020001df",
+  "sha": "b983db1e3b237601b74b422e4db91c950832e80f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "b983db1",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(edge): whatsapp-webhook GET sem token retorna 403, nao 500 (#115)",
+    "files": [
+     "supabase/deployment-manifest.json",
+     "supabase/functions/whatsapp-webhook/index.ts"
+    ]
+   },
    {
     "sha": "0f9c748",
     "date": "2026-11-19",
@@ -189375,33 +189385,23 @@
      "src/test/auth-context-signin.test.tsx",
      "src/test/rich-editor.test.tsx"
     ]
-   },
-   {
-    "sha": "44448e6",
-    "date": "2026-11-09",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @supabase/supabase-js (#62)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    8
-   ],
-   [
-    "package-lock.json",
-    5
-   ],
-   [
-    "package.json",
-    5
+    9
    ],
    [
     ".github/workflows/ci.yml",
+    4
+   ],
+   [
+    "package-lock.json",
+    4
+   ],
+   [
+    "package.json",
     4
    ],
    [
