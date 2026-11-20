@@ -48,7 +48,7 @@ jobs:
           apply_secret() {
             local name="$1" value="$2"
             if [ -n "$value" ]; then
-              npx --yes supabase secrets set "${name}=${value}" --remote=qdlnzopxrlsoljcrcmzv \
+              npx --yes supabase secrets set "${name}=${value}" --remote=qdlnzopxrlsoljcrcmzv --yes \
                 || echo "::warning::falha ao setar secret ${name}"
             fi
           }
