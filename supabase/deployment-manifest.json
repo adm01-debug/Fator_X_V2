@@ -215,8 +215,8 @@
     },
     {
       "path": "supabase/functions/cost-calculator/index.ts",
-      "bytes": 2765,
-      "sha256": "b0f8c80160e54e1dbf8d24d1766c88f3fd8b0d713d641d6ad01ab88b1bd6a6f0"
+      "bytes": 3057,
+      "sha256": "18a43d2bceca53297198feb92f12f39acc308425101ada98b190781bf112f635"
     },
     {
       "path": "supabase/functions/crm-bitrix-sync/index.ts",
@@ -435,8 +435,8 @@
     },
     {
       "path": "supabase/functions/product-mockup/index.ts",
-      "bytes": 10919,
-      "sha256": "cc1f5e9fef119f56552485fd5f4df49b74d13a225794173397241930025d4cf6"
+      "bytes": 11209,
+      "sha256": "576466eccf12b677e0b6ca165d744e6ec69635997d3664781767170d41ff227f"
     },
     {
       "path": "supabase/functions/queue-worker/index.ts",
@@ -984,7 +984,7 @@
       "name": "cost-calculator",
       "entrypoint": "supabase/functions/cost-calculator/index.ts",
       "verify_jwt": true,
-      "source_sha256": "9dabf7023e70e3cc8df6f733634b6d3ccdce7582308945bce8ed0c3949ecf9c5",
+      "source_sha256": "69a2c25711fa6771a936e9300fffec575811009b56a7129e1b0ed1d5563aac08",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -1782,7 +1782,7 @@
       "name": "product-mockup",
       "entrypoint": "supabase/functions/product-mockup/index.ts",
       "verify_jwt": true,
-      "source_sha256": "7f99f493ebc15640ec22fca5f088d2c465f4e7fcf27e6c6781e348bd93164d43",
+      "source_sha256": "94d7fd8452b9a2bc648ec6181c51da5c7ed91eaec16d48a05652ef7e87a60a76",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2598,5 +2598,5 @@
       ]
     }
   ],
-  "manifest_sha256": "aae368013d372444322aa494e14756f5c18c1050d4af11361950c11bd06a6968"
+  "manifest_sha256": "d0a2d1acada1559bcea6fc97129989cbd48f656ef2fffd064eb7cd6a0d33998c"
 }
