@@ -1528,6 +1528,7 @@
    "src/components/ui/button.tsx"
   ],
   "src/components/chat/MessageBubble.tsx": [
+   "src/integrations/supabase/externalClient.ts",
    "src/lib/utils.ts"
   ],
   "src/components/chat/ScrollToBottomButton.tsx": [
@@ -4728,6 +4729,7 @@
    "src/components/ui/scroll-area.tsx",
    "src/hooks/use-data.ts",
    "src/hooks/useStreamingResponse.ts",
+   "src/integrations/supabase/externalClient.ts",
    "src/lib/edgeUrl.ts",
    "src/services/chatThreadService.ts"
   ],
@@ -6212,6 +6214,7 @@
   "src/services/chatThreadService.ts": [
    "src/components/chat/MessageBubble.tsx",
    "src/integrations/supabase/externalClient.ts",
+   "src/integrations/supabase/types.ts",
    "src/lib/logger.ts"
   ],
   "src/services/citationTelemetryService.ts": [

@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 332,
+ "migrations": 333,
  "seeds": [],
  "avisos": [
   "45 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -9376,11 +9376,18 @@
   },
   "chat_messages": {
    "colunas": {
+    "attachments": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'[]'::jsonb",
+     "ref": null
+    },
     "content": {
      "tipo": "text",
      "nn": true,
      "pk": false,
-     "default": null,
+     "default": "''",
      "ref": null
     },
     "created_at": {
@@ -9429,12 +9436,12 @@
      "tipo": "text",
      "nn": true,
      "pk": false,
-     "default": null,
+     "default": "'user'",
      "ref": null
     },
     "thread_id": {
      "tipo": "uuid",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": null,
      "ref": "chat_threads"
@@ -9481,6 +9488,7 @@
    ],
    "criada_em": "20260728131430_3ddbcf0f-e975-401a-bacc-cd7d14132ed0.sql",
    "colunas_types": {
+    "attachments": "Json | null",
     "content": "string",
     "created_at": "string",
     "failed": "boolean",
@@ -32763,8 +32771,14 @@
   },
   "storage.objects": {
    "colunas": {},
-   "rls": false,
+   "rls": true,
    "policies": [
+    {
+     "nome": "Users delete own chat attachments",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "Users delete own knowledge uploads",
      "comando": "delete",
@@ -32772,8 +32786,20 @@
      "tipo": "permissive"
     },
     {
+     "nome": "Users read own chat attachments",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "Users read own knowledge uploads",
      "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Users upload own chat attachments",
+     "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },

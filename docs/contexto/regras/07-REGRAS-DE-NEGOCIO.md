@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `efdc4b1af5` · branch `main` · 2026-11-20 16:50 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2473145566` · branch `main` · 2026-11-20 18:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `change_requests` | Members view change requests | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `change_requests` | Members create change requests | INSERT | public | permissive |  | `requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |
 | `change_requests` | Requester or admin updates change requests | UPDATE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id) OR (requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())))` |  |
-| … +344 linhas — lista completa em `context.json` | | | | | | |
+| … +347 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -734,13 +734,13 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | update_template_skill_links_updated_at | BEFORE UPDATE | `template_skill_links` | `update_updated_at_column` |  |
 | trg_template_skill_links_actor | BEFORE INSERT OR UPDATE | `template_skill_links` | `template_skill_links_set_actor` |  |
 | trg_stamp_skill_curation | BEFORE UPDATE | `skill_registry` | `stamp_skill_curation` |  |
-| trg_chat_threads_updated_at | BEFORE UPDATE | `chat_threads` | `update_updated_at_column` |  |
-| trg_touch_chat_thread | AFTER INSERT OR DELETE | `chat_messages` | `touch_chat_thread` |  |
 | update_skill_reclass_updated_at | BEFORE UPDATE | `skill_reclassification_reviews` | `update_updated_at_column` |  |
 | update_skill_harvest_checkpoints_updated_at | BEFORE UPDATE | `skill_harvest_checkpoints` | `update_updated_at_column` |  |
 | trg_touch_document_ingestions | BEFORE UPDATE | `document_ingestions` | `touch_document_ingestions` |  |
 | trg_log_ingestion_event_ins | AFTER INSERT | `document_ingestions` | `log_ingestion_event` |  |
 | trg_log_ingestion_event_upd | AFTER UPDATE | `document_ingestions` | `log_ingestion_event` |  |
+| trg_chat_threads_updated_at | BEFORE UPDATE | `chat_threads` | `update_updated_at_column` |  |
+| trg_touch_chat_thread | AFTER INSERT OR DELETE | `chat_messages` | `touch_chat_thread` |  |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1311,7 +1311,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `ended` | compara, escreve | `src/pages/VoiceAgentsPage.tsx`<br>`supabase/functions/voice-session/index.ts` |
 | `status` | `err` | escreve | `src/components/integrations/Bitrix24ApiTester.tsx` |
 | `status` | `erro` | compara | `src/lib/skills/observability.ts` |
-| `status` | `error` | compara, escreve | `src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agents/detail/ErrorAnalysisPanel.tsx`<br>`src/components/datahub/ConnectionCard.tsx`<br>`src/components/monitoring/SpanTreeView.tsx`<br>`src/components/monitoring/TracingPanel.tsx`<br>… +18 |
+| `status` | `error` | compara, escreve | `src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agents/detail/ErrorAnalysisPanel.tsx`<br>`src/components/chat/ChatComposer.tsx`<br>`src/components/datahub/ConnectionCard.tsx`<br>`src/components/monitoring/SpanTreeView.tsx`<br>… +19 |
 | `status` | `executando` | compara | `src/components/skills/SkillDescriptionEnrichPanel.tsx` |
 | `status` | `expired` | compara, escreve | `src/components/automation/CredentialVaultPanel.tsx`<br>`src/pages/FreezeWindowsPage.tsx`<br>`src/services/credentialVaultService.ts` |
 | `status` | `fail` | compara, escreve | `src/services/evaluationsService.ts` |
@@ -1355,7 +1355,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `passed` | compara | `src/components/agent-builder/modules/TestingModule.tsx`<br>`src/pages/ComplianceReportsPage.tsx` |
 | `status` | `paused` | compara, escreve | `src/components/agent-builder/modules/ExperimentsModule.tsx`<br>`src/pages/AgentExperimentsPage.tsx`<br>`src/services/batchProcessorService.ts`<br>`src/services/cronSchedulerService.ts`<br>`src/services/workflowCheckpointService.ts`<br>… +1 |
 | `status` | `pendente` | compara, escreve | `src/components/skills/SkillDescriptionEnrichPanel.tsx`<br>`src/components/skills/SkillReclassificationReviewPanel.tsx`<br>`src/lib/skills/llmClassificationQueue.ts`<br>`src/lib/skills/observability.ts`<br>`src/services/skillReclassificationReviewService.ts` |
-| `status` | `pending` | compara, escreve, filtra | `src/components/agent-builder/HandoffPanel.tsx`<br>`src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agent-builder/modules/TestingModule.tsx`<br>`src/components/datahub/DataHubSyncTab.tsx`<br>`src/components/knowledge/IngestionLogsPanel.tsx`<br>… +22 |
+| `status` | `pending` | compara, escreve, filtra | `src/components/agent-builder/HandoffPanel.tsx`<br>`src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agent-builder/modules/TestingModule.tsx`<br>`src/components/chat/ChatComposer.tsx`<br>`src/components/datahub/DataHubSyncTab.tsx`<br>… +23 |
 | … +121 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
@@ -3051,6 +3051,8 @@ _nenhum item encontrado_
 | `DOODLE_SVG` | `"url(\"` | `src/components/chat/ChatBackground.tsx` |
 | `MAX_LEN` | `4000` | `src/components/chat/ChatComposer.tsx` |
 | `WARN_AT` | `3600` | `src/components/chat/ChatComposer.tsx` |
+| `MAX_ATTACHMENTS` | `5` | `src/components/chat/ChatComposer.tsx` |
+| `MAX_ATTACHMENT_SIZE` | `25` | `src/components/chat/ChatComposer.tsx` |
 | `PAGE_SIZE` | `25` | `src/components/datahub/DataHubExplorerTab.tsx` |
 | `HISTORY_MAX` | `10` | `src/components/datahub/DataHubQueryBuilderTab.tsx` |
 | `MAX_BYTES` | `25` | `src/components/knowledge/AudioUploadDialog.tsx` |
@@ -3845,6 +3847,9 @@ _nenhum item encontrado_
 | Falha no replay | `src/components/automation/WebhookManagerPanel.tsx` |
 | Falha no teste | `src/components/automation/WebhookManagerPanel.tsx` |
 | JSON inválido | `src/components/automation/WebhookManagerPanel.tsx` |
+| Anexo acima de 25 MB: ${oversized.map((f) => f.name).join( | `src/components/chat/ChatComposer.tsx` |
+| Máximo de ${MAX_ATTACHMENTS} anexos por mensagem. | `src/components/chat/ChatComposer.tsx` |
+| Não foi possível abrir o anexo. | `src/components/chat/MessageBubble.tsx` |
 | Não foi possível copiar. | `src/components/chat/MessageBubble.tsx` |
 | Falha ao adicionar passo | `src/components/crm/CadenceStepsEditor.tsx` |
 | Falha ao salvar ICP | `src/components/crm/IcpProfilePanel.tsx` |
@@ -3964,10 +3969,7 @@ _nenhum item encontrado_
 | Não foi possível concluir a classificação por IA. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ; import { Badge } from  | `src/components/slack/SlackOnboardingWizard.tsx` |
 | Workspace não identificado | `src/components/slack/SlackTestBroadcastButton.tsx` |
-| Não foi possível copiar a URL | `src/components/slo/DrilldownAuditPanel.tsx` |
-| Não foi possível ler a área de transferência | `src/components/super-cerebro/AutoExtractionTab.tsx` |
-|                className= | `src/components/super-cerebro/CitationDialog.tsx` |
-| … +512 linhas — lista completa em `context.json` | |
+| … +516 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4002,7 +4004,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3012 testes em 212 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3015 testes em 212 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4088,6 +4090,7 @@ _nenhum item encontrado_
 | `src/test/webhook-trigger.test.ts` | 14 | webhookTriggerService — applyTransform · maps simple top-level field · maps nested dotted path · handles multiple lines … |
 | `e2e/critical-flows.spec.ts` | 13 | Deployments Page · deployment page redirects unauthenticated users · deployment page has correct title structure · Workflows Page … |
 | `src/test/automation-template.test.ts` | 13 | automationTemplateService — BUILTIN_TEMPLATES · has 6 built-in templates · all templates have required fields · templates have unique slugs … |
+| `src/test/chat-thread-service.test.ts` | 13 | chatThreadService — ordenação do histórico · mapeia attachments JSONB para a UI quando existem · deixa attachments undefined quando a coluna vem nula · devolve as mensagens em ordem cronológica ainda que o banco responda DESC … |
 | `src/test/datahub-service.test.ts` | 13 | datahubService — guard de sessão e envelope · queryEntity aborta sem sessão e NÃO dispara requisição alguma · getEntityDetail também aborta sem sessão · queryEntity envia Bearer da sessão e o envelope de ação esperado … |
 | `src/test/rag-pipeline-service.test.ts` | 13 | ragPipelineService — invokers · embedTexts envia provider, dimensão e task de retrieval · rerankDocuments envia top_k e modelo · erros de embed e rerank viram exceção rotulada … |
 | `src/test/skill-demand-department-provenance.test.ts` | 13 | normalizeDepartmentConfidence · aceita numeric vindo como string do PostgREST · degrada valores inválidos para 0 em vez de propagar NaN · satura fora da faixa [0,1] … |
@@ -4106,7 +4109,6 @@ _nenhum item encontrado_
 | `src/test/status-badge.test.tsx` | 12 | StatusBadge · renders known status with correct label · renders unknown status with raw value as label · applies success class for production status … |
 | `supabase/functions/_shared/retry.test.ts` | 12 | sucesso imediato — 1 call · erro network transitório — recupera antes de esgotar · exaustão — sempre erro transitório · não-retriable — 4xx não repete … |
 | `src/test/accessibility.test.tsx` | 11 | Accessibility · EmptyState · has role=status and aria-label · hides icon from assistive tech … |
-| `src/test/chat-thread-service.test.ts` | 11 | chatThreadService — ordenação do histórico · devolve as mensagens em ordem cronológica ainda que o banco responda DESC · mapeia papéis desconhecidos para assistant, já que a bolha só renderiza dois papéis · degrada para lista vazia em erro de rede, sem propagar exceção … |
 | `src/test/curation-realtime.test.ts` | 11 | shouldRefreshCurationFeed — casos determinísticos · INSERT manual ativo dispara em  · soft delete dispara nos dois filtros (sai de um, entra no outro) · escrita automática é ignorada em todos os filtros … |
 | `src/test/skill-demand-needs-review-filter.test.ts` | 11 | filterByNeedsReview · desligado devolve o conjunto intacto (e uma cópia, não a referência) · ligado mantém só os rótulos automáticos de baixa confiança · compõe por interseção com o filtro de departamento … |
 | `src/test/skill-license-filter.test.ts` | 11 | isLicenseFilter · aceita apenas os modos declarados · cada modo tem rótulo e dica em PT-BR · matchesLicenseFilter — partição do catálogo … |
@@ -4182,6 +4184,7 @@ _nenhum item encontrado_
 | `e2e/visual.spec.ts` | 5 | Visual regression — public screens · auth page — desktop 1280x720 · auth page — mobile 375x667 · auth page — signup variant … |
 | `src/test/architecture-dual-client.test.ts` | 5 | arquitetura dual-client · fromTable() resolve para o banco EXTERNO, não para o de auth · rpcCall() resolve para o banco EXTERNO · isUserLockedOut permanece no client LOCAL (é auth, não dado) … |
 | `src/test/auth-context-signin.test.tsx` | 5 | signIn preserva o resultado de autenticação ao registrar auditoria · aguarda builder thenable sem exigir método catch · falha do registro não bloqueia login válido · falha de autenticação é preservada mesmo se o registro rejeitar … |
+| `src/test/chat-message-bubble.test.tsx` | 5 | MessageBubble — sanitization · não executa <script> em payload malicioso · bloqueia <iframe> · renderiza anexos como links clicáveis com nome e tamanho … |
 | `src/test/guardrails-ml-service.test.ts` | 5 | guardrailsMLService · checkInput returns guardrail response · checkOutput returns guardrail response · isTextSafe returns boolean … |
 | `src/test/health-alerts-service.test.ts` | 5 | healthAlertsService · checkOnce runs without error · getCurrentState returns state shape · start and stop manage polling … |
 | `src/test/memory-tiers.test.ts` | 5 | computeTier (Autograph) · pinned sempre retorna core · mapeia relevância aos 5 tiers · valores inválidos caem em archive … |
@@ -4196,7 +4199,6 @@ _nenhum item encontrado_
 | `tests/e2e/security-audits.spec.ts` | 5 | Security & Stability Audit · should load the dashboard for an authenticated user · should protect administrative pages from unauthorized access · should verify security monitoring panel presence on security page … |
 | `src/components/slack/__tests__/SlackOnboardingWizard.test.tsx` | 4 | SlackOnboardingWizard · renderiza passo 1 por padrão · avança e volta entre passos · dispara verifyConnection no passo 3 |
 | `src/test/agent-evolution.test.ts` | 4 | Agent Self-Evolution · builds skillbook prompt from skills · returns empty for no skills · reflects on traces |
-| `src/test/chat-message-bubble.test.tsx` | 4 | MessageBubble — sanitization · não executa <script> em payload malicioso · bloqueia <iframe> · renderiza mensagem falha com botão de retry |
 | `src/test/error-boundary.test.tsx` | 4 | ErrorBoundary · renders children when there is no error · renders error UI when a child throws · renders custom fallback when provided |
 | `src/test/nlp-pipeline-service.test.ts` | 4 | nlpPipelineService · analyzeText returns NLP result · analyzeText throws on error · analyzeWhatsAppMessage returns structured result |
 | `src/test/openclaw-whatsapp-setup.test.tsx` | 4 | OpenclawWhatsappSetup · renderiza o formulário inicial com badge de estado idle · exibe o QR Code retornado pelo serviço após pareamento · exibe erro quando o pareamento falha |

@@ -2668,10 +2668,11 @@
   {
    "arquivo": "src/components/chat/ChatComposer.tsx",
    "exports": [
-    "ChatComposer"
+    "ChatComposer",
+    "PendingAttachment"
    ],
    "export_default": null,
-   "linhas": 142,
+   "linhas": 250,
    "dominio": "components/chat",
    "hooks_locais": [],
    "tabelas": [],
@@ -2752,11 +2753,12 @@
   {
    "arquivo": "src/components/chat/MessageBubble.tsx",
    "exports": [
+    "ChatAttachment",
     "ChatMessage",
     "MessageBubble"
    ],
    "export_default": null,
-   "linhas": 130,
+   "linhas": 202,
    "dominio": "components/chat",
    "hooks_locais": [],
    "tabelas": [],
@@ -8731,7 +8733,7 @@
     "ChatWithAgentPage"
    ],
    "export_default": "ChatWithAgentPage",
-   "linhas": 620,
+   "linhas": 664,
    "dominio": "pages",
    "hooks_locais": [
     "useAgents",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "efdc4b1af5247ce2b61a234e42e2bd93b3118806",
+  "commit": "24731455663602a933e8b077bf4aa1d7cccb9741",
   "branch": "main",
-  "data_commit": "2026-11-20T13:50:12-03:00",
+  "data_commit": "2026-11-20T14:59:39-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "24731455",
+    "data": "2026-11-20",
+    "assunto": "feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)"
+   },
    {
     "sha": "efdc4b1a",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "8c281873",
     "data": "2026-11-19",
     "assunto": "ci(security): dependency review barra CVE novo high/critical nos PRs (#107)"
-   },
-   {
-    "sha": "79787795",
-    "data": "2026-11-14",
-    "assunto": "fix(infra): expoe falha no deploy das edge functions (#96)"
    }
   ],
-  "arquivos_mudados_7d": 67,
+  "arquivos_mudados_7d": 75,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "package-lock.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 40
+    "commits": 41
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1978,
+  "arquivos_total": 1979,
   "arquivos_codigo": 1449,
-  "linhas_codigo": 317841,
+  "linhas_codigo": 318184,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -322,7 +322,7 @@
   "hooks": 75,
   "edge_functions": 87,
   "tabelas": 327,
-  "migrations": 332,
+  "migrations": 333,
   "cron_jobs": 37,
   "testes": 239,
   "workflows": 10,
@@ -468,7 +468,7 @@
   },
   "src/components": {
    "arquivos": 557,
-   "linhas": 103720
+   "linhas": 103900
   },
   "src/config": {
    "arquivos": 10,
@@ -492,7 +492,7 @@
   },
   "src/integrations": {
    "arquivos": 5,
-   "linhas": 15728
+   "linhas": 15731
   },
   "src/lib": {
    "arquivos": 93,
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 141,
-   "linhas": 49687
+   "linhas": 49731
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -512,7 +512,7 @@
   },
   "src/services": {
    "arquivos": 166,
-   "linhas": 33213
+   "linhas": 33239
   },
   "src/stores": {
    "arquivos": 12,
@@ -520,7 +520,7 @@
   },
   "src/test": {
    "arquivos": 191,
-   "linhas": 28949
+   "linhas": 29039
   },
   "src/tests": {
    "arquivos": 2,
@@ -566,7 +566,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 15454
+   "linhas": 15457
   },
   {
    "arquivo": "src/pages/SLODashboard.tsx",

@@ -779,11 +779,12 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 116,
+   "usado_por": 118,
    "usado_por_modulos": [
     "components/agent-builder",
     "components/agents",
     "components/billing",
+    "components/chat",
     "components/datahub",
     "components/evaluations",
     "components/memory",
@@ -847,7 +848,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 15454,
+   "linhas": 15457,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -856,7 +857,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 19,
+   "usado_por": 20,
    "usado_por_modulos": [
     "components/agents",
     "hooks",
@@ -5013,7 +5014,7 @@
     "migrateLegacyLocalHistory"
    ],
    "export_default": null,
-   "linhas": 339,
+   "linhas": 365,
    "tabelas": [
     "chat_messages",
     "chat_threads"

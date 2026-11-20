@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "efdc4b1af5247ce2b61a234e42e2bd93b3118806",
+  "sha": "24731455663602a933e8b077bf4aa1d7cccb9741",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 16:50 UTC",
-  "files_total": 1983,
-  "code_files": 1785,
-  "code_lines": 347250
+  "generated_at": "2026-11-20 18:00 UTC",
+  "files_total": 1984,
+  "code_files": 1786,
+  "code_lines": 347709
  },
  "version": "1.3.2",
- "facts_hash": "e6ce22326192385c",
+ "facts_hash": "2b551790e54999df",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -237,7 +237,7 @@
   "languages": {
    ".tsx": 699,
    ".ts": 692,
-   ".sql": 335,
+   ".sql": 336,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -21232,6 +21232,13 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20260728131430_3ddbcf0f-e975-401a-bacc-cd7d14132ed0.sql"
+     },
+     {
+      "name": "attachments",
+      "type": "Json | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
      }
     ],
     "constraints": [],
@@ -36727,6 +36734,36 @@
     "using": "user_id = auth.uid()",
     "check": "",
     "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "Users read own chat attachments",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'chat-attachments' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "Users upload own chat attachments",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'chat-attachments' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "Users delete own chat attachments",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'chat-attachments' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
    }
   ],
   "triggers": [
@@ -37730,24 +37767,6 @@
     "src": "supabase/migrations/20260728124610_4e7004f4-7a8c-4ce2-bda3-aee29f48e588.sql"
    },
    {
-    "name": "trg_chat_threads_updated_at",
-    "when": "BEFORE UPDATE",
-    "table": "chat_threads",
-    "function": "update_updated_at_column",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260728131430_3ddbcf0f-e975-401a-bacc-cd7d14132ed0.sql"
-   },
-   {
-    "name": "trg_touch_chat_thread",
-    "when": "AFTER INSERT OR DELETE",
-    "table": "chat_messages",
-    "function": "touch_chat_thread",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260728131430_3ddbcf0f-e975-401a-bacc-cd7d14132ed0.sql"
-   },
-   {
     "name": "update_skill_reclass_updated_at",
     "when": "BEFORE UPDATE",
     "table": "skill_reclassification_reviews",
@@ -37791,6 +37810,24 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "trg_chat_threads_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "chat_threads",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "trg_touch_chat_thread",
+    "when": "AFTER INSERT OR DELETE",
+    "table": "chat_messages",
+    "function": "touch_chat_thread",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
    }
   ],
   "functions": {
@@ -40923,19 +40960,6 @@
      "OLD"
     ]
    },
-   "touch_chat_thread": {
-    "args": "",
-    "returns": "TRIGGER",
-    "lang": "plpgsql",
-    "src": "supabase/migrations/20260728131430_3ddbcf0f-e975-401a-bacc-cd7d14132ed0.sql",
-    "security_definer": false,
-    "search_path": true,
-    "body": "BEGIN IF TG_OP = 'INSERT' THEN UPDATE public.chat_threads SET last_message_at = NEW.created_at, message_count = message_count + 1 WHERE id = NEW.thread_id; ELSIF TG_OP = 'DELETE' THEN UPDATE public.chat_threads SET message_count = GREATEST(0, message_count - 1) WHERE id = OLD.thread_id; END IF; RETURN NULL; END;",
-    "raises": [],
-    "tables": [
-     "chat_threads"
-    ]
-   },
    "decide_skill_reclassification": {
     "args": "_review_id UUID, _approve BOOLEAN, _reason TEXT DEFAULT ''",
     "returns": "public.skill_reclassification_reviews",
@@ -41013,6 +41037,19 @@
     "body": "BEGIN IF NEW.is_meta_collection THEN NEW.is_public := false; NEW.is_verified := false; END IF; RETURN NEW; END;",
     "raises": [],
     "tables": []
+   },
+   "touch_chat_thread": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN IF TG_OP = 'INSERT' THEN UPDATE public.chat_threads SET last_message_at = NEW.created_at, message_count = message_count + 1 WHERE id = NEW.thread_id; ELSIF TG_OP = 'DELETE' THEN UPDATE public.chat_threads SET message_count = GREATEST(0, message_count - 1) WHERE id = OLD.thread_id; END IF; RETURN NULL; END;",
+    "raises": [],
+    "tables": [
+     "chat_threads"
+    ]
    },
    "Args": {
     "args": "",
@@ -46125,6 +46162,38 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "idx_chat_messages_thread_created",
+    "table": "chat_messages",
+    "columns": "thread_id, created_at",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "idx_chat_messages_parent",
+    "table": "chat_messages",
+    "columns": "parent_id",
+    "unique": false,
+    "where": "WHERE parent_id IS NOT NULL",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "idx_chat_threads_user_agent",
+    "table": "chat_threads",
+    "columns": "user_id, agent_id, last_message_at DESC",
+    "unique": false,
+    "where": "WHERE is_archived = false",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "idx_chat_threads_id_user",
+    "table": "chat_threads",
+    "columns": "id, user_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
    }
   ],
   "cron_jobs": [
@@ -46700,6 +46769,7 @@
    "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
    "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
    "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
+   "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -46923,7 +46993,8 @@
    "chat_threads": "enabled",
    "chat_messages": "enabled",
    "skill_reclassification_reviews": "enabled",
-   "skill_harvest_checkpoints": "enabled"
+   "skill_harvest_checkpoints": "enabled",
+   "storage.objects": "enabled"
   },
   "grants": [
    {
@@ -58136,7 +58207,7 @@
   {
    "module": "src/components",
    "files": 557,
-   "lines": 103720,
+   "lines": 103900,
    "tables": [
     "agent_templates",
     "agent_traces",
@@ -58596,7 +58667,7 @@
   {
    "module": "src/integrations",
    "files": 5,
-   "lines": 15728,
+   "lines": 15731,
    "tables": [],
    "exports": [
     "index.ts: lovable",
@@ -58797,7 +58868,7 @@
   {
    "module": "src/pages",
    "files": 141,
-   "lines": 49687,
+   "lines": 49731,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -58992,7 +59063,7 @@
   {
    "module": "src/services",
    "files": 166,
-   "lines": 33213,
+   "lines": 33239,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59321,7 +59392,7 @@
   {
    "module": "src/test",
    "files": 191,
-   "lines": 28949,
+   "lines": 29039,
    "tables": [
     "tabela"
    ],
@@ -59746,8 +59817,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 332,
-   "lines": 29098,
+   "files": 333,
+   "lines": 29214,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -60379,7 +60450,7 @@
     "select": [
      "src/services/chatThreadService.ts"
     ],
-    "insert": [
+    "ref": [
      "src/services/chatThreadService.ts"
     ],
     "update": [
@@ -62259,6 +62330,7 @@
     "workspace_id"
    ],
    "chat_messages": [
+    "attachments",
     "content",
     "created_at",
     "failed",
@@ -64074,6 +64146,10 @@
   "storage": {
    "bucket": [
     "scripts/ci/gerar-matriz-edge-tabela.mjs"
+   ],
+   "chat-attachments": [
+    "src/components/chat/MessageBubble.tsx",
+    "src/pages/ChatWithAgentPage.tsx"
    ],
    "contatos": [
     "scripts/ci/inventario-banco.unit.mjs"
@@ -68466,6 +68542,18 @@
     "msg": "JSON inválido"
    },
    {
+    "file": "src/components/chat/ChatComposer.tsx",
+    "msg": "Anexo acima de 25 MB: ${oversized.map((f) => f.name).join("
+   },
+   {
+    "file": "src/components/chat/ChatComposer.tsx",
+    "msg": "Máximo de ${MAX_ATTACHMENTS} anexos por mensagem."
+   },
+   {
+    "file": "src/components/chat/MessageBubble.tsx",
+    "msg": "Não foi possível abrir o anexo."
+   },
+   {
     "file": "src/components/chat/MessageBubble.tsx",
     "msg": "Não foi possível copiar."
    },
@@ -69556,6 +69644,10 @@
    {
     "file": "src/pages/ChatWithAgentPage.tsx",
     "msg": "Conversa ainda carregando, tente novamente."
+   },
+   {
+    "file": "src/pages/ChatWithAgentPage.tsx",
+    "msg": "Falha ao enviar ${f.file.name}."
    },
    {
     "file": "src/pages/ChatWithAgentPage.tsx",
@@ -85586,6 +85678,16 @@
     "value": "3600"
    },
    {
+    "file": "src/components/chat/ChatComposer.tsx",
+    "name": "MAX_ATTACHMENTS",
+    "value": "5"
+   },
+   {
+    "file": "src/components/chat/ChatComposer.tsx",
+    "name": "MAX_ATTACHMENT_SIZE",
+    "value": "25"
+   },
+   {
     "file": "src/components/datahub/DataHubExplorerTab.tsx",
     "name": "PAGE_SIZE",
     "value": "25"
@@ -88105,6 +88207,24 @@
     "file": "src/components/billing/RealTimeCostStream.tsx",
     "field": "status",
     "value": "SUBSCRIBED",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/chat/ChatComposer.tsx",
+    "field": "status",
+    "value": "pending",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/chat/ChatComposer.tsx",
+    "field": "status",
+    "value": "pending",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/chat/ChatComposer.tsx",
+    "field": "status",
+    "value": "error",
     "kind": "compara"
    },
    {
@@ -102961,11 +103081,23 @@
    },
    {
     "file": "src/test/chat-message-bubble.test.tsx",
+    "name": "renderiza anexos como links clicáveis com nome e tamanho"
+   },
+   {
+    "file": "src/test/chat-message-bubble.test.tsx",
     "name": "renderiza mensagem falha com botão de retry"
    },
    {
     "file": "src/test/chat-thread-service.test.ts",
     "name": "chatThreadService — ordenação do histórico"
+   },
+   {
+    "file": "src/test/chat-thread-service.test.ts",
+    "name": "mapeia attachments JSONB para a UI quando existem"
+   },
+   {
+    "file": "src/test/chat-thread-service.test.ts",
+    "name": "deixa attachments undefined quando a coluna vem nula"
    },
    {
     "file": "src/test/chat-thread-service.test.ts",
@@ -120412,6 +120544,36 @@
     "using": "user_id = auth.uid()",
     "check": "",
     "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "Users read own chat attachments",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'chat-attachments' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "Users upload own chat attachments",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'chat-attachments' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "Users delete own chat attachments",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'chat-attachments' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
    }
   ],
   "db_triggers": [
@@ -121415,24 +121577,6 @@
     "src": "supabase/migrations/20260728124610_4e7004f4-7a8c-4ce2-bda3-aee29f48e588.sql"
    },
    {
-    "name": "trg_chat_threads_updated_at",
-    "when": "BEFORE UPDATE",
-    "table": "chat_threads",
-    "function": "update_updated_at_column",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260728131430_3ddbcf0f-e975-401a-bacc-cd7d14132ed0.sql"
-   },
-   {
-    "name": "trg_touch_chat_thread",
-    "when": "AFTER INSERT OR DELETE",
-    "table": "chat_messages",
-    "function": "touch_chat_thread",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260728131430_3ddbcf0f-e975-401a-bacc-cd7d14132ed0.sql"
-   },
-   {
     "name": "update_skill_reclass_updated_at",
     "when": "BEFORE UPDATE",
     "table": "skill_reclassification_reviews",
@@ -121476,6 +121620,24 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "trg_chat_threads_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "chat_threads",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "trg_touch_chat_thread",
+    "when": "AFTER INSERT OR DELETE",
+    "table": "chat_messages",
+    "function": "touch_chat_thread",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
    }
   ],
   "db_functions": {
@@ -124608,19 +124770,6 @@
      "OLD"
     ]
    },
-   "touch_chat_thread": {
-    "args": "",
-    "returns": "TRIGGER",
-    "lang": "plpgsql",
-    "src": "supabase/migrations/20260728131430_3ddbcf0f-e975-401a-bacc-cd7d14132ed0.sql",
-    "security_definer": false,
-    "search_path": true,
-    "body": "BEGIN IF TG_OP = 'INSERT' THEN UPDATE public.chat_threads SET last_message_at = NEW.created_at, message_count = message_count + 1 WHERE id = NEW.thread_id; ELSIF TG_OP = 'DELETE' THEN UPDATE public.chat_threads SET message_count = GREATEST(0, message_count - 1) WHERE id = OLD.thread_id; END IF; RETURN NULL; END;",
-    "raises": [],
-    "tables": [
-     "chat_threads"
-    ]
-   },
    "decide_skill_reclassification": {
     "args": "_review_id UUID, _approve BOOLEAN, _reason TEXT DEFAULT ''",
     "returns": "public.skill_reclassification_reviews",
@@ -124698,6 +124847,19 @@
     "body": "BEGIN IF NEW.is_meta_collection THEN NEW.is_public := false; NEW.is_verified := false; END IF; RETURN NEW; END;",
     "raises": [],
     "tables": []
+   },
+   "touch_chat_thread": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN IF TG_OP = 'INSERT' THEN UPDATE public.chat_threads SET last_message_at = NEW.created_at, message_count = message_count + 1 WHERE id = NEW.thread_id; ELSIF TG_OP = 'DELETE' THEN UPDATE public.chat_threads SET message_count = GREATEST(0, message_count - 1) WHERE id = OLD.thread_id; END IF; RETURN NULL; END;",
+    "raises": [],
+    "tables": [
+     "chat_threads"
+    ]
    },
    "Args": {
     "args": "",
@@ -128632,6 +128794,7 @@
       "compara:src/services/retryEngineService.ts",
       "escreve:src/components/agent-builder/modules/DeployModule.tsx",
       "escreve:src/components/agent-builder/modules/TestingModule.tsx",
+      "escreve:src/components/chat/ChatComposer.tsx",
       "escreve:src/components/datahub/DataHubSyncTab.tsx",
       "escreve:src/components/knowledge/IngestionLogsPanel.tsx",
       "escreve:src/components/knowledge/KnowledgeBaseDetail.tsx",
@@ -128709,6 +128872,7 @@
      "error": [
       "compara:src/components/agent-builder/modules/DeployModule.tsx",
       "compara:src/components/agents/detail/ErrorAnalysisPanel.tsx",
+      "compara:src/components/chat/ChatComposer.tsx",
       "compara:src/components/datahub/ConnectionCard.tsx",
       "compara:src/components/monitoring/SpanTreeView.tsx",
       "compara:src/components/monitoring/TracingPanel.tsx",
@@ -148610,9 +148774,14 @@
   },
   "src/components/chat/ChatComposer.tsx": {
    "path": "src/components/chat/ChatComposer.tsx",
-   "lines": 142,
+   "lines": 250,
    "exports": [
+    "interface PendingAttachment",
     "function ChatComposer"
+   ],
+   "errors": [
+    "Anexo acima de 25 MB: ${oversized.map((f) => f.name).join(",
+    "Máximo de ${MAX_ATTACHMENTS} anexos por mensagem."
    ],
    "params": [
     {
@@ -148622,6 +148791,31 @@
     {
      "name": "WARN_AT",
      "value": "3600"
+    },
+    {
+     "name": "MAX_ATTACHMENTS",
+     "value": "5"
+    },
+    {
+     "name": "MAX_ATTACHMENT_SIZE",
+     "value": "25"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "pending",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pending",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "error",
+     "kind": "compara"
     }
    ],
    "doc": "ChatComposer — textarea auto-resize, emoji picker, contador de caracteres, enviar/parar e suporte a offline."
@@ -148670,12 +148864,17 @@
   },
   "src/components/chat/MessageBubble.tsx": {
    "path": "src/components/chat/MessageBubble.tsx",
-   "lines": 130,
+   "lines": 202,
    "exports": [
+    "interface ChatAttachment",
     "interface ChatMessage",
     "function MessageBubble"
    ],
+   "storage": [
+    "chat-attachments"
+   ],
    "errors": [
+    "Não foi possível abrir o anexo.",
     "Não foi possível copiar."
    ],
    "status_values": [
@@ -157048,7 +157247,7 @@
   },
   "src/integrations/supabase/types.ts": {
    "path": "src/integrations/supabase/types.ts",
-   "lines": 15454,
+   "lines": 15457,
    "exports": [
     "type Json",
     "type Database",
@@ -161420,9 +161619,12 @@
   },
   "src/pages/ChatWithAgentPage.tsx": {
    "path": "src/pages/ChatWithAgentPage.tsx",
-   "lines": 620,
+   "lines": 664,
    "exports": [
     "function ChatWithAgentPage"
+   ],
+   "storage": [
+    "chat-attachments"
    ],
    "navigates": [
     "/agents/",
@@ -161431,6 +161633,7 @@
    ],
    "errors": [
     "Conversa ainda carregando, tente novamente.",
+    "Falha ao enviar ${f.file.name}.",
     "Falha ao responder: ${err}",
     "Não foi possível abrir a conversa.",
     "Sem conexão."
@@ -166699,7 +166902,7 @@
   },
   "src/services/chatThreadService.ts": {
    "path": "src/services/chatThreadService.ts",
-   "lines": 339,
+   "lines": 365,
    "exports": [
     "const MESSAGE_PAGE_SIZE",
     "interface ChatThread",
@@ -166728,7 +166931,7 @@
     },
     {
      "table": "chat_messages",
-     "op": "insert,select"
+     "op": "ref"
     },
     {
      "table": "chat_messages",
@@ -166762,6 +166965,7 @@
      "user_id"
     ],
     "chat_messages": [
+     "attachments",
      "content",
      "created_at",
      "failed",
@@ -175343,18 +175547,19 @@
   },
   "src/test/chat-message-bubble.test.tsx": {
    "path": "src/test/chat-message-bubble.test.tsx",
-   "lines": 46,
+   "lines": 79,
    "is_test": true,
    "tests": [
     "MessageBubble — sanitization",
     "não executa <script> em payload malicioso",
     "bloqueia <iframe>",
+    "renderiza anexos como links clicáveis com nome e tamanho",
     "renderiza mensagem falha com botão de retry"
    ]
   },
   "src/test/chat-thread-service.test.ts": {
    "path": "src/test/chat-thread-service.test.ts",
-   "lines": 182,
+   "lines": 239,
    "is_test": true,
    "params": [
     {
@@ -175367,6 +175572,8 @@
    ],
    "tests": [
     "chatThreadService — ordenação do histórico",
+    "mapeia attachments JSONB para a UI quando existem",
+    "deixa attachments undefined quando a coluna vem nula",
     "devolve as mensagens em ordem cronológica ainda que o banco responda DESC",
     "mapeia papéis desconhecidos para assistant, já que a bolha só renderiza dois papéis",
     "degrada para lista vazia em erro de rede, sem propagar exceção",
@@ -190328,6 +190535,10 @@
    "lines": 173,
    "uses_service_role": true
   },
+  "supabase/migrations/20261120150000_reconcile_chat_schema.sql": {
+   "path": "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
+   "lines": 116
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -190489,10 +190700,26 @@
   }
  },
  "git": {
-  "sha": "efdc4b1af5247ce2b61a234e42e2bd93b3118806",
+  "sha": "24731455663602a933e8b077bf4aa1d7cccb9741",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "2473145",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)",
+    "files": [
+     "src/components/chat/ChatComposer.tsx",
+     "src/components/chat/MessageBubble.tsx",
+     "src/integrations/supabase/types.ts",
+     "src/pages/ChatWithAgentPage.tsx",
+     "src/services/chatThreadService.ts",
+     "src/test/chat-message-bubble.test.tsx",
+     "src/test/chat-thread-service.test.ts",
+     "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+    ]
+   },
    {
     "sha": "efdc4b1",
     "date": "2026-11-20",
@@ -190809,15 +191036,6 @@
     "files": [
      "tests/load/llm-gateway.k6.js"
     ]
-   },
-   {
-    "sha": "067d565",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "docs: adiciona inventario de prontidao de producao (main f618216) (#89)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
    }
   ],
   "hot_files": [
@@ -190858,6 +191076,38 @@
     2
    ],
    [
+    "src/components/chat/ChatComposer.tsx",
+    1
+   ],
+   [
+    "src/components/chat/MessageBubble.tsx",
+    1
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    1
+   ],
+   [
+    "src/pages/ChatWithAgentPage.tsx",
+    1
+   ],
+   [
+    "src/services/chatThreadService.ts",
+    1
+   ],
+   [
+    "src/test/chat-message-bubble.test.tsx",
+    1
+   ],
+   [
+    "src/test/chat-thread-service.test.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
+    1
+   ],
+   [
     ".github/workflows/anti-stale-dependabot.yml",
     1
    ],
@@ -190867,38 +191117,6 @@
    ],
    [
     ".github/workflows/automation-local.yml",
-    1
-   ],
-   [
-    ".github/workflows/ci.yml",
-    1
-   ],
-   [
-    "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
-    1
-   ],
-   [
-    "supabase/functions/openclaw-webhook/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/quick-agent-test/index.ts",
-    1
-   ],
-   [
-    "docs/migration/MATRIZ_EDGE_TABELA.md",
-    1
-   ],
-   [
-    "supabase/functions/cerebro-query/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/rag-embed-backfill/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/rag-ingest/index.ts",
     1
    ]
   ]

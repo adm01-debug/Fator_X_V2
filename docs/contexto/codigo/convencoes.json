@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)",
    "fix(deps): declara @tiptap/core usado no teste do rich editor (#125)",
    "fix(deploy): remove SUPABASE_* do secrets set e usa --remote (CLI v3) (#123)",
    "chore(ci): workflow anti-stale para PRs dependabot com base atrasada (#124)",
-   "chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)",
-   "chore(ci)(deps): bump peter-evans/create-pull-request (#99)"
+   "chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `efdc4b1af5` · branch `main` · 2026-11-20 16:50 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2473145566` · branch `main` · 2026-11-20 18:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -84,7 +84,7 @@
 | `change_approvals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `change_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 18 colunas | migration |
 | `chaos_experiments` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `chat_messages` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `chat_messages` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `chat_threads` | Conversas do AgentTalk. Um agente pode ter N threads por usuário. | 10 colunas | migration |
 | `chunks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 18 colunas | migration |
 | `citation_telemetry` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |

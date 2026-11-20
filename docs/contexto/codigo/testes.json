@@ -575,20 +575,20 @@
   {
    "arquivo": "src/test/chat-message-bubble.test.tsx",
    "tipo": "unit",
-   "linhas": 46,
+   "linhas": 79,
    "testa": [
     "src/components/chat/MessageBubble.tsx"
    ],
-   "casos": 3
+   "casos": 4
   },
   {
    "arquivo": "src/test/chat-thread-service.test.ts",
    "tipo": "unit",
-   "linhas": 182,
+   "linhas": 239,
    "testa": [
     "src/services/chatThreadService.ts"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/test/connector-registry.test.ts",
