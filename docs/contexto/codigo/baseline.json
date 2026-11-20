@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "33249304c2385549d1d02ac13cc5b573a58f114c",
+  "commit": "e4460f85d7d1672d9c5df47acb16fec543c4ca81",
   "branch": "main",
-  "data_commit": "2026-11-20T10:53:40-03:00",
+  "data_commit": "2026-11-20T10:53:45-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "e4460f85",
+    "data": "2026-11-20",
+    "assunto": "chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)"
+   },
    {
     "sha": "33249304",
     "data": "2026-11-20",
@@ -126,11 +131,6 @@
     "sha": "f6a5b20d",
     "data": "2026-11-14",
     "assunto": "feat(validacao): adiciona zod as rotas de entrada do auth (#92)"
-   },
-   {
-    "sha": "715e9cd5",
-    "data": "2026-11-14",
-    "assunto": "fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)"
    }
   ],
   "arquivos_mudados_7d": 72,
@@ -152,6 +152,10 @@
     "mudancas": 5
    },
    {
+    "pasta": ".github/workflows/contexto.yml",
+    "mudancas": 4
+   },
+   {
     "pasta": "src/components/admin",
     "mudancas": 4
    },
@@ -162,10 +166,6 @@
    {
     "pasta": "supabase/functions/llm-gateway",
     "mudancas": 4
-   },
-   {
-    "pasta": ".github/workflows/contexto.yml",
-    "mudancas": 3
    },
    {
     "pasta": ".github/workflows/guards.yml",
@@ -214,6 +214,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 4
+   },
+   {
     "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
     "mudancas": 4
    },
@@ -228,10 +232,6 @@
    {
     "arquivo": "supabase/functions/voice-synthesize/index.ts",
     "mudancas": 4
-   },
-   {
-    "arquivo": ".github/workflows/contexto.yml",
-    "mudancas": 3
    },
    {
     "arquivo": ".github/workflows/guards.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 12
+    "commits": 13
    }
   ]
  },

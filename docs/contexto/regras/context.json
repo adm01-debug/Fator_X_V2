@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "33249304c2385549d1d02ac13cc5b573a58f114c",
+  "sha": "e4460f85d7d1672d9c5df47acb16fec543c4ca81",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 13:54 UTC",
+  "generated_at": "2026-11-20 13:56 UTC",
   "files_total": 1982,
   "code_files": 1785,
   "code_lines": 347250
@@ -190476,10 +190476,19 @@
   }
  },
  "git": {
-  "sha": "33249304c2385549d1d02ac13cc5b573a58f114c",
+  "sha": "e4460f85d7d1672d9c5df47acb16fec543c4ca81",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "e4460f8",
+    "date": "2026-11-20",
+    "author": "dependabot[bot]",
+    "subject": "chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)",
+    "files": [
+     ".github/workflows/contexto.yml"
+    ]
+   },
    {
     "sha": "3324930",
     "date": "2026-11-20",
@@ -190803,24 +190812,12 @@
      "supabase/functions/voice-transcribe/index.ts",
      "supabase/functions/workflow-engine-v2/index.ts"
     ]
-   },
-   {
-    "sha": "46af5ba",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix(edge): corrige erros de tipagem em webhooks (#84)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/openclaw-webhook/index.ts",
-     "supabase/functions/slack-events-webhook/index.ts",
-     "supabase/functions/webhook-receiver/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    8
+    7
    ],
    [
     "package-lock.json",
@@ -190829,6 +190826,10 @@
    [
     "package.json",
     4
+   ],
+   [
+    ".github/workflows/contexto.yml",
+    2
    ],
    [
     ".github/workflows/ci.yml",
@@ -190840,10 +190841,6 @@
    ],
    [
     ".github/workflows/guards.yml",
-    2
-   ],
-   [
-    "supabase/functions/openclaw-webhook/index.ts",
     2
    ],
    [
@@ -190875,6 +190872,10 @@
     1
    ],
    [
+    "supabase/functions/openclaw-webhook/index.ts",
+    1
+   ],
+   [
     "supabase/functions/quick-agent-test/index.ts",
     1
    ],
@@ -190892,10 +190893,6 @@
    ],
    [
     "supabase/functions/rag-ingest/index.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
     1
    ]
   ]
