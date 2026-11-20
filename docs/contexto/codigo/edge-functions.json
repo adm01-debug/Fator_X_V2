@@ -48,7 +48,7 @@
    "nome": "a2a-server",
    "entrada": "supabase/functions/a2a-server/index.ts",
    "arquivos": 1,
-   "linhas": 258,
+   "linhas": 259,
    "verify_jwt": true,
    "metodos": [
     "GET",
@@ -187,7 +187,7 @@
    "nome": "audio-transcribe",
    "entrada": "supabase/functions/audio-transcribe/index.ts",
    "arquivos": 1,
-   "linhas": 101,
+   "linhas": 102,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -251,7 +251,7 @@
    "nome": "bitrix24-api",
    "entrada": "supabase/functions/bitrix24-api/index.ts",
    "arquivos": 1,
-   "linhas": 65,
+   "linhas": 66,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -596,7 +596,7 @@
    "nome": "crm-bitrix-sync",
    "entrada": "supabase/functions/crm-bitrix-sync/index.ts",
    "arquivos": 1,
-   "linhas": 192,
+   "linhas": 193,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -672,7 +672,7 @@
    "nome": "crm-enrich",
    "entrada": "supabase/functions/crm-enrich/index.ts",
    "arquivos": 1,
-   "linhas": 445,
+   "linhas": 446,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -817,7 +817,7 @@
    "nome": "doc-ocr",
    "entrada": "supabase/functions/doc-ocr/index.ts",
    "arquivos": 1,
-   "linhas": 120,
+   "linhas": 121,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -957,7 +957,7 @@
    "nome": "eval-engine-v2",
    "entrada": "supabase/functions/eval-engine-v2/index.ts",
    "arquivos": 1,
-   "linhas": 252,
+   "linhas": 253,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1099,7 +1099,7 @@
    "nome": "guardrails-engine",
    "entrada": "supabase/functions/guardrails-engine/index.ts",
    "arquivos": 1,
-   "linhas": 159,
+   "linhas": 160,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1123,7 +1123,7 @@
    "nome": "guardrails-ml",
    "entrada": "supabase/functions/guardrails-ml/index.ts",
    "arquivos": 1,
-   "linhas": 195,
+   "linhas": 196,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1212,7 +1212,7 @@
    "nome": "image-analysis",
    "entrada": "supabase/functions/image-analysis/index.ts",
    "arquivos": 1,
-   "linhas": 102,
+   "linhas": 103,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1462,7 +1462,7 @@
    "nome": "memory-manager",
    "entrada": "supabase/functions/memory-manager/index.ts",
    "arquivos": 1,
-   "linhas": 156,
+   "linhas": 157,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1548,7 +1548,7 @@
    "nome": "nlp-pipeline",
    "entrada": "supabase/functions/nlp-pipeline/index.ts",
    "arquivos": 1,
-   "linhas": 237,
+   "linhas": 238,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1760,7 +1760,7 @@
    "nome": "oracle-research",
    "entrada": "supabase/functions/oracle-research/index.ts",
    "arquivos": 1,
-   "linhas": 323,
+   "linhas": 324,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1962,7 +1962,7 @@
    "nome": "rag-embed-v2",
    "entrada": "supabase/functions/rag-embed-v2/index.ts",
    "arquivos": 2,
-   "linhas": 270,
+   "linhas": 271,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2036,7 +2036,7 @@
    "nome": "rag-rerank",
    "entrada": "supabase/functions/rag-rerank/index.ts",
    "arquivos": 1,
-   "linhas": 148,
+   "linhas": 149,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2075,7 +2075,7 @@
    "nome": "rag-rerank-v2",
    "entrada": "supabase/functions/rag-rerank-v2/index.ts",
    "arquivos": 1,
-   "linhas": 245,
+   "linhas": 246,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2533,7 +2533,7 @@
    "nome": "smart-model-router",
    "entrada": "supabase/functions/smart-model-router/index.ts",
    "arquivos": 1,
-   "linhas": 191,
+   "linhas": 192,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2636,7 +2636,7 @@
    "nome": "test-runner",
    "entrada": "supabase/functions/test-runner/index.ts",
    "arquivos": 4,
-   "linhas": 1671,
+   "linhas": 1672,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

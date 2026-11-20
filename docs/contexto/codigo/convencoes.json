@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(edge): CORS no 429 e rate heavy em agentes — absorve pr19 (GAP-2/S24) (#118)",
    "feat(edge): rate limit pesado em cost-calculator e product-mockup (#116)",
    "fix(edge): whatsapp-webhook GET sem token retorna 403, nao 500 (#115)",
    "fix(a11y): contraste do tip do tour 6.95:1 (#108)",
-   "feat(automacao): preserva scripts de validacao exaustiva de edge functions (pr19-resolved) (#114)",
-   "fix(auth,a11y): mensagem certa na validação e 3 violações do axe na área logada (#97)"
+   "feat(automacao): preserva scripts de validacao exaustiva de edge functions (pr19-resolved) (#114)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
