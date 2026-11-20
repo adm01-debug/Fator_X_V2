@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "69df67d02a05697d825cb15bb45c7065a4ed17bc",
+  "sha": "efdc4b1af5247ce2b61a234e42e2bd93b3118806",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 14:49 UTC",
+  "generated_at": "2026-11-20 16:50 UTC",
   "files_total": 1983,
   "code_files": 1785,
   "code_lines": 347250
@@ -190489,10 +190489,20 @@
   }
  },
  "git": {
-  "sha": "69df67d02a05697d825cb15bb45c7065a4ed17bc",
+  "sha": "efdc4b1af5247ce2b61a234e42e2bd93b3118806",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "efdc4b1",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix(deps): declara @tiptap/core usado no teste do rich editor (#125)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "69df67d",
     "date": "2026-11-20",
@@ -190808,30 +190818,20 @@
     "files": [
      "docs/prod-readiness.md"
     ]
-   },
-   {
-    "sha": "f618216",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/llm-gateway/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
-    "supabase/deployment-manifest.json",
+    "package-lock.json",
     6
    ],
    [
-    "package-lock.json",
+    "package.json",
     5
    ],
    [
-    "package.json",
-    4
+    "supabase/deployment-manifest.json",
+    5
    ],
    [
     ".github/workflows/edge-deploy.yml",

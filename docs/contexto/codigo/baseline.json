@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "69df67d02a05697d825cb15bb45c7065a4ed17bc",
+  "commit": "efdc4b1af5247ce2b61a234e42e2bd93b3118806",
   "branch": "main",
-  "data_commit": "2026-11-20T11:47:15-03:00",
+  "data_commit": "2026-11-20T13:50:12-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "efdc4b1a",
+    "data": "2026-11-20",
+    "assunto": "fix(deps): declara @tiptap/core usado no teste do rich editor (#125)"
+   },
    {
     "sha": "69df67d0",
     "data": "2026-11-20",
@@ -126,26 +131,21 @@
     "sha": "79787795",
     "data": "2026-11-14",
     "assunto": "fix(infra): expoe falha no deploy das edge functions (#96)"
-   },
-   {
-    "sha": "9d6d1f42",
-    "data": "2026-11-14",
-    "assunto": "infra: workflow de deploy automatico das Edge Functions (#95)"
    }
   ],
-  "arquivos_mudados_7d": 73,
+  "arquivos_mudados_7d": 67,
   "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 13
+   },
    {
     "pasta": "supabase/deployment-manifest.json",
     "mudancas": 13
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 12
-   },
-   {
     "pasta": "package.json",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
     "pasta": ".github/workflows/ci.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 20
+    "mudancas": 21
    },
    {
     "arquivo": "package.json",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 39
+    "commits": 40
    },
    {
     "autor": "dependabot[bot]",

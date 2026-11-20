@@ -83,7 +83,7 @@
    "test:watch": "vitest",
    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json"
   },
-  "dependencias": 89,
+  "dependencias": 90,
   "dev_dependencias": 25,
   "principais": {
    "@supabase/supabase-js": "2.119.0",

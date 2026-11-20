@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `69df67d02a05697d825cb15bb45c7065a4ed17bc` (2026-11-20T11:47:15-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `efdc4b1af5247ce2b61a234e42e2bd93b3118806` (2026-11-20T13:50:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -431,14 +431,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13822 nós · 37072 arestas · 890 comunidades · grafo do commit `69df67d0`
-- comunidades maiores: react (362), badge.tsx (287), App.tsx (285), useAgentBuilderStore (242), cn (226), logger.ts (192), react-router-dom (184), getCorsHeaders (155), notesService.ts (113), AgentDetailPage.tsx (111), ref_node_fs (105), mod.ts (105)
+- 13823 nós · 37074 arestas · 888 comunidades · grafo do commit `efdc4b1a`
+- comunidades maiores: badge.tsx (320), button.tsx (261), cn (248), App.tsx (194), @tanstack/react-query (186), react (179), getCorsHeaders (153), templateSkillLinkService.ts (128), monitoringService.ts (125), ref_node_fs (102), logger.ts (101), notesService.ts (100)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (20)
-- package.json (19)
+- package-lock.json (21)
+- package.json (20)
 - supabase/deployment-manifest.json (13)
 - .github/workflows/ci.yml (7)
 - .github/workflows/contexto.yml (4)
@@ -577,6 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-20 `efdc4b1a` fix(deps): declara @tiptap/core usado no teste do rich editor (#125)
 - 2026-11-20 `69df67d0` fix(deploy): remove SUPABASE_* do secrets set e usa --remote (CLI v3) (#123)
 - 2026-11-20 `db07b5db` chore(ci): workflow anti-stale para PRs dependabot com base atrasada (#124)
 - 2026-11-20 `e4460f85` chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)
@@ -591,7 +592,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `bc0d0b86` fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)
 - 2026-11-20 `b35c28a4` fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)
 - 2026-11-20 `d2249e59` chore: contexto agendado de 10 min para 1x/hora (#98)
-- 2026-11-20 `9a673de6` chore(ci): unifica node 22 nos guards (#91)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
