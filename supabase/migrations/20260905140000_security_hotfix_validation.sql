@@ -129,20 +129,37 @@ $function$;
 ALTER FUNCTION public.audit_trigger_fn() SET search_path TO public, pg_catalog;
 
 -- ── 4. Policies legadas USING(true) → deny/service-only (F4) ──────
+-- Tabelas *_old só existem em produção (renomeadas manualmente); em base
+-- limpa/preview são ausentes e os DROP/CREATE POLICY falham (42P01).
 
-DROP POLICY IF EXISTS skill_reclass_all ON public.skill_reclassification_reviews_old;
-CREATE POLICY skill_reclass_service_only ON public.skill_reclassification_reviews_old
-  FOR ALL TO authenticated USING (false);
+DO $$
+BEGIN
+  IF to_regclass('public.skill_reclassification_reviews_old') IS NOT NULL THEN
+    DROP POLICY IF EXISTS skill_reclass_all ON public.skill_reclassification_reviews_old;
+    CREATE POLICY skill_reclass_service_only ON public.skill_reclassification_reviews_old
+      FOR ALL TO authenticated USING (false);
+  END IF;
+END $$;
 
-DROP POLICY IF EXISTS skill_harvest_runs_all ON public.skill_harvest_runs_old;
-CREATE POLICY skill_harvest_runs_service_only ON public.skill_harvest_runs_old
-  FOR SELECT TO authenticated USING (false);
+DO $$
+BEGIN
+  IF to_regclass('public.skill_harvest_runs_old') IS NOT NULL THEN
+    DROP POLICY IF EXISTS skill_harvest_runs_all ON public.skill_harvest_runs_old;
+    CREATE POLICY skill_harvest_runs_service_only ON public.skill_harvest_runs_old
+      FOR SELECT TO authenticated USING (false);
+  END IF;
+END $$;
 
-DROP POLICY IF EXISTS audit_log_all ON public.audit_log_old;
-CREATE POLICY audit_log_owner_all ON public.audit_log_old
-  FOR ALL TO authenticated
-  USING (workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid()))
-  WITH CHECK (workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid()));
+DO $$
+BEGIN
+  IF to_regclass('public.audit_log_old') IS NOT NULL THEN
+    DROP POLICY IF EXISTS audit_log_all ON public.audit_log_old;
+    CREATE POLICY audit_log_owner_all ON public.audit_log_old
+      FOR ALL TO authenticated
+      USING (workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid()))
+      WITH CHECK (workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid()));
+  END IF;
+END $$;
 
 -- ── 5. member_insert tolerante a rows legadas sem workspace (F5) ──
 -- Services legados (ex.: agentsService.createAgentVersion) inserem sem
