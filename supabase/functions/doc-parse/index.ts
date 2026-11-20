@@ -206,7 +206,7 @@ serve(async (req) => {
     const { user } = auth;
 
     const rate = checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
-    if (!rate.allowed) return createRateLimitResponse(rate);
+    if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
     const parsed = await parseBody(req, Input);
     if (parsed.error) return parsed.error;
