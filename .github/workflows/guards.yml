@@ -56,7 +56,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       - run: npm ci
       - name: node --test em scripts/ci e scripts/edge-deploy
@@ -72,7 +72,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       - run: npm ci
       - name: Lint ratchet
@@ -94,7 +94,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       - run: npm ci
       # Sem secret nenhum: o guard procura JWT de service_role no dist/, e um build sem
@@ -119,7 +119,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
       - name: docs/migration/MATRIZ_EDGE_TABELA.md bate com o código
         run: node scripts/ci/gerar-matriz-edge-tabela.mjs --check
       - name: supabase/deployment-manifest.json bate com supabase/functions/
@@ -142,7 +142,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
       - name: src/ lendo VITE_SUPABASE_URL/PUBLISHABLE_KEY direto do import.meta.env
         id: env
         continue-on-error: true
