@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "60357f2b0e0afb46f0beae1f9f85876f64d166e8",
+  "sha": "849d83ced262607712f1c8844ab28ced49d7d412",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 13:10 UTC",
+  "generated_at": "2026-11-20 13:14 UTC",
   "files_total": 1982,
   "code_files": 1785,
   "code_lines": 347250
  },
  "version": "1.3.2",
- "facts_hash": "222b28e27dea4266",
+ "facts_hash": "88961c7db328c0de",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -27,7 +27,7 @@
     "in": "package.json"
    },
    "@tanstack/react-query": {
-    "version": "^5.83.0",
+    "version": "^5.107.1",
     "role": "Cache/fetch de dados (TanStack Query)",
     "in": "package.json"
    },
@@ -190476,10 +190476,49 @@
   }
  },
  "git": {
-  "sha": "60357f2b0e0afb46f0beae1f9f85876f64d166e8",
+  "sha": "849d83ced262607712f1c8844ab28ced49d7d412",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "849d83c",
+    "date": "2026-11-20",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps): bump otpauth from 9.5.1 to 9.6.0 (#106)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "42dc7a0",
+    "date": "2026-11-20",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps): bump @tanstack/react-query from 5.83.0 to 5.107.1 (#105)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "3ad9813",
+    "date": "2026-11-20",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps): bump the radix group across 1 directory with 27 updates (#103)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "02ed452",
+    "date": "2026-11-20",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps): bump @sentry/react (#102)",
+    "files": [
+     "package-lock.json"
+    ]
+   },
    {
     "sha": "60357f2",
     "date": "2026-11-20",
@@ -190779,59 +190818,20 @@
      "src/components/knowledge/RichEditor.tsx",
      "src/test/rich-editor.test.tsx"
     ]
-   },
-   {
-    "sha": "81afc70",
-    "date": "2026-11-12",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates (#72)",
-    "files": [
-     "package-lock.json"
-    ]
-   },
-   {
-    "sha": "d41db74",
-    "date": "2026-11-12",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @sentry/react from 10.73.0 to 11.11.0 in the sentry group across 1 directory (#63)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "ba8344c",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "chore(ci): atualiza comentario do SUPABASE_ACCESS_TOKEN no inventario semanal (#79)",
-    "files": [
-     ".github/workflows/inventario-estado-semanal.yml"
-    ]
-   },
-   {
-    "sha": "1033b2f",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS",
-    "files": [
-     ".prettierignore",
-     "supabase/deployment-manifest.json",
-     "supabase/functions/_shared/cors.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    9
+    8
    ],
    [
     "package-lock.json",
-    4
+    6
    ],
    [
     "package.json",
-    3
+    5
    ],
    [
     ".github/workflows/ci.yml",

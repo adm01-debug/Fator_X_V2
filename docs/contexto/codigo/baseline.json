@@ -2,11 +2,31 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "60357f2b0e0afb46f0beae1f9f85876f64d166e8",
+  "commit": "849d83ced262607712f1c8844ab28ced49d7d412",
   "branch": "main",
-  "data_commit": "2026-11-20T10:08:20-03:00",
+  "data_commit": "2026-11-20T10:08:43-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "849d83ce",
+    "data": "2026-11-20",
+    "assunto": "chore(deps)(deps): bump otpauth from 9.5.1 to 9.6.0 (#106)"
+   },
+   {
+    "sha": "42dc7a0d",
+    "data": "2026-11-20",
+    "assunto": "chore(deps)(deps): bump @tanstack/react-query from 5.83.0 to 5.107.1 (#105)"
+   },
+   {
+    "sha": "3ad98132",
+    "data": "2026-11-20",
+    "assunto": "chore(deps)(deps): bump the radix group across 1 directory with 27 updates (#103)"
+   },
+   {
+    "sha": "02ed452c",
+    "data": "2026-11-20",
+    "assunto": "chore(deps)(deps): bump @sentry/react (#102)"
+   },
    {
     "sha": "60357f2b",
     "data": "2026-11-20",
@@ -111,26 +131,6 @@
     "sha": "067d5656",
     "data": "2026-11-14",
     "assunto": "docs: adiciona inventario de prontidao de producao (main f618216) (#89)"
-   },
-   {
-    "sha": "f6182168",
-    "data": "2026-11-13",
-    "assunto": "feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)"
-   },
-   {
-    "sha": "8e722da7",
-    "data": "2026-11-13",
-    "assunto": "fix(ci): sobe node-version para 22 nos jobs npm (#86)"
-   },
-   {
-    "sha": "c1ba2138",
-    "data": "2026-11-13",
-    "assunto": "chore(lint): zerar erros do ESLint (13 → 0) (#85)"
-   },
-   {
-    "sha": "46af5baa",
-    "data": "2026-11-12",
-    "assunto": "fix(edge): corrige erros de tipagem em webhooks (#84)"
    }
   ],
   "arquivos_mudados_7d": 71,
@@ -141,11 +141,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 8
+    "mudancas": 12
    },
    {
     "pasta": "package.json",
-    "mudancas": 8
+    "mudancas": 11
    },
    {
     "pasta": ".github/workflows/ci.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 16
+    "mudancas": 20
    },
    {
     "arquivo": "package.json",
-    "mudancas": 16
+    "mudancas": 19
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 7
+    "commits": 11
    }
   ]
  },
