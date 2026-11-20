@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)",
    "fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)",
    "feat(storage): cria bucket knowledge-uploads reconciliado (#127)",
    "feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)",
-   "fix(deps): declara @tiptap/core usado no teste do rich editor (#125)",
-   "fix(deploy): remove SUPABASE_* do secrets set e usa --remote (CLI v3) (#123)"
+   "fix(deps): declara @tiptap/core usado no teste do rich editor (#125)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

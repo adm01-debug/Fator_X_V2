@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "3a23906d9adb465971a6746e767b6fb8f5936c47",
+  "sha": "10e7a1defae6071421926888edee507efb16aad8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 19:12 UTC",
-  "files_total": 1985,
+  "generated_at": "2026-11-20 20:12 UTC",
+  "files_total": 1998,
   "code_files": 1787,
   "code_lines": 347762
  },
@@ -190705,10 +190705,31 @@
   }
  },
  "git": {
-  "sha": "3a23906d9adb465971a6746e767b6fb8f5936c47",
+  "sha": "10e7a1defae6071421926888edee507efb16aad8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "10e7a1d",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)",
+    "files": [
+     "docs/pendencias/_achados.md",
+     "docs/pendencias/_linha-de-base.md",
+     "docs/pendencias/_ordem.md",
+     "docs/pendencias/_regras-de-negocio.md",
+     "docs/pendencias/exfil-001-migrations-projeto-alheio.md",
+     "docs/pendencias/int-001-keyvalue-para-encrypted.md",
+     "docs/pendencias/int-002-bitrix24-webhook-config.md",
+     "docs/pendencias/int-003-notification-sender-mente.md",
+     "docs/pendencias/int-004-whatsapp-browser-risco.md",
+     "docs/pendencias/int-005-env-example-segredo-fantasma.md",
+     "docs/pendencias/tbl-001-webhook-events-ausente.md",
+     "docs/pendencias/tbl-002-game-day-events-ausente.md",
+     "docs/pendencias/tbl-003-rpcs-grc-ausentes.md"
+    ]
+   },
    {
     "sha": "3a23906",
     "date": "2026-11-20",
@@ -191033,15 +191054,6 @@
     "files": [
      ".github/workflows/edge-deploy.yml"
     ]
-   },
-   {
-    "sha": "557f1f6",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "chore(coverage): sobe thresholds para o nivel medido na CI (#90)",
-    "files": [
-     "vitest.config.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -191086,43 +191098,43 @@
     2
    ],
    [
-    "supabase/functions/workflow-engine-v2/index.ts",
+    "docs/pendencias/_achados.md",
     1
    ],
    [
-    "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
+    "docs/pendencias/_linha-de-base.md",
     1
    ],
    [
-    "src/components/chat/ChatComposer.tsx",
+    "docs/pendencias/_ordem.md",
     1
    ],
    [
-    "src/components/chat/MessageBubble.tsx",
+    "docs/pendencias/_regras-de-negocio.md",
     1
    ],
    [
-    "src/integrations/supabase/types.ts",
+    "docs/pendencias/exfil-001-migrations-projeto-alheio.md",
     1
    ],
    [
-    "src/pages/ChatWithAgentPage.tsx",
+    "docs/pendencias/int-001-keyvalue-para-encrypted.md",
     1
    ],
    [
-    "src/services/chatThreadService.ts",
+    "docs/pendencias/int-002-bitrix24-webhook-config.md",
     1
    ],
    [
-    "src/test/chat-message-bubble.test.tsx",
+    "docs/pendencias/int-003-notification-sender-mente.md",
     1
    ],
    [
-    "src/test/chat-thread-service.test.ts",
+    "docs/pendencias/int-004-whatsapp-browser-risco.md",
     1
    ],
    [
-    "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
+    "docs/pendencias/int-005-env-example-segredo-fantasma.md",
     1
    ]
   ]

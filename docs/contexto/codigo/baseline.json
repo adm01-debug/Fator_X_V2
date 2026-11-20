@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3a23906d9adb465971a6746e767b6fb8f5936c47",
+  "commit": "10e7a1defae6071421926888edee507efb16aad8",
   "branch": "main",
-  "data_commit": "2026-11-20T16:11:55-03:00",
+  "data_commit": "2026-11-20T16:38:36-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "10e7a1de",
+    "data": "2026-11-20",
+    "assunto": "docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)"
+   },
    {
     "sha": "3a23906d",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "0f9c748c",
     "data": "2026-11-19",
     "assunto": "fix(a11y): contraste do tip do tour 6.95:1 (#108)"
-   },
-   {
-    "sha": "47756467",
-    "data": "2026-11-19",
-    "assunto": "feat(automacao): preserva scripts de validacao exaustiva de edge functions (pr19-resolved) (#114)"
    }
   ],
-  "arquivos_mudados_7d": 77,
+  "arquivos_mudados_7d": 90,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 43
+    "commits": 44
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1980,
+  "arquivos_total": 1993,
   "arquivos_codigo": 1449,
   "linhas_codigo": 318185,
   "rotas": 151,
@@ -327,7 +327,7 @@
   "testes": 239,
   "workflows": 10,
   "scripts": 45,
-  "docs_md": 114
+  "docs_md": 127
  },
  "por_pasta": {
   "e2e/agent-builder.spec.ts": {

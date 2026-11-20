@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1391)",
    "SQL (337)",
-   "Markdown (114)",
+   "Markdown (127)",
    "JavaScript (54)",
    "JSON (24)",
    "YAML (16)",
@@ -826,6 +826,10 @@
   }
  ],
  "docs_em_subpastas": [
+  {
+   "pasta": "docs/pendencias",
+   "arquivos_md": 13
+  },
   {
    "pasta": "docs/auditoria-estado-2026-08",
    "arquivos_md": 11
