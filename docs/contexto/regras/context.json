@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d2249e5934807c2f88d87125f754fbab26cebdea",
+  "sha": "b35c28a439bd421934cfe31eac78d6fff64b7ee2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 03:30 UTC",
-  "files_total": 1979,
-  "code_files": 1782,
-  "code_lines": 346699
+  "generated_at": "2026-11-20 04:03 UTC",
+  "files_total": 1981,
+  "code_files": 1784,
+  "code_lines": 347001
  },
  "version": "1.3.2",
- "facts_hash": "c7f97ce62b975338",
+ "facts_hash": "22a9064d0a18cd7b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -229,7 +229,7 @@
   "languages": {
    ".tsx": 699,
    ".ts": 692,
-   ".sql": 332,
+   ".sql": 334,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -35079,16 +35079,6 @@
     "src": "supabase/migrations/20260724000004_rls_agent_skills.sql"
    },
    {
-    "name": "skill_registry_public_read",
-    "table": "skill_registry",
-    "cmd": "SELECT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "TRUE",
-    "check": "",
-    "src": "supabase/migrations/20260724000004_rls_agent_skills.sql"
-   },
-   {
     "name": "skill_registry_workspace_insert",
     "table": "skill_registry",
     "cmd": "INSERT",
@@ -36107,6 +36097,626 @@
     "using": "workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid())",
     "check": "workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid())",
     "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
+   },
+   {
+    "name": "assets_member_select",
+    "table": "assets",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "assets_member_insert",
+    "table": "assets",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "assets_member_update",
+    "table": "assets",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "assets_member_delete",
+    "table": "assets",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_log_member_select",
+    "table": "audit_log",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "business_systems_member_select",
+    "table": "business_systems",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "business_systems_member_insert",
+    "table": "business_systems",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "business_systems_member_update",
+    "table": "business_systems",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "business_systems_member_delete",
+    "table": "business_systems",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "change_requests_member_select",
+    "table": "change_requests",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR requested_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "change_requests_member_insert",
+    "table": "change_requests",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "change_requests_member_update",
+    "table": "change_requests",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR requested_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "change_requests_member_delete",
+    "table": "change_requests",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "freeze_windows_member_select",
+    "table": "freeze_windows",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "freeze_windows_member_insert",
+    "table": "freeze_windows",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "freeze_windows_member_update",
+    "table": "freeze_windows",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "freeze_windows_member_delete",
+    "table": "freeze_windows",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_playbooks_member_select",
+    "table": "ir_playbooks",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_playbooks_member_insert",
+    "table": "ir_playbooks",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_playbooks_member_update",
+    "table": "ir_playbooks",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_playbooks_member_delete",
+    "table": "ir_playbooks",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_tabletop_exercises_member_select",
+    "table": "ir_tabletop_exercises",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_tabletop_exercises_member_insert",
+    "table": "ir_tabletop_exercises",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_tabletop_exercises_member_update",
+    "table": "ir_tabletop_exercises",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_tabletop_exercises_member_delete",
+    "table": "ir_tabletop_exercises",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "managed_secrets_member_select",
+    "table": "managed_secrets",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "managed_secrets_member_insert",
+    "table": "managed_secrets",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "managed_secrets_member_update",
+    "table": "managed_secrets",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "managed_secrets_member_delete",
+    "table": "managed_secrets",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "pentest_findings_member_select",
+    "table": "pentest_findings",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "pentest_findings_member_insert",
+    "table": "pentest_findings",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "pentest_findings_member_update",
+    "table": "pentest_findings",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "pentest_findings_member_delete",
+    "table": "pentest_findings",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "risk_register_member_select",
+    "table": "risk_register",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "risk_register_member_insert",
+    "table": "risk_register",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "risk_register_member_update",
+    "table": "risk_register",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "risk_register_member_delete",
+    "table": "risk_register",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "vendors_member_select",
+    "table": "vendors",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "vendors_member_insert",
+    "table": "vendors",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "vendors_member_update",
+    "table": "vendors",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "vendors_member_delete",
+    "table": "vendors",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_events_member_select",
+    "table": "audit_events",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_events_member_insert",
+    "table": "audit_events",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_events_member_update",
+    "table": "audit_events",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_events_member_delete",
+    "table": "audit_events",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_registry_public_read",
+    "table": "skill_registry",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "is_public = true OR workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_registry_member_insert",
+    "table": "skill_registry",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_registry_owner_update",
+    "table": "skill_registry",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid() OR is_public = true",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_registry_owner_delete",
+    "table": "skill_registry",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_2fa_own_select",
+    "table": "user_2fa",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_2fa_own_insert",
+    "table": "user_2fa",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_2fa_own_update",
+    "table": "user_2fa",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_2fa_own_delete",
+    "table": "user_2fa",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_filter_preferences_own_select",
+    "table": "user_filter_preferences",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_filter_preferences_own_insert",
+    "table": "user_filter_preferences",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_filter_preferences_own_update",
+    "table": "user_filter_preferences",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_filter_preferences_own_delete",
+    "table": "user_filter_preferences",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_reclassification_reviews_own_select",
+    "table": "skill_reclassification_reviews",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_reclassification_reviews_own_insert",
+    "table": "skill_reclassification_reviews",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "requested_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_reclassification_reviews_own_update",
+    "table": "skill_reclassification_reviews",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid()",
+    "check": "requested_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_reclassification_reviews_own_delete",
+    "table": "skill_reclassification_reviews",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_harvest_runs_public_read",
+    "table": "skill_harvest_runs",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "true",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
    }
   ],
   "triggers": [
@@ -37247,10 +37857,10 @@
     ]
    },
    "log_audit_entry": {
-    "args": "p_action TEXT, p_entity_type TEXT, p_entity_id TEXT DEFAULT NULL, p_metadata JSONB DEFAULT '{}'::JSONB",
+    "args": "p_action TEXT, p_entity_type TEXT, p_entity_id UUID DEFAULT NULL, p_metadata JSONB DEFAULT '{}'::JSONB",
     "returns": "void",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260401002019_26e948c0-3c01-41cd-9f25-df3d3a33ac66.sql",
+    "src": "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
     "security_definer": true,
     "search_path": true,
     "body": "BEGIN INSERT INTO public.audit_log (user_id, action, entity_type, entity_id, metadata) VALUES (auth.uid(), p_action, p_entity_type, p_entity_id, p_metadata); END;",
@@ -46021,6 +46631,8 @@
    "supabase/migrations/20260905120000_rls_complete_reconciliation.sql",
    "supabase/migrations/20260905130000_revoke_anon_default_privileges.sql",
    "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+   "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
+   "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -49678,6 +50290,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "log_audit_entry",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261114094500_restore_log_audit_entry.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "log_audit_entry",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261114094500_restore_log_audit_entry.sql"
    }
   ],
   "raises": [
@@ -59013,8 +59641,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 329,
-   "lines": 28623,
+   "files": 331,
+   "lines": 28925,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -117992,16 +118620,6 @@
     "src": "supabase/migrations/20260724000004_rls_agent_skills.sql"
    },
    {
-    "name": "skill_registry_public_read",
-    "table": "skill_registry",
-    "cmd": "SELECT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "TRUE",
-    "check": "",
-    "src": "supabase/migrations/20260724000004_rls_agent_skills.sql"
-   },
-   {
     "name": "skill_registry_workspace_insert",
     "table": "skill_registry",
     "cmd": "INSERT",
@@ -119020,6 +119638,626 @@
     "using": "workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid())",
     "check": "workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid())",
     "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
+   },
+   {
+    "name": "assets_member_select",
+    "table": "assets",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "assets_member_insert",
+    "table": "assets",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "assets_member_update",
+    "table": "assets",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "assets_member_delete",
+    "table": "assets",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_log_member_select",
+    "table": "audit_log",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "business_systems_member_select",
+    "table": "business_systems",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "business_systems_member_insert",
+    "table": "business_systems",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "business_systems_member_update",
+    "table": "business_systems",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "business_systems_member_delete",
+    "table": "business_systems",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "change_requests_member_select",
+    "table": "change_requests",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR requested_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "change_requests_member_insert",
+    "table": "change_requests",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "change_requests_member_update",
+    "table": "change_requests",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR requested_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "change_requests_member_delete",
+    "table": "change_requests",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "freeze_windows_member_select",
+    "table": "freeze_windows",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "freeze_windows_member_insert",
+    "table": "freeze_windows",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "freeze_windows_member_update",
+    "table": "freeze_windows",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "freeze_windows_member_delete",
+    "table": "freeze_windows",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_playbooks_member_select",
+    "table": "ir_playbooks",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_playbooks_member_insert",
+    "table": "ir_playbooks",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_playbooks_member_update",
+    "table": "ir_playbooks",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_playbooks_member_delete",
+    "table": "ir_playbooks",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_tabletop_exercises_member_select",
+    "table": "ir_tabletop_exercises",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_tabletop_exercises_member_insert",
+    "table": "ir_tabletop_exercises",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_tabletop_exercises_member_update",
+    "table": "ir_tabletop_exercises",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "ir_tabletop_exercises_member_delete",
+    "table": "ir_tabletop_exercises",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "managed_secrets_member_select",
+    "table": "managed_secrets",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "managed_secrets_member_insert",
+    "table": "managed_secrets",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "managed_secrets_member_update",
+    "table": "managed_secrets",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "managed_secrets_member_delete",
+    "table": "managed_secrets",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "pentest_findings_member_select",
+    "table": "pentest_findings",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "pentest_findings_member_insert",
+    "table": "pentest_findings",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "pentest_findings_member_update",
+    "table": "pentest_findings",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "pentest_findings_member_delete",
+    "table": "pentest_findings",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "risk_register_member_select",
+    "table": "risk_register",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "risk_register_member_insert",
+    "table": "risk_register",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "risk_register_member_update",
+    "table": "risk_register",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "risk_register_member_delete",
+    "table": "risk_register",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "vendors_member_select",
+    "table": "vendors",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "vendors_member_insert",
+    "table": "vendors",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "vendors_member_update",
+    "table": "vendors",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "vendors_member_delete",
+    "table": "vendors",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_events_member_select",
+    "table": "audit_events",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_events_member_insert",
+    "table": "audit_events",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_events_member_update",
+    "table": "audit_events",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "audit_events_member_delete",
+    "table": "audit_events",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_registry_public_read",
+    "table": "skill_registry",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "is_public = true OR workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_registry_member_insert",
+    "table": "skill_registry",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_registry_owner_update",
+    "table": "skill_registry",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid() OR is_public = true",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_registry_owner_delete",
+    "table": "skill_registry",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_2fa_own_select",
+    "table": "user_2fa",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_2fa_own_insert",
+    "table": "user_2fa",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_2fa_own_update",
+    "table": "user_2fa",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_2fa_own_delete",
+    "table": "user_2fa",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_filter_preferences_own_select",
+    "table": "user_filter_preferences",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_filter_preferences_own_insert",
+    "table": "user_filter_preferences",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_filter_preferences_own_update",
+    "table": "user_filter_preferences",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "user_id = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "user_filter_preferences_own_delete",
+    "table": "user_filter_preferences",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_reclassification_reviews_own_select",
+    "table": "skill_reclassification_reviews",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_reclassification_reviews_own_insert",
+    "table": "skill_reclassification_reviews",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "requested_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_reclassification_reviews_own_update",
+    "table": "skill_reclassification_reviews",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid()",
+    "check": "requested_by = auth.uid()",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_reclassification_reviews_own_delete",
+    "table": "skill_reclassification_reviews",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "requested_by = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "skill_harvest_runs_public_read",
+    "table": "skill_harvest_runs",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "true",
+    "check": "",
+    "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
    }
   ],
   "db_triggers": [
@@ -120160,10 +121398,10 @@
     ]
    },
    "log_audit_entry": {
-    "args": "p_action TEXT, p_entity_type TEXT, p_entity_id TEXT DEFAULT NULL, p_metadata JSONB DEFAULT '{}'::JSONB",
+    "args": "p_action TEXT, p_entity_type TEXT, p_entity_id UUID DEFAULT NULL, p_metadata JSONB DEFAULT '{}'::JSONB",
     "returns": "void",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260401002019_26e948c0-3c01-41cd-9f25-df3d3a33ac66.sql",
+    "src": "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
     "security_definer": true,
     "search_path": true,
     "body": "BEGIN INSERT INTO public.audit_log (user_id, action, entity_type, entity_id, metadata) VALUES (auth.uid(), p_action, p_entity_type, p_entity_id, p_metadata); END;",
@@ -129128,35 +130366,46 @@
    "assets": {
     "rls": "enabled",
     "SELECT": [
-     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
+     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()"
     ],
     "INSERT": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "audit_events": {
     "rls": "enabled",
     "SELECT": [
-     "public: EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND workspace_id = audit_events.workspace_id AND role_key = 'wor"
+     "public: EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND workspace_id = audit_events.workspace_id AND role_key = 'wor",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()"
     ],
     "INSERT": [
-     "public: auth.role() = 'authenticated' OR auth.role() = 'service_role'"
+     "public: auth.role() = 'authenticated' OR auth.role() = 'service_role'",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()"
     ],
-    "UPDATE": [],
-    "DELETE": []
+    "UPDATE": [
+     "authenticated: user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
+    ],
+    "DELETE": [
+     "authenticated: user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
+    ]
    },
    "audit_log": {
     "rls": "enabled",
     "SELECT": [
      "authenticated: auth.uid() = user_id",
      "public: EXISTS (SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role_key IN ('workspace_admin','platform_admin'))",
-     "public: ( workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin') ) ) "
+     "public: ( workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin') ) ) ",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid()"
     ],
     "INSERT": [
      "authenticated: true",
@@ -129461,16 +130710,20 @@
    "business_systems": {
     "rls": "enabled",
     "SELECT": [
-     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
+     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()"
     ],
     "INSERT": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "change_approvals": {
@@ -129487,16 +130740,20 @@
    "change_requests": {
     "rls": "enabled",
     "SELECT": [
-     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
+     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR requested_by = auth.uid()"
     ],
     "INSERT": [
-     "public: requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
+     "public: requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id) OR (requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_worksp"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id) OR (requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_worksp",
+     "authenticated: requested_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: requested_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "chaos_experiments": {
@@ -130329,16 +131586,20 @@
     "rls": "enabled",
     "SELECT": [
      "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()"
     ],
     "INSERT": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "game_day_events": {
@@ -130642,32 +131903,40 @@
     "rls": "enabled",
     "SELECT": [
      "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()"
     ],
     "INSERT": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "ir_tabletop_exercises": {
     "rls": "enabled",
     "SELECT": [
      "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "INSERT": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "kb_article_versions": {
@@ -130829,16 +132098,20 @@
    "managed_secrets": {
     "rls": "enabled",
     "SELECT": [
-     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
+     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()"
     ],
     "INSERT": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "mcp_servers": {
@@ -131134,16 +132407,20 @@
    "pentest_findings": {
     "rls": "enabled",
     "SELECT": [
-     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
+     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()"
     ],
     "INSERT": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "permissions": {
@@ -131363,15 +132640,20 @@
    "risk_register": {
     "rls": "enabled",
     "SELECT": [
-     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
+     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid()"
     ],
     "INSERT": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
-    "DELETE": []
+    "DELETE": [
+     "authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
+    ]
    },
    "risk_review_events": {
     "rls": "enabled",
@@ -131548,7 +132830,8 @@
    "skill_harvest_runs": {
     "rls": "enabled",
     "SELECT": [
-     "authenticated: public.is_workspace_admin((SELECT auth.uid()))"
+     "authenticated: public.is_workspace_admin((SELECT auth.uid()))",
+     "authenticated: true"
     ],
     "INSERT": [],
     "UPDATE": [],
@@ -131583,30 +132866,38 @@
    "skill_reclassification_reviews": {
     "rls": "enabled",
     "SELECT": [
-     "authenticated: true"
+     "authenticated: true",
+     "authenticated: requested_by = auth.uid()"
     ],
     "INSERT": [
-     "authenticated: requested_by = (SELECT auth.uid()) AND status = 'pendente' AND reviewed_by IS NULL"
+     "authenticated: requested_by = (SELECT auth.uid()) AND status = 'pendente' AND reviewed_by IS NULL",
+     "authenticated: requested_by = auth.uid()"
     ],
     "UPDATE": [
-     "authenticated: is_workspace_admin((SELECT auth.uid()))"
+     "authenticated: is_workspace_admin((SELECT auth.uid()))",
+     "authenticated: requested_by = auth.uid()"
     ],
-    "DELETE": []
+    "DELETE": [
+     "authenticated: requested_by = auth.uid()"
+    ]
    },
    "skill_registry": {
     "rls": "enabled",
     "SELECT": [
-     "public: TRUE"
+     "authenticated: is_public = true OR workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()"
     ],
     "INSERT": [
-     "public: (workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin') ) AND"
+     "public: (workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin') ) AND",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()"
     ],
     "UPDATE": [
      "public: (workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin') ) AND",
-     "authenticated: is_public = true AND public.is_workspace_admin((SELECT auth.uid()))"
+     "authenticated: is_public = true AND public.is_workspace_admin((SELECT auth.uid()))",
+     "authenticated: created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: (workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role = 'owner' ) AND workspace_i"
+     "public: (workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role = 'owner' ) AND workspace_i",
+     "authenticated: created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "skill_registry_safe": {
@@ -132327,31 +133618,39 @@
    "user_2fa": {
     "rls": "enabled",
     "SELECT": [
-     "authenticated: auth.uid() = user_id"
+     "authenticated: auth.uid() = user_id",
+     "authenticated: user_id = auth.uid()"
     ],
     "INSERT": [
-     "authenticated: auth.uid() = user_id"
+     "authenticated: auth.uid() = user_id",
+     "authenticated: user_id = auth.uid()"
     ],
     "UPDATE": [
-     "authenticated: auth.uid() = user_id"
+     "authenticated: auth.uid() = user_id",
+     "authenticated: user_id = auth.uid()"
     ],
     "DELETE": [
-     "authenticated: auth.uid() = user_id"
+     "authenticated: auth.uid() = user_id",
+     "authenticated: user_id = auth.uid()"
     ]
    },
    "user_filter_preferences": {
     "rls": "enabled",
     "SELECT": [
-     "public: auth.uid() = user_id"
+     "public: auth.uid() = user_id",
+     "authenticated: user_id = auth.uid()"
     ],
     "INSERT": [
-     "public: auth.uid() = user_id"
+     "public: auth.uid() = user_id",
+     "authenticated: user_id = auth.uid()"
     ],
     "UPDATE": [
-     "public: auth.uid() = user_id"
+     "public: auth.uid() = user_id",
+     "authenticated: user_id = auth.uid()"
     ],
     "DELETE": [
-     "public: auth.uid() = user_id"
+     "public: auth.uid() = user_id",
+     "authenticated: user_id = auth.uid()"
     ]
    },
    "user_research_configs": {
@@ -132436,16 +133735,20 @@
    "vendors": {
     "rls": "enabled",
     "SELECT": [
-     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
+     "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "INSERT": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()",
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))"
     ],
     "UPDATE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
-     "public: public.is_workspace_admin(auth.uid(), workspace_id)"
+     "public: public.is_workspace_admin(auth.uid(), workspace_id)",
+     "authenticated: public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "voice_sessions": {
@@ -133032,6 +134335,7 @@
    "supabase/migrations/20260805000001_security_bug_corrections.sql",
    "supabase/migrations/20260905120000_rls_complete_reconciliation.sql",
    "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+   "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
    "tests/load/llm-gateway.k6.js",
    "tests/rls/personas.test.ts",
    "tests/rls/setup.ts",
@@ -136659,6 +137963,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "log_audit_entry",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261114094500_restore_log_audit_entry.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "log_audit_entry",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261114094500_restore_log_audit_entry.sql"
    }
   ],
   "guards": [
@@ -188734,6 +190054,15 @@
    "lines": 172,
    "uses_service_role": true
   },
+  "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql": {
+   "path": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
+   "lines": 266,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261114094500_restore_log_audit_entry.sql": {
+   "path": "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
+   "lines": 36
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -188895,10 +190224,20 @@
   }
  },
  "git": {
-  "sha": "d2249e5934807c2f88d87125f754fbab26cebdea",
+  "sha": "b35c28a439bd421934cfe31eac78d6fff64b7ee2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "b35c28a",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)",
+    "files": [
+     "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
+     "supabase/migrations/20261114094500_restore_log_audit_entry.sql"
+    ]
+   },
    {
     "sha": "d2249e5",
     "date": "2026-11-20",
@@ -189247,29 +190586,6 @@
      "src/components/agent-builder/ConversationalBuilder.tsx",
      "src/components/agent-builder/CostEstimateCard.tsx"
     ]
-   },
-   {
-    "sha": "898e6ab",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix(config): aponta todas as referências de projeto Supabase para qdlnzopxrlsoljcrcmzv (#80)",
-    "files": [
-     "AGENTS.md",
-     "ESTADO-ATUAL.md",
-     "docs/agentes/banco.md",
-     "docs/agentes/deploy.md",
-     "docs/agentes/mapa-repo.md",
-     "index.html",
-     "scripts/deploy-edge-functions.sh",
-     "scripts/generate-openapi.ts",
-     "scripts/generate-types.sh",
-     "scripts/set-secrets.sh",
-     "src/config/env.ts",
-     "src/integrations/supabase/externalClient.ts",
-     "src/pages/DeploymentsPage.tsx",
-     "src/pages/WidgetBuilderPage.tsx",
-     "src/services/widgetService.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -189310,14 +190626,6 @@
     2
    ],
    [
-    "scripts/deploy-edge-functions.sh",
-    2
-   ],
-   [
-    "scripts/generate-openapi.ts",
-    2
-   ],
-   [
     "supabase/functions/agent-workflow-runner/index.ts",
     2
    ],
@@ -189326,8 +190634,12 @@
     2
    ],
    [
-    "src/services/widgetService.ts",
-    2
+    "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
+    1
    ],
    [
     ".github/workflows/contexto.yml",
@@ -189351,6 +190663,10 @@
    ],
    [
     "supabase/functions/bitrix24-oauth/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/crm-bitrix-sync/index.ts",
     1
    ]
   ]

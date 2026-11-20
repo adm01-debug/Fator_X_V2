@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d2249e5934807c2f88d87125f754fbab26cebdea",
+  "commit": "b35c28a439bd421934cfe31eac78d6fff64b7ee2",
   "branch": "main",
-  "data_commit": "2026-11-20T00:29:25-03:00",
+  "data_commit": "2026-11-20T01:02:57-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "b35c28a4",
+    "data": "2026-11-20",
+    "assunto": "fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)"
+   },
    {
     "sha": "d2249e59",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "ba8344c3",
     "data": "2026-11-12",
     "assunto": "chore(ci): atualiza comentario do SUPABASE_ACCESS_TOKEN no inventario semanal (#79)"
-   },
-   {
-    "sha": "1033b2fe",
-    "data": "2026-11-12",
-    "assunto": "fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS"
    }
   ],
-  "arquivos_mudados_7d": 61,
+  "arquivos_mudados_7d": 63,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 33
+    "commits": 34
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1974,
+  "arquivos_total": 1976,
   "arquivos_codigo": 1449,
   "linhas_codigo": 317765,
   "rotas": 151,
@@ -322,7 +322,7 @@
   "hooks": 75,
   "edge_functions": 87,
   "tabelas": 327,
-  "migrations": 329,
+  "migrations": 331,
   "cron_jobs": 37,
   "testes": 239,
   "workflows": 9,

@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 329,
+ "migrations": 331,
  "seeds": [],
  "avisos": [
   "45 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -6030,6 +6030,30 @@
      "tipo": "permissive"
     },
     {
+     "nome": "assets_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "assets_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "assets_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "assets_member_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "members view assets",
      "comando": "select",
      "para": "public",
@@ -6198,6 +6222,30 @@
      "tipo": "permissive"
     },
     {
+     "nome": "audit_events_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "audit_events_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "audit_events_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "audit_events_member_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "Only service role or authenticated can log events",
      "comando": "insert",
      "para": "public",
@@ -6325,6 +6373,12 @@
    },
    "rls": true,
    "policies": [
+    {
+     "nome": "audit_log_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "audit_log_service_insert",
      "comando": "insert",
@@ -8766,6 +8820,30 @@
      "tipo": "permissive"
     },
     {
+     "nome": "business_systems_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "business_systems_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "business_systems_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "business_systems_member_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "members_select_business_systems",
      "comando": "select",
      "para": "public",
@@ -9049,6 +9127,30 @@
      "nome": "Admin deletes change requests",
      "comando": "delete",
      "para": "public",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "change_requests_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "change_requests_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "change_requests_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "change_requests_member_update",
+     "comando": "update",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
@@ -17544,6 +17646,30 @@
      "tipo": "permissive"
     },
     {
+     "nome": "freeze_windows_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "freeze_windows_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "freeze_windows_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "freeze_windows_member_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "Members view freeze windows",
      "comando": "select",
      "para": "public",
@@ -20396,6 +20522,30 @@
      "tipo": "permissive"
     },
     {
+     "nome": "ir_playbooks_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ir_playbooks_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ir_playbooks_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ir_playbooks_member_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "ir_playbooks_select",
      "comando": "select",
      "para": "public",
@@ -20560,6 +20710,30 @@
      "nome": "ir_tabletop_admin_write",
      "comando": "all",
      "para": "public",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ir_tabletop_exercises_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ir_tabletop_exercises_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ir_tabletop_exercises_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ir_tabletop_exercises_member_update",
+     "comando": "update",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
@@ -22158,6 +22332,30 @@
    },
    "rls": true,
    "policies": [
+    {
+     "nome": "managed_secrets_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "managed_secrets_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "managed_secrets_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "managed_secrets_member_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "Workspace admins can delete managed secrets",
      "comando": "delete",
@@ -25583,6 +25781,30 @@
      "comando": "select",
      "para": "public",
      "tipo": "permissive"
+    },
+    {
+     "nome": "pentest_findings_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pentest_findings_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pentest_findings_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pentest_findings_member_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
     }
    ],
    "indices": [
@@ -28016,6 +28238,30 @@
      "comando": "select",
      "para": "public",
      "tipo": "permissive"
+    },
+    {
+     "nome": "risk_register_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "risk_register_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "risk_register_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "risk_register_member_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
     }
    ],
    "indices": [
@@ -29831,6 +30077,12 @@
      "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
+    },
+    {
+     "nome": "skill_harvest_runs_public_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
     }
    ],
    "indices": [],
@@ -30328,6 +30580,30 @@
      "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
+    },
+    {
+     "nome": "skill_reclassification_reviews_own_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "skill_reclassification_reviews_own_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "skill_reclassification_reviews_own_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "skill_reclassification_reviews_own_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
     }
    ],
    "indices": [
@@ -30642,9 +30918,27 @@
    "rls": true,
    "policies": [
     {
+     "nome": "skill_registry_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "skill_registry_owner_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "skill_registry_owner_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "skill_registry_public_read",
      "comando": "select",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
@@ -34873,6 +35167,30 @@
    "rls": true,
    "policies": [
     {
+     "nome": "user_2fa_own_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "user_2fa_own_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "user_2fa_own_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "user_2fa_own_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "Users manage own 2FA",
      "comando": "all",
      "para": "authenticated",
@@ -34937,6 +35255,30 @@
    },
    "rls": true,
    "policies": [
+    {
+     "nome": "user_filter_preferences_own_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "user_filter_preferences_own_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "user_filter_preferences_own_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "user_filter_preferences_own_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "Users delete own filter prefs",
      "comando": "delete",
@@ -35733,6 +36075,30 @@
      "nome": "vendors_insert_admins",
      "comando": "insert",
      "para": "public",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "vendors_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "vendors_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "vendors_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "vendors_member_update",
+     "comando": "update",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {

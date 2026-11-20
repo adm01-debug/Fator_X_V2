@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d2249e5934807c2f88d87125f754fbab26cebdea` (2026-11-20T00:29:25-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b35c28a439bd421934cfe31eac78d6fff64b7ee2` (2026-11-20T01:02:57-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1391), SQL (332), Markdown (114), JavaScript (54), JSON (24), YAML (15), Shell (10), Python (5)
+- linguagens: TypeScript (1391), SQL (334), Markdown (114), JavaScript (54), JSON (24), YAML (15), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1974 |
+| arquivos_total | 1976 |
 | arquivos_codigo | 1449 |
 | linhas_codigo | 317765 |
 | rotas | 151 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 75 |
 | edge_functions | 87 |
 | tabelas | 327 |
-| migrations | 329 |
+| migrations | 331 |
 | cron_jobs | 37 |
 | testes | 239 |
 | workflows | 9 |
@@ -431,8 +431,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13799 nós · 37047 arestas · 902 comunidades · grafo do commit `d2249e59`
-- comunidades maiores: lucide-react (290), button.tsx (215), react (210), ref_https (160), App.tsx (156), PageHeader.tsx (146), cn (137), badge.tsx (131), agent-workflow-runner/index.ts (108), fromTable (104), templateSkillLinkService.ts (104), ref_node_fs (102)
+- 13802 nós · 37048 arestas · 886 comunidades · grafo do commit `b35c28a4`
+- comunidades maiores: lucide-react (301), react (273), App.tsx (173), PageHeader.tsx (167), button.tsx (150), ref_https (148), cn (120), badge.tsx (112), fromTable (104), ref_node_fs (102), dependencies (90), services/index.ts (90)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -576,6 +576,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-20 `b35c28a4` fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)
 - 2026-11-20 `d2249e59` chore: contexto agendado de 10 min para 1x/hora (#98)
 - 2026-11-20 `9a673de6` chore(ci): unifica node 22 nos guards (#91)
 - 2026-11-20 `7b3991fb` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 7 updates (#104)
@@ -590,7 +591,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `9d6d1f42` infra: workflow de deploy automatico das Edge Functions (#95)
 - 2026-11-14 `557f1f6c` chore(coverage): sobe thresholds para o nivel medido na CI (#90)
 - 2026-11-14 `f6a5b20d` feat(validacao): adiciona zod as rotas de entrada do auth (#92)
-- 2026-11-14 `715e9cd5` fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

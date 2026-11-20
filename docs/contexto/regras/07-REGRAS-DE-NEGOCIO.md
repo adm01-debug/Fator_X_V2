@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d2249e5934` · branch `main` · 2026-11-20 03:30 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b35c28a439` · branch `main` · 2026-11-20 04:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `change_requests` | Members view change requests | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `change_requests` | Members create change requests | INSERT | public | permissive |  | `requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |
 | `change_requests` | Requester or admin updates change requests | UPDATE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id) OR (requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())))` |  |
-| … +283 linhas — lista completa em `context.json` | | | | | | |
+| … +344 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
