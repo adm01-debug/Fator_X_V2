@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e4460f85d7d1672d9c5df47acb16fec543c4ca81",
+  "sha": "db07b5db60238f97393035818b0de7930ada70f6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 13:56 UTC",
-  "files_total": 1982,
+  "generated_at": "2026-11-20 14:47 UTC",
+  "files_total": 1983,
   "code_files": 1785,
   "code_lines": 347250
  },
  "version": "1.3.2",
- "facts_hash": "88961c7db328c0de",
+ "facts_hash": "e6ce22326192385c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -148,6 +148,14 @@
    }
   ],
   "ci": [
+   {
+    "file": ".github/workflows/anti-stale-dependabot.yml",
+    "name": "Anti-stale dependabot",
+    "triggers": [
+     "schedule",
+     "workflow_dispatch"
+    ]
+   },
    {
     "file": ".github/workflows/automation-local.yml",
     "name": "Automação local",
@@ -57190,6 +57198,11 @@
     "kind": "cron (código)",
     "detail": "⏰",
     "file": "src/components/automation/ExecutionHistoryPanel.tsx"
+   },
+   {
+    "kind": "GitHub Actions cron",
+    "detail": "42 6 * * 5",
+    "file": ".github/workflows/anti-stale-dependabot.yml"
    },
    {
     "kind": "GitHub Actions cron",
@@ -190476,10 +190489,19 @@
   }
  },
  "git": {
-  "sha": "e4460f85d7d1672d9c5df47acb16fec543c4ca81",
+  "sha": "db07b5db60238f97393035818b0de7930ada70f6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "db07b5d",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore(ci): workflow anti-stale para PRs dependabot com base atrasada (#124)",
+    "files": [
+     ".github/workflows/anti-stale-dependabot.yml"
+    ]
+   },
    {
     "sha": "e4460f8",
     "date": "2026-11-20",
@@ -190796,28 +190818,12 @@
     "files": [
      ".github/workflows/ci.yml"
     ]
-   },
-   {
-    "sha": "c1ba213",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "chore(lint): zerar erros do ESLint (13 → 0) (#85)",
-    "files": [
-     "scripts/generate-openapi.ts",
-     "supabase/deployment-manifest.json",
-     "supabase/functions/agent-workflow-runner/index.ts",
-     "supabase/functions/datahub-query/index.ts",
-     "supabase/functions/llm-gateway/index.ts",
-     "supabase/functions/voice-synthesize/index.ts",
-     "supabase/functions/voice-transcribe/index.ts",
-     "supabase/functions/workflow-engine-v2/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    7
+    6
    ],
    [
     "package-lock.json",
@@ -190856,8 +190862,8 @@
     2
    ],
    [
-    "supabase/functions/llm-gateway/index.ts",
-    2
+    ".github/workflows/anti-stale-dependabot.yml",
+    1
    ],
    [
     ".github/workflows/inventario-estado-semanal.yml",

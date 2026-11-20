@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e4460f85d7d1672d9c5df47acb16fec543c4ca81",
+  "commit": "db07b5db60238f97393035818b0de7930ada70f6",
   "branch": "main",
-  "data_commit": "2026-11-20T10:53:45-03:00",
+  "data_commit": "2026-11-20T11:47:08-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "db07b5db",
+    "data": "2026-11-20",
+    "assunto": "chore(ci): workflow anti-stale para PRs dependabot com base atrasada (#124)"
+   },
    {
     "sha": "e4460f85",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "557f1f6c",
     "data": "2026-11-14",
     "assunto": "chore(coverage): sobe thresholds para o nivel medido na CI (#90)"
-   },
-   {
-    "sha": "f6a5b20d",
-    "data": "2026-11-14",
-    "assunto": "feat(validacao): adiciona zod as rotas de entrada do auth (#92)"
    }
   ],
-  "arquivos_mudados_7d": 72,
+  "arquivos_mudados_7d": 73,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 37
+    "commits": 38
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1977,
+  "arquivos_total": 1978,
   "arquivos_codigo": 1449,
   "linhas_codigo": 317841,
   "rotas": 151,
@@ -325,7 +325,7 @@
   "migrations": 332,
   "cron_jobs": 37,
   "testes": 239,
-  "workflows": 9,
+  "workflows": 10,
   "scripts": 45,
   "docs_md": 114
  },
