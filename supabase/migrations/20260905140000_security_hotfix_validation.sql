@@ -16,8 +16,15 @@
 
 -- ── 1. Funções administrativas/analíticas: apenas service_role ────
 
-REVOKE EXECUTE ON FUNCTION public.exec_sql(text) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.exec_sql(text) TO service_role;
+-- exec_sql é RPC SECURITY DEFINER criado manualmente no projeto produção
+-- (não existe em base limpa/preview; datahub-query tem fallback).
+DO $$
+BEGIN
+  IF to_regprocedure('public.exec_sql(text)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.exec_sql(text) FROM PUBLIC, anon, authenticated;
+    GRANT EXECUTE ON FUNCTION public.exec_sql(text) TO service_role;
+  END IF;
+END $$;
 
 REVOKE EXECUTE ON PROCEDURE public.apply_workspace_rls(text) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON PROCEDURE public.apply_workspace_rls(text) TO service_role;
