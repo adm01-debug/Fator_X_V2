@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "c5fffcfb99266437a78caa6f2561b713a72fb57c",
+  "sha": "60357f2b0e0afb46f0beae1f9f85876f64d166e8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 13:05 UTC",
+  "generated_at": "2026-11-20 13:10 UTC",
   "files_total": 1982,
   "code_files": 1785,
   "code_lines": 347250
@@ -190476,10 +190476,22 @@
   }
  },
  "git": {
-  "sha": "c5fffcfb99266437a78caa6f2561b713a72fb57c",
+  "sha": "60357f2b0e0afb46f0beae1f9f85876f64d166e8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "60357f2",
+    "date": "2026-11-20",
+    "author": "dependabot[bot]",
+    "subject": "chore(ci)(deps): bump actions/setup-node from 6.5.0 to 7.1.0 (#101)",
+    "files": [
+     ".github/workflows/automation-local.yml",
+     ".github/workflows/ci.yml",
+     ".github/workflows/edge-deploy.yml",
+     ".github/workflows/guards.yml"
+    ]
+   },
    {
     "sha": "c5fffcf",
     "date": "2026-11-20",
@@ -190806,22 +190818,12 @@
      "supabase/deployment-manifest.json",
      "supabase/functions/_shared/cors.ts"
     ]
-   },
-   {
-    "sha": "60e36b8",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "feat(notificacao): envio real de e-mail via Resend no notification-sender (#82)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/notification-sender/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    10
+    9
    ],
    [
     "package-lock.json",
@@ -190830,6 +190832,18 @@
    [
     "package.json",
     3
+   ],
+   [
+    ".github/workflows/ci.yml",
+    2
+   ],
+   [
+    ".github/workflows/edge-deploy.yml",
+    2
+   ],
+   [
+    ".github/workflows/guards.yml",
+    2
    ],
    [
     "supabase/functions/openclaw-webhook/index.ts",
@@ -190850,6 +190864,10 @@
    [
     "supabase/functions/llm-gateway/index.ts",
     2
+   ],
+   [
+    ".github/workflows/automation-local.yml",
+    1
    ],
    [
     "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
@@ -190881,22 +190899,6 @@
    ],
    [
     "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
-    1
-   ],
-   [
-    ".github/workflows/contexto.yml",
-    1
-   ],
-   [
-    ".github/workflows/guards.yml",
-    1
-   ],
-   [
-    "supabase/functions/a2a-server/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/agent-conversational-builder/index.ts",
     1
    ]
   ]

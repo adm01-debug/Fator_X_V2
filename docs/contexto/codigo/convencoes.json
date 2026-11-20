@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "chore(ci)(deps): bump actions/setup-node from 6.5.0 to 7.1.0 (#101)",
    "fix(db): reconcilia schema de documentos com o contrato das edges (#122)",
    "fix(edge): contract tests verdes sem secrets — valida payload e assinatura antes de exigir key (#120)",
    "fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)",
-   "fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)",
-   "chore: contexto agendado de 10 min para 1x/hora (#98)"
+   "fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

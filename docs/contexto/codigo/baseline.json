@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c5fffcfb99266437a78caa6f2561b713a72fb57c",
+  "commit": "60357f2b0e0afb46f0beae1f9f85876f64d166e8",
   "branch": "main",
-  "data_commit": "2026-11-20T10:05:10-03:00",
+  "data_commit": "2026-11-20T10:08:20-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "60357f2b",
+    "data": "2026-11-20",
+    "assunto": "chore(ci)(deps): bump actions/setup-node from 6.5.0 to 7.1.0 (#101)"
+   },
    {
     "sha": "c5fffcfb",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "46af5baa",
     "data": "2026-11-12",
     "assunto": "fix(edge): corrige erros de tipagem em webhooks (#84)"
-   },
-   {
-    "sha": "12be1922",
-    "data": "2026-11-12",
-    "assunto": "fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)"
    }
   ],
-  "arquivos_mudados_7d": 70,
+  "arquivos_mudados_7d": 71,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": ".github/workflows/ci.yml",
-    "mudancas": 4
+    "mudancas": 5
    },
    {
     "pasta": "src/components/admin",
@@ -165,6 +165,10 @@
    },
    {
     "pasta": ".github/workflows/contexto.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".github/workflows/guards.yml",
     "mudancas": 3
    },
    {
@@ -190,10 +194,6 @@
    {
     "pasta": "supabase/functions/agent-workflow-runner",
     "mudancas": 3
-   },
-   {
-    "pasta": "supabase/functions/crm-enrich",
-    "mudancas": 3
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 6
+    "mudancas": 7
    },
    {
     "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
@@ -231,6 +231,10 @@
    },
    {
     "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 3
+   },
+   {
+    "arquivo": ".github/workflows/guards.yml",
     "mudancas": 3
    },
    {
@@ -292,10 +296,6 @@
    {
     "arquivo": "supabase/functions/kb-translate-article/index.ts",
     "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/product-mockup/index.ts",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 6
+    "commits": 7
    }
   ]
  },
