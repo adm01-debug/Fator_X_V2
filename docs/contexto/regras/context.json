@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "bc0d0b86ba7131e83906041e16fb0738ae1deb4a",
+  "sha": "71fcc76c24055d1251cd2825c9d50edaec10b4cd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 05:29 UTC",
+  "generated_at": "2026-11-20 05:58 UTC",
   "files_total": 1981,
   "code_files": 1784,
   "code_lines": 347077
@@ -190337,10 +190337,21 @@
   }
  },
  "git": {
-  "sha": "bc0d0b86ba7131e83906041e16fb0738ae1deb4a",
+  "sha": "71fcc76c24055d1251cd2825c9d50edaec10b4cd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "71fcc76",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix(edge): contract tests verdes sem secrets — valida payload e assinatura antes de exigir key (#120)",
+    "files": [
+     "supabase/deployment-manifest.json",
+     "supabase/functions/openclaw-webhook/index.ts",
+     "supabase/functions/quick-agent-test/index.ts"
+    ]
+   },
    {
     "sha": "bc0d0b8",
     "date": "2026-11-20",
@@ -190671,32 +190682,6 @@
      "supabase/functions/_shared/auth.ts",
      "supabase/functions/widget-proxy/index.ts"
     ]
-   },
-   {
-    "sha": "b8f1e83",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)",
-    "files": [
-     "docs/agentes/integracoes.md",
-     "supabase/deployment-manifest.json",
-     "supabase/functions/_shared/ai-provider.ts",
-     "supabase/functions/agent-conversational-builder/index.ts",
-     "supabase/functions/agent-eval-runner/index.ts",
-     "supabase/functions/agent-workflow-runner/index.ts",
-     "supabase/functions/code-interpreter-execute/index.ts",
-     "supabase/functions/crm-enrich/index.ts",
-     "supabase/functions/global-search/index.ts",
-     "supabase/functions/graph-execute/index.ts",
-     "supabase/functions/kb-analyze-gaps/index.ts",
-     "supabase/functions/kb-translate-article/index.ts",
-     "supabase/functions/llm-gateway/index.ts",
-     "supabase/functions/llm-gateway/providers/openai.ts",
-     "supabase/functions/quick-agent-test/index.ts",
-     "supabase/functions/skill-classify-llm/index.ts",
-     "supabase/functions/skill-describe-llm/index.ts",
-     "supabase/functions/voice-synthesize/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -190713,19 +190698,11 @@
     3
    ],
    [
-    "supabase/functions/llm-gateway/index.ts",
-    3
+    "supabase/functions/openclaw-webhook/index.ts",
+    2
    ],
    [
     "docs/migration/MATRIZ_EDGE_TABELA.md",
-    2
-   ],
-   [
-    "supabase/functions/agent-conversational-builder/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/crm-enrich/index.ts",
     2
    ],
    [
@@ -190741,12 +190718,12 @@
     2
    ],
    [
-    "supabase/functions/agent-workflow-runner/index.ts",
+    "supabase/functions/llm-gateway/index.ts",
     2
    ],
    [
-    "supabase/functions/voice-synthesize/index.ts",
-    2
+    "supabase/functions/quick-agent-test/index.ts",
+    1
    ],
    [
     "supabase/functions/cerebro-query/index.ts",
@@ -190778,6 +190755,14 @@
    ],
    [
     "supabase/functions/a2a-server/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/agent-conversational-builder/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/audio-transcribe/index.ts",
     1
    ]
   ]

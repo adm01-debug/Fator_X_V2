@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(edge): contract tests verdes sem secrets — valida payload e assinatura antes de exigir key (#120)",
    "fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)",
    "fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)",
    "chore: contexto agendado de 10 min para 1x/hora (#98)",
-   "chore(ci): unifica node 22 nos guards (#91)",
-   "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 7 updates (#104)"
+   "chore(ci): unifica node 22 nos guards (#91)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bc0d0b86ba7131e83906041e16fb0738ae1deb4a` (2026-11-20T02:29:03-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `71fcc76c24055d1251cd2825c9d50edaec10b4cd` (2026-11-20T02:58:00-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -431,7 +431,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13802 nós · 37048 arestas · 886 comunidades · grafo do commit `bc0d0b86`
+- 13802 nós · 37048 arestas · 886 comunidades · grafo do commit `71fcc76c`
 - comunidades maiores: lucide-react (301), react (273), App.tsx (173), PageHeader.tsx (167), button.tsx (150), ref_https (148), cn (120), badge.tsx (112), fromTable (104), ref_node_fs (102), dependencies (90), services/index.ts (90)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -439,7 +439,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (16)
 - package.json (16)
-- supabase/deployment-manifest.json (12)
+- supabase/deployment-manifest.json (13)
 - .github/workflows/ci.yml (6)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/crm-enrich/index.ts (4)
@@ -576,6 +576,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-20 `71fcc76c` fix(edge): contract tests verdes sem secrets — valida payload e assinatura antes de exigir key (#120)
 - 2026-11-20 `bc0d0b86` fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)
 - 2026-11-20 `b35c28a4` fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)
 - 2026-11-20 `d2249e59` chore: contexto agendado de 10 min para 1x/hora (#98)
@@ -590,7 +591,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `8c281873` ci(security): dependency review barra CVE novo high/critical nos PRs (#107)
 - 2026-11-14 `79787795` fix(infra): expoe falha no deploy das edge functions (#96)
 - 2026-11-14 `9d6d1f42` infra: workflow de deploy automatico das Edge Functions (#95)
-- 2026-11-14 `557f1f6c` chore(coverage): sobe thresholds para o nivel medido na CI (#90)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

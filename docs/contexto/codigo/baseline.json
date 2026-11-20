@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bc0d0b86ba7131e83906041e16fb0738ae1deb4a",
+  "commit": "71fcc76c24055d1251cd2825c9d50edaec10b4cd",
   "branch": "main",
-  "data_commit": "2026-11-20T02:29:03-03:00",
+  "data_commit": "2026-11-20T02:58:00-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "71fcc76c",
+    "data": "2026-11-20",
+    "assunto": "fix(edge): contract tests verdes sem secrets — valida payload e assinatura antes de exigir key (#120)"
+   },
    {
     "sha": "bc0d0b86",
     "data": "2026-11-20",
@@ -126,18 +131,13 @@
     "sha": "81afc708",
     "data": "2026-11-12",
     "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates (#72)"
-   },
-   {
-    "sha": "d41db745",
-    "data": "2026-11-12",
-    "assunto": "chore(deps)(deps): bump @sentry/react from 10.73.0 to 11.11.0 in the sentry group across 1 directory (#63)"
    }
   ],
-  "arquivos_mudados_7d": 67,
+  "arquivos_mudados_7d": 69,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "pasta": "package-lock.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 35
+    "commits": 36
    },
    {
     "autor": "dependabot[bot]",
