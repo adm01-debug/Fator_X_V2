@@ -95,8 +95,8 @@ export default function ResetPasswordPage() {
     const result = resetPasswordSchema.safeParse({ password, confirmPassword });
     if (!result.success) {
       for (const issue of result.error.issues) {
-        if (issue.path[0] === 'password') errs.password = issue.message;
-        else if (issue.path[0] === 'confirmPassword') errs.confirm = issue.message;
+        if (issue.path[0] === 'password') errs.password ??= issue.message;
+        else if (issue.path[0] === 'confirmPassword') errs.confirm ??= issue.message;
       }
     }
     setErrors(errs);

@@ -15,6 +15,7 @@
  * lacunas; um valor confirmado pelo time sempre vence a inferência.
  */
 import {
+  getCorsHeaders,
   authenticateRequest,
   checkRateLimit,
   createAdminClient,
@@ -290,7 +291,7 @@ Deno.serve(async (req) => {
     const { user } = auth;
 
     const rate = await checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
-    if (!rate.allowed) return createRateLimitResponse(rate);
+    if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
     const parsed = await parseBody(req, EnrichInput);
     if (parsed.error) return parsed.error;

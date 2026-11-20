@@ -82,15 +82,35 @@ serve(async (req) => {
           if (secret?.key_value && insertedChunks) {
             const { withRetry, fetchWithTimeout } = await import('../_shared/retry.ts');
             for (let i = 0; i < insertedChunks.length; i++) {
-              const resp = await withRetry(() => fetchWithTimeout('https://api.openai.com/v1/embeddings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${secret.key_value}` },
-                body: JSON.stringify({ model: 'text-embedding-3-small', input: chunks[i] }),
-                timeoutMs: 20_000,
-              }), { attempts: 3, baseMs: 500, capMs: 5_000 });
-              const res = await resp.json();
-              if (res.data?.[0]?.embedding) {
-                await supabase.from('chunks').update({ embedding_status: 'done' }).eq('id', insertedChunks[i].id);
+              let embedding: number[] | null = null;
+              const embedModel = 'text-embedding-3-small';
+              try {
+                const resp = await withRetry(() => fetchWithTimeout('https://api.openai.com/v1/embeddings', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${secret.key_value}` },
+                  body: JSON.stringify({ model: 'text-embedding-3-small', input: chunks[i] }),
+                  timeoutMs: 20_000,
+                }), { attempts: 3, baseMs: 500, capMs: 5_000 });
+                const res = await resp.json();
+                embedding = res.data?.[0]?.embedding ?? null;
+              } catch {
+                embedding = null;
+              }
+              if (embedding) {
+                // Grava o vetor junto com a provenance do modelo: sem o vetor,
+                // `match_documents` nunca teria dados para buscar — o status
+                // 'done' sozinho era um buraco silencioso no pipeline.
+                await supabase.from('chunks').update({
+                  embedding_status: 'done',
+                  embedding: embedding,
+                  embedding_model: embedModel,
+                  embedded_at: new Date().toISOString(),
+                }).eq('id', insertedChunks[i].id);
+              } else {
+                await supabase
+                  .from('chunks')
+                  .update({ embedding_status: 'failed' })
+                  .eq('id', insertedChunks[i].id);
               }
               await send('progress', { current: i + 1, total: chunks.length, percentage: Math.round(((i + 1) / chunks.length) * 100) });
             }

@@ -77,6 +77,12 @@ Deno.serve(async (req) => {
   const admin = createClient(supabaseUrl, serviceKey);
 
   try {
+    // Body opcional: doc-rechunk invoca esta edge com { document_id } para
+    // escopar o embedding aos chunks daquele documento. Sem body (cron), o
+    // processamento é global.
+    const reqBody = (await req.json().catch(() => null)) as { document_id?: string } | null;
+    const scopeDocumentId = reqBody?.document_id ?? null;
+
     // 1. Busca linhas pendentes (content não vazio, embedding NULL, attempts < 3)
     const { data: rows, error: fetchErr } = await admin
       .from('agent_memories_v2')
@@ -89,13 +95,6 @@ Deno.serve(async (req) => {
 
     if (fetchErr) throw fetchErr;
     const pending = (rows ?? []).filter((r: MemoryRow) => r.content && r.content.length >= 10);
-
-    if (pending.length === 0) {
-      return new Response(
-        JSON.stringify({ ok: true, processed: 0, elapsed_ms: Date.now() - startedAt }),
-        { headers: { ...cors, 'Content-Type': 'application/json' } },
-      );
-    }
 
     let processed = 0;
     let failed = 0;
@@ -167,12 +166,83 @@ Deno.serve(async (req) => {
       }
     }
 
+    // 3. Processa chunks pendentes (embedding NULL + status 'pending'). O
+    // doc-rechunk arquiva e recria chunks aguardando embed — sem este passo o
+    // vetor nunca chega ao banco e `match_documents` fica sem dados. Quando o
+    // chamador escopa por document_id, processa só aquele documento.
+    let chunkPending: Array<{ id: string; content: string }> = [];
+    if (scopeDocumentId || pending.length === 0) {
+      let chunkQuery = admin
+        .from('chunks')
+        .select('id, content')
+        .is('embedding', null)
+        .eq('embedding_status', 'pending')
+        .not('content', 'is', null)
+        .order('created_at', { ascending: true })
+        .limit(MAX_ROWS);
+      if (scopeDocumentId) chunkQuery = chunkQuery.eq('document_id', scopeDocumentId);
+      const { data: chunkRows, error: chunkFetchErr } = await chunkQuery;
+      if (chunkFetchErr) throw chunkFetchErr;
+      chunkPending = (chunkRows ?? []).filter(
+        (r: { content: string | null }) => r.content && r.content.length >= 10,
+      );
+
+      for (let i = 0; i < chunkPending.length; i += BATCH_SIZE) {
+        const batch = chunkPending.slice(i, i + BATCH_SIZE);
+        try {
+          const { vectors, model } = await embedBatch(
+            batch.map((r) => r.content.slice(0, 8000)),
+            authHeader,
+            projectRef,
+          );
+          for (let j = 0; j < batch.length; j++) {
+            if (vectors[j].length !== EMBED_DIM) {
+              failed++;
+              await admin
+                .from('chunks')
+                .update({ embedding_status: 'failed' })
+                .eq('id', batch[j].id);
+              continue;
+            }
+            const { error: upErr } = await admin
+              .from('chunks')
+              .update({
+                embedding: vectors[j] as unknown as string,
+                embedding_model: model,
+                embedded_at: new Date().toISOString(),
+                embedding_status: 'done',
+              })
+              .eq('id', batch[j].id);
+            if (upErr) {
+              failed++;
+              await admin
+                .from('chunks')
+                .update({ embedding_status: 'failed' })
+                .eq('id', batch[j].id);
+            } else {
+              processed++;
+            }
+          }
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          failed += batch.length;
+          console.error('[rag-embed-backfill] chunk batch error:', msg);
+          await admin
+            .from('chunks')
+            .update({ embedding_status: 'failed' })
+            .in('id', batch.map((r) => r.id));
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({
         ok: true,
         processed,
         failed,
         candidates: pending.length,
+        chunk_candidates: chunkPending.length,
         elapsed_ms: Date.now() - startedAt,
       }),
       { headers: { ...cors, 'Content-Type': 'application/json' } },

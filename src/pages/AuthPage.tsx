@@ -52,9 +52,11 @@ export default function AuthPage() {
     const schema = isLogin ? loginSchema : signUpSchema;
     const result = schema.safeParse({ email, password });
     if (!result.success) {
+      // Zod reporta TODAS as regras que falham no campo; a primeira é a mais
+      // específica (ex.: vazio → "E-mail é obrigatório", não "E-mail inválido").
       for (const issue of result.error.issues) {
-        if (issue.path[0] === 'email') errs.email = issue.message;
-        else if (issue.path[0] === 'password') errs.password = issue.message;
+        if (issue.path[0] === 'email') errs.email ??= issue.message;
+        else if (issue.path[0] === 'password') errs.password ??= issue.message;
       }
     }
     setErrors(errs);

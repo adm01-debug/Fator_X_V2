@@ -16,6 +16,7 @@
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 import {
+  getCorsHeaders,
   handleCorsPreflight,
   jsonResponse,
   errorResponse,
@@ -116,7 +117,7 @@ Deno.serve(async (req) => {
     const { user } = auth;
 
     const rate = await checkRateLimit(getRateLimitIdentifier(req, user.id), RATE_LIMITS.heavy);
-    if (!rate.allowed) return createRateLimitResponse(rate);
+    if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
 
     const parsed = await parseBody(req, SyncInput);
     if (parsed.error) return parsed.error;

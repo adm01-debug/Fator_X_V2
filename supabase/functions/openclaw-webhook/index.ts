@@ -80,14 +80,14 @@ Deno.serve(async (req) => {
   const rl = checkRateLimit(getRateLimitIdentifier(req), WEBHOOK_LIMIT);
   if (!rl.allowed) return createRateLimitResponse(rl, corsHeaders);
 
-  const secret = Deno.env.get('OPENCLAW_WEBHOOK_SECRET') ?? '';
-  if (!secret) return json(500, { error: 'webhook_secret_not_configured' });
-
   const rawBody = await req.text();
   if (rawBody.length > MAX_BODY) return json(413, { error: 'payload_too_large' });
 
   const signature = req.headers.get('x-openclaw-signature') ?? '';
   if (!signature) return json(401, { error: 'missing_signature' });
+
+  const secret = Deno.env.get('OPENCLAW_WEBHOOK_SECRET') ?? '';
+  if (!secret) return json(500, { error: 'webhook_secret_not_configured' });
 
   // Replay protection: x-openclaw-timestamp (unix ms) is MANDATORY, window ±5min.
   // Omitting the timestamp header is rejected to prevent replay attacks.

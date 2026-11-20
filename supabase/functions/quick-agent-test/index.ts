@@ -67,13 +67,13 @@ Deno.serve(async (req) => {
       return json({ error: 'Method not allowed' }, 405);
     }
 
-    const apiKey = requireEnv(AI_API_KEY_ENV);
-
     const raw = await req.json().catch(() => null);
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ error: 'Payload inválido', details: parsed.error.flatten().fieldErrors }, 400);
     }
+
+    const apiKey = requireEnv(AI_API_KEY_ENV);
     const {
       system_prompt: rawSystemPrompt,
       user_message: userMessage,
