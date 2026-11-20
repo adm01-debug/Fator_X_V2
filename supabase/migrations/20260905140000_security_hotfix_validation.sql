@@ -89,11 +89,21 @@ GRANT EXECUTE ON FUNCTION public.cleanup_rate_limit_entries() TO service_role;
 -- (get_user_workspace_ids) antes de agregar; service_role escapa.
 
 CREATE OR REPLACE FUNCTION public.get_vendor_summary(p_workspace_id uuid)
-RETURNS TABLE(total bigint, active bigint, critical bigint, dpa_expiring bigint, reviews_overdue bigint)
+RETURNS jsonb
 LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path TO 'public'
-AS $function$
+STABLE SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_total INTEGER;
+  v_active INTEGER;
+  v_critical INTEGER;
+  v_dpa_expiring INTEGER;
+  v_dpa_expired INTEGER;
+  v_certs_expired INTEGER;
+  v_overdue_reviews INTEGER;
+  v_by_type jsonb;
+  v_by_criticality jsonb;
 BEGIN
   IF NOT (
     p_workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))
@@ -101,17 +111,38 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'Acesso negado: workspace não pertence ao usuário' USING ERRCODE = '42501';
   END IF;
-  RETURN QUERY
+
   SELECT
-    COUNT(*)::bigint,
-    COUNT(*) FILTER (WHERE status = 'active')::bigint,
-    COUNT(*) FILTER (WHERE criticality = 'critical')::bigint,
-    COUNT(*) FILTER (WHERE dpa_expires_at IS NOT NULL AND dpa_expires_at < NOW() + INTERVAL '60 days')::bigint,
-    COUNT(*) FILTER (WHERE next_review_at IS NOT NULL AND next_review_at < NOW())::bigint
+    COUNT(*),
+    COUNT(*) FILTER (WHERE status = 'active'),
+    COUNT(*) FILTER (WHERE status = 'active' AND criticality = 'critical'),
+    COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at BETWEEN now() AND now() + interval '30 days'),
+    COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at < now()),
+    COUNT(*) FILTER (WHERE status != 'offboarded' AND ((soc2_valid_until IS NOT NULL AND soc2_valid_until < now()) OR (iso27001_valid_until IS NOT NULL AND iso27001_valid_until < now()))),
+    COUNT(*) FILTER (WHERE status != 'offboarded' AND next_review_due IS NOT NULL AND next_review_due < now())
+  INTO v_total, v_active, v_critical, v_dpa_expiring, v_dpa_expired, v_certs_expired, v_overdue_reviews
   FROM public.vendors
   WHERE workspace_id = p_workspace_id;
+
+  SELECT COALESCE(jsonb_object_agg(vendor_type, c), '{}'::jsonb) INTO v_by_type
+  FROM (SELECT vendor_type, COUNT(*) c FROM public.vendors WHERE workspace_id = p_workspace_id AND status != 'offboarded' GROUP BY vendor_type) t;
+
+  SELECT COALESCE(jsonb_object_agg(criticality, c), '{}'::jsonb) INTO v_by_criticality
+  FROM (SELECT criticality, COUNT(*) c FROM public.vendors WHERE workspace_id = p_workspace_id AND status != 'offboarded' GROUP BY criticality) t;
+
+  RETURN jsonb_build_object(
+    'total', v_total,
+    'active', v_active,
+    'critical', v_critical,
+    'dpa_expiring', v_dpa_expiring,
+    'dpa_expired', v_dpa_expired,
+    'certs_expired', v_certs_expired,
+    'overdue_reviews', v_overdue_reviews,
+    'by_type', v_by_type,
+    'by_criticality', v_by_criticality
+  );
 END;
-$function$;
+$$;
 
 -- (get_asset_summary, get_bcp_summary, get_change_summary,
 --  get_ir_summary, get_secrets_status_summary seguem o MESMO padrão:
