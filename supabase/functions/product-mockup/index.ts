@@ -1,6 +1,14 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
-import { handleCorsPreflight, jsonResponse } from '../_shared/mod.ts';
+import {
+  handleCorsPreflight,
+  jsonResponse,
+  getCorsHeaders,
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentifier,
+  RATE_LIMITS,
+} from '../_shared/mod.ts';
 import { fetchWithTimeout } from '../_shared/retry.ts';
 import { z } from 'https://esm.sh/zod@3.23.8';
 
@@ -40,6 +48,9 @@ const SPACE_TIMEOUT = 60000; // 60s for GPU-heavy operations
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
+
+  const rateCheck = await checkRateLimit(getRateLimitIdentifier(req), RATE_LIMITS.heavy);
+  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
   try {
     const authHeader = req.headers.get('Authorization')!;
