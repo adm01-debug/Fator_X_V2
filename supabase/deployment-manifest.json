@@ -200,8 +200,8 @@
     },
     {
       "path": "supabase/functions/cerebro-query/index.ts",
-      "bytes": 11143,
-      "sha256": "131ed652730ae6b6640e4ae1cda74174033b08308e9532a30219468f00be5ff1"
+      "bytes": 10651,
+      "sha256": "74a1449db286c61965816e871ef398a38fc35b7feb99e8123d80374b5401f2d1"
     },
     {
       "path": "supabase/functions/code-interpreter-execute/index.ts",
@@ -450,8 +450,8 @@
     },
     {
       "path": "supabase/functions/rag-embed-backfill/index.ts",
-      "bytes": 6468,
-      "sha256": "b88b6db51a58bb7096c21975db52b301b0da014ab5558c02bc992bbf27e0b475"
+      "bytes": 9352,
+      "sha256": "72a6bcbb72474886046244c420fb513b2a2458118b1c91069849329f43675005"
     },
     {
       "path": "supabase/functions/rag-embed-v2/embedder.ts",
@@ -465,8 +465,8 @@
     },
     {
       "path": "supabase/functions/rag-ingest/index.ts",
-      "bytes": 6588,
-      "sha256": "aba5ccca6942c4eac4d1dd41294cceea6af28d60ace52455f1b97e9579c06da9"
+      "bytes": 7463,
+      "sha256": "715245fbb1af409a95a2bedee70a3e46ad7048c79c7c04a82e88398c48bef403"
     },
     {
       "path": "supabase/functions/rag-rerank-v2/index.ts",
@@ -916,7 +916,7 @@
       "name": "cerebro-query",
       "entrypoint": "supabase/functions/cerebro-query/index.ts",
       "verify_jwt": true,
-      "source_sha256": "3a4b721607a5e83bd5ab0f7f3a7686db370f2ee99fa9eafa8f31541ca7ed05a3",
+      "source_sha256": "ad6931120803d14918da298d6e44adcae2694ccd4d8dc1b23c9fa6bf3b8e1b88",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -1850,7 +1850,7 @@
       "name": "rag-embed-backfill",
       "entrypoint": "supabase/functions/rag-embed-backfill/index.ts",
       "verify_jwt": false,
-      "source_sha256": "3c205518248234ef326e6d3db4c3dd110d662ff5b1df1549919c16a46969895e",
+      "source_sha256": "bcfc2c7ffcf3151d3c276fe2f6b762e168e4b90727670e72a252ba7c1fcef016",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -1895,7 +1895,7 @@
       "name": "rag-ingest",
       "entrypoint": "supabase/functions/rag-ingest/index.ts",
       "verify_jwt": true,
-      "source_sha256": "3ac8906876e0b85a8d24517892a9be2f1b64e0fce4d8808774473d7c3ae7e1e0",
+      "source_sha256": "772934044a424d402ecb86c43b1ea21e8f13ce3ff5be0004cd973aa2c9e0b54a",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2598,5 +2598,5 @@
       ]
     }
   ],
-  "manifest_sha256": "431d5f810a14f344e215db60bdfa28b120c33af54ba408b6308182a3a4b09c69"
+  "manifest_sha256": "5a25953b8db2c12ff797c3ce3d8bc9b03630893233846f4cc8c59f4feaf6bf29"
 }
