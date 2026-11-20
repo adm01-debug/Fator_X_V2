@@ -1,0 +1,52 @@
+# docs:
+#   gatilho: agendado (sex 06:42 UTC = antes do dependabot semanal de segunda) e dispatch
+#   prova: PRs dependabot abertas com base atrasada viram mergeable e os checks de DB Drift
+#          voltam a rodar sem retrabalho manual
+#   falha: o job fica vermelho e as PRs dependabot continuam abrindo com DB Drift
+name: Anti-stale dependabot
+
+# PRs dependabot abrem com base na versão lock no momento do bump; quando supabase/ gerou
+# migration nova na main nesse intervalo, o DB Drift Check falha porque a base da PR não tem
+# o arquivo. `gh pr update-branch` traz a main pra base e destrava os checks sem abrir PR por
+# cima nem tocar no diff do dependabot.
+#
+# Secrets: nenhum. Usa ${{ github.token }} (permissions contents: write) e gh do runner.
+# Depois da atualização o dependabot re-diffa e os checks (inclusive DB Drift) disparam normal.
+
+on:
+  schedule:
+    - cron: '42 6 * * 5' # sexta 06:42 UTC (03:42 BRT), antes do update semanal de segunda
+  workflow_dispatch:
+
+permissions:
+  contents: write # gh pr update-branch na branch da PR dependabot
+
+concurrency:
+  group: anti-stale-dependabot
+  cancel-in-progress: false
+
+jobs:
+  atualizar-base:
+    name: Atualizar base de PRs dependabot
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Atualizar base das PRs dependabot atrás da main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # mergeStateStatus == BEHIND: a branch head da PR não contém a main (base atrasada) —
+          # mesma condição que faz o DB Drift Check falhar. Filtrar BEHIND evita mexer em
+          # CONFLICTING (update-branch não resolve) e em CLEAN (desnecessário).
+          mapfile -t PRS < <(gh pr list --repo "$GITHUB_REPOSITORY" --author app/dependabot \
+            --state open --json number,baseRefName,mergeStateStatus \
+            --jq '.[] | select(.baseRefName == "main") | select(.mergeStateStatus == "BEHIND") | .number')
+          if [ "${#PRS[@]}" -eq 0 ]; then
+            echo "Nenhuma PR dependabot com base atrasada."
+            exit 0
+          fi
+          for n in "${PRS[@]}"; do
+            echo "update-branch PR #$n"
+            gh pr update-branch "$n" --repo "$GITHUB_REPOSITORY" \
+              || echo "::warning::não foi possível atualizar a base da PR #$n"
+          done
