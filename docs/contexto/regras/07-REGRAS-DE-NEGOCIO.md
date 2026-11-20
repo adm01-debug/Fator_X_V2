@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `71fcc76c24` · branch `main` · 2026-11-20 05:58 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c5fffcfb99` · branch `main` · 2026-11-20 13:05 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -461,6 +461,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `documents` | `chunk_overlap` | obrigatório |
 | `documents` | `chunk_strategy` | obrigatório |
 | `documents` | `chunk_version` | obrigatório |
+| `documents` | `(tabela)` | constraint documents_status_check CHECK (status IN ('pending','processing','indexed','failed')) |
 | `documents` | `(tabela)` | constraint documents_chunk_strategy_check CHECK (chunk_strategy IN ('fixed','paragraph','sentence')) |
 | `documents` | `(tabela)` | constraint documents_chunk_size_check CHECK (chunk_size BETWEEN 200 AND 4000 AND chunk_overlap >= 0 AND chunk_overlap < chunk_size) |
 | `tool_integrations` | `id` | PK; default gen_random_uuid() |
@@ -616,8 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `alert_rules` | `cooldown_minutes` | default 60 |
 | `alert_rules` | `is_enabled` | default true |
 | `alert_rules` | `created_at` | default now() |
-| `prompt_ab_tests` | `id` | PK; default gen_random_uuid() |
-| … +2194 linhas — lista completa em `context.json` | | |
+| … +2196 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -701,10 +701,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_slack_rag_updated | BEFORE UPDATE | `slack_rag_sources` | `update_updated_at_column` |  |
 | trg_slack_bot_updated | BEFORE UPDATE | `slack_bot_bindings` | `update_updated_at_column` |  |
 | trg_dispatch_security_alert_to_slack | AFTER INSERT | `security_alerts` | `dispatch_security_alert_to_slack` |  |
-| trg_touch_document_ingestions | BEFORE UPDATE | `document_ingestions` | `touch_document_ingestions` |  |
 | collections_fill_workspace_trg | BEFORE INSERT OR UPDATE | `collections` | `collections_fill_workspace` |  |
-| trg_log_ingestion_event_ins | AFTER INSERT | `document_ingestions` | `log_ingestion_event` |  |
-| trg_log_ingestion_event_upd | AFTER UPDATE | `document_ingestions` | `log_ingestion_event` |  |
 | update_notebook_notes_updated_at | BEFORE UPDATE | `notebook_notes` | `update_updated_at_column` |  |
 | trg_notebook_podcasts_updated_at | BEFORE UPDATE | `notebook_podcasts` | `update_updated_at_column` |  |
 | trg_notebook_canvases_updated_at | BEFORE UPDATE | `notebook_canvases` | `tg_notebook_canvases_updated_at` |  |
@@ -741,6 +738,9 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_touch_chat_thread | AFTER INSERT OR DELETE | `chat_messages` | `touch_chat_thread` |  |
 | update_skill_reclass_updated_at | BEFORE UPDATE | `skill_reclassification_reviews` | `update_updated_at_column` |  |
 | update_skill_harvest_checkpoints_updated_at | BEFORE UPDATE | `skill_harvest_checkpoints` | `update_updated_at_column` |  |
+| trg_touch_document_ingestions | BEFORE UPDATE | `document_ingestions` | `touch_document_ingestions` |  |
+| trg_log_ingestion_event_ins | AFTER INSERT | `document_ingestions` | `log_ingestion_event` |  |
+| trg_log_ingestion_event_upd | AFTER UPDATE | `document_ingestions` | `log_ingestion_event` |  |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 

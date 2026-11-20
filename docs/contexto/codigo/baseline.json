@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "71fcc76c24055d1251cd2825c9d50edaec10b4cd",
+  "commit": "c5fffcfb99266437a78caa6f2561b713a72fb57c",
   "branch": "main",
-  "data_commit": "2026-11-20T02:58:00-03:00",
+  "data_commit": "2026-11-20T10:05:10-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "c5fffcfb",
+    "data": "2026-11-20",
+    "assunto": "fix(db): reconcilia schema de documentos com o contrato das edges (#122)"
+   },
    {
     "sha": "71fcc76c",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "12be1922",
     "data": "2026-11-12",
     "assunto": "fix(tiptap): alinha extensoes para v3 e remove Link duplicada do StarterKit (#65)"
-   },
-   {
-    "sha": "81afc708",
-    "data": "2026-11-12",
-    "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group across 1 directory with 7 updates (#72)"
    }
   ],
-  "arquivos_mudados_7d": 69,
+  "arquivos_mudados_7d": 70,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 36
+    "commits": 37
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1976,
+  "arquivos_total": 1977,
   "arquivos_codigo": 1449,
   "linhas_codigo": 317841,
   "rotas": 151,
@@ -322,7 +322,7 @@
   "hooks": 75,
   "edge_functions": 87,
   "tabelas": 327,
-  "migrations": 331,
+  "migrations": 332,
   "cron_jobs": 37,
   "testes": 239,
   "workflows": 9,

@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 331,
+ "migrations": 332,
  "seeds": [],
  "avisos": [
   "45 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -9757,7 +9757,7 @@
      "tipo": "jsonb",
      "nn": false,
      "pk": false,
-     "default": null,
+     "default": "'{}'::jsonb",
      "ref": null
     },
     "parent_chunk_id": {
@@ -10316,12 +10316,12 @@
      "tipo": "jsonb",
      "nn": false,
      "pk": false,
-     "default": "'{}'",
+     "default": "'{}'::jsonb",
      "ref": null
     },
     "name": {
      "tipo": "text",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": null,
      "ref": null
@@ -15493,7 +15493,7 @@
      "tipo": "text",
      "nn": true,
      "pk": false,
-     "default": null,
+     "default": "''",
      "ref": null
     },
     "id": {
@@ -15507,7 +15507,7 @@
      "tipo": "text",
      "nn": true,
      "pk": false,
-     "default": null,
+     "default": "''",
      "ref": null
     },
     "pages": {
@@ -15644,28 +15644,28 @@
    "colunas": {
     "chunk_overlap": {
      "tipo": "int",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": "200",
      "ref": null
     },
     "chunk_size": {
      "tipo": "int",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": "1000",
      "ref": null
     },
     "chunk_strategy": {
      "tipo": "text",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": "'fixed'",
      "ref": null
     },
     "chunk_version": {
      "tipo": "int",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": "1",
      "ref": null
@@ -15702,7 +15702,7 @@
      "tipo": "jsonb",
      "nn": false,
      "pk": false,
-     "default": "'{}'",
+     "default": "'{}'::jsonb",
      "ref": null
     },
     "mime_type": {
@@ -15744,12 +15744,12 @@
      "tipo": "text",
      "nn": false,
      "pk": false,
-     "default": "'pending'",
+     "default": null,
      "ref": null
     },
     "title": {
      "tipo": "text",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": null,
      "ref": null

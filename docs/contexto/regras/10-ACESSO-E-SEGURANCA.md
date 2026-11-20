@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `71fcc76c24` · branch `main` · 2026-11-20 05:58 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c5fffcfb99` · branch `main` · 2026-11-20 13:05 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 172 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 173 arquivo(s)
 
 - `e2e/auth-flows.spec.ts`
 - `e2e/helpers/auth-fixtures.ts`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260726201930_d21d3920-77d2-411e-8f05-a64f62ecc59e.sql`
 - `supabase/migrations/20260726202014_612509e6-18c1-4b63-9f38-70c79cd5916b.sql`
 - `supabase/migrations/20260726203035_dc665ad4-1157-455f-888a-8ef823a15569.sql`
-- … +22 (lista completa em `context.json`)
+- … +23 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -721,15 +721,15 @@ Middleware matcher (Next.js): nenhum
 | grant | anon, authenticated | select | `forum_threads_public`, `forum_posts_public`, `forum_threads_public`, `forum_posts_public` |
 | grant | anon, authenticated, service_role | execute | `check_rate_limit`, `is_user_locked_out`, `check_rate_limit` |
 | grant | authenticated | execute | `get_user_workspace_ids`, `get_slo_summary`, `get_workspace_members_full`, `get_oncall_with_contacts`, `get_my_2fa_status`, `get_pending_invites_for_email`, `invite_workspace_member`, `get_wal_generation_rate`, `get_cron_job_health`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_snapshot` … +9 |
-| grant | authenticated | select | `audit_log_safe`, `audit_log_safe`, `workspace_members_safe`, `workspace_members_directory`, `workspace_members_safe`, `workspace_members_safe`, `workspace_members_safe`, `slo_metrics_hourly`, `slo_metrics_hourly`, `workspace_members_safe`, `workspace_members_safe`, `oncall_schedule_safe`, `workspace_members_safe`, `workspace_members_directory`, `oncall_schedule_safe` … +26 |
+| grant | authenticated | select | `audit_log_safe`, `audit_log_safe`, `workspace_members_safe`, `workspace_members_directory`, `workspace_members_safe`, `workspace_members_safe`, `workspace_members_safe`, `slo_metrics_hourly`, `slo_metrics_hourly`, `workspace_members_safe`, `workspace_members_safe`, `oncall_schedule_safe`, `workspace_members_safe`, `workspace_members_directory`, `oncall_schedule_safe` … +27 |
 | grant | authenticated | select, insert, update | `citation_telemetry`, `skill_reclassification_reviews` |
-| grant | authenticated | select, insert, update, delete | `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `slack_workspace_config`, `slack_channel_routes`, `slack_agent_notifications`, `slack_rag_sources`, `slack_bot_bindings`, `document_ingestions`, `collections`, `notebook_notes`, `knowledge_links`, `notebook_podcasts` … +18 |
+| grant | authenticated | select, insert, update, delete | `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `slack_workspace_config`, `slack_channel_routes`, `slack_agent_notifications`, `slack_rag_sources`, `slack_bot_bindings`, `document_ingestions`, `collections`, `notebook_notes`, `knowledge_links`, `notebook_podcasts` … +19 |
 | grant | authenticated, anon | select | `forum_threads_safe`, `forum_posts_safe` |
 | grant | authenticated, service_role | execute | `is_user_locked_out`, `is_mfa_valid_for_role`, `increment_webhook_counter`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_slo_summary`, `get_slo_summary`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `hybrid_memory_search`, `is_workspace_admin`, `touch_memory`, `get_slow_query_alerts_history` … +12 |
 | grant | authenticated, service_role | select | `agent_daily_metrics`, `agent_daily_metrics` |
 | grant | postgres | execute | `_fase8_snapshot_as` |
 | grant | postgres, service_role | execute | `handle_new_user` |
-| grant | service_role | all | `retention_job_runs`, `pg_net_smoke_runs`, `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `openclaw_events`, `openclaw_agent_templates`, `slack_workspace_config`, `slack_channel_routes`, `slack_event_dedupe`, `slack_user_cache`, `slack_agent_notifications`, `slack_rag_sources` … +50 |
+| grant | service_role | all | `retention_job_runs`, `pg_net_smoke_runs`, `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `openclaw_events`, `openclaw_agent_templates`, `slack_workspace_config`, `slack_channel_routes`, `slack_event_dedupe`, `slack_user_cache`, `slack_agent_notifications`, `slack_rag_sources` … +52 |
 | grant | service_role | execute | `cleanup_rate_limit_entries`, `increment_webhook_counter`, `prune_traces_retention`, `prune_traces_retention`, `run_prune_traces_retention_monitored`, `check_retention_job_health`, `pg_net_schema`, `pg_net_smoke_post`, `pg_net_smoke_response`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `refresh_agent_daily_metrics`, `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions` … +52 |
 | grant | service_role | select | `agent_daily_metrics`, `internal.agent_daily_metrics`, `llm_cost_by_caller`, `knowledge_graph_health` |
 | grant | service_role | update, delete | `audit_log` |

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "71fcc76c24055d1251cd2825c9d50edaec10b4cd",
+  "sha": "c5fffcfb99266437a78caa6f2561b713a72fb57c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 05:58 UTC",
-  "files_total": 1981,
-  "code_files": 1784,
-  "code_lines": 347077
+  "generated_at": "2026-11-20 13:05 UTC",
+  "files_total": 1982,
+  "code_files": 1785,
+  "code_lines": 347250
  },
  "version": "1.3.2",
- "facts_hash": "e5ee6c6824a04051",
+ "facts_hash": "222b28e27dea4266",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -229,7 +229,7 @@
   "languages": {
    ".tsx": 699,
    ".ts": 692,
-   ".sql": 334,
+   ".sql": 335,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -1728,6 +1728,7 @@
      }
     ],
     "constraints": [
+     "constraint documents_status_check CHECK (status IN ('pending','processing','indexed','failed'))",
      "constraint documents_chunk_strategy_check CHECK (chunk_strategy IN ('fixed','paragraph','sentence'))",
      "constraint documents_chunk_size_check CHECK (chunk_size BETWEEN 200 AND 4000 AND chunk_overlap >= 0 AND chunk_overlap < chunk_size)"
     ],
@@ -17319,7 +17320,8 @@
      }
     ],
     "constraints": [
-     "constraint document_ingestions_status_check CHECK (status = ANY (ARRAY[ 'pending','uploading','parsing','ocr','chunking','embedding','ready','error','cancelled' ]))"
+     "constraint document_ingestions_status_check CHECK (status IN ('pending','uploading','parsing','ocr','chunking','embedding','ready','error','cancelled'))",
+     "constraint document_ingestions_extraction_method_check CHECK (extraction_method IN ('text','ocr','hybrid','docx'))"
     ],
     "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql",
     "comment": "",
@@ -17445,60 +17447,60 @@
       "type": "UUID PRIMARY KEY DEFAULT gen_random_uuid()",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
+      "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
      },
      {
       "name": "ingestion_id",
       "type": "UUID NOT NULL REFERENCES public.document_ingestions(id) ON DELETE CASCADE",
       "fk": "document_ingestions.id ON DELETE CASCADE",
       "generated": "",
-      "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
+      "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
      },
      {
       "name": "user_id",
       "type": "UUID NOT NULL",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
+      "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
      },
      {
       "name": "status",
       "type": "TEXT NOT NULL",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
+      "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
      },
      {
       "name": "progress_pct",
       "type": "INTEGER NOT NULL DEFAULT 0",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
+      "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
      },
      {
       "name": "message",
       "type": "TEXT",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
+      "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
      },
      {
       "name": "metadata",
       "type": "JSONB NOT NULL DEFAULT '{}'::jsonb",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
+      "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
      },
      {
       "name": "created_at",
       "type": "TIMESTAMPTZ NOT NULL DEFAULT now()",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
+      "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
      }
     ],
     "constraints": [],
-    "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
     "comment": "",
     "origin": "migration"
    },
@@ -34519,16 +34521,6 @@
     "src": "supabase/migrations/20260722171121_e5daea0c-20f0-475f-afaa-394b1e9ee631.sql"
    },
    {
-    "name": "users_read_own_ingestion_events",
-    "table": "document_ingestion_events",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "user_id = auth.uid()",
-    "check": "",
-    "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
-   },
-   {
     "name": "notebook_notes select workspace member",
     "table": "notebook_notes",
     "cmd": "SELECT",
@@ -36717,6 +36709,16 @@
     "using": "true",
     "check": "",
     "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "users_read_own_ingestion_events",
+    "table": "document_ingestion_events",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
    }
   ],
   "triggers": [
@@ -37423,15 +37425,6 @@
     "src": "supabase/migrations/20260722112903_e4950969-c93b-49eb-bec1-8637aa5b7e08.sql"
    },
    {
-    "name": "trg_touch_document_ingestions",
-    "when": "BEFORE UPDATE",
-    "table": "document_ingestions",
-    "function": "touch_document_ingestions",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
-   },
-   {
     "name": "collections_fill_workspace_trg",
     "when": "BEFORE INSERT OR UPDATE",
     "table": "collections",
@@ -37439,24 +37432,6 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260722170122_d38205c2-13c9-4c18-a88c-52b66ef4bfe6.sql"
-   },
-   {
-    "name": "trg_log_ingestion_event_ins",
-    "when": "AFTER INSERT",
-    "table": "document_ingestions",
-    "function": "log_ingestion_event",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
-   },
-   {
-    "name": "trg_log_ingestion_event_upd",
-    "when": "AFTER UPDATE",
-    "table": "document_ingestions",
-    "function": "log_ingestion_event",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
    },
    {
     "name": "update_notebook_notes_updated_at",
@@ -37781,6 +37756,33 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260728172934_8ab165ff-6023-48e1-8e26-c298a007ca62.sql"
+   },
+   {
+    "name": "trg_touch_document_ingestions",
+    "when": "BEFORE UPDATE",
+    "table": "document_ingestions",
+    "function": "touch_document_ingestions",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "trg_log_ingestion_event_ins",
+    "when": "AFTER INSERT",
+    "table": "document_ingestions",
+    "function": "log_ingestion_event",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "trg_log_ingestion_event_upd",
+    "when": "AFTER UPDATE",
+    "table": "document_ingestions",
+    "function": "log_ingestion_event",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
    }
   ],
   "functions": {
@@ -40440,7 +40442,7 @@
     "args": "",
     "returns": "TRIGGER",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
     "security_definer": false,
     "search_path": true,
     "body": "BEGIN NEW.updated_at = now(); RETURN NEW; END;",
@@ -40478,10 +40480,10 @@
     "args": "",
     "returns": "TRIGGER",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF TG_OP = 'INSERT' OR NEW.status IS DISTINCT FROM OLD.status OR NEW.progress_pct IS DISTINCT FROM OLD.progress_pct OR NEW.error_message IS DISTINCT FROM OLD.error_message THEN INSERT INTO public.document_ingestion_events (ingestion_id, user_id, status, progress_pct, message, metadata) VALUES ( NEW.id, NEW.user_id, NEW.status, COALESCE(NEW.progress_pct, 0), NEW.error_message, jsonb_build_object( 'extraction_method', NEW.extraction_method, 'pages', NEW.pages, 'cancel_requested', NEW.cancel_requested ) ); END IF; RETURN NEW; END;",
+    "body": "BEGIN IF TG_OP = 'INSERT' OR NEW.status IS DISTINCT FROM OLD.status OR NEW.progress_pct IS DISTINCT FROM OLD.progress_pct OR NEW.error_message IS DISTINCT FROM OLD.error_message THEN INSERT INTO public.document_ingestion_events (ingestion_id, user_id, status, progress_pct, message, metadata) VALUES ( NEW.id, NEW.user_id, NEW.status, COALESCE(NEW.progress_pct, 0), NEW.error_message, jsonb_build_object('extraction_method', NEW.extraction_method, 'pages', NEW.pages, 'cancel_requested', NEW.cancel_requested) ); END IF; RETURN NEW; END;",
     "raises": [],
     "tables": [
      "OLD",
@@ -46059,6 +46061,62 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20260905120000_rls_complete_reconciliation.sql"
+   },
+   {
+    "name": "idx_doc_ingestions_user",
+    "table": "document_ingestions",
+    "columns": "user_id, created_at DESC",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "idx_doc_ingestions_collection",
+    "table": "document_ingestions",
+    "columns": "collection_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "idx_chunks_active_doc",
+    "table": "chunks",
+    "columns": "document_id, chunk_version",
+    "unique": false,
+    "where": "WHERE is_active",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "uniq_documents_collection_hash",
+    "table": "documents",
+    "columns": "collection_id, content_hash",
+    "unique": true,
+    "where": "WHERE content_hash IS NOT NULL",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "idx_documents_content_hash",
+    "table": "documents",
+    "columns": "content_hash",
+    "unique": false,
+    "where": "WHERE content_hash IS NOT NULL",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "idx_ingestion_events_ingestion",
+    "table": "document_ingestion_events",
+    "columns": "ingestion_id, created_at DESC",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "idx_ingestion_events_user",
+    "table": "document_ingestion_events",
+    "columns": "user_id, created_at DESC",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
    }
   ],
   "cron_jobs": [
@@ -46633,6 +46691,7 @@
    "supabase/migrations/20260905140000_security_hotfix_validation.sql",
    "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
    "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
+   "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -50306,6 +50365,38 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261114094500_restore_log_audit_entry.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "document_ingestion_events",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "document_ingestion_events",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update, delete",
+    "object": "document_ingestions",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "document_ingestions",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
    }
   ],
   "raises": [
@@ -59642,8 +59733,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 331,
-   "lines": 28925,
+   "files": 332,
+   "lines": 29098,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -73582,6 +73673,11 @@
    {
     "table": "documents",
     "column": "(tabela)",
+    "rule": "constraint documents_status_check CHECK (status IN ('pending','processing','indexed','failed'))"
+   },
+   {
+    "table": "documents",
+    "column": "(tabela)",
     "rule": "constraint documents_chunk_strategy_check CHECK (chunk_strategy IN ('fixed','paragraph','sentence'))"
    },
    {
@@ -81462,7 +81558,12 @@
    {
     "table": "document_ingestions",
     "column": "(tabela)",
-    "rule": "constraint document_ingestions_status_check CHECK (status = ANY (ARRAY[ 'pending','uploading','parsing','ocr','chunking','embedding','ready','error','cancelled' ]))"
+    "rule": "constraint document_ingestions_status_check CHECK (status IN ('pending','uploading','parsing','ocr','chunking','embedding','ready','error','cancelled'))"
+   },
+   {
+    "table": "document_ingestions",
+    "column": "(tabela)",
+    "rule": "constraint document_ingestions_extraction_method_check CHECK (extraction_method IN ('text','ocr','hybrid','docx'))"
    },
    {
     "table": "citation_telemetry",
@@ -118100,16 +118201,6 @@
     "src": "supabase/migrations/20260722171121_e5daea0c-20f0-475f-afaa-394b1e9ee631.sql"
    },
    {
-    "name": "users_read_own_ingestion_events",
-    "table": "document_ingestion_events",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "user_id = auth.uid()",
-    "check": "",
-    "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
-   },
-   {
     "name": "notebook_notes select workspace member",
     "table": "notebook_notes",
     "cmd": "SELECT",
@@ -120298,6 +120389,16 @@
     "using": "true",
     "check": "",
     "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
+   },
+   {
+    "name": "users_read_own_ingestion_events",
+    "table": "document_ingestion_events",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
    }
   ],
   "db_triggers": [
@@ -121004,15 +121105,6 @@
     "src": "supabase/migrations/20260722112903_e4950969-c93b-49eb-bec1-8637aa5b7e08.sql"
    },
    {
-    "name": "trg_touch_document_ingestions",
-    "when": "BEFORE UPDATE",
-    "table": "document_ingestions",
-    "function": "touch_document_ingestions",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
-   },
-   {
     "name": "collections_fill_workspace_trg",
     "when": "BEFORE INSERT OR UPDATE",
     "table": "collections",
@@ -121020,24 +121112,6 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260722170122_d38205c2-13c9-4c18-a88c-52b66ef4bfe6.sql"
-   },
-   {
-    "name": "trg_log_ingestion_event_ins",
-    "when": "AFTER INSERT",
-    "table": "document_ingestions",
-    "function": "log_ingestion_event",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
-   },
-   {
-    "name": "trg_log_ingestion_event_upd",
-    "when": "AFTER UPDATE",
-    "table": "document_ingestions",
-    "function": "log_ingestion_event",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql"
    },
    {
     "name": "update_notebook_notes_updated_at",
@@ -121362,6 +121436,33 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260728172934_8ab165ff-6023-48e1-8e26-c298a007ca62.sql"
+   },
+   {
+    "name": "trg_touch_document_ingestions",
+    "when": "BEFORE UPDATE",
+    "table": "document_ingestions",
+    "function": "touch_document_ingestions",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "trg_log_ingestion_event_ins",
+    "when": "AFTER INSERT",
+    "table": "document_ingestions",
+    "function": "log_ingestion_event",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "name": "trg_log_ingestion_event_upd",
+    "when": "AFTER UPDATE",
+    "table": "document_ingestions",
+    "function": "log_ingestion_event",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
    }
   ],
   "db_functions": {
@@ -124021,7 +124122,7 @@
     "args": "",
     "returns": "TRIGGER",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
     "security_definer": false,
     "search_path": true,
     "body": "BEGIN NEW.updated_at = now(); RETURN NEW; END;",
@@ -124059,10 +124160,10 @@
     "args": "",
     "returns": "TRIGGER",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260722172758_0f44574f-5ee8-4622-84a0-5c5f7922f6c7.sql",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF TG_OP = 'INSERT' OR NEW.status IS DISTINCT FROM OLD.status OR NEW.progress_pct IS DISTINCT FROM OLD.progress_pct OR NEW.error_message IS DISTINCT FROM OLD.error_message THEN INSERT INTO public.document_ingestion_events (ingestion_id, user_id, status, progress_pct, message, metadata) VALUES ( NEW.id, NEW.user_id, NEW.status, COALESCE(NEW.progress_pct, 0), NEW.error_message, jsonb_build_object( 'extraction_method', NEW.extraction_method, 'pages', NEW.pages, 'cancel_requested', NEW.cancel_requested ) ); END IF; RETURN NEW; END;",
+    "body": "BEGIN IF TG_OP = 'INSERT' OR NEW.status IS DISTINCT FROM OLD.status OR NEW.progress_pct IS DISTINCT FROM OLD.progress_pct OR NEW.error_message IS DISTINCT FROM OLD.error_message THEN INSERT INTO public.document_ingestion_events (ingestion_id, user_id, status, progress_pct, message, metadata) VALUES ( NEW.id, NEW.user_id, NEW.status, COALESCE(NEW.progress_pct, 0), NEW.error_message, jsonb_build_object('extraction_method', NEW.extraction_method, 'pages', NEW.pages, 'cancel_requested', NEW.cancel_requested) ); END IF; RETURN NEW; END;",
     "raises": [],
     "tables": [
      "OLD",
@@ -134380,6 +134481,7 @@
    "supabase/migrations/20260905120000_rls_complete_reconciliation.sql",
    "supabase/migrations/20260905140000_security_hotfix_validation.sql",
    "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
+   "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
    "tests/load/llm-gateway.k6.js",
    "tests/rls/personas.test.ts",
    "tests/rls/setup.ts",
@@ -138023,6 +138125,38 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261114094500_restore_log_audit_entry.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "document_ingestion_events",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "document_ingestion_events",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update, delete",
+    "object": "document_ingestions",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "document_ingestions",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
    }
   ],
   "guards": [
@@ -190176,6 +190310,11 @@
    "path": "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
    "lines": 36
   },
+  "supabase/migrations/20261120124500_reconcile_doc_schema.sql": {
+   "path": "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
+   "lines": 173,
+   "uses_service_role": true
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -190337,10 +190476,19 @@
   }
  },
  "git": {
-  "sha": "71fcc76c24055d1251cd2825c9d50edaec10b4cd",
+  "sha": "c5fffcfb99266437a78caa6f2561b713a72fb57c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "c5fffcf",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix(db): reconcilia schema de documentos com o contrato das edges (#122)",
+    "files": [
+     "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+    ]
+   },
    {
     "sha": "71fcc76",
     "date": "2026-11-20",
@@ -190668,26 +190816,12 @@
      "supabase/deployment-manifest.json",
      "supabase/functions/notification-sender/index.ts"
     ]
-   },
-   {
-    "sha": "d53c9e3",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)",
-    "files": [
-     "docs/migration/MATRIZ_EDGE_TABELA.md",
-     "src/services/widgetService.ts",
-     "supabase/config.toml",
-     "supabase/deployment-manifest.json",
-     "supabase/functions/_shared/auth.ts",
-     "supabase/functions/widget-proxy/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    11
+    10
    ],
    [
     "package-lock.json",
@@ -190699,10 +190833,6 @@
    ],
    [
     "supabase/functions/openclaw-webhook/index.ts",
-    2
-   ],
-   [
-    "docs/migration/MATRIZ_EDGE_TABELA.md",
     2
    ],
    [
@@ -190722,7 +190852,15 @@
     2
    ],
    [
+    "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
+    1
+   ],
+   [
     "supabase/functions/quick-agent-test/index.ts",
+    1
+   ],
+   [
+    "docs/migration/MATRIZ_EDGE_TABELA.md",
     1
    ],
    [
@@ -190759,10 +190897,6 @@
    ],
    [
     "supabase/functions/agent-conversational-builder/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/audio-transcribe/index.ts",
     1
    ]
   ]
