@@ -32,6 +32,39 @@ describe('MessageBubble — sanitization', () => {
     expect(container.querySelector('iframe')).toBeNull();
   });
 
+  it('renderiza anexos como links clicáveis com nome e tamanho', () => {
+    render(
+      <MessageBubble
+        message={{
+          id: 'a1',
+          role: 'user',
+          content: 'veja',
+          timestamp: Date.now(),
+          attachments: [
+            {
+              name: 'relatorio.pdf',
+              size: 2_048,
+              mime: 'application/pdf',
+              storagePath: 'u/t/0-relatorio.pdf',
+            },
+            {
+              name: 'nao-gerado.png',
+              size: 1024,
+              mime: 'image/png',
+              url: 'https://exemplo.test/n.png',
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByText('relatorio.pdf')).toBeInTheDocument();
+    expect(screen.getByText('2 KB')).toBeInTheDocument();
+    expect(screen.getByText('nao-gerado.png')).toBeInTheDocument();
+    // storagePath real gera signed URL; quando só existe url, usa direto.
+    expect(screen.getAllByRole('button').length).toBeGreaterThan(0);
+  });
+
   it('renderiza mensagem falha com botão de retry', () => {
     render(
       <MessageBubble

@@ -3,15 +3,30 @@
  */
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Check, CheckCheck, Copy, RotateCw, AlertCircle } from 'lucide-react';
+import { AlertCircle, Check, CheckCheck, Copy, FileText, RotateCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { supabaseExternal } from '@/integrations/supabase/externalClient';
+
+export interface ChatAttachment {
+  /** Nome original do arquivo, para exibição no balão. */
+  name: string;
+  /** Tamanho em bytes. */
+  size: number;
+  /** Tipo MIME declarado pelo navegador. */
+  mime: string;
+  /** Caminho no Storage (`{userId}/{uuid}.{ext}`). Presente após o upload. */
+  storagePath?: string;
+  /** URL assinada (temporária) para abrir o anexo — gerada sob demanda no clique. */
+  url?: string;
+}
 
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
+  attachments?: ChatAttachment[];
   delivered?: boolean;
   read?: boolean;
   failed?: boolean;
@@ -32,6 +47,28 @@ const MARKDOWN_DISALLOWED = ['script', 'iframe', 'style', 'object', 'embed', 'li
 export function MessageBubble({ message, streaming, onRetry }: MessageBubbleProps) {
   const isUser = message.role === 'user';
   const [hover, setHover] = useState(false);
+
+  async function openAttachment(att: ChatAttachment) {
+    if (!att.storagePath) return;
+    if (att.url) {
+      window.open(att.url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    const { data, error } = await supabaseExternal.storage
+      .from('chat-attachments')
+      .createSignedUrl(att.storagePath, 3600);
+    if (error || !data?.signedUrl) {
+      toast.error('Não foi possível abrir o anexo.');
+      return;
+    }
+    window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+  }
+
+  function formatBytes(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
 
   async function copy() {
     try {
@@ -71,24 +108,59 @@ export function MessageBubble({ message, streaming, onRetry }: MessageBubbleProp
           )}
         />
 
-        <div className={cn('prose prose-invert prose-sm max-w-none', 'prose-p:my-1 prose-pre:my-2 prose-code:text-body-sm')}>
+        <div
+          className={cn(
+            'prose prose-invert prose-sm max-w-none',
+            'prose-p:my-1 prose-pre:my-2 prose-code:text-body-sm',
+          )}
+        >
           <ReactMarkdown skipHtml disallowedElements={MARKDOWN_DISALLOWED}>
             {message.content || (streaming ? '…' : '')}
           </ReactMarkdown>
-          {streaming && <span className="inline-block ml-0.5 w-1.5 h-3.5 align-middle bg-current opacity-60 animate-pulse" />}
+          {streaming && (
+            <span className="inline-block ml-0.5 w-1.5 h-3.5 align-middle bg-current opacity-60 animate-pulse" />
+          )}
         </div>
 
-        <div className={cn('mt-1 flex items-center gap-1 justify-end', isUser ? 'text-primary-foreground/70' : 'text-muted-foreground')}>
+        {(message.attachments?.length ?? 0) > 0 && (
+          <ul className="mt-2 flex flex-col gap-1.5" aria-label="Anexos">
+            {message.attachments!.map((att, i) => (
+              <li key={i}>
+                <button
+                  type="button"
+                  onClick={() => openAttachment(att)}
+                  aria-label={`Abrir anexo ${att.name}`}
+                  className={cn(
+                    'flex w-full items-center gap-2 rounded-lg border border-border/50 px-2.5 py-1.5 text-left',
+                    'bg-background/40 hover:bg-background/70 transition-colors',
+                    isUser ? 'text-primary-foreground/90' : 'text-foreground',
+                  )}
+                >
+                  <FileText className="h-4 w-4 shrink-0 opacity-80" aria-hidden />
+                  <span className="flex-1 truncate text-meta font-medium">{att.name}</span>
+                  <span className="text-meta opacity-70 tabular-nums">{formatBytes(att.size)}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div
+          className={cn(
+            'mt-1 flex items-center gap-1 justify-end',
+            isUser ? 'text-primary-foreground/70' : 'text-muted-foreground',
+          )}
+        >
           <span className="text-meta tabular-nums">{formatTime(message.timestamp)}</span>
-          {isUser && !message.failed && (
-            message.read ? (
+          {isUser &&
+            !message.failed &&
+            (message.read ? (
               <CheckCheck className="h-3 w-3 text-nexus-cyan" aria-label="Lida" />
             ) : message.delivered ? (
               <CheckCheck className="h-3 w-3" aria-label="Entregue" />
             ) : (
               <Check className="h-3 w-3" aria-label="Enviada" />
-            )
-          )}
+            ))}
           {message.failed && (
             <AlertCircle className="h-3 w-3 text-destructive" aria-label="Falha ao entregar" />
           )}

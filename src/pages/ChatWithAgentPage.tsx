@@ -25,7 +25,8 @@ import { ChatHeader } from '@/components/chat/ChatHeader';
 import { ChatBackground } from '@/components/chat/ChatBackground';
 import { MessageBubble, type ChatMessage } from '@/components/chat/MessageBubble';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
-import { ChatComposer } from '@/components/chat/ChatComposer';
+import { ChatComposer, type PendingAttachment } from '@/components/chat/ChatComposer';
+import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { EmptyChatState } from '@/components/chat/EmptyChatState';
 import { DaySeparator } from '@/components/chat/DaySeparator';
 import { ClearChatDialog } from '@/components/chat/ClearChatDialog';
@@ -331,7 +332,7 @@ export default function ChatWithAgentPage() {
   );
 
   const handleSend = useCallback(
-    async (text: string) => {
+    async (text: string, files?: PendingAttachment[]) => {
       if (!activeAgent) return;
       if (!online) {
         toast.error('Sem conexão.');
@@ -344,23 +345,66 @@ export default function ChatWithAgentPage() {
 
       const timestamp = Date.now();
       const tempId = newId();
-      const optimistic: ChatMessage = { id: tempId, role: 'user', content: text, timestamp };
+      const attachments = (files ?? []).map((f) => ({
+        name: f.file.name,
+        size: f.file.size,
+        mime: f.file.type || 'application/octet-stream',
+      }));
+      const optimistic: ChatMessage = {
+        id: tempId,
+        role: 'user',
+        content: text,
+        timestamp,
+        attachments,
+      };
       setMessages((prev) => [...prev, optimistic]);
       setPreviews((p) => ({
         ...p,
-        [activeAgent.id]: { lastMessage: text.slice(0, 80), lastAt: timestamp, unread: 0 },
+        [activeAgent.id]: {
+          lastMessage: attachments.length > 0 ? `📎 ${attachments[0].name}` : text.slice(0, 80),
+          lastAt: timestamp,
+          unread: 0,
+        },
       }));
+
+      // Upload dos anexos ANTES de persistir, para gravar o storagePath real.
+      const uploaded: Array<{ name: string; size: number; mime: string; storagePath: string }> = [];
+      if (attachments.length > 0) {
+        const { data: user } = await supabaseExternal.auth.getUser();
+        const userId = user.user?.id;
+        for (let i = 0; i < (files ?? []).length; i++) {
+          const f = (files ?? [])[i];
+          const storagePath = `${userId ?? 'anon'}/${tempId}/${i}-${f.file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          const up = await supabaseExternal.storage
+            .from('chat-attachments')
+            .upload(storagePath, f.file, {
+              contentType: f.file.type || 'application/octet-stream',
+              upsert: false,
+            });
+          if (up.error) {
+            toast.error(`Falha ao enviar ${f.file.name}.`);
+            setMessages((prev) => prev.map((m) => (m.id === tempId ? { ...m, failed: true } : m)));
+            return;
+          }
+          uploaded.push({ ...attachments[i], storagePath });
+        }
+      }
 
       const persistedId = await appendMessage({
         threadId,
         parentId: lastPersistedIdRef.current,
         role: 'user',
         content: text,
+        attachments: uploaded,
       });
 
       // Troca o id otimista pelo id real para que o retry e o encadeamento
       // de `parent_id` apontem para a linha que existe no banco.
-      const userMsg: ChatMessage = { ...optimistic, id: persistedId ?? tempId };
+      const userMsg: ChatMessage = {
+        ...optimistic,
+        id: persistedId ?? tempId,
+        attachments: uploaded.length > 0 ? uploaded : optimistic.attachments,
+      };
       if (persistedId) {
         lastPersistedIdRef.current = persistedId;
         setMessages((prev) => prev.map((m) => (m.id === tempId ? userMsg : m)));
