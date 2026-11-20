@@ -416,7 +416,7 @@
     {
       "path": "supabase/functions/openclaw-webhook/index.ts",
       "bytes": 7274,
-      "sha256": "df50ce980ee102e1429c55727c2e6b20007db19d490553616b43edd2ab807f7c"
+      "sha256": "2cf7627273fcd703ff6ce91c1714471e01b22cea0e6b8c8ca503e0ade14b6ce2"
     },
     {
       "path": "supabase/functions/oracle-council/index.ts",
@@ -446,7 +446,7 @@
     {
       "path": "supabase/functions/quick-agent-test/index.ts",
       "bytes": 5249,
-      "sha256": "a0878178f15b40486596d7a542a2dc57fd5f0bbf5648fc3a69966bc4873f08f7"
+      "sha256": "6760ce2487a848803887374ba285bdfec03a3da20543890ac7798e803da53397"
     },
     {
       "path": "supabase/functions/rag-embed-backfill/index.ts",
@@ -1703,7 +1703,7 @@
       "name": "openclaw-webhook",
       "entrypoint": "supabase/functions/openclaw-webhook/index.ts",
       "verify_jwt": false,
-      "source_sha256": "db6df3829618c98c40617ca0860b443230e816051f1c9b6463d323ee3dfd6134",
+      "source_sha256": "4e800c7eb93b68b0568f2b15bf6ae255d3b3b96df2b65bed035467d016237caa",
       "source_files": [
         "supabase/functions/_shared/contracts.ts",
         "supabase/functions/_shared/cors.ts",
@@ -1826,7 +1826,7 @@
       "name": "quick-agent-test",
       "entrypoint": "supabase/functions/quick-agent-test/index.ts",
       "verify_jwt": true,
-      "source_sha256": "d7a96eb79116e040e93103df87a23457600090602bc783d869e6ccc9c04aa823",
+      "source_sha256": "cdacdda7c89e8bed35160b350eb74c3257eabbf09562ea8f7892d51696b3916d",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -2598,5 +2598,5 @@
       ]
     }
   ],
-  "manifest_sha256": "5a25953b8db2c12ff797c3ce3d8bc9b03630893233846f4cc8c59f4feaf6bf29"
+  "manifest_sha256": "96d2a6738786f8ef70d8430beb4e76882b0df41405580a470ea3ec2c2bd87aad"
 }
