@@ -129,20 +129,20 @@ CREATE POLICY managed_secrets_member_delete ON public.managed_secrets
   FOR DELETE TO authenticated
   USING (owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id));
 
--- pentest_findings (linha própria = reporter_id)
+-- pentest_findings (linha própria = created_by)
 CREATE POLICY pentest_findings_member_select ON public.pentest_findings
   FOR SELECT TO authenticated
-  USING (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid());
+  USING (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid());
 CREATE POLICY pentest_findings_member_insert ON public.pentest_findings
   FOR INSERT TO authenticated
   WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())));
 CREATE POLICY pentest_findings_member_update ON public.pentest_findings
   FOR UPDATE TO authenticated
-  USING (reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id))
-  WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid());
+  USING (created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id))
+  WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid());
 CREATE POLICY pentest_findings_member_delete ON public.pentest_findings
   FOR DELETE TO authenticated
-  USING (reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id));
+  USING (created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id));
 
 -- risk_register (linha própria = owner_id)
 CREATE POLICY risk_register_member_select ON public.risk_register
