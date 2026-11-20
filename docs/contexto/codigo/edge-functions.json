@@ -565,7 +565,7 @@
    "nome": "cost-calculator",
    "entrada": "supabase/functions/cost-calculator/index.ts",
    "arquivos": 1,
-   "linhas": 94,
+   "linhas": 102,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1830,7 +1830,7 @@
    "nome": "product-mockup",
    "entrada": "supabase/functions/product-mockup/index.ts",
    "arquivos": 1,
-   "linhas": 290,
+   "linhas": 301,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

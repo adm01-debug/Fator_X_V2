@@ -4,10 +4,10 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: bun run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "b983db1e3b237601b74b422e4db91c950832e80f",
+ "commit_do_grafo": "bf1af82e3d529c7556d32ba9d5e1f1bce58c56b3",
  "grafo_atual": true,
  "nos": 13799,
- "arestas": 37019,
+ "arestas": 37029,
  "comunidades_total": 902,
  "relacoes": {
   "calls": 4665,
@@ -16,7 +16,7 @@
   "defines": 13,
   "dynamic_import": 271,
   "extends": 5,
-  "imports": 10496,
+  "imports": 10506,
   "imports_from": 7840,
   "indexes": 613,
   "indirect_call": 198,
@@ -29,7 +29,7 @@
   "triggers": 118
  },
  "origem": {
-  "EXTRACTED": 36450,
+  "EXTRACTED": 36460,
   "INFERRED": 569
  },
  "comunidades": [
@@ -121,18 +121,18 @@
   {
    "id": 5,
    "nome": "checkRateLimit",
-   "nos": 143,
-   "callables": 52,
-   "arquivos": 41,
+   "nos": 142,
+   "callables": 56,
+   "arquivos": 42,
    "exemplos_arquivos": [
-    "supabase/functions/_shared/ai-provider.ts",
+    "supabase/functions/_shared/auth.ts",
     "supabase/functions/_shared/cors.ts",
     "supabase/functions/_shared/rate-limiter.ts",
-    "supabase/functions/_shared/requireEnv.ts",
     "supabase/functions/_shared/slack.ts",
-    "supabase/functions/agent-conversational-builder/index.ts",
-    "supabase/functions/agent-eval-runner/index.ts",
-    "supabase/functions/automation-pipeline/index.ts"
+    "supabase/functions/_shared/validation.ts",
+    "supabase/functions/a2a-server/index.ts",
+    "supabase/functions/audio-transcribe/index.ts",
+    "supabase/functions/bitrix24-api/index.ts"
    ]
   },
   {
@@ -154,23 +154,6 @@
   },
   {
    "id": 7,
-   "nome": "ref_https",
-   "nos": 133,
-   "callables": 71,
-   "arquivos": 30,
-   "exemplos_arquivos": [
-    "https://esm.sh/unpdf@0.12.1",
-    "https://esm.sh/unzipit@1.4.3",
-    "supabase/functions/_shared/auth.ts",
-    "supabase/functions/_shared/chunker.ts",
-    "supabase/functions/_shared/cors.ts",
-    "supabase/functions/_shared/validation.ts",
-    "supabase/functions/a2a-server/index.ts",
-    "supabase/functions/audio-transcribe/index.ts"
-   ]
-  },
-  {
-   "id": 8,
    "nome": "badge.tsx",
    "nos": 131,
    "callables": 62,
@@ -187,7 +170,7 @@
    ]
   },
   {
-   "id": 9,
+   "id": 8,
    "nome": "fromTable",
    "nos": 104,
    "callables": 95,
@@ -204,7 +187,7 @@
    ]
   },
   {
-   "id": 10,
+   "id": 9,
    "nome": "templateSkillLinkService.ts",
    "nos": 104,
    "callables": 75,
@@ -221,7 +204,7 @@
    ]
   },
   {
-   "id": 11,
+   "id": 10,
    "nome": "ref_node_fs",
    "nos": 102,
    "callables": 38,
@@ -238,7 +221,7 @@
    ]
   },
   {
-   "id": 12,
+   "id": 11,
    "nome": "VendorsPage.tsx",
    "nos": 101,
    "callables": 41,
@@ -255,10 +238,27 @@
    ]
   },
   {
+   "id": 12,
+   "nome": "getCorsHeaders",
+   "nos": 101,
+   "callables": 46,
+   "arquivos": 28,
+   "exemplos_arquivos": [
+    "src/test/edge-shared-skills.test.ts",
+    "supabase/functions/_shared/ai-provider.ts",
+    "supabase/functions/_shared/cors.ts",
+    "supabase/functions/_shared/idempotency.ts",
+    "supabase/functions/_shared/requireEnv.ts",
+    "supabase/functions/_shared/skills.ts",
+    "supabase/functions/agent-conversational-builder/index.ts",
+    "supabase/functions/agent-eval-runner/index.ts"
+   ]
+  },
+  {
    "id": 13,
    "nome": "mod.ts",
-   "nos": 93,
-   "callables": 61,
+   "nos": 100,
+   "callables": 66,
    "arquivos": 15,
    "exemplos_arquivos": [
     "@supabase/supabase-js",
@@ -273,29 +273,29 @@
   },
   {
    "id": 14,
-   "nome": "dependencies",
-   "nos": 90,
-   "callables": 0,
-   "arquivos": 1,
-   "exemplos_arquivos": [
-    "package.json"
-   ]
-  },
-  {
-   "id": 15,
    "nome": "retry.ts",
-   "nos": 86,
-   "callables": 58,
-   "arquivos": 17,
+   "nos": 99,
+   "callables": 67,
+   "arquivos": 22,
    "exemplos_arquivos": [
     "docs/EDGE-FUNCTIONS-AUDIT-2026-07-21.md",
     "supabase/functions/_shared/breakerEvents.ts",
     "supabase/functions/_shared/circuitBreaker.ts",
     "supabase/functions/_shared/retry.test.ts",
     "supabase/functions/_shared/retry.ts",
+    "supabase/functions/a2a-server/index.ts",
     "supabase/functions/browser-agent-run/index.ts",
-    "supabase/functions/llm-gateway/index.ts",
-    "supabase/functions/llm-gateway/providers.ts"
+    "supabase/functions/llm-gateway/index.ts"
+   ]
+  },
+  {
+   "id": 15,
+   "nome": "dependencies",
+   "nos": 90,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "package.json"
    ]
   },
   {
@@ -470,6 +470,23 @@
   },
   {
    "id": 27,
+   "nome": "whatsapp-webhook/index.ts",
+   "nos": 64,
+   "callables": 44,
+   "arquivos": 8,
+   "exemplos_arquivos": [
+    "docs/SIMULACAO-CENARIOS-2026-07-22.md",
+    "supabase/functions/_shared/crmNormalize.ts",
+    "supabase/functions/_shared/security.ts",
+    "supabase/functions/_shared/slack.ts",
+    "supabase/functions/_shared/webhookSignature.ts",
+    "supabase/functions/bitrix24-webhook/index.ts",
+    "supabase/functions/crm-bitrix-sync/index.ts",
+    "supabase/functions/whatsapp-webhook/index.ts"
+   ]
+  },
+  {
+   "id": 28,
    "nome": "WorkflowCanvasTab.tsx",
    "nos": 64,
    "callables": 38,
@@ -486,7 +503,7 @@
    ]
   },
   {
-   "id": 28,
+   "id": 29,
    "nome": "ChatWithAgentPage.tsx",
    "nos": 63,
    "callables": 42,
@@ -500,23 +517,6 @@
     "src/components/chat/DaySeparator.tsx",
     "src/components/chat/EmptyChatState.tsx",
     "src/components/chat/MessageBubble.tsx"
-   ]
-  },
-  {
-   "id": 29,
-   "nome": "DataBrowser.tsx",
-   "nos": 63,
-   "callables": 46,
-   "arquivos": 12,
-   "exemplos_arquivos": [
-    "src/components/datahub/BulkEditDialog.tsx",
-    "src/components/datahub/CreateRecordDialog.tsx",
-    "src/components/datahub/DataBrowser.tsx",
-    "src/components/datahub/DataBrowserFilters.tsx",
-    "src/components/datahub/DataBrowserPagination.tsx",
-    "src/components/datahub/DataBrowserTable.tsx",
-    "src/components/datahub/InlineEditCell.tsx",
-    "src/components/datahub/RecordDetail.tsx"
    ]
   },
   {
@@ -606,23 +606,6 @@
   },
   {
    "id": 35,
-   "nome": "whatsapp-webhook/index.ts",
-   "nos": 59,
-   "callables": 33,
-   "arquivos": 10,
-   "exemplos_arquivos": [
-    "docs/SIMULACAO-CENARIOS-2026-07-22.md",
-    "supabase/functions/_shared/contracts.ts",
-    "supabase/functions/_shared/security.ts",
-    "supabase/functions/_shared/slack.ts",
-    "supabase/functions/_shared/webhookSignature.ts",
-    "supabase/functions/slack-events-webhook/index.ts",
-    "supabase/functions/test-runner/contract_test.ts",
-    "supabase/functions/test-runner/versioning_contract_test.ts"
-   ]
-  },
-  {
-   "id": 36,
    "nome": "agentChangelog.ts",
    "nos": 59,
    "callables": 48,
@@ -639,7 +622,7 @@
    ]
   },
   {
-   "id": 37,
+   "id": 36,
    "nome": "PromptContradictionAutoFixPanel.tsx",
    "nos": 58,
    "callables": 42,
@@ -656,7 +639,7 @@
    ]
   },
   {
-   "id": 38,
+   "id": 37,
    "nome": "e2eeAutoSync.ts",
    "nos": 58,
    "callables": 50,
@@ -673,7 +656,7 @@
    ]
   },
   {
-   "id": 39,
+   "id": 38,
    "nome": "SLODashboard.tsx",
    "nos": 57,
    "callables": 39,
@@ -690,24 +673,7 @@
    ]
   },
   {
-   "id": 40,
-   "nome": "agent-workflow-runner/index.ts",
-   "nos": 56,
-   "callables": 31,
-   "arquivos": 9,
-   "exemplos_arquivos": [
-    "docs/RUNBOOK.md",
-    "src/test/edge-shared-skills.test.ts",
-    "supabase/functions/_shared/chaos.ts",
-    "supabase/functions/_shared/idempotency.ts",
-    "supabase/functions/_shared/skills.ts",
-    "supabase/functions/agent-workflow-runner/index.ts",
-    "supabase/functions/cerebro-brain/index.ts",
-    "supabase/functions/graph-execute/index.ts"
-   ]
-  },
-  {
-   "id": 41,
+   "id": 39,
    "nome": "package.json",
    "nos": 56,
    "callables": 0,
@@ -720,7 +686,7 @@
    ]
   },
   {
-   "id": 42,
+   "id": 40,
    "nome": "StepQuickPrompt.tsx",
    "nos": 56,
    "callables": 44,
@@ -737,7 +703,7 @@
    ]
   },
   {
-   "id": 43,
+   "id": 41,
    "nome": "WorkflowTimeTravelPanel.tsx",
    "nos": 56,
    "callables": 48,
@@ -751,7 +717,7 @@
    ]
   },
   {
-   "id": 44,
+   "id": 42,
    "nome": "lib.mjs",
    "nos": 55,
    "callables": 45,
@@ -763,7 +729,24 @@
    ]
   },
   {
-   "id": 45,
+   "id": 43,
+   "nome": "ref_https",
+   "nos": 54,
+   "callables": 28,
+   "arquivos": 13,
+   "exemplos_arquivos": [
+    "https://esm.sh/unpdf@0.12.1",
+    "https://esm.sh/unzipit@1.4.3",
+    "supabase/functions/_shared/alternation.test.ts",
+    "supabase/functions/_shared/alternation.ts",
+    "supabase/functions/_shared/chunker.ts",
+    "supabase/functions/_shared/edge-contract_test.ts",
+    "supabase/functions/computer-use-execute/index.ts",
+    "supabase/functions/doc-parse/index.ts"
+   ]
+  },
+  {
+   "id": 44,
    "nome": "lint-ratchet.mjs",
    "nos": 54,
    "callables": 47,
@@ -775,7 +758,7 @@
    ]
   },
   {
-   "id": 46,
+   "id": 45,
    "nome": "DataHubPage.tsx",
    "nos": 53,
    "callables": 29,
@@ -792,7 +775,7 @@
    ]
   },
   {
-   "id": 47,
+   "id": 46,
    "nome": "rbacService.ts",
    "nos": 52,
    "callables": 33,
@@ -809,7 +792,7 @@
    ]
   },
   {
-   "id": 48,
+   "id": 47,
    "nome": "supabaseMock.ts",
    "nos": 52,
    "callables": 32,
@@ -826,7 +809,7 @@
    ]
   },
   {
-   "id": 49,
+   "id": 48,
    "nome": "AlertRuleEditor.tsx",
    "nos": 51,
    "callables": 35,
@@ -843,7 +826,7 @@
    ]
   },
   {
-   "id": 50,
+   "id": 49,
    "nome": "thresholdCalibration.ts",
    "nos": 51,
    "callables": 34,
@@ -860,7 +843,7 @@
    ]
   },
   {
-   "id": 51,
+   "id": 50,
    "nome": "skillsSimulationService.ts",
    "nos": 51,
    "callables": 43,
@@ -872,7 +855,7 @@
    ]
   },
   {
-   "id": 52,
+   "id": 51,
    "nome": "observability.ts",
    "nos": 50,
    "callables": 34,
@@ -889,7 +872,7 @@
    ]
   },
   {
-   "id": 53,
+   "id": 52,
    "nome": "🤖 Agentes a Implementar — Fator X / Promo Brindes",
    "nos": 49,
    "callables": 0,
@@ -899,7 +882,7 @@
    ]
   },
   {
-   "id": 54,
+   "id": 53,
    "nome": "20260405220001_automation_services.sql",
    "nos": 49,
    "callables": 0,
@@ -909,7 +892,7 @@
    ]
   },
   {
-   "id": 55,
+   "id": 54,
    "nome": "snapshot.py",
    "nos": 48,
    "callables": 37,
@@ -919,7 +902,7 @@
    ]
   },
   {
-   "id": 56,
+   "id": 55,
    "nome": "AgentEvalsPage.tsx",
    "nos": 48,
    "callables": 33,
@@ -936,7 +919,7 @@
    ]
   },
   {
-   "id": 57,
+   "id": 56,
    "nome": "AgentVersioningPage.tsx",
    "nos": 47,
    "callables": 34,
@@ -953,7 +936,7 @@
    ]
   },
   {
-   "id": 58,
+   "id": 57,
    "nome": "promptSanitizer.ts",
    "nos": 47,
    "callables": 37,
@@ -969,7 +952,7 @@
    ]
   },
   {
-   "id": 59,
+   "id": 58,
    "nome": "agentsService.ts",
    "nos": 47,
    "callables": 39,
@@ -986,7 +969,7 @@
    ]
   },
   {
-   "id": 60,
+   "id": 59,
    "nome": "promptSimulation.ts",
    "nos": 47,
    "callables": 30,
@@ -1003,7 +986,7 @@
    ]
   },
   {
-   "id": 61,
+   "id": 60,
    "nome": "useCerebroStore",
    "nos": 46,
    "callables": 28,
@@ -1020,7 +1003,7 @@
    ]
   },
   {
-   "id": 62,
+   "id": 61,
    "nome": "QuickAgentTestPanel.tsx",
    "nos": 46,
    "callables": 32,
@@ -1034,6 +1017,21 @@
     "src/lib/llmPricing.ts",
     "src/lib/promptCompiler.ts",
     "src/services/agentTestSimulationService.ts"
+   ]
+  },
+  {
+   "id": 62,
+   "nome": "RecordSubComponents.tsx",
+   "nos": 46,
+   "callables": 34,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "src/components/datahub/EntityDetailPanel.tsx",
+    "src/components/datahub/RecordDetail.tsx",
+    "src/components/datahub/RecordFieldRenderers.tsx",
+    "src/components/datahub/RecordSubComponents.tsx",
+    "src/config/datahub-columns.ts",
+    "src/config/datahub-entities.ts"
    ]
   },
   {
@@ -1202,23 +1200,6 @@
   },
   {
    "id": 75,
-   "nome": "externalClient.ts",
-   "nos": 40,
-   "callables": 26,
-   "arquivos": 10,
-   "exemplos_arquivos": [
-    "src/components/billing/RealTimeCostStream.tsx",
-    "src/components/shared/PaginationControls.tsx",
-    "src/hooks/use-paginated-query.ts",
-    "src/hooks/useBillingData.ts",
-    "src/hooks/useTracesData.ts",
-    "src/integrations/supabase/externalClient.ts",
-    "src/lib/agentBulkActions.ts",
-    "src/services/evalEngineService.ts"
-   ]
-  },
-  {
-   "id": 76,
    "nome": "charts/index.ts",
    "nos": 40,
    "callables": 29,
@@ -1235,7 +1216,7 @@
    ]
   },
   {
-   "id": 77,
+   "id": 76,
    "nome": "attribution.ts",
    "nos": 40,
    "callables": 19,
@@ -1250,7 +1231,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 77,
    "nome": "notesService.ts",
    "nos": 40,
    "callables": 32,
@@ -1266,7 +1247,7 @@
    ]
   },
   {
-   "id": 79,
+   "id": 78,
    "nome": "productMockupService.ts",
    "nos": 40,
    "callables": 32,
@@ -1280,6 +1261,16 @@
     "src/components/tools/mockup/SegmentTab.tsx",
     "src/components/tools/mockup/UpscaleTab.tsx",
     "src/services/productMockupService.ts"
+   ]
+  },
+  {
+   "id": 79,
+   "nome": "scripts",
+   "nos": 39,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "package.json"
    ]
   }
  ],
@@ -2178,7 +2169,7 @@
   "docs/QA-BASELINE-2026-07-15.md": "QA Baseline — 2026-07-15 (Fase 1 completa)",
   "docs/QA-SIM-2026-07-21.md": "QA Simulação Exaustiva — 2026-07-21",
   "docs/RUNBOOK.md": "signedUrlCache.ts",
-  "docs/SIMULACAO-CENARIOS-2026-07-22.md": "Integração Slack — Documentação Técnica",
+  "docs/SIMULACAO-CENARIOS-2026-07-22.md": "whatsapp-webhook/index.ts",
   "docs/SIMULACAO-CENARIOS-FASE6.md": "🧪 Simulação Fase 6 — 200 cenários auditados",
   "docs/SIMULACAO-CENARIOS-FASE7.md": "🧪 Simulação Fase 7 — 120 cenários pós-10/10",
   "docs/SIMULACAO-SUPER-CEREBRO-2026-07-22.md": "foldForSearch",
@@ -2545,7 +2536,7 @@
   "src/components/datahub/ConnectionCard.tsx": "DataHubPage.tsx",
   "src/components/datahub/CreateRecordDialog.tsx": "button.tsx",
   "src/components/datahub/DataBrowser.tsx": "DataBrowser.tsx",
-  "src/components/datahub/DataBrowserFilters.tsx": "react",
+  "src/components/datahub/DataBrowserFilters.tsx": "DataBrowser.tsx",
   "src/components/datahub/DataBrowserPagination.tsx": "react",
   "src/components/datahub/DataBrowserTable.tsx": "DataBrowser.tsx",
   "src/components/datahub/DataHubExplorerTab.tsx": "react",
@@ -2555,14 +2546,14 @@
   "src/components/datahub/DataHubQueryBuilderTab.tsx": "DataHubPage.tsx",
   "src/components/datahub/DataHubStats.tsx": "DataHubStats.tsx",
   "src/components/datahub/DataHubSyncTab.tsx": "DataHubPage.tsx",
-  "src/components/datahub/EntityDetailPanel.tsx": "EntityDetailPanel.tsx",
+  "src/components/datahub/EntityDetailPanel.tsx": "RecordSubComponents.tsx",
   "src/components/datahub/HibernatedDatabasesPanel.tsx": "DataHubPage.tsx",
   "src/components/datahub/InlineEditCell.tsx": "DataBrowser.tsx",
   "src/components/datahub/LiveRlsView.tsx": "DataHubPage.tsx",
   "src/components/datahub/MCPServerPanel.tsx": "DataHubPage.tsx",
-  "src/components/datahub/RecordDetail.tsx": "DataBrowser.tsx",
-  "src/components/datahub/RecordFieldRenderers.tsx": "DataBrowser.tsx",
-  "src/components/datahub/RecordSubComponents.tsx": "DataBrowser.tsx",
+  "src/components/datahub/RecordDetail.tsx": "RecordSubComponents.tsx",
+  "src/components/datahub/RecordFieldRenderers.tsx": "RecordSubComponents.tsx",
+  "src/components/datahub/RecordSubComponents.tsx": "RecordSubComponents.tsx",
   "src/components/debug/SignedUrlCacheDebugPanel.tsx": "signedUrlCache.ts",
   "src/components/deployments/ApprovalQueuePanel.tsx": "contextTiersService.ts",
   "src/components/deployments/DeploymentWizard.tsx": "button.tsx",
@@ -2610,7 +2601,7 @@
   "src/components/monitoring/MiddlewarePipelinePanel.tsx": "MonitoringPage.tsx",
   "src/components/monitoring/RetryEnginePanel.tsx": "MonitoringPage.tsx",
   "src/components/monitoring/SpanTreeView.tsx": "SpanTreeView.tsx",
-  "src/components/monitoring/TracingPanel.tsx": "MonitoringPage.tsx",
+  "src/components/monitoring/TracingPanel.tsx": "SpanTreeView.tsx",
   "src/components/monitoring/WebVitalsPanel.tsx": "WebVitalsPanel.tsx",
   "src/components/openclaw/OpenclawStatusBadge.tsx": "badge.tsx",
   "src/components/openclaw/OpenclawTestConsole.tsx": "openclawDeployService.ts",
@@ -2880,7 +2871,7 @@
   "src/config/auto-facts.ts": "auto-facts.ts",
   "src/config/datahub-blacklist.ts": "DataHubPage.tsx",
   "src/config/datahub-columns.ts": "DataBrowser.tsx",
-  "src/config/datahub-entities.ts": "EntityDetailPanel.tsx",
+  "src/config/datahub-entities.ts": "RecordSubComponents.tsx",
   "src/config/department-bridge.ts": "templateSkillRegistry.ts",
   "src/config/env.ts": "logger.ts",
   "src/config/huggingface-models.ts": "huggingface-models.ts",
@@ -2926,7 +2917,7 @@
   "src/hooks/useNLPAnalysis.ts": "🕳️ Funcionalidades sem Interface Visual Completa — V2",
   "src/hooks/useNotifications.ts": "notificationEngineService.ts",
   "src/hooks/useObsidianMode.ts": "noteTemplatesService.ts",
-  "src/hooks/useOpenclawTemplates.ts": "useOpenclawTemplates.ts",
+  "src/hooks/useOpenclawTemplates.ts": "logger.ts",
   "src/hooks/usePasswordBreachCheck.ts": "🕳️ Funcionalidades sem Interface Visual Completa — V2",
   "src/hooks/usePrefersReducedMotion.ts": "PromptUnlockDiffDialog.tsx",
   "src/hooks/useRBAC.ts": "rbacService.ts",
@@ -3127,7 +3118,7 @@
   "src/pages/ObservabilityOTelPage.tsx": "lucide-react",
   "src/pages/OncallPage.tsx": "incidentService.ts",
   "src/pages/OpenclawDeployPage.tsx": "openclawDeployService.ts",
-  "src/pages/OpenclawTemplatesPage.tsx": "useOpenclawTemplates.ts",
+  "src/pages/OpenclawTemplatesPage.tsx": "logger.ts",
   "src/pages/OraclePage.tsx": "🚀 Nexus Agents Studio — Análise Exaustiva de Funcionalidades",
   "src/pages/PartitioningDocsPage.tsx": "lucide-react",
   "src/pages/PentestFindingsPage.tsx": "pentestService.ts",
@@ -3168,7 +3159,7 @@
   "src/pages/SyntheticMonitoringPage.tsx": "react",
   "src/pages/SystemJobsPage.tsx": "lucide-react",
   "src/pages/TeamPage.tsx": "rbacService.ts",
-  "src/pages/ToolsPage.tsx": "logger.ts",
+  "src/pages/ToolsPage.tsx": "toolsService.ts",
   "src/pages/TracesTimelinePage.tsx": "SpanTreeView.tsx",
   "src/pages/TypographyDocsPage.tsx": "App.tsx",
   "src/pages/VendorsPage.tsx": "vendorRiskService.ts",
@@ -3316,11 +3307,11 @@
   "src/services/skillsSimulationService.ts": "skillDraft.ts",
   "src/services/syntheticService.ts": "syntheticService.ts",
   "src/services/teamsService.ts": "rbacService.ts",
-  "src/services/templateSkillLinkService.ts": "templateSkillLinkService.ts",
+  "src/services/templateSkillLinkService.ts": "useCurationRealtime.ts",
   "src/services/templateSkillRegistry.ts": "templateSkillRegistry.ts",
-  "src/services/temporalKnowledgeService.ts": "externalClient.ts",
+  "src/services/temporalKnowledgeService.ts": "temporalKnowledgeService.ts",
   "src/services/thresholdCalibrationService.ts": "logger",
-  "src/services/toolsService.ts": "logger.ts",
+  "src/services/toolsService.ts": "toolsService.ts",
   "src/services/types/agentHandoffTypes.ts": "agentHandoffService.ts",
   "src/services/types/batchProcessorTypes.ts": "batchProcessorService.ts",
   "src/services/types/connectorRegistryTypes.ts": "hooks/use-toast.ts",
@@ -3406,7 +3397,7 @@
   "src/test/draft-store-skills.test.ts": "QuickCreateWizard.tsx",
   "src/test/e2ee-service.test.ts": "e2eeAutoSync.ts",
   "src/test/edge-runtime-contract.test.ts": "ref_node_fs",
-  "src/test/edge-shared-skills.test.ts": "agent-workflow-runner/index.ts",
+  "src/test/edge-shared-skills.test.ts": "getCorsHeaders",
   "src/test/edge-symbol-guard.test.ts": "ref_node_fs",
   "src/test/embedding-dimension-contract.test.ts": "ref_node_fs",
   "src/test/error-boundary.test.tsx": "@testing-library/react",
@@ -3525,7 +3516,7 @@
   "src/test/template-skill-link.test.ts": "templateSkillRegistry.ts",
   "src/test/template-skill-links-merge.test.ts": "quick-type-template-map.test.ts",
   "src/test/template-skill-links-rebuild.test.ts": "vitest",
-  "src/test/template-skill-links-restore-all.test.ts": "templateSkillLinkService.ts",
+  "src/test/template-skill-links-restore-all.test.ts": "contextTiersService.ts",
   "src/test/template-skill-links-restore.test.ts": "vitest",
   "src/test/template-skill-links.test.ts": "templateSkillRegistry.ts",
   "src/test/template-skill-registry.test.ts": "templateSkillRegistry.ts",
@@ -3560,19 +3551,19 @@
   "src/types/hfTypes.ts": "hfTypes.ts",
   "src/views/Home.vue": "cenarios.mjs",
   "src/vite-env.d.ts": "vite-env.d.ts",
-  "supabase/functions/_shared/ai-provider.ts": "checkRateLimit",
-  "supabase/functions/_shared/alternation.test.ts": "whatsapp-router/index.ts",
-  "supabase/functions/_shared/alternation.ts": "whatsapp-router/index.ts",
+  "supabase/functions/_shared/ai-provider.ts": "getCorsHeaders",
+  "supabase/functions/_shared/alternation.test.ts": "ref_https",
+  "supabase/functions/_shared/alternation.ts": "ref_https",
   "supabase/functions/_shared/auth.ts": "mod.ts",
   "supabase/functions/_shared/breakerEvents.ts": "retry.ts",
   "supabase/functions/_shared/chaos.ts": "agent-workflow-runner/index.ts",
   "supabase/functions/_shared/chunker.ts": "ref_https",
   "supabase/functions/_shared/circuitBreaker.ts": "retry.ts",
-  "supabase/functions/_shared/contracts.ts": "whatsapp-webhook/index.ts",
-  "supabase/functions/_shared/cors.ts": "checkRateLimit",
-  "supabase/functions/_shared/crmNormalize.ts": "bitrix24-webhook/index.ts",
-  "supabase/functions/_shared/edge-contract_test.ts": "edge-contract_test.ts",
-  "supabase/functions/_shared/idempotency.ts": "agent-workflow-runner/index.ts",
+  "supabase/functions/_shared/contracts.ts": "contracts.ts",
+  "supabase/functions/_shared/cors.ts": "getCorsHeaders",
+  "supabase/functions/_shared/crmNormalize.ts": "whatsapp-webhook/index.ts",
+  "supabase/functions/_shared/edge-contract_test.ts": "ref_https",
+  "supabase/functions/_shared/idempotency.ts": "getCorsHeaders",
   "supabase/functions/_shared/json.ts": "mod.ts",
   "supabase/functions/_shared/magic-bytes.ts": "magic-bytes.ts",
   "supabase/functions/_shared/memory-tiers.ts": "KnowledgeGraphHealthCard",
@@ -3580,55 +3571,55 @@
   "supabase/functions/_shared/otel-edge.ts": "mod.ts",
   "supabase/functions/_shared/otel.ts": "otel.ts",
   "supabase/functions/_shared/rate-limiter.ts": "mod.ts",
-  "supabase/functions/_shared/requireEnv.ts": "mod.ts",
+  "supabase/functions/_shared/requireEnv.ts": "getCorsHeaders",
   "supabase/functions/_shared/retry.test.ts": "retry.ts",
   "supabase/functions/_shared/retry.ts": "retry.ts",
   "supabase/functions/_shared/runtimeAlerts.ts": "mod.ts",
   "supabase/functions/_shared/security.ts": "mod.ts",
-  "supabase/functions/_shared/skills.ts": "agent-workflow-runner/index.ts",
+  "supabase/functions/_shared/skills.ts": "getCorsHeaders",
   "supabase/functions/_shared/slack.ts": "whatsapp-webhook/index.ts",
-  "supabase/functions/_shared/validation.ts": "mod.ts",
+  "supabase/functions/_shared/validation.ts": "contracts.ts",
   "supabase/functions/_shared/webhookSender.ts": "mod.ts",
   "supabase/functions/_shared/webhookSignature.ts": "mod.ts",
-  "supabase/functions/a2a-server/index.ts": "ref_https",
-  "supabase/functions/agent-conversational-builder/index.ts": "checkRateLimit",
-  "supabase/functions/agent-eval-runner/index.ts": "checkRateLimit",
+  "supabase/functions/a2a-server/index.ts": "checkRateLimit",
+  "supabase/functions/agent-conversational-builder/index.ts": "getCorsHeaders",
+  "supabase/functions/agent-eval-runner/index.ts": "getCorsHeaders",
   "supabase/functions/agent-workflow-runner/index.ts": "agent-workflow-runner/index.ts",
-  "supabase/functions/audio-transcribe/index.ts": "ref_https",
-  "supabase/functions/automation-pipeline/index.ts": "checkRateLimit",
-  "supabase/functions/bitrix24-api/index.ts": "ref_https",
+  "supabase/functions/audio-transcribe/index.ts": "checkRateLimit",
+  "supabase/functions/automation-pipeline/index.ts": "getCorsHeaders",
+  "supabase/functions/bitrix24-api/index.ts": "checkRateLimit",
   "supabase/functions/bitrix24-oauth/index.ts": "checkRateLimit",
-  "supabase/functions/bitrix24-webhook/index.ts": "bitrix24-webhook/index.ts",
+  "supabase/functions/bitrix24-webhook/index.ts": "whatsapp-webhook/index.ts",
   "supabase/functions/browser-agent-run/index.ts": "retry.ts",
-  "supabase/functions/browser-session-cancel/index.ts": "checkRateLimit",
+  "supabase/functions/browser-session-cancel/index.ts": "getCorsHeaders",
   "supabase/functions/cerebro-brain/index.ts": "agent-workflow-runner/index.ts",
-  "supabase/functions/cerebro-query/index.ts": "ref_https",
-  "supabase/functions/code-interpreter-execute/index.ts": "checkRateLimit",
+  "supabase/functions/cerebro-query/index.ts": "checkRateLimit",
+  "supabase/functions/code-interpreter-execute/index.ts": "getCorsHeaders",
   "supabase/functions/computer-use-execute/index.ts": "ref_https",
-  "supabase/functions/cost-calculator/index.ts": "ref_https",
-  "supabase/functions/crm-bitrix-sync/index.ts": "bitrix24-webhook/index.ts",
-  "supabase/functions/crm-cadence-runner/index.ts": "ref_https",
+  "supabase/functions/cost-calculator/index.ts": "checkRateLimit",
+  "supabase/functions/crm-bitrix-sync/index.ts": "whatsapp-webhook/index.ts",
+  "supabase/functions/crm-cadence-runner/index.ts": "mod.ts",
   "supabase/functions/crm-enrich/index.ts": "crm-enrich/index.ts",
   "supabase/functions/cron-executor/index.ts": "checkRateLimit",
   "supabase/functions/datahub-mcp-server/index.ts": "datahub-mcp-server/index.ts",
   "supabase/functions/datahub-query/index.ts": "datahub-query/index.ts",
-  "supabase/functions/doc-ocr/index.ts": "ref_https",
+  "supabase/functions/doc-ocr/index.ts": "checkRateLimit",
   "supabase/functions/doc-parse/index.ts": "ref_https",
-  "supabase/functions/doc-rechunk/index.ts": "ref_https",
-  "supabase/functions/dr-orchestrator/index.ts": "checkRateLimit",
-  "supabase/functions/eval-engine-v2/index.ts": "eval-engine-v2/index.ts",
+  "supabase/functions/doc-rechunk/index.ts": "checkRateLimit",
+  "supabase/functions/dr-orchestrator/index.ts": "getCorsHeaders",
+  "supabase/functions/eval-engine-v2/index.ts": "checkRateLimit",
   "supabase/functions/eval-judge/index.ts": "checkRateLimit",
-  "supabase/functions/global-search/index.ts": "checkRateLimit",
-  "supabase/functions/graph-execute/index.ts": "agent-workflow-runner/index.ts",
-  "supabase/functions/guardrails-engine/index.ts": "ref_https",
-  "supabase/functions/guardrails-ml/index.ts": "ref_https",
+  "supabase/functions/global-search/index.ts": "getCorsHeaders",
+  "supabase/functions/graph-execute/index.ts": "getCorsHeaders",
+  "supabase/functions/guardrails-engine/index.ts": "checkRateLimit",
+  "supabase/functions/guardrails-ml/index.ts": "checkRateLimit",
   "supabase/functions/health-check/index.ts": "checkRateLimit",
-  "supabase/functions/hf-autotrain/index.ts": "checkRateLimit",
-  "supabase/functions/image-analysis/index.ts": "ref_https",
-  "supabase/functions/incident-orchestrator/index.ts": "checkRateLimit",
-  "supabase/functions/kb-analyze-gaps/index.ts": "checkRateLimit",
-  "supabase/functions/kb-translate-article/index.ts": "checkRateLimit",
-  "supabase/functions/lgpd-manager/index.ts": "ref_https",
+  "supabase/functions/hf-autotrain/index.ts": "getCorsHeaders",
+  "supabase/functions/image-analysis/index.ts": "checkRateLimit",
+  "supabase/functions/incident-orchestrator/index.ts": "getCorsHeaders",
+  "supabase/functions/kb-analyze-gaps/index.ts": "getCorsHeaders",
+  "supabase/functions/kb-translate-article/index.ts": "getCorsHeaders",
+  "supabase/functions/lgpd-manager/index.ts": "checkRateLimit",
   "supabase/functions/llm-gateway/index.ts": "retry.ts",
   "supabase/functions/llm-gateway/providers.ts": "retry.ts",
   "supabase/functions/llm-gateway/providers/anthropic.ts": "retry.ts",
@@ -3638,30 +3629,30 @@
   "supabase/functions/llm-gateway/providers/openrouter.ts": "retry.ts",
   "supabase/functions/llm-gateway/types.ts": "retry.ts",
   "supabase/functions/llm-gateway/utils.ts": "retry.ts",
-  "supabase/functions/memory-manager/index.ts": "ref_https",
+  "supabase/functions/memory-manager/index.ts": "checkRateLimit",
   "supabase/functions/memory-tools/index.ts": "memory-tools/index.ts",
   "supabase/functions/migrate-helper/index.ts": "migrate-helper/index.ts",
-  "supabase/functions/nlp-pipeline/index.ts": "ref_https",
-  "supabase/functions/notebook-podcast-generate/index.ts": "checkRateLimit",
+  "supabase/functions/nlp-pipeline/index.ts": "nlp-pipeline/index.ts",
+  "supabase/functions/notebook-podcast-generate/index.ts": "ref_https",
   "supabase/functions/notification-sender/index.ts": "retry.ts",
-  "supabase/functions/openclaw-proxy/index.ts": "agent-workflow-runner/index.ts",
+  "supabase/functions/openclaw-proxy/index.ts": "retry.ts",
   "supabase/functions/openclaw-webhook/index.ts": "mod.ts",
   "supabase/functions/oracle-council/index.ts": "retry.ts",
-  "supabase/functions/oracle-research/index.ts": "ref_https",
+  "supabase/functions/oracle-research/index.ts": "checkRateLimit",
   "supabase/functions/pg-net-smoke-test/index.ts": "checkRateLimit",
-  "supabase/functions/product-mockup/index.ts": "ref_https",
+  "supabase/functions/product-mockup/index.ts": "checkRateLimit",
   "supabase/functions/queue-worker/index.ts": "checkRateLimit",
-  "supabase/functions/quick-agent-test/index.ts": "checkRateLimit",
+  "supabase/functions/quick-agent-test/index.ts": "getCorsHeaders",
   "supabase/functions/rag-embed-backfill/index.ts": "checkRateLimit",
-  "supabase/functions/rag-embed-v2/embedder.ts": "rag-embed-v2/index.ts",
-  "supabase/functions/rag-embed-v2/index.test.ts": "rag-embed-v2/index.ts",
-  "supabase/functions/rag-embed-v2/index.ts": "rag-embed-v2/index.ts",
-  "supabase/functions/rag-ingest/index.ts": "checkRateLimit",
-  "supabase/functions/rag-rerank-v2/index.ts": "ref_https",
-  "supabase/functions/rag-rerank/index.ts": "ref_https",
-  "supabase/functions/replay-fork-execute/index.ts": "checkRateLimit",
+  "supabase/functions/rag-embed-v2/embedder.ts": "embedder.ts",
+  "supabase/functions/rag-embed-v2/index.test.ts": "embedder.ts",
+  "supabase/functions/rag-embed-v2/index.ts": "retry.ts",
+  "supabase/functions/rag-ingest/index.ts": "retry.ts",
+  "supabase/functions/rag-rerank-v2/index.ts": "retry.ts",
+  "supabase/functions/rag-rerank/index.ts": "checkRateLimit",
+  "supabase/functions/replay-fork-execute/index.ts": "ref_https",
   "supabase/functions/sbom-scanner/index.ts": "sbom-scanner/index.ts",
-  "supabase/functions/semantic-search/index.ts": "checkRateLimit",
+  "supabase/functions/semantic-search/index.ts": "ref_https",
   "supabase/functions/skill-classify-llm/departments.ts": "skill-describe-llm/index.ts",
   "supabase/functions/skill-classify-llm/index.ts": "skill-describe-llm/index.ts",
   "supabase/functions/skill-describe-llm/index.ts": "skill-describe-llm/index.ts",
@@ -3673,24 +3664,24 @@
   "supabase/functions/slack-alert-dispatcher/index.ts": "checkRateLimit",
   "supabase/functions/slack-dlq-discard/index.ts": "checkRateLimit",
   "supabase/functions/slack-dlq-retry/index.ts": "Entregáveis aplicados",
-  "supabase/functions/slack-events-webhook/index.ts": "whatsapp-webhook/index.ts",
+  "supabase/functions/slack-events-webhook/index.ts": "checkRateLimit",
   "supabase/functions/slack-rag-sync/index.ts": "checkRateLimit",
   "supabase/functions/slack-verify-connection/index.ts": "checkRateLimit",
-  "supabase/functions/smart-model-router/index.ts": "ref_https",
+  "supabase/functions/smart-model-router/index.ts": "checkRateLimit",
   "supabase/functions/smolagent-runtime/index.ts": "smolagent-runtime/index.ts",
-  "supabase/functions/synthetic-runner/index.ts": "checkRateLimit",
-  "supabase/functions/test-runner/contract_test.ts": "whatsapp-webhook/index.ts",
-  "supabase/functions/test-runner/index.ts": "ref_https",
+  "supabase/functions/synthetic-runner/index.ts": "getCorsHeaders",
+  "supabase/functions/test-runner/contract_test.ts": "contracts.ts",
+  "supabase/functions/test-runner/index.ts": "checkRateLimit",
   "supabase/functions/test-runner/security_contract_test.ts": "ref_https",
-  "supabase/functions/test-runner/versioning_contract_test.ts": "whatsapp-webhook/index.ts",
-  "supabase/functions/text-to-speech/index.ts": "ref_https",
-  "supabase/functions/validate-access/index.ts": "checkRateLimit",
-  "supabase/functions/visual-search/index.ts": "checkRateLimit",
-  "supabase/functions/voice-session/index.ts": "checkRateLimit",
-  "supabase/functions/voice-synthesize/index.ts": "checkRateLimit",
-  "supabase/functions/voice-transcribe/index.ts": "checkRateLimit",
-  "supabase/functions/webhook-receiver/index.ts": "whatsapp-webhook/index.ts",
-  "supabase/functions/whatsapp-router/index.ts": "whatsapp-router/index.ts",
+  "supabase/functions/test-runner/versioning_contract_test.ts": "contracts.ts",
+  "supabase/functions/text-to-speech/index.ts": "checkRateLimit",
+  "supabase/functions/validate-access/index.ts": "getCorsHeaders",
+  "supabase/functions/visual-search/index.ts": "getCorsHeaders",
+  "supabase/functions/voice-session/index.ts": "getCorsHeaders",
+  "supabase/functions/voice-synthesize/index.ts": "getCorsHeaders",
+  "supabase/functions/voice-transcribe/index.ts": "getCorsHeaders",
+  "supabase/functions/webhook-receiver/index.ts": "checkRateLimit",
+  "supabase/functions/whatsapp-router/index.ts": "ref_https",
   "supabase/functions/whatsapp-webhook/index.ts": "whatsapp-webhook/index.ts",
   "supabase/functions/widget-proxy/index.ts": "mod.ts",
   "supabase/functions/workflow-engine-v2/index.ts": "workflow-engine-v2/index.ts",

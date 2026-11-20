@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b983db1e3b237601b74b422e4db91c950832e80f` (2026-11-19T21:08:00-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bf1af82e3d529c7556d32ba9d5e1f1bce58c56b3` (2026-11-19T22:25:40-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1974 |
 | arquivos_codigo | 1449 |
-| linhas_codigo | 317728 |
+| linhas_codigo | 317747 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -431,15 +431,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13799 nós · 37019 arestas · 902 comunidades · grafo do commit `b983db1e`
-- comunidades maiores: lucide-react (290), button.tsx (215), react (210), App.tsx (156), PageHeader.tsx (146), checkRateLimit (143), cn (137), ref_https (133), badge.tsx (131), fromTable (104), templateSkillLinkService.ts (104), ref_node_fs (102)
+- 13799 nós · 37029 arestas · 902 comunidades · grafo do commit `bf1af82e`
+- comunidades maiores: lucide-react (290), button.tsx (215), react (210), App.tsx (156), PageHeader.tsx (146), checkRateLimit (142), cn (137), badge.tsx (131), fromTable (104), templateSkillLinkService.ts (104), ref_node_fs (102), VendorsPage.tsx (101)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (15)
 - package.json (15)
-- supabase/deployment-manifest.json (9)
+- supabase/deployment-manifest.json (10)
 - .github/workflows/ci.yml (6)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/llm-gateway/index.ts (4)
@@ -576,6 +576,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-19 `bf1af82e` feat(edge): rate limit pesado em cost-calculator e product-mockup (#116)
 - 2026-11-19 `b983db1e` fix(edge): whatsapp-webhook GET sem token retorna 403, nao 500 (#115)
 - 2026-11-19 `0f9c748c` fix(a11y): contraste do tip do tour 6.95:1 (#108)
 - 2026-11-19 `47756467` feat(automacao): preserva scripts de validacao exaustiva de edge functions (pr19-resolved) (#114)
@@ -590,7 +591,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `f6182168` feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)
 - 2026-11-13 `8e722da7` fix(ci): sobe node-version para 22 nos jobs npm (#86)
 - 2026-11-13 `c1ba2138` chore(lint): zerar erros do ESLint (13 → 0) (#85)
-- 2026-11-12 `46af5baa` fix(edge): corrige erros de tipagem em webhooks (#84)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
