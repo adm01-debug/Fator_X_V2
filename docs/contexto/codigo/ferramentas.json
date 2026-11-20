@@ -357,10 +357,7 @@
     "LOVABLE_API_KEY",
     "OPENCLAW_WEBHOOK_SECRET",
     "OPENROUTER_API_KEY",
-    "SUPABASE_ACCESS_TOKEN",
-    "SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "SUPABASE_URL"
+    "SUPABASE_ACCESS_TOKEN"
    ],
    "actions": [
     "actions/checkout",

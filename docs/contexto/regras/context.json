@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "db07b5db60238f97393035818b0de7930ada70f6",
+  "sha": "69df67d02a05697d825cb15bb45c7065a4ed17bc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 14:47 UTC",
+  "generated_at": "2026-11-20 14:49 UTC",
   "files_total": 1983,
   "code_files": 1785,
   "code_lines": 347250
@@ -190489,10 +190489,19 @@
   }
  },
  "git": {
-  "sha": "db07b5db60238f97393035818b0de7930ada70f6",
+  "sha": "69df67d02a05697d825cb15bb45c7065a4ed17bc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "69df67d",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix(deploy): remove SUPABASE_* do secrets set e usa --remote (CLI v3) (#123)",
+    "files": [
+     ".github/workflows/edge-deploy.yml"
+    ]
+   },
    {
     "sha": "db07b5d",
     "date": "2026-11-20",
@@ -190809,15 +190818,6 @@
      "supabase/deployment-manifest.json",
      "supabase/functions/llm-gateway/index.ts"
     ]
-   },
-   {
-    "sha": "8e722da",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(ci): sobe node-version para 22 nos jobs npm (#86)",
-    "files": [
-     ".github/workflows/ci.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -190834,15 +190834,11 @@
     4
    ],
    [
-    ".github/workflows/contexto.yml",
-    2
-   ],
-   [
-    ".github/workflows/ci.yml",
-    2
-   ],
-   [
     ".github/workflows/edge-deploy.yml",
+    3
+   ],
+   [
+    ".github/workflows/contexto.yml",
     2
    ],
    [
@@ -190871,6 +190867,10 @@
    ],
    [
     ".github/workflows/automation-local.yml",
+    1
+   ],
+   [
+    ".github/workflows/ci.yml",
     1
    ],
    [

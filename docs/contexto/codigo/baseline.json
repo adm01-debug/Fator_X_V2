@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "db07b5db60238f97393035818b0de7930ada70f6",
+  "commit": "69df67d02a05697d825cb15bb45c7065a4ed17bc",
   "branch": "main",
-  "data_commit": "2026-11-20T11:47:08-03:00",
+  "data_commit": "2026-11-20T11:47:15-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "69df67d0",
+    "data": "2026-11-20",
+    "assunto": "fix(deploy): remove SUPABASE_* do secrets set e usa --remote (CLI v3) (#123)"
+   },
    {
     "sha": "db07b5db",
     "data": "2026-11-20",
@@ -126,11 +131,6 @@
     "sha": "9d6d1f42",
     "data": "2026-11-14",
     "assunto": "infra: workflow de deploy automatico das Edge Functions (#95)"
-   },
-   {
-    "sha": "557f1f6c",
-    "data": "2026-11-14",
-    "assunto": "chore(coverage): sobe thresholds para o nivel medido na CI (#90)"
    }
   ],
   "arquivos_mudados_7d": 73,
@@ -168,6 +168,10 @@
     "mudancas": 4
    },
    {
+    "pasta": ".github/workflows/edge-deploy.yml",
+    "mudancas": 3
+   },
+   {
     "pasta": ".github/workflows/guards.yml",
     "mudancas": 3
    },
@@ -189,10 +193,6 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 3
-   },
-   {
-    "pasta": "supabase/functions/agent-conversational-builder",
     "mudancas": 3
    }
   ],
@@ -232,6 +232,10 @@
    {
     "arquivo": "supabase/functions/voice-synthesize/index.ts",
     "mudancas": 4
+   },
+   {
+    "arquivo": ".github/workflows/edge-deploy.yml",
+    "mudancas": 3
    },
    {
     "arquivo": ".github/workflows/guards.yml",
@@ -292,16 +296,12 @@
    {
     "arquivo": "supabase/functions/graph-execute/index.ts",
     "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/kb-analyze-gaps/index.ts",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 38
+    "commits": 39
    },
    {
     "autor": "dependabot[bot]",
