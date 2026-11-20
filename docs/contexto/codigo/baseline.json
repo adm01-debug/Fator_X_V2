@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "327f5f32ed2b8428a835b70ce5f81b3c532b8eff",
+  "commit": "3a23906d9adb465971a6746e767b6fb8f5936c47",
   "branch": "main",
-  "data_commit": "2026-11-20T15:19:04-03:00",
+  "data_commit": "2026-11-20T16:11:55-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "3a23906d",
+    "data": "2026-11-20",
+    "assunto": "fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)"
+   },
    {
     "sha": "327f5f32",
     "data": "2026-11-20",
@@ -126,21 +131,16 @@
     "sha": "47756467",
     "data": "2026-11-19",
     "assunto": "feat(automacao): preserva scripts de validacao exaustiva de edge functions (pr19-resolved) (#114)"
-   },
-   {
-    "sha": "c3d51464",
-    "data": "2026-11-19",
-    "assunto": "fix(auth,a11y): mensagem certa na validação e 3 violações do axe na área logada (#97)"
    }
   ],
-  "arquivos_mudados_7d": 76,
+  "arquivos_mudados_7d": 77,
   "pastas_mais_mudadas_30d": [
    {
-    "pasta": "package-lock.json",
-    "mudancas": 13
+    "pasta": "supabase/deployment-manifest.json",
+    "mudancas": 14
    },
    {
-    "pasta": "supabase/deployment-manifest.json",
+    "pasta": "package-lock.json",
     "mudancas": 13
    },
    {
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -226,11 +226,19 @@
     "mudancas": 4
    },
    {
+    "arquivo": "supabase/functions/doc-rechunk/index.ts",
+    "mudancas": 4
+   },
+   {
     "arquivo": "supabase/functions/llm-gateway/index.ts",
     "mudancas": 4
    },
    {
     "arquivo": "supabase/functions/voice-synthesize/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/workflow-engine-v2/index.ts",
     "mudancas": 4
    },
    {
@@ -286,22 +294,14 @@
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/functions/doc-rechunk/index.ts",
-    "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/global-search/index.ts",
-    "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/graph-execute/index.ts",
+    "arquivo": "supabase/functions/doc-parse/index.ts",
     "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 42
+    "commits": 43
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1980,
   "arquivos_codigo": 1449,
-  "linhas_codigo": 318184,
+  "linhas_codigo": 318185,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -532,7 +532,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32150
+   "linhas": 32151
   },
   "tailwind.config.ts": {
    "arquivos": 1,

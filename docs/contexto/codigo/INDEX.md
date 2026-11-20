@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `327f5f32ed2b8428a835b70ce5f81b3c532b8eff` (2026-11-20T15:19:04-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3a23906d9adb465971a6746e767b6fb8f5936c47` (2026-11-20T16:11:55-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1980 |
 | arquivos_codigo | 1449 |
-| linhas_codigo | 318184 |
+| linhas_codigo | 318185 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -431,7 +431,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13844 nós · 37105 arestas · 891 comunidades · grafo do commit `327f5f32`
+- 13844 nós · 37105 arestas · 891 comunidades · grafo do commit `3a23906d`
 - comunidades maiores: badge.tsx (281), react (278), button.tsx (224), App.tsx (170), lucide-react (155), logger.ts (149), getCorsHeaders (125), templateSkillLinkService.ts (116), handleCorsPreflight (111), tabs.tsx (110), ref_node_fs (105), retry.ts (101)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -439,19 +439,19 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (21)
 - package.json (20)
-- supabase/deployment-manifest.json (13)
+- supabase/deployment-manifest.json (14)
 - .github/workflows/ci.yml (7)
 - .github/workflows/contexto.yml (4)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/crm-enrich/index.ts (4)
+- supabase/functions/doc-rechunk/index.ts (4)
 - supabase/functions/llm-gateway/index.ts (4)
 - supabase/functions/voice-synthesize/index.ts (4)
+- supabase/functions/workflow-engine-v2/index.ts (4)
 - .github/workflows/edge-deploy.yml (3)
 - .github/workflows/guards.yml (3)
 - .github/workflows/inventario-estado-semanal.yml (3)
 - AGENTS.md (3)
-- CHANGELOG.md (3)
-- docs/migration/MATRIZ_EDGE_TABELA.md (3)
 
 ## Workflows
 - `anti-stale-dependabot.yml` — Anti-stale dependabot (schedule, workflow_dispatch; cron 42 6 * * 5)
@@ -577,6 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-20 `3a23906d` fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)
 - 2026-11-20 `327f5f32` feat(storage): cria bucket knowledge-uploads reconciliado (#127)
 - 2026-11-20 `24731455` feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)
 - 2026-11-20 `efdc4b1a` fix(deps): declara @tiptap/core usado no teste do rich editor (#125)
@@ -591,7 +592,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `60357f2b` chore(ci)(deps): bump actions/setup-node from 6.5.0 to 7.1.0 (#101)
 - 2026-11-20 `c5fffcfb` fix(db): reconcilia schema de documentos com o contrato das edges (#122)
 - 2026-11-20 `71fcc76c` fix(edge): contract tests verdes sem secrets — valida payload e assinatura antes de exigir key (#120)
-- 2026-11-20 `bc0d0b86` fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

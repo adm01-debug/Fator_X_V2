@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "327f5f32ed2b8428a835b70ce5f81b3c532b8eff",
+  "sha": "3a23906d9adb465971a6746e767b6fb8f5936c47",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 18:19 UTC",
+  "generated_at": "2026-11-20 19:12 UTC",
   "files_total": 1985,
   "code_files": 1787,
-  "code_lines": 347761
+  "code_lines": 347762
  },
  "version": "1.3.2",
- "facts_hash": "1207e65210d6e0fd",
+ "facts_hash": "e7a655189c05a774",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -59575,7 +59575,7 @@
   {
    "module": "supabase/functions",
    "files": 134,
-   "lines": 32150,
+   "lines": 32151,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -183138,7 +183138,7 @@
   },
   "supabase/functions/doc-parse/index.ts": {
    "path": "supabase/functions/doc-parse/index.ts",
-   "lines": 666,
+   "lines": 667,
    "exports": [
     "type OcrPageEvent"
    ],
@@ -190705,10 +190705,23 @@
   }
  },
  "git": {
-  "sha": "327f5f32ed2b8428a835b70ce5f81b3c532b8eff",
+  "sha": "3a23906d9adb465971a6746e767b6fb8f5936c47",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "3a23906",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)",
+    "files": [
+     "supabase/deployment-manifest.json",
+     "supabase/functions/doc-parse/index.ts",
+     "supabase/functions/doc-rechunk/index.ts",
+     "supabase/functions/rag-ingest/index.ts",
+     "supabase/functions/workflow-engine-v2/index.ts"
+    ]
+   },
    {
     "sha": "327f5f3",
     "date": "2026-11-20",
@@ -191029,21 +191042,13 @@
     "files": [
      "vitest.config.ts"
     ]
-   },
-   {
-    "sha": "f6a5b20",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "feat(validacao): adiciona zod as rotas de entrada do auth (#92)",
-    "files": [
-     "src/lib/validations/authSchemas.ts",
-     "src/pages/AuthPage.tsx",
-     "src/pages/ResetPasswordPage.tsx",
-     "src/services/secretsRotationService.ts"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "supabase/deployment-manifest.json",
+    6
+   ],
    [
     "package-lock.json",
     6
@@ -191053,12 +191058,20 @@
     5
    ],
    [
-    "supabase/deployment-manifest.json",
-    5
-   ],
-   [
     ".github/workflows/edge-deploy.yml",
     3
+   ],
+   [
+    "supabase/functions/doc-parse/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/doc-rechunk/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/rag-ingest/index.ts",
+    2
    ],
    [
     ".github/workflows/contexto.yml",
@@ -191073,12 +191086,8 @@
     2
    ],
    [
-    "src/pages/AuthPage.tsx",
-    2
-   ],
-   [
-    "src/pages/ResetPasswordPage.tsx",
-    2
+    "supabase/functions/workflow-engine-v2/index.ts",
+    1
    ],
    [
     "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
@@ -191114,14 +191123,6 @@
    ],
    [
     "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
-    1
-   ],
-   [
-    ".github/workflows/anti-stale-dependabot.yml",
-    1
-   ],
-   [
-    ".github/workflows/inventario-estado-semanal.yml",
     1
    ]
   ]

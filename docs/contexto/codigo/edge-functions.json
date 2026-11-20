@@ -847,7 +847,7 @@
    "nome": "doc-parse",
    "entrada": "supabase/functions/doc-parse/index.ts",
    "arquivos": 1,
-   "linhas": 666,
+   "linhas": 667,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
