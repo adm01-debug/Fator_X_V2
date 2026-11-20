@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7b3991fbef8c5354d03586e1f1039260c6fb2d66` (2026-11-20T00:25:56-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d2249e5934807c2f88d87125f754fbab26cebdea` (2026-11-20T00:29:25-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -431,7 +431,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13799 nós · 37047 arestas · 902 comunidades · grafo do commit `7b3991fb`
+- 13799 nós · 37047 arestas · 902 comunidades · grafo do commit `d2249e59`
 - comunidades maiores: lucide-react (290), button.tsx (215), react (210), ref_https (160), App.tsx (156), PageHeader.tsx (146), cn (137), badge.tsx (131), agent-workflow-runner/index.ts (108), fromTable (104), templateSkillLinkService.ts (104), ref_node_fs (102)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -445,19 +445,19 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - supabase/functions/crm-enrich/index.ts (4)
 - supabase/functions/llm-gateway/index.ts (4)
 - supabase/functions/voice-synthesize/index.ts (4)
+- .github/workflows/contexto.yml (3)
 - AGENTS.md (3)
 - CHANGELOG.md (3)
 - scripts/automation.config.json (3)
 - src/components/shared/OnboardingTour.tsx (3)
 - supabase/functions/agent-conversational-builder/index.ts (3)
 - supabase/functions/code-interpreter-execute/index.ts (3)
-- supabase/functions/crm-bitrix-sync/index.ts (3)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
 - `ci.yml` — Nexus CI (pull_request, push, workflow_dispatch)
 - `codeql.yml` — CodeQL (pull_request, push, schedule; cron 17 5 * * 1)
-- `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3-59/10 * * * *)
+- `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3 * * * *)
 - `dependency-review.yml` — Dependency Review (pull_request)
 - `edge-deploy.yml` — Edge Deploy (push, workflow_dispatch)
 - `guards.yml` — Guards (pull_request, push, workflow_dispatch)
@@ -576,6 +576,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-20 `d2249e59` chore: contexto agendado de 10 min para 1x/hora (#98)
+- 2026-11-20 `9a673de6` chore(ci): unifica node 22 nos guards (#91)
 - 2026-11-20 `7b3991fb` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 7 updates (#104)
 - 2026-11-19 `b5951c72` fix(edge): CORS no 429 e rate heavy em agentes — absorve pr19 (GAP-2/S24) (#118)
 - 2026-11-19 `bf1af82e` feat(edge): rate limit pesado em cost-calculator e product-mockup (#116)
@@ -589,8 +591,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `557f1f6c` chore(coverage): sobe thresholds para o nivel medido na CI (#90)
 - 2026-11-14 `f6a5b20d` feat(validacao): adiciona zod as rotas de entrada do auth (#92)
 - 2026-11-14 `715e9cd5` fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)
-- 2026-11-14 `067d5656` docs: adiciona inventario de prontidao de producao (main f618216) (#89)
-- 2026-11-13 `f6182168` feat(llm-gateway): adiciona fallback OPENROUTER_API_KEY no env (#87)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

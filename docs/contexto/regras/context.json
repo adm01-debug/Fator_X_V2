@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7b3991fbef8c5354d03586e1f1039260c6fb2d66",
+  "sha": "d2249e5934807c2f88d87125f754fbab26cebdea",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 03:26 UTC",
+  "generated_at": "2026-11-20 03:30 UTC",
   "files_total": 1979,
   "code_files": 1782,
   "code_lines": 346699
  },
  "version": "1.3.2",
- "facts_hash": "52b6112ab10aef90",
+ "facts_hash": "c7f97ce62b975338",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -56478,7 +56478,7 @@
    },
    {
     "kind": "GitHub Actions cron",
-    "detail": "3-59/10 * * * *",
+    "detail": "3 * * * *",
     "file": ".github/workflows/contexto.yml"
    },
    {
@@ -188895,10 +188895,28 @@
   }
  },
  "git": {
-  "sha": "7b3991fbef8c5354d03586e1f1039260c6fb2d66",
+  "sha": "d2249e5934807c2f88d87125f754fbab26cebdea",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "d2249e5",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore: contexto agendado de 10 min para 1x/hora (#98)",
+    "files": [
+     ".github/workflows/contexto.yml"
+    ]
+   },
+   {
+    "sha": "9a673de",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore(ci): unifica node 22 nos guards (#91)",
+    "files": [
+     ".github/workflows/guards.yml"
+    ]
+   },
    {
     "sha": "7b3991f",
     "date": "2026-11-20",
@@ -189252,151 +189270,12 @@
      "src/pages/WidgetBuilderPage.tsx",
      "src/services/widgetService.ts"
     ]
-   },
-   {
-    "sha": "e851039",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix(contexto): autentica o fetch da branch contexto em repo privado (#75)",
-    "files": [
-     ".github/workflows/contexto.yml"
-    ]
-   },
-   {
-    "sha": "531aa68",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "feat(automacao): porta os scripts autônomos de estado real do Zapp Web V2 (#71)",
-    "files": [
-     ".github/workflows/contexto.yml",
-     ".github/workflows/guards.yml",
-     ".github/workflows/inventario-estado-semanal.yml",
-     ".husky/commit-msg",
-     ".prettierignore",
-     "ai-context.config.json",
-     "docs/contexto/.gitignore",
-     "docs/contexto/regras/manual/README.md",
-     "docs/contexto/regras/manual/TEMPLATE-regras-de-negocio.md",
-     "docs/migration/MATRIZ_EDGE_TABELA.md",
-     "inventario/estado/README.md",
-     "inventario/estado/edges.json",
-     "scripts/.gitignore",
-     "scripts/ai-context/README.md",
-     "scripts/ai-context/cenarios.mjs",
-     "scripts/ai-context/gerar.mjs",
-     "scripts/ai-context/gerar.unit.mjs",
-     "scripts/automation.config.json",
-     "scripts/ci/README.md",
-     "scripts/ci/a11y-button-name-baseline.json",
-     "scripts/ci/a11y-button-name-ratchet.mjs",
-     "scripts/ci/a11y-button-name-ratchet.unit.mjs",
-     "scripts/ci/check-bundle-secrets.mjs",
-     "scripts/ci/check-bundle-secrets.unit.mjs",
-     "scripts/ci/check-e2e-artifact-secrets.mjs",
-     "scripts/ci/check-e2e-artifact-secrets.unit.mjs",
-     "scripts/ci/check-edge-error-exposure.mjs",
-     "scripts/ci/check-edge-error-exposure.unit.mjs",
-     "scripts/ci/check-pr-workflow-secrets.mjs",
-     "scripts/ci/check-pr-workflow-secrets.unit.mjs",
-     "scripts/ci/check-supabase-url-import-meta.mjs",
-     "scripts/ci/check-supabase-url-import-meta.unit.mjs",
-     "scripts/ci/commit-msg-lint.mjs",
-     "scripts/ci/commit-msg-lint.unit.mjs",
-     "scripts/ci/eslint-baseline.json",
-     "scripts/ci/gerar-matriz-edge-tabela.mjs",
-     "scripts/ci/gerar-matriz-edge-tabela.unit.mjs",
-     "scripts/ci/implicit-any-baseline.json",
-     "scripts/ci/implicit-any-ratchet.mjs",
-     "scripts/ci/implicit-any-ratchet.unit.mjs",
-     "scripts/ci/inventario-banco.unit.mjs",
-     "scripts/ci/inventario-mudou.unit.mjs",
-     "scripts/ci/inventario-repo.unit.mjs",
-     "scripts/ci/lint-ratchet.mjs",
-     "scripts/ci/lint-ratchet.unit.mjs",
-     "scripts/ci/typecheck-baseline.json",
-     "scripts/ci/typecheck-ratchet.mjs",
-     "scripts/ci/typecheck-ratchet.unit.mjs",
-     "scripts/edge-deploy/generate-manifest.mjs",
-     "scripts/edge-deploy/manifest-lib.mjs",
-     "scripts/edge-deploy/manifest.unit.mjs",
-     "scripts/inventario/banco.sql",
-     "scripts/inventario/gerar-banco.mjs",
-     "scripts/inventario/gerar-repo.mjs",
-     "scripts/inventario/mudou-conteudo.mjs",
-     "scripts/lib/seguranca-processo.mjs",
-     "scripts/regras_negocio/README.md",
-     "scripts/regras_negocio/generate.py",
-     "scripts/regras_negocio/indice.py",
-     "scripts/regras_negocio/publish.sh",
-     "scripts/regras_negocio/test_generate.py",
-     "scripts/supabase_snapshot/README.md",
-     "scripts/supabase_snapshot/requirements.txt",
-     "scripts/supabase_snapshot/snapshot.py",
-     "scripts/supabase_snapshot/test_snapshot.py",
-     "supabase/deployment-manifest.json",
-     "supabase/functions/a2a-server/index.ts",
-     "supabase/functions/agent-conversational-builder/index.ts",
-     "supabase/functions/agent-workflow-runner/index.ts",
-     "supabase/functions/audio-transcribe/index.ts",
-     "supabase/functions/bitrix24-api/index.ts",
-     "supabase/functions/bitrix24-oauth/index.ts",
-     "supabase/functions/browser-session-cancel/index.ts",
-     "supabase/functions/cerebro-brain/index.ts",
-     "supabase/functions/cerebro-query/index.ts",
-     "supabase/functions/code-interpreter-execute/index.ts",
-     "supabase/functions/crm-bitrix-sync/index.ts",
-     "supabase/functions/crm-cadence-runner/index.ts",
-     "supabase/functions/crm-enrich/index.ts",
-     "supabase/functions/cron-executor/index.ts",
-     "supabase/functions/datahub-query/index.ts",
-     "supabase/functions/doc-ocr/index.ts",
-     "supabase/functions/doc-rechunk/index.ts",
-     "supabase/functions/dr-orchestrator/index.ts",
-     "supabase/functions/eval-judge/index.ts",
-     "supabase/functions/global-search/index.ts",
-     "supabase/functions/graph-execute/index.ts",
-     "supabase/functions/guardrails-engine/index.ts",
-     "supabase/functions/hf-autotrain/index.ts",
-     "supabase/functions/image-analysis/index.ts",
-     "supabase/functions/kb-analyze-gaps/index.ts",
-     "supabase/functions/kb-translate-article/index.ts",
-     "supabase/functions/memory-manager/index.ts",
-     "supabase/functions/memory-tools/index.ts",
-     "supabase/functions/notebook-podcast-generate/index.ts",
-     "supabase/functions/notification-sender/index.ts",
-     "supabase/functions/oracle-council/index.ts",
-     "supabase/functions/product-mockup/index.ts",
-     "supabase/functions/queue-worker/index.ts",
-     "supabase/functions/rag-ingest/index.ts",
-     "supabase/functions/rag-rerank/index.ts",
-     "supabase/functions/replay-fork-execute/index.ts",
-     "supabase/functions/sbom-scanner/index.ts",
-     "supabase/functions/semantic-search/index.ts",
-     "supabase/functions/slack-agent-notify/index.ts",
-     "supabase/functions/slack-alert-dispatcher/index.ts",
-     "supabase/functions/slack-dlq-discard/index.ts",
-     "supabase/functions/slack-dlq-retry/index.ts",
-     "supabase/functions/slack-rag-sync/index.ts",
-     "supabase/functions/slack-verify-connection/index.ts",
-     "supabase/functions/smolagent-runtime/index.ts",
-     "supabase/functions/synthetic-runner/index.ts",
-     "supabase/functions/test-runner/index.ts",
-     "supabase/functions/text-to-speech/index.ts",
-     "supabase/functions/validate-access/index.ts",
-     "supabase/functions/visual-search/index.ts",
-     "supabase/functions/voice-session/index.ts",
-     "supabase/functions/voice-synthesize/index.ts",
-     "supabase/functions/voice-transcribe/index.ts",
-     "supabase/functions/webhook-receiver/index.ts",
-     "supabase/functions/widget-proxy/index.ts",
-     "supabase/functions/workflow-engine-v2/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    11
+    10
    ],
    [
     "package-lock.json",
@@ -189407,72 +189286,72 @@
     3
    ],
    [
-    "supabase/functions/agent-conversational-builder/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/crm-enrich/index.ts",
-    3
-   ],
-   [
     "supabase/functions/llm-gateway/index.ts",
     3
    ],
    [
+    "supabase/functions/agent-conversational-builder/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/crm-enrich/index.ts",
+    2
+   ],
+   [
+    "src/components/shared/OnboardingTour.tsx",
+    2
+   ],
+   [
+    "src/pages/AuthPage.tsx",
+    2
+   ],
+   [
+    "src/pages/ResetPasswordPage.tsx",
+    2
+   ],
+   [
+    "scripts/deploy-edge-functions.sh",
+    2
+   ],
+   [
+    "scripts/generate-openapi.ts",
+    2
+   ],
+   [
     "supabase/functions/agent-workflow-runner/index.ts",
-    3
+    2
    ],
    [
     "supabase/functions/voice-synthesize/index.ts",
-    3
+    2
+   ],
+   [
+    "src/services/widgetService.ts",
+    2
+   ],
+   [
+    ".github/workflows/contexto.yml",
+    1
+   ],
+   [
+    ".github/workflows/guards.yml",
+    1
    ],
    [
     "supabase/functions/a2a-server/index.ts",
-    2
+    1
    ],
    [
     "supabase/functions/audio-transcribe/index.ts",
-    2
+    1
    ],
    [
     "supabase/functions/bitrix24-api/index.ts",
-    2
+    1
    ],
    [
     "supabase/functions/bitrix24-oauth/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/crm-bitrix-sync/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/cron-executor/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/doc-ocr/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/doc-rechunk/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/guardrails-engine/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/image-analysis/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/memory-manager/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/rag-rerank/index.ts",
-    2
+    1
    ]
   ]
  }

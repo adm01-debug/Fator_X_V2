@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7b3991fbef8c5354d03586e1f1039260c6fb2d66",
+  "commit": "d2249e5934807c2f88d87125f754fbab26cebdea",
   "branch": "main",
-  "data_commit": "2026-11-20T00:25:56-03:00",
+  "data_commit": "2026-11-20T00:29:25-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "d2249e59",
+    "data": "2026-11-20",
+    "assunto": "chore: contexto agendado de 10 min para 1x/hora (#98)"
+   },
+   {
+    "sha": "9a673de6",
+    "data": "2026-11-20",
+    "assunto": "chore(ci): unifica node 22 nos guards (#91)"
+   },
    {
     "sha": "7b3991fb",
     "data": "2026-11-20",
@@ -121,19 +131,9 @@
     "sha": "1033b2fe",
     "data": "2026-11-12",
     "assunto": "fix(cors): adiciona *.vercel.app ao ALLOWED_ORIGIN_PATTERNS"
-   },
-   {
-    "sha": "60e36b81",
-    "data": "2026-11-11",
-    "assunto": "feat(notificacao): envio real de e-mail via Resend no notification-sender (#82)"
-   },
-   {
-    "sha": "d53c9e3c",
-    "data": "2026-11-11",
-    "assunto": "fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)"
    }
   ],
-  "arquivos_mudados_7d": 59,
+  "arquivos_mudados_7d": 61,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -164,6 +164,10 @@
     "mudancas": 4
    },
    {
+    "pasta": ".github/workflows/contexto.yml",
+    "mudancas": 3
+   },
+   {
     "pasta": "AGENTS.md",
     "mudancas": 3
    },
@@ -190,10 +194,6 @@
    {
     "pasta": "supabase/functions/voice-synthesize",
     "mudancas": 3
-   },
-   {
-    "pasta": ".agents/skills/fator-x-v2",
-    "mudancas": 2
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -228,6 +228,10 @@
    {
     "arquivo": "supabase/functions/voice-synthesize/index.ts",
     "mudancas": 4
+   },
+   {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 3
    },
    {
     "arquivo": "AGENTS.md",
@@ -292,16 +296,12 @@
    {
     "arquivo": "supabase/functions/slack-alert-dispatcher/index.ts",
     "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/slack-dlq-retry/index.ts",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 31
+    "commits": 33
    },
    {
     "autor": "dependabot[bot]",
