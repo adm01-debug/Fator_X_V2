@@ -91,7 +91,7 @@ serve(async (req) => {
     const body = await req.json();
     const parsed = WorkflowInput.safeParse(body);
     if (!parsed.success)
-      return jsonResponse({ error: 'Invalid input', details: parsed.error.flatten() }, 400);
+      return jsonResponse(req, { error: 'Invalid input', details: parsed.error.flatten() }, 400);
     const { workflow_id, input, resume_run_id } = parsed.data;
 
     const streamRequested = req.headers.get('accept') === 'text/event-stream';
@@ -102,7 +102,7 @@ serve(async (req) => {
       .select('*')
       .eq('id', workflow_id)
       .single();
-    if (wfErr || !workflow) return jsonResponse({ error: 'Workflow not found' }, 404);
+    if (wfErr || !workflow) return jsonResponse(req, { error: 'Workflow not found' }, 404);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
     const wfConfig = (workflow.config || {}) as Record<string, any>;
@@ -135,7 +135,7 @@ serve(async (req) => {
       }
     }
 
-    if (graph.nodes.length === 0) return jsonResponse({ error: 'No nodes in workflow' }, 400);
+    if (graph.nodes.length === 0) return jsonResponse(req, { error: 'No nodes in workflow' }, 400);
 
     // Initialize or resume state
     let state: WorkflowState;
@@ -147,7 +147,7 @@ serve(async (req) => {
         .select('*')
         .eq('id', resume_run_id)
         .single();
-      if (!existingRun) return jsonResponse({ error: 'Run not found' }, 404);
+      if (!existingRun) return jsonResponse(req, { error: 'Run not found' }, 404);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
       const existingOutput = existingRun.output as Record<string, any> | null;
       state = (existingOutput?.state as WorkflowState) || {
@@ -444,7 +444,7 @@ serve(async (req) => {
         },
       });
       return new Response(stream, {
-        headers: { ...getCorsHeaders(), 'Content-Type': 'text/event-stream' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'text/event-stream' },
       });
     }
 
@@ -455,7 +455,7 @@ serve(async (req) => {
 
       state._iteration_count[node.id] = (state._iteration_count[node.id] || 0) + 1;
       if (state._iteration_count[node.id] > MAX_ITERATIONS)
-        return jsonResponse({ error: `Cycle limit reached at "${node.label}"` }, 400);
+        return jsonResponse(req, { error: `Cycle limit reached at "${node.label}"` }, 400);
 
       state._history.push(node.id);
 
@@ -468,7 +468,7 @@ serve(async (req) => {
             output: { state, pending_approval: { node_id: node.id, label: node.label } },
           })
           .eq('id', runId);
-        return jsonResponse({ status: 'awaiting_approval', run_id: runId });
+        return jsonResponse(req, { status: 'awaiting_approval', run_id: runId });
       }
 
       await executeStep(node);
@@ -501,7 +501,7 @@ serve(async (req) => {
         total_tokens: totalTokens,
       })
       .eq('id', runId);
-    return jsonResponse({
+    return jsonResponse(req, {
       status: 'completed',
       run_id: runId,
       output: state._output,
@@ -511,6 +511,6 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error('workflow-engine-v2 error:', e);
-    return jsonResponse({ error: 'Internal server error' }, 500);
+    return jsonResponse(req, { error: 'Internal server error' }, 500);
   }
 });

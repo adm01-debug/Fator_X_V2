@@ -325,7 +325,7 @@ serve(async (req) => {
                 ),
             );
 
-          return jsonResponse({
+          return jsonResponse(req, {
             status: 'ok',
             deduped: true,
             document_id: existing.id,
@@ -336,7 +336,7 @@ serve(async (req) => {
       }
     }
 
-    if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
+    if (await checkCancelled()) return jsonResponse(req, { status: 'cancelled' });
     await updateStatus('parsing', 10);
 
     // Download from storage
@@ -417,7 +417,7 @@ serve(async (req) => {
                   `[audit] falha ao registrar document.reuse (hash servidor): ${e?.message ?? e}`,
                 ),
             );
-          return jsonResponse({
+          return jsonResponse(req, {
             status: 'ok',
             deduped: true,
             document_id: existing.id,
@@ -458,6 +458,7 @@ serve(async (req) => {
               'PDF escaneado detectado. Cliente precisa rasterizar páginas antes do reenvio.',
           });
           return jsonResponse(
+            req,
             {
               error: 'ocr_pages_required',
               message: 'PDF escaneado. Envie ocr_pages: [{page,png_base64}]',
@@ -467,7 +468,7 @@ serve(async (req) => {
             422,
           );
         }
-        if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
+        if (await checkCancelled()) return jsonResponse(req, { status: 'cancelled' });
         await updateStatus('ocr', 30);
         let ocrMap: Map<number, string>;
         try {
@@ -482,7 +483,7 @@ serve(async (req) => {
             (ev) => pageEvents.push(ev),
           );
         } catch (e) {
-          if (e === CANCELLED) return jsonResponse({ status: 'cancelled' });
+          if (e === CANCELLED) return jsonResponse(req, { status: 'cancelled' });
           throw e;
         }
 
@@ -557,7 +558,7 @@ serve(async (req) => {
       strategy: body.chunk_strategy,
     });
 
-    if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
+    if (await checkCancelled()) return jsonResponse(req, { status: 'cancelled' });
     await updateStatus('chunking', 75, { pages: pageCount, extraction_method: extractionMethod });
 
     const { data: doc, error: docErr } = await supabase
@@ -596,7 +597,7 @@ serve(async (req) => {
       .update({ document_id: doc.id })
       .eq('id', body.ingestion_id);
 
-    if (await checkCancelled()) return jsonResponse({ status: 'cancelled' });
+    if (await checkCancelled()) return jsonResponse(req, { status: 'cancelled' });
     await updateStatus('embedding', 85);
 
     const chunks = chunkText(fullText, chunkOpts);
@@ -648,7 +649,7 @@ serve(async (req) => {
       })
       .catch(() => {});
 
-    return jsonResponse({
+    return jsonResponse(req, {
       status: 'ok',
       document_id: doc.id,
       chunks: chunks.length,
