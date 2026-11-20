@@ -457,7 +457,7 @@
    "nome": "cerebro-query",
    "entrada": "supabase/functions/cerebro-query/index.ts",
    "arquivos": 1,
-   "linhas": 323,
+   "linhas": 309,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1934,13 +1934,14 @@
    "nome": "rag-embed-backfill",
    "entrada": "supabase/functions/rag-embed-backfill/index.ts",
    "arquivos": 1,
-   "linhas": 189,
+   "linhas": 259,
    "verify_jwt": false,
    "metodos": [
     "OPTIONS"
    ],
    "tabelas": [
-    "agent_memories_v2"
+    "agent_memories_v2",
+    "chunks"
    ],
    "rpcs": [],
    "env": [],
@@ -2002,7 +2003,7 @@
    "nome": "rag-ingest",
    "entrada": "supabase/functions/rag-ingest/index.ts",
    "arquivos": 1,
-   "linhas": 127,
+   "linhas": 147,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

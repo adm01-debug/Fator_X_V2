@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b35c28a439bd421934cfe31eac78d6fff64b7ee2",
+  "sha": "bc0d0b86ba7131e83906041e16fb0738ae1deb4a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 04:03 UTC",
+  "generated_at": "2026-11-20 05:29 UTC",
   "files_total": 1981,
   "code_files": 1784,
-  "code_lines": 347001
+  "code_lines": 347077
  },
  "version": "1.3.2",
- "facts_hash": "22a9064d0a18cd7b",
+ "facts_hash": "e5ee6c6824a04051",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -54908,6 +54908,7 @@
      "agent_memories_v2",
      "agent_usage",
      "api_keys",
+     "chunks",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members"
@@ -59398,7 +59399,7 @@
   {
    "module": "supabase/functions",
    "files": 134,
-   "lines": 32074,
+   "lines": 32150,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -60299,17 +60300,15 @@
      "src/services/knowledgeService.ts",
      "src/services/temporalKnowledgeService.ts",
      "supabase/functions/cerebro-brain/index.ts",
+     "supabase/functions/cerebro-query/index.ts",
      "supabase/functions/doc-parse/index.ts",
+     "supabase/functions/rag-embed-backfill/index.ts",
      "supabase/functions/rag-ingest/index.ts",
      "supabase/functions/semantic-search/index.ts"
     ],
     "delete": [
      "src/services/documentIngestionService.ts",
      "src/services/knowledgeService.ts"
-    ],
-    "ref": [
-     "supabase/functions/cerebro-query/index.ts",
-     "supabase/functions/rag-ingest/index.ts"
     ],
     "insert": [
      "supabase/functions/doc-parse/index.ts",
@@ -60318,6 +60317,10 @@
     ],
     "update": [
      "supabase/functions/doc-rechunk/index.ts",
+     "supabase/functions/rag-embed-backfill/index.ts",
+     "supabase/functions/rag-ingest/index.ts"
+    ],
+    "ref": [
      "supabase/functions/rag-ingest/index.ts"
     ]
    },
@@ -62174,6 +62177,7 @@
     "content",
     "created_at",
     "document_id",
+    "embedding",
     "embedding_status",
     "id",
     "is_active",
@@ -97716,6 +97720,36 @@
     "kind": "escreve"
    },
    {
+    "file": "supabase/functions/rag-embed-backfill/index.ts",
+    "field": "embedding_status",
+    "value": "failed",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/rag-embed-backfill/index.ts",
+    "field": "embedding_status",
+    "value": "done",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/rag-embed-backfill/index.ts",
+    "field": "embedding_status",
+    "value": "failed",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/rag-embed-backfill/index.ts",
+    "field": "embedding_status",
+    "value": "failed",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/rag-embed-backfill/index.ts",
+    "field": "embedding_status",
+    "value": "pending",
+    "kind": "filtra"
+   },
+   {
     "file": "supabase/functions/rag-ingest/index.ts",
     "field": "stage",
     "value": "start",
@@ -97749,6 +97783,12 @@
     "file": "supabase/functions/rag-ingest/index.ts",
     "field": "embedding_status",
     "value": "done",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/rag-ingest/index.ts",
+    "field": "embedding_status",
+    "value": "failed",
     "kind": "escreve"
    },
    {
@@ -129712,6 +129752,7 @@
       "compara:src/components/knowledge/KnowledgeBaseDetail.tsx"
      ],
      "done": [
+      "escreve:supabase/functions/rag-embed-backfill/index.ts",
       "escreve:supabase/functions/rag-ingest/index.ts",
       "filtra:src/services/knowledgeService.ts",
       "filtra:supabase/functions/cerebro-brain/index.ts",
@@ -129722,9 +129763,12 @@
       "escreve:supabase/functions/doc-rechunk/index.ts",
       "escreve:supabase/functions/rag-ingest/index.ts",
       "filtra:src/services/knowledgeService.ts",
-      "filtra:supabase/functions/cerebro-brain/index.ts"
+      "filtra:supabase/functions/cerebro-brain/index.ts",
+      "filtra:supabase/functions/rag-embed-backfill/index.ts"
      ],
      "failed": [
+      "escreve:supabase/functions/rag-embed-backfill/index.ts",
+      "escreve:supabase/functions/rag-ingest/index.ts",
       "filtra:src/services/knowledgeService.ts",
       "filtra:supabase/functions/cerebro-brain/index.ts"
      ]
@@ -181837,7 +181881,7 @@
   },
   "supabase/functions/cerebro-query/index.ts": {
    "path": "supabase/functions/cerebro-query/index.ts",
-   "lines": 323,
+   "lines": 309,
    "tables": [
     {
      "table": "workspace_members",
@@ -181861,7 +181905,7 @@
     },
     {
      "table": "chunks",
-     "op": "ref"
+     "op": "select"
     }
    ],
    "table_cols": {
@@ -181882,6 +181926,13 @@
     "collections": [
      "id",
      "name"
+    ],
+    "chunks": [
+     "content",
+     "document_id",
+     "embedding_status",
+     "id",
+     "knowledge_base_id"
     ]
    },
    "env": [
@@ -185447,7 +185498,7 @@
   },
   "supabase/functions/rag-embed-backfill/index.ts": {
    "path": "supabase/functions/rag-embed-backfill/index.ts",
-   "lines": 189,
+   "lines": 259,
    "tables": [
     {
      "table": "agent_memories_v2",
@@ -185464,6 +185515,26 @@
     {
      "table": "agent_memories_v2",
      "op": "update"
+    },
+    {
+     "table": "chunks",
+     "op": "select"
+    },
+    {
+     "table": "chunks",
+     "op": "update"
+    },
+    {
+     "table": "chunks",
+     "op": "update"
+    },
+    {
+     "table": "chunks",
+     "op": "update"
+    },
+    {
+     "table": "chunks",
+     "op": "update"
     }
    ],
    "table_cols": {
@@ -185471,6 +185542,12 @@
      "content",
      "embed_attempts",
      "embedding",
+     "id"
+    ],
+    "chunks": [
+     "content",
+     "embedding",
+     "embedding_status",
      "id"
     ]
    },
@@ -185491,6 +185568,33 @@
     {
      "name": "EMBED_DIM",
      "value": "1536"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "embedding_status",
+     "value": "failed",
+     "kind": "escreve"
+    },
+    {
+     "field": "embedding_status",
+     "value": "done",
+     "kind": "escreve"
+    },
+    {
+     "field": "embedding_status",
+     "value": "failed",
+     "kind": "escreve"
+    },
+    {
+     "field": "embedding_status",
+     "value": "failed",
+     "kind": "escreve"
+    },
+    {
+     "field": "embedding_status",
+     "value": "pending",
+     "kind": "filtra"
     }
    ],
    "rule_comments": [
@@ -185589,7 +185693,7 @@
   },
   "supabase/functions/rag-ingest/index.ts": {
    "path": "supabase/functions/rag-ingest/index.ts",
-   "lines": 127,
+   "lines": 147,
    "tables": [
     {
      "table": "documents",
@@ -185606,6 +185710,10 @@
     {
      "table": "chunks",
      "op": "insert,select"
+    },
+    {
+     "table": "chunks",
+     "op": "update"
     },
     {
      "table": "chunks",
@@ -185682,6 +185790,11 @@
     {
      "field": "embedding_status",
      "value": "done",
+     "kind": "escreve"
+    },
+    {
+     "field": "embedding_status",
+     "value": "failed",
      "kind": "escreve"
     },
     {
@@ -190224,10 +190337,23 @@
   }
  },
  "git": {
-  "sha": "b35c28a439bd421934cfe31eac78d6fff64b7ee2",
+  "sha": "bc0d0b86ba7131e83906041e16fb0738ae1deb4a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "bc0d0b8",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)",
+    "files": [
+     "docs/migration/MATRIZ_EDGE_TABELA.md",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/cerebro-query/index.ts",
+     "supabase/functions/rag-embed-backfill/index.ts",
+     "supabase/functions/rag-ingest/index.ts"
+    ]
+   },
    {
     "sha": "b35c28a",
     "date": "2026-11-20",
@@ -190571,27 +190697,12 @@
      "supabase/functions/skill-describe-llm/index.ts",
      "supabase/functions/voice-synthesize/index.ts"
     ]
-   },
-   {
-    "sha": "fd6c7ff",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "style(manutencao): aplica correcoes locais verificadas (#77)",
-    "files": [
-     "src/components/NavLink.tsx",
-     "src/components/admin/AuditTrailPanel.tsx",
-     "src/components/admin/DbHealthCard.tsx",
-     "src/components/admin/DbHealthTimeseriesCard.tsx",
-     "src/components/admin/DetectorSloCard.tsx",
-     "src/components/agent-builder/ConversationalBuilder.tsx",
-     "src/components/agent-builder/CostEstimateCard.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    10
+    11
    ],
    [
     "package-lock.json",
@@ -190604,6 +190715,10 @@
    [
     "supabase/functions/llm-gateway/index.ts",
     3
+   ],
+   [
+    "docs/migration/MATRIZ_EDGE_TABELA.md",
+    2
    ],
    [
     "supabase/functions/agent-conversational-builder/index.ts",
@@ -190634,6 +190749,18 @@
     2
    ],
    [
+    "supabase/functions/cerebro-query/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/rag-embed-backfill/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/rag-ingest/index.ts",
+    1
+   ],
+   [
     "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
     1
    ],
@@ -190651,22 +190778,6 @@
    ],
    [
     "supabase/functions/a2a-server/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/audio-transcribe/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/bitrix24-api/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/bitrix24-oauth/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/crm-bitrix-sync/index.ts",
     1
    ]
   ]

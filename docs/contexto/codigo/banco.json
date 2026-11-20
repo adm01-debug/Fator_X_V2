@@ -9901,6 +9901,7 @@
     "cerebro-query",
     "doc-parse",
     "doc-rechunk",
+    "rag-embed-backfill",
     "rag-ingest",
     "semantic-search"
    ],

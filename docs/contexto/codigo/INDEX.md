@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b35c28a439bd421934cfe31eac78d6fff64b7ee2` (2026-11-20T01:02:57-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bc0d0b86ba7131e83906041e16fb0738ae1deb4a` (2026-11-20T02:29:03-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1976 |
 | arquivos_codigo | 1449 |
-| linhas_codigo | 317765 |
+| linhas_codigo | 317841 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -328,7 +328,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `product-mockup` — tabelas: -; chamada por 1 arquivo(s) do front
 - `queue-worker` — tabelas: queue_items, task_queues; chamada por 1 arquivo(s) do front
 - `quick-agent-test` — tabelas: -; chamada por 2 arquivo(s) do front
-- `rag-embed-backfill` (verify_jwt=false) — tabelas: agent_memories_v2; chamada por 0 arquivo(s) do front
+- `rag-embed-backfill` (verify_jwt=false) — tabelas: agent_memories_v2, chunks; chamada por 0 arquivo(s) do front
 - `rag-embed-v2` — tabelas: workspace_members, workspace_secrets; chamada por 1 arquivo(s) do front
 - `rag-ingest` — tabelas: chunks, documents, workspace_members, workspace_secrets; chamada por 1 arquivo(s) do front
 - `rag-rerank` — tabelas: workspace_members, workspace_secrets; chamada por 2 arquivo(s) do front
@@ -431,7 +431,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13802 nós · 37048 arestas · 886 comunidades · grafo do commit `b35c28a4`
+- 13802 nós · 37048 arestas · 886 comunidades · grafo do commit `bc0d0b86`
 - comunidades maiores: lucide-react (301), react (273), App.tsx (173), PageHeader.tsx (167), button.tsx (150), ref_https (148), cn (120), badge.tsx (112), fromTable (104), ref_node_fs (102), dependencies (90), services/index.ts (90)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -439,7 +439,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (16)
 - package.json (16)
-- supabase/deployment-manifest.json (11)
+- supabase/deployment-manifest.json (12)
 - .github/workflows/ci.yml (6)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/crm-enrich/index.ts (4)
@@ -448,10 +448,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/contexto.yml (3)
 - AGENTS.md (3)
 - CHANGELOG.md (3)
+- docs/migration/MATRIZ_EDGE_TABELA.md (3)
 - scripts/automation.config.json (3)
 - src/components/shared/OnboardingTour.tsx (3)
 - supabase/functions/agent-conversational-builder/index.ts (3)
-- supabase/functions/code-interpreter-execute/index.ts (3)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -576,6 +576,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-20 `bc0d0b86` fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)
 - 2026-11-20 `b35c28a4` fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)
 - 2026-11-20 `d2249e59` chore: contexto agendado de 10 min para 1x/hora (#98)
 - 2026-11-20 `9a673de6` chore(ci): unifica node 22 nos guards (#91)
@@ -590,7 +591,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `79787795` fix(infra): expoe falha no deploy das edge functions (#96)
 - 2026-11-14 `9d6d1f42` infra: workflow de deploy automatico das Edge Functions (#95)
 - 2026-11-14 `557f1f6c` chore(coverage): sobe thresholds para o nivel medido na CI (#90)
-- 2026-11-14 `f6a5b20d` feat(validacao): adiciona zod as rotas de entrada do auth (#92)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
