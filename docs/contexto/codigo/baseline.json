@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "24731455663602a933e8b077bf4aa1d7cccb9741",
+  "commit": "327f5f32ed2b8428a835b70ce5f81b3c532b8eff",
   "branch": "main",
-  "data_commit": "2026-11-20T14:59:39-03:00",
+  "data_commit": "2026-11-20T15:19:04-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "327f5f32",
+    "data": "2026-11-20",
+    "assunto": "feat(storage): cria bucket knowledge-uploads reconciliado (#127)"
+   },
    {
     "sha": "24731455",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "c3d51464",
     "data": "2026-11-19",
     "assunto": "fix(auth,a11y): mensagem certa na validação e 3 violações do axe na área logada (#97)"
-   },
-   {
-    "sha": "8c281873",
-    "data": "2026-11-19",
-    "assunto": "ci(security): dependency review barra CVE novo high/critical nos PRs (#107)"
    }
   ],
-  "arquivos_mudados_7d": 75,
+  "arquivos_mudados_7d": 76,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "package-lock.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 41
+    "commits": 42
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1979,
+  "arquivos_total": 1980,
   "arquivos_codigo": 1449,
   "linhas_codigo": 318184,
   "rotas": 151,
@@ -322,7 +322,7 @@
   "hooks": 75,
   "edge_functions": 87,
   "tabelas": 327,
-  "migrations": 333,
+  "migrations": 334,
   "cron_jobs": 37,
   "testes": 239,
   "workflows": 10,

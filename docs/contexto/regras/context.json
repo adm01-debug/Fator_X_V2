@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "24731455663602a933e8b077bf4aa1d7cccb9741",
+  "sha": "327f5f32ed2b8428a835b70ce5f81b3c532b8eff",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 18:00 UTC",
-  "files_total": 1984,
-  "code_files": 1786,
-  "code_lines": 347709
+  "generated_at": "2026-11-20 18:19 UTC",
+  "files_total": 1985,
+  "code_files": 1787,
+  "code_lines": 347761
  },
  "version": "1.3.2",
- "facts_hash": "2b551790e54999df",
+ "facts_hash": "1207e65210d6e0fd",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -237,7 +237,7 @@
   "languages": {
    ".tsx": 699,
    ".ts": 692,
-   ".sql": 336,
+   ".sql": 337,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -34436,36 +34436,6 @@
     "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
    },
    {
-    "name": "Users read own knowledge uploads",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
-    "check": "",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
-   },
-   {
-    "name": "Users upload own knowledge uploads",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
-   },
-   {
-    "name": "Users delete own knowledge uploads",
-    "table": "storage.objects",
-    "cmd": "DELETE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
-    "check": "",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
-   },
-   {
     "name": "collections_workspace_select",
     "table": "collections",
     "cmd": "SELECT",
@@ -36764,6 +36734,36 @@
     "using": "bucket_id = 'chat-attachments' AND (storage.foldername(name))[1] = auth.uid()::text",
     "check": "",
     "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "Users read own knowledge uploads",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql"
+   },
+   {
+    "name": "Users upload own knowledge uploads",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "src": "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql"
+   },
+   {
+    "name": "Users delete own knowledge uploads",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql"
    }
   ],
   "triggers": [
@@ -46770,6 +46770,7 @@
    "supabase/migrations/20261114094500_restore_log_audit_entry.sql",
    "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
    "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
+   "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -59817,8 +59818,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 333,
-   "lines": 29214,
+   "files": 334,
+   "lines": 29266,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -118246,36 +118247,6 @@
     "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
    },
    {
-    "name": "Users read own knowledge uploads",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
-    "check": "",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
-   },
-   {
-    "name": "Users upload own knowledge uploads",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
-   },
-   {
-    "name": "Users delete own knowledge uploads",
-    "table": "storage.objects",
-    "cmd": "DELETE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
-    "check": "",
-    "src": "supabase/migrations/20260722161523_1aa7a3ec-d763-42fe-958a-65dc737be6a8.sql"
-   },
-   {
     "name": "collections_workspace_select",
     "table": "collections",
     "cmd": "SELECT",
@@ -120574,6 +120545,36 @@
     "using": "bucket_id = 'chat-attachments' AND (storage.foldername(name))[1] = auth.uid()::text",
     "check": "",
     "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "Users read own knowledge uploads",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql"
+   },
+   {
+    "name": "Users upload own knowledge uploads",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "src": "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql"
+   },
+   {
+    "name": "Users delete own knowledge uploads",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'knowledge-uploads' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql"
    }
   ],
   "db_triggers": [
@@ -190539,6 +190540,10 @@
    "path": "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
    "lines": 116
   },
+  "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql": {
+   "path": "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
+   "lines": 52
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -190700,10 +190705,19 @@
   }
  },
  "git": {
-  "sha": "24731455663602a933e8b077bf4aa1d7cccb9741",
+  "sha": "327f5f32ed2b8428a835b70ce5f81b3c532b8eff",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "327f5f3",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "feat(storage): cria bucket knowledge-uploads reconciliado (#127)",
+    "files": [
+     "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql"
+    ]
+   },
    {
     "sha": "2473145",
     "date": "2026-11-20",
@@ -191027,15 +191041,6 @@
      "src/pages/ResetPasswordPage.tsx",
      "src/services/secretsRotationService.ts"
     ]
-   },
-   {
-    "sha": "715e9cd",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "fix(ci): k6 do llm-gateway conta só 5xx/rede como falha (#88)",
-    "files": [
-     "tests/load/llm-gateway.k6.js"
-    ]
    }
   ],
   "hot_files": [
@@ -191076,6 +191081,10 @@
     2
    ],
    [
+    "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
+    1
+   ],
+   [
     "src/components/chat/ChatComposer.tsx",
     1
    ],
@@ -191113,10 +191122,6 @@
    ],
    [
     ".github/workflows/inventario-estado-semanal.yml",
-    1
-   ],
-   [
-    ".github/workflows/automation-local.yml",
     1
    ]
   ]

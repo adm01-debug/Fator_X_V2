@@ -1,17 +1,17 @@
 # Graph Report - Fator_X_V2  (2026-11-20)
 
 ## Corpus Check
-- 1920 files · ~1,343,562 words
+- 1921 files · ~1,343,806 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 26 file(s) not represented in the graph (top: (none) 10, .toml 5, .css 3)
 
 ## Summary
-- 13843 nodes · 37105 edges · 890 communities (604 shown, 286 thin omitted)
+- 13844 nodes · 37105 edges · 891 communities (604 shown, 287 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 569 edges (avg confidence: 0.91)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `24731455`
+- Built from commit: `327f5f32`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -805,7 +805,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (890 total, 286 thin omitted)
+## Communities (891 total, 287 thin omitted)
 
 ### Community 0 - "badge.tsx"
 Cohesion: 0.03
@@ -3225,8 +3225,8 @@ Nodes (3): idx_mcp_tools_server_id, idx_mcp_tools_workspace_id, public.mcp_tools
 
 ## Knowledge Gaps
 - **3490 isolated node(s):** `session-start.sh script`, `PATH`, `$schema`, `config:recommended`, `:semanticCommits` (+3485 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 5106 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **286 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 5107 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **287 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -3236,7 +3236,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `vitest` connect `vitest` to `badge.tsx`, `tiers.ts`, `otel-genai.ts`, `local-graph-view.test.tsx`, `App.tsx`, `logger.ts`, `templateSkillLinkService.ts`, `ref_node_fs`, `SkillReclassifyDialog.tsx`, `services/index.ts`, `fromTable`, `notesService.ts`, `agent-workflow-runner/index.ts`, `QuickCreateWizard.tsx`, `SkillDemandPanel.tsx`, `AgentTracesPage.tsx`, `AppLayout.tsx`, `AgentDetailPage.tsx`, `DbRow`, `E2EESyncPanel.tsx`, `package.json`, `SkillClassificationEfficacyCard.tsx`, `SkillHarvestPage.tsx`, `ChatWithAgentPage.tsx`, `templateSkillRegistry.ts`, `notificationEngineService.ts`, `skillsRegistryService.ts`, `skillDepartmentClassifier.ts`, `rbacService.ts`, `CompareTracesSheet.tsx`, `promptContradictions.ts`, `tracing.ts`, `observability.ts`, `RoutingConfigPage.tsx`, `VendorsPage.tsx`, `@testing-library/react`, `classificationEfficacy.ts`, `securityService.ts`, `kanbanService.ts`, `skillDraft.ts`, `SearchTab.tsx`, `agentsService.ts`, `nexus-complete-test-suite.test.ts`, `promptSimulation.ts`, `sidebar.tsx`, `llmGatewayService.ts`, `supabaseMock.ts`, `foldForSearch`, `knowledgeService.ts`, `basesService.ts`, `ref_node_url`, `evaluationsService.ts`, `crmScoringService.ts`, `agentHandoffService.ts`, `accessControlService.ts`, `services.test.ts`, `progressiveSkillLoader.ts`, `test-exaustivo.cjs`, `webhookTriggerService.ts`, `descriptionEnrichment.ts`, `MonitoringPage.tsx`, `attribution.ts`, `agentSchema.ts`, `openclawDeployService.ts`, `NexusMCPClient`, `promptEvidenceLedger.ts`, `billingService.ts`, `batchProcessorService.ts`, `connectorRegistryService.ts`, `datahubService.ts`, `useCurationRealtime.ts`, `installGuard.ts`, `I18nProvider.tsx`, `installCapLedger.ts`, `WorkflowCanvas.tsx`, `nlpPipelineService.ts`, `SkillOverflowAlertCard.tsx`, `memoryService.ts`, `llmClassificationQueue.ts`, `credentialVaultService.ts`, `RestoreFeedbackBanner.tsx`, `design-improvements.test.tsx`, `skillEnrichmentService.ts`, `queueManagerService.ts`, `workflowCheckpointService.ts`, `zod`, `healthAlertsService.ts`, `calibrationGovernance.ts`, `BrainModule.tsx`, `noteTemplatesService.ts`, `whatsappOutboundService.ts`, `GuardrailsModule.tsx`, `promptAuditArtifact.ts`, `nexus-design.js`, `createSSEEmitter`, `SpanTreeView.tsx`, `queueFailureSummary.ts`, `useIsMobile`, `openclawCompiler.ts`, `llm-gateway-providers.test.ts`, `RichEditor.tsx`, `skill-attribution.test.ts`, `dialogSchemas.ts`, `agentEvolutionService.ts`, `workspaceContextService.ts`, `securityGuards.ts`, `TemplateCanvasPreview.tsx`, `vaultSyncService.ts`?**
   _High betweenness centrality (0.057) - this node is a cross-community bridge._
 - **Why does `Badge()` connect `badge.tsx` to `react`, `button.tsx`, `App.tsx`, `lucide-react`, `logger.ts`, `templateSkillLinkService.ts`, `tabs.tsx`, `cn`, `SkillReclassifyDialog.tsx`, `services/index.ts`, `notesService.ts`, `PostmortemsPage.tsx`, `SkillDemandPanel.tsx`, `AgentTracesPage.tsx`, `cronSchedulerService.ts`, `AppLayout.tsx`, `StepQuickPrompt.tsx`, `AgentDetailPage.tsx`, `E2EESyncPanel.tsx`, `oracleStore.ts`, `SkillClassificationEfficacyCard.tsx`, `SkillHarvestPage.tsx`, `agentService.ts`, `SuperCerebroPage.tsx`, `skillsRegistryService.ts`, `ui/index.ts`, `CompareTracesSheet.tsx`, `ExecutionTimeline.tsx`, `RoutingConfigPage.tsx`, `DataHubPage.tsx`, `VendorsPage.tsx`, `quickAgentTemplates.ts`, `promptSanitizer.ts`, `agentChangelog.ts`, `RecordSubComponents.tsx`, `useAgentBuilderStore`, `securityService.ts`, `kanbanService.ts`, `SearchTab.tsx`, `SLODashboard.tsx`, `alertRulesService.ts`, `nexus-complete-test-suite.test.ts`, `promptSimulation.ts`, `sidebar.tsx`, `llmGatewayService.ts`, `supabaseMock.ts`, `IRPlaybooksPage.tsx`, `PostmortemEditorPage.tsx`, `RAGModule.tsx`, `agentTypes.ts`, `QuickAgentTestPanel.tsx`, `ChangeManagementPage.tsx`, `productMockupService.ts`, `DocumentUploadTab.tsx`, `MonitoringPage.tsx`, `AssetInventoryPage.tsx`, `OrchestratorModule.tsx`, `connectorRegistryService.ts`, `datahubService.ts`, `I18nProvider.tsx`, `SkillOverflowAlertCard.tsx`, `promptDiff.ts`, `VoiceAgentsPage.tsx`, `charts/index.ts`, `BrainModule.tsx`, `GuardrailsModule.tsx`, `SpanTreeView.tsx`, `healthService.ts`, `RiskRegisterPage.tsx`, `ObservabilityModule.tsx`, `WizardStepComponents.tsx`, `PublicNoteView.tsx`, `BillingModule.tsx`, `IngestionHistoryDialog.tsx`, `WebVitalsPanel.tsx`, `GenerativeUI.tsx`, `SkillDescriptionEnrichPanel.tsx`, `ComplianceReportsPage.tsx`, `AgentContextPanel.tsx`, `StepComparePanel.tsx`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
+  _High betweenness centrality (0.048) - this node is a cross-community bridge._
 - **What connects `session-start.sh script`, `PATH`, `$schema` to the rest of the system?**
   _3490 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `badge.tsx` be split into smaller, more focused modules?**
