@@ -48,13 +48,10 @@ jobs:
           apply_secret() {
             local name="$1" value="$2"
             if [ -n "$value" ]; then
-              npx --yes supabase secrets set "${name}=${value}" --project-ref qdlnzopxrlsoljcrcmzv \
+              npx --yes supabase secrets set "${name}=${value}" --remote=qdlnzopxrlsoljcrcmzv \
                 || echo "::warning::falha ao setar secret ${name}"
             fi
           }
-          apply_secret SUPABASE_URL "${{ secrets.SUPABASE_URL }}"
-          apply_secret SUPABASE_ANON_KEY "${{ secrets.SUPABASE_ANON_KEY }}"
-          apply_secret SUPABASE_SERVICE_ROLE_KEY "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
           apply_secret OPENROUTER_API_KEY "${{ secrets.OPENROUTER_API_KEY }}"
           apply_secret DEEPSEEK_API_KEY "${{ secrets.DEEPSEEK_API_KEY }}"
           apply_secret LOVABLE_API_KEY "${{ secrets.LOVABLE_API_KEY }}"
