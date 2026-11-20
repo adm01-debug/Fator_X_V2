@@ -255,13 +255,13 @@
     },
     {
       "path": "supabase/functions/doc-parse/index.ts",
-      "bytes": 23058,
-      "sha256": "3248ba045d2997b7777cb9b8a2f3e4c6837b6e7ae38b0620c83f3688206613a6"
+      "bytes": 23115,
+      "sha256": "1149170b4024fd0af8de861e036cd3f95df620b600a5c5cb82b44e8af3876df1"
     },
     {
       "path": "supabase/functions/doc-rechunk/index.ts",
-      "bytes": 8220,
-      "sha256": "c777c6e0ea65160c082c25dfd97e5a6122d8732aeee226edde0abf8c2652be8f"
+      "bytes": 8230,
+      "sha256": "4d4352d8a79bd188c91a96468fde17581ad1ac4cae6c1b822e50cf41e713c719"
     },
     {
       "path": "supabase/functions/dr-orchestrator/index.ts",
@@ -465,8 +465,8 @@
     },
     {
       "path": "supabase/functions/rag-ingest/index.ts",
-      "bytes": 7463,
-      "sha256": "715245fbb1af409a95a2bedee70a3e46ad7048c79c7c04a82e88398c48bef403"
+      "bytes": 7473,
+      "sha256": "6225dbb82c14f62c2f3810191896d3340bd9634d53f4a2dc38d122f9f102701b"
     },
     {
       "path": "supabase/functions/rag-rerank-v2/index.ts",
@@ -635,8 +635,8 @@
     },
     {
       "path": "supabase/functions/workflow-engine-v2/index.ts",
-      "bytes": 20420,
-      "sha256": "1d77debb79eed4594d6d29926cbe70f81e332e3e5775239da602a236d97b008d"
+      "bytes": 20463,
+      "sha256": "33f5d9a8bfe50593c6a2636b4665d3c2edfcc13d08a364f4d06a6a0dfc9f408e"
     }
   ],
   "functions": [
@@ -1164,7 +1164,7 @@
       "name": "doc-parse",
       "entrypoint": "supabase/functions/doc-parse/index.ts",
       "verify_jwt": true,
-      "source_sha256": "877d68bd1447b6387c2bcc770f2c2d232b218f863d2ded3464ee18c24cf9210b",
+      "source_sha256": "a2dae6e440ecda50ff5190a54351ba6fca850cb24edb62a83ba41c217d468746",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/chunker.ts",
@@ -1187,7 +1187,7 @@
       "name": "doc-rechunk",
       "entrypoint": "supabase/functions/doc-rechunk/index.ts",
       "verify_jwt": true,
-      "source_sha256": "f74983c3d5bf4da90531ca81437e78edf1b9b7f0cf81d5d0d725d88e61903c61",
+      "source_sha256": "64582a7be293d67918bb1a1e58de52cacdd81ba781100c398816ba21cde5ac9b",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/chunker.ts",
@@ -1895,7 +1895,7 @@
       "name": "rag-ingest",
       "entrypoint": "supabase/functions/rag-ingest/index.ts",
       "verify_jwt": true,
-      "source_sha256": "772934044a424d402ecb86c43b1ea21e8f13ce3ff5be0004cd973aa2c9e0b54a",
+      "source_sha256": "635f0e05f3a95d8ae13fbc560b32c44a3ae8b39970cd6ee4e7150c711b801d03",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2579,7 +2579,7 @@
       "name": "workflow-engine-v2",
       "entrypoint": "supabase/functions/workflow-engine-v2/index.ts",
       "verify_jwt": true,
-      "source_sha256": "0d58ed78f147ebff48e6b4cf39aeaf39d32ba19db12d67ebb1fe7c86ea62b4b6",
+      "source_sha256": "67cbba01c05c4a2b0dac25974b63c569f6bcf744a04b8b63634ad6d04c06e373",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2598,5 +2598,5 @@
       ]
     }
   ],
-  "manifest_sha256": "96d2a6738786f8ef70d8430beb4e76882b0df41405580a470ea3ec2c2bd87aad"
+  "manifest_sha256": "72b39da8313a3b2833c1188f9a572cd14f5b8eaa09534fb14a25bb8b2f3dc136"
 }

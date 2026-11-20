@@ -119,7 +119,7 @@ serve(async (req) => {
       nextOpts.overlap === doc.chunk_overlap &&
       nextOpts.strategy === doc.chunk_strategy
     ) {
-      return jsonResponse({
+      return jsonResponse(req, {
         status: 'noop',
         message: 'Configurações idênticas às atuais — nada a fazer',
         chunk_version: doc.chunk_version,
@@ -226,7 +226,7 @@ serve(async (req) => {
       })
       .catch(() => {});
 
-    return jsonResponse({
+    return jsonResponse(req, {
       status: 'ok',
       document_id: doc.id,
       chunk_version: nextVersion,

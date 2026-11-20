@@ -45,7 +45,7 @@ serve(async (req) => {
     const rawBody = await req.json().catch(() => null);
     const parsedBody = IngestBodySchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return jsonResponse({ error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
+      return jsonResponse(req, { error: 'Payload inválido', details: parsedBody.error.flatten().fieldErrors }, 400);
     }
     const body: IngestRequest = parsedBody.data;
     const { document_id, content, chunk_size = 1000, chunk_overlap = 200 } = body;
@@ -135,7 +135,7 @@ serve(async (req) => {
     const chunks = chunkText(content, chunk_size, chunk_overlap);
     await supabase.from('chunks').insert(chunks.map((c, i) => ({ document_id, content: c, chunk_index: i })));
     await supabase.from('documents').update({ status: 'indexed' }).eq('id', document_id);
-    return jsonResponse({ status: 'ok', chunks: chunks.length });
+    return jsonResponse(req, { status: 'ok', chunks: chunks.length });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
   } catch (error: any) {
