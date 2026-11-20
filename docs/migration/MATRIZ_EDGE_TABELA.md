@@ -64,7 +64,7 @@
 | `product-mockup` | — |
 | `queue-worker` | `queue_items`, `task_queues` |
 | `quick-agent-test` | — |
-| `rag-embed-backfill` | `agent_memories_v2` |
+| `rag-embed-backfill` | `agent_memories_v2`, `chunks` |
 | `rag-embed-v2` | `workspace_members`, `workspace_secrets` |
 | `rag-ingest` | `chunks`, `documents`, `workspace_members`, `workspace_secrets` |
 | `rag-rerank` | `workspace_members`, `workspace_secrets` |
@@ -122,7 +122,7 @@
 | `browser_sessions` | `browser-agent-run`, `browser-session-cancel` |
 | `budgets` | `llm-gateway` |
 | `chaos_experiments` | `incident-orchestrator` |
-| `chunks` | `cerebro-brain`, `cerebro-query`, `doc-parse`, `doc-rechunk`, `rag-ingest`, `semantic-search` |
+| `chunks` | `cerebro-brain`, `cerebro-query`, `doc-parse`, `doc-rechunk`, `rag-embed-backfill`, `rag-ingest`, `semantic-search` |
 | `code_executions` | `code-interpreter-execute` |
 | `collections` | `cerebro-query`, `doc-parse`, `notebook-podcast-generate` |
 | `consent_records` | `lgpd-manager` |
