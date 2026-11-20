@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 7 updates (#104)",
    "fix(edge): CORS no 429 e rate heavy em agentes — absorve pr19 (GAP-2/S24) (#118)",
    "feat(edge): rate limit pesado em cost-calculator e product-mockup (#116)",
    "fix(edge): whatsapp-webhook GET sem token retorna 403, nao 500 (#115)",
-   "fix(a11y): contraste do tip do tour 6.95:1 (#108)",
-   "feat(automacao): preserva scripts de validacao exaustiva de edge functions (pr19-resolved) (#114)"
+   "fix(a11y): contraste do tip do tour 6.95:1 (#108)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

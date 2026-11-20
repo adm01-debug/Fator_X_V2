@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b5951c72cd585633da2236191a1627adbb68b2ed",
+  "commit": "7b3991fbef8c5354d03586e1f1039260c6fb2d66",
   "branch": "main",
-  "data_commit": "2026-11-19T22:54:55-03:00",
+  "data_commit": "2026-11-20T00:25:56-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "7b3991fb",
+    "data": "2026-11-20",
+    "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 7 updates (#104)"
+   },
    {
     "sha": "b5951c72",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "d53c9e3c",
     "data": "2026-11-11",
     "assunto": "fix(widget): widget de chat funciona em site de cliente e chave de API volta a validar (#81)"
-   },
-   {
-    "sha": "b8f1e832",
-    "data": "2026-11-11",
-    "assunto": "feat(edge): troca o Lovable AI Gateway pelo DeepSeek nas edges de texto (#78)"
    }
   ],
-  "arquivos_mudados_7d": 57,
+  "arquivos_mudados_7d": 59,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -141,11 +141,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 7
+    "mudancas": 8
    },
    {
     "pasta": "package.json",
-    "mudancas": 7
+    "mudancas": 8
    },
    {
     "pasta": ".github/workflows/ci.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "package.json",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 5
+    "commits": 6
    }
   ]
  },
