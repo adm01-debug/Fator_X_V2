@@ -32,6 +32,7 @@ const A2ATaskSchema = z.object({
   agentId: z.string().uuid().optional(),
 }).passthrough();
 import {
+  getCorsHeaders,
   handleCorsPreflight, jsonResponse, errorResponse,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
 } from "../_shared/mod.ts";
@@ -206,7 +207,7 @@ serve(async (req) => {
   // Rate limiting
   const identifier = getRateLimitIdentifier(req);
   const rateCheck = checkRateLimit(identifier, RATE_LIMITS.standard);
-  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck);
+  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
   try {
     // ═══ Agent Card Discovery ═══

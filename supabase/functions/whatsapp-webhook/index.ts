@@ -401,12 +401,14 @@ serve(async (req) => {
     const mode = url.searchParams.get('hub.mode');
     const token = url.searchParams.get('hub.verify_token');
     const challenge = url.searchParams.get('hub.challenge');
-    const expected = requireEnv('WHATSAPP_META_VERIFY_TOKEN');
-    if (mode === 'subscribe' && expected && token === expected && challenge) {
-      return new Response(challenge, {
-        status: 200,
-        headers: { ...getCorsHeaders(req), 'Content-Type': 'text/plain' },
-      });
+    if (mode === 'subscribe' && challenge) {
+      const expected = requireEnv('WHATSAPP_META_VERIFY_TOKEN');
+      if (token === expected) {
+        return new Response(challenge, {
+          status: 200,
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'text/plain' },
+        });
+      }
     }
     return errorResponse(req, 'Forbidden', 403);
   }

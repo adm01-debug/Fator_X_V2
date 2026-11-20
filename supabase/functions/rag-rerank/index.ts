@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import {
+  getCorsHeaders,
   handleCorsPreflight, jsonResponse, errorResponse,
   authenticateRequest,
   checkRateLimit, createRateLimitResponse, getRateLimitIdentifier, RATE_LIMITS,
@@ -27,7 +28,7 @@ serve(async (req) => {
     // ═══ Rate Limiting ═══
     const identifier = getRateLimitIdentifier(req, user.id);
     const rateCheck = checkRateLimit(identifier, RATE_LIMITS.standard);
-    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     // ═══ Validate Input ═══
     const parsed = await parseBody(req, RerankInput);

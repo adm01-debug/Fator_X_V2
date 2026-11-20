@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
-import { handleKeyboardClick } from '@/lib/a11y';
 
 interface TourStep {
   title: string;
@@ -97,6 +96,17 @@ export function OnboardingTour() {
     setOnboardingComplete(true);
   }, [setOnboardingComplete]);
 
+  // Esc fecha o tour (o fundo não é mais um "botão" focável: ele continha os
+  // controles do diálogo, o que o axe reprova como nested-interactive).
+  useEffect(() => {
+    if (!visible) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [visible, dismiss]);
+
   const next = () => {
     if (step < TOUR_STEPS.length - 1) {
       setStep(step + 1);
@@ -124,9 +134,7 @@ export function OnboardingTour() {
 
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onKeyDown={handleKeyboardClick}
+      role="presentation"
       className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
       onClick={dismiss}
     >
@@ -173,7 +181,7 @@ export function OnboardingTour() {
           </p>
 
           {current.tip && (
-            <p className="text-meta text-primary/70 mt-2 flex items-center gap-1">
+            <p className="text-meta text-primary mt-2 flex items-center gap-1">
               <Sparkles className="h-3 w-3 shrink-0" aria-hidden="true" />
               {current.tip}
             </p>

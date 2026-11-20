@@ -15,7 +15,7 @@ serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rateCheck = checkRateLimit(identifier, RATE_LIMITS.standard);
-  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck);
+  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');

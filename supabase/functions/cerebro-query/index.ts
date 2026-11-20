@@ -139,21 +139,21 @@ serve(async (req) => {
     let ragReranked = false;
 
     try {
+      // Schema real: chunks (17 colunas) sem metadata/is_active e sem join
+      // documents(title, collection_id). O filtro é por embedding_status='done'
+      // (só chunks com vetor persistido) e o notebook é o knowledge_base_id.
       let chunkQuery = supabase
         .from('chunks')
-        .select(
-          'id, content, metadata, document_id, documents(id, title, collection_id, collections(id, name))',
-        )
+        .select('id, content, document_id, knowledge_base_id')
         .eq('embedding_status', 'done')
-        .eq('is_active', true)
         .limit(15);
 
       if (notebookId) {
-        // Isolation: only chunks whose metadata pins this notebook
-        chunkQuery = chunkQuery.filter('metadata->>collection_id', 'eq', notebookId);
+        // Isolation: o notebook mapeia para a knowledge base dona dos chunks
+        chunkQuery = chunkQuery.eq('knowledge_base_id', notebookId);
       }
       if (sourceIds && sourceIds.length > 0) {
-        // NotebookLM-style: user restringiu o chat a fontes específicas
+        // Usuário restringiu o chat a fontes específicas (notas/documentos)
         chunkQuery = chunkQuery.in('document_id', sourceIds);
         facts.push(`Chat restrito a ${sourceIds.length} fontes selecionadas`);
       }
@@ -192,30 +192,16 @@ serve(async (req) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         citations = selected.map((c: any, i: number): Citation => {
           const { page, section } = extractMeta(c);
-          const doc = Array.isArray(c.documents) ? c.documents[0] : c.documents;
-          const col = doc?.collections
-            ? Array.isArray(doc.collections)
-              ? doc.collections[0]
-              : doc.collections
-            : null;
-          const metaCollectionId =
-            c.metadata && typeof c.metadata === 'object'
-              ? (c.metadata.collection_id ?? null)
-              : null;
-          const metaNotebookName =
-            c.metadata && typeof c.metadata === 'object'
-              ? (c.metadata.notebook_name ?? null)
-              : null;
           return {
             n: i + 1,
             chunk_id: c.id,
-            document_id: c.document_id ?? doc?.id ?? null,
-            document_title: doc?.title ?? 'Documento sem título',
+            document_id: c.document_id ?? null,
+            document_title: c.document_title ?? 'Documento sem título',
             page,
             section,
             snippet: snippet(c.content ?? ''),
-            notebook_id: col?.id ?? metaCollectionId ?? doc?.collection_id ?? null,
-            notebook_name: col?.name ?? metaNotebookName ?? null,
+            notebook_id: c.knowledge_base_id ?? null,
+            notebook_name: c.knowledge_base_name ?? null,
           };
         });
 
