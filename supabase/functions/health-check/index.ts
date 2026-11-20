@@ -8,7 +8,7 @@ serve(async (req) => {
 
   const identifier = getRateLimitIdentifier(req);
   const rateCheck = checkRateLimit(identifier, RATE_LIMITS.standard);
-  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck);
+  if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
   const start = Date.now();
   const checks: Record<string, { status: string; latency_ms?: number; error?: string }> = {};

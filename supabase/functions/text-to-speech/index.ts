@@ -35,7 +35,7 @@ serve(async (req) => {
 
     const identifier = getRateLimitIdentifier(req, user.id);
     const rateCheck = checkRateLimit(identifier, RATE_LIMITS.heavy);
-    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck);
+    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
 
     const parsed = await parseBody(req, TTSInput);
     if (parsed.error) return parsed.error;

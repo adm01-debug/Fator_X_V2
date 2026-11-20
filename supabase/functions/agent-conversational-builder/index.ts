@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
 
   const identifier = getRateLimitIdentifier(req);
-  const rateResult = checkRateLimit(identifier, RATE_LIMITS.standard);
+  const rateResult = checkRateLimit(identifier, RATE_LIMITS.heavy);
   if (!rateResult.allowed) return createRateLimitResponse(rateResult, corsHeaders);
 
   try {
