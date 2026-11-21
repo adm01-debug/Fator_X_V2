@@ -38,6 +38,7 @@
 | `dr-orchestrator` | `dr_drills`, `dr_snapshots` |
 | `eval-engine-v2` | `eval_runs` |
 | `eval-judge` | `agents`, `evaluation_runs`, `test_cases`, `workspace_members`, `workspace_secrets` |
+| `geo-code` | — |
 | `global-search` | `agent_eval_datasets`, `agent_workflows`, `agents`, `automation_rules`, `documents`, `kb_articles`, `knowledge_bases` |
 | `graph-execute` | `agent_graphs`, `agents`, `graph_executions` |
 | `guardrails-engine` | — |
