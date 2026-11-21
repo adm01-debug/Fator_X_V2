@@ -17,3 +17,15 @@ verify_jwt = false
 
 [functions.widget-proxy]
 verify_jwt = false
+
+# Webhooks inbound de provedores externos (HMAC, nao JWT). Sem isso o gateway
+# exige Bearer JWT e os provedores (Bitrix24, Meta/Zapi/Evolution, clientes
+# genericos) recebem 401 ao chamar a edge.
+[functions.bitrix24-webhook]
+verify_jwt = false
+
+[functions.whatsapp-webhook]
+verify_jwt = false
+
+[functions.webhook-receiver]
+verify_jwt = false
