@@ -1,5 +1,3 @@
-import { _createClient } from 'https://esm.sh/@supabase/supabase-js@2.42.7';
-
 /**
  * Idempotency Helper — Nexus Agents Studio
  *
@@ -143,12 +141,12 @@ export async function claimIdempotencyKey(supabase: unknown, key: string): Promi
   if (!key) return true; // no key = no dedup
   const client = supabase as {
     from: (t: string) => {
-      insert: (row: Record<string, unknown>) => {
-        // ON CONFLICT DO NOTHING semantics via upsert
-        upsert: (row: Record<string, unknown>) => {
-          select: () => {
-            single: () => Promise<{ data: unknown; error: { code?: string } | null }>;
-          };
+      upsert: (
+        row: Record<string, unknown>,
+        opts?: { onConflict?: string; ignoreDuplicates?: boolean },
+      ) => {
+        select: () => {
+          single: () => Promise<{ data: unknown; error: { code?: string } | null }>;
         };
       };
     };
@@ -192,9 +190,7 @@ export async function saveIdempotency(
   if (!key) return;
   const client = supabaseClient as {
     from: (t: string) => {
-      insert: (row: Record<string, unknown>) => {
-        then?: (fn: (v: unknown) => void) => void;
-      };
+      insert: (row: Record<string, unknown>) => Promise<{ error: { code?: string } | null }>;
     };
   };
 

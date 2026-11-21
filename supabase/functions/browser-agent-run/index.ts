@@ -220,16 +220,16 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_ANON_KEY'), {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: claimsData, error: claimsErr } = await supabase.auth.getClaims(
+    const { data: userData, error: userErr } = await supabase.auth.getUser(
       authHeader.replace('Bearer ', ''),
     );
-    if (claimsErr || !claimsData?.claims) {
+    if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    const userId = claimsData.claims.sub;
+    const userId = userData.user.id;
 
     const parsed = BodySchema.safeParse(await req.json());
     if (!parsed.success) {

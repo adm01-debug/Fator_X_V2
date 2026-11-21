@@ -35,8 +35,8 @@
     },
     {
       "path": "supabase/functions/_shared/chaos.ts",
-      "bytes": 2827,
-      "sha256": "c5e032dac548af6bf5e1f20610acf3d9fb7a80d7b22b5e7c82c10a772f28f302"
+      "bytes": 2851,
+      "sha256": "4ab9947636ac4a63d61d4d37fdfbf7881d6ce0b57beeafaf65f2a41a15472cac"
     },
     {
       "path": "supabase/functions/_shared/chunker.ts",
@@ -65,8 +65,8 @@
     },
     {
       "path": "supabase/functions/_shared/idempotency.ts",
-      "bytes": 9653,
-      "sha256": "b5eb39703cfe5f1d84e11fb20364b92a02be9c6e495a2cce205b7b327f60f8db"
+      "bytes": 9520,
+      "sha256": "63a3ccfa7c3eede7ad526fcef68c60ce9c342c333ec781d7ca5c267f7a41a578"
     },
     {
       "path": "supabase/functions/_shared/json.ts",
@@ -185,8 +185,8 @@
     },
     {
       "path": "supabase/functions/browser-agent-run/index.ts",
-      "bytes": 12944,
-      "sha256": "08d8eee0c7b070aca059877e3c89f1f4ad24c18941a768b9c4f8b6e349c58b02"
+      "bytes": 12927,
+      "sha256": "d7470feb9fea2b12d17a06efc7e259afc51c8d08c15738bc91bd3829f806cee0"
     },
     {
       "path": "supabase/functions/browser-session-cancel/index.ts",
@@ -335,8 +335,8 @@
     },
     {
       "path": "supabase/functions/llm-gateway/index.ts",
-      "bytes": 62724,
-      "sha256": "40b9fc870308da97dab171baff49a5caa788be95f9387ffc1356020e5c5a79db"
+      "bytes": 62793,
+      "sha256": "638e81a8813010ad6bbec0302fca19c88b5cb621d24d09ffbfb7ef8a9d41b738"
     },
     {
       "path": "supabase/functions/llm-gateway/providers.ts",
@@ -689,7 +689,7 @@
       "name": "agent-eval-runner",
       "entrypoint": "supabase/functions/agent-eval-runner/index.ts",
       "verify_jwt": true,
-      "source_sha256": "9a3b67ad61d7b8ac4c70d0ef98267ffa96cdd0be8eae8f45a0476220164ca13f",
+      "source_sha256": "52581413462c3869f0adf8cad8d32d2c75f51f65fea3e6153f7924355278ed14",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -713,7 +713,7 @@
       "name": "agent-workflow-runner",
       "entrypoint": "supabase/functions/agent-workflow-runner/index.ts",
       "verify_jwt": true,
-      "source_sha256": "8cee93abc062922ba4584eb1bd8290638ab860244eac6227a0142c63c09878f3",
+      "source_sha256": "b17950a981f11d25c29efa81642d39bc37769b03c22037485d0edc1ce92697fd",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -850,7 +850,7 @@
       "name": "browser-agent-run",
       "entrypoint": "supabase/functions/browser-agent-run/index.ts",
       "verify_jwt": true,
-      "source_sha256": "05b128d434f5fe35ef6f7ae81887166c786f15d15363f55dfcf58cd947cfc97d",
+      "source_sha256": "5fc03cbedf663717c1d77fada899936199a4498dcb51b9fad39404e3d31fab08",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -939,7 +939,7 @@
       "name": "code-interpreter-execute",
       "entrypoint": "supabase/functions/code-interpreter-execute/index.ts",
       "verify_jwt": true,
-      "source_sha256": "9a01c9d0dd6e8564efb2245facc188145a44494de1d7b22e38a41942a6d31c6c",
+      "source_sha256": "67b45c67d88e8ead3ceda883569d86196eaf87778e15d36a9594d63d0865ea69",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1300,7 +1300,7 @@
       "name": "graph-execute",
       "entrypoint": "supabase/functions/graph-execute/index.ts",
       "verify_jwt": true,
-      "source_sha256": "d59d23f88bf15be501a8b8e9705443a55736a519e8da9225cb8d9eaded056610",
+      "source_sha256": "fdbbef95244e722cac372ced11e58d1df7c83109583ea7176e38bdf797b15bc6",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1525,7 +1525,7 @@
       "name": "llm-gateway",
       "entrypoint": "supabase/functions/llm-gateway/index.ts",
       "verify_jwt": true,
-      "source_sha256": "f5efc3cc758d3a419e17658bc831a23e1e4b1e40b5bcbb852e89329a399d3db0",
+      "source_sha256": "ba602fcf7fb358e53308f8c9eaaefb56392cddea82ea73c667bfc429b518a706",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1681,7 +1681,7 @@
       "name": "openclaw-proxy",
       "entrypoint": "supabase/functions/openclaw-proxy/index.ts",
       "verify_jwt": true,
-      "source_sha256": "c86059eca86cfb55313ec996fe8470a1c7d385e25dd59190d694e9614f008479",
+      "source_sha256": "051244aa4538dea41d1e6c6952f4840b9e6894c47decbc7e20eb2271c59469d9",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/circuitBreaker.ts",
@@ -2602,5 +2602,5 @@
       ]
     }
   ],
-  "manifest_sha256": "0bf39f4c113c0e48a42115959706abf51b4d383d083dbdaa8ca15f73522e16df"
+  "manifest_sha256": "6388f639855c7d8dcffa63831e508813964df4e989dbb617058d7479bb23933f"
 }
