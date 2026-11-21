@@ -1315,7 +1315,12 @@ serve(async (req) => {
     const guardrailMs = tPreCall - t0; // includes injection + PII + guardrails + budget
 
     const startTime = Date.now();
-    const callParams: LLMCallParams = { model, messages: safeMessages, temperature, max_tokens };
+    const callParams: LLMCallParams = {
+      model,
+      messages: safeMessages,
+      temperature: temperature ?? 0.7,
+      max_tokens: max_tokens ?? 4000,
+    };
     const {
       result,
       provider,

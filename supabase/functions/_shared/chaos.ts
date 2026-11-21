@@ -10,6 +10,7 @@ export type ChaosFault = {
   id: string;
   fault_type: 'latency' | 'error_500' | 'error_429' | 'timeout';
   latency_ms: number;
+  probability?: number;
 };
 
 const FAULT_CACHE_TTL_MS = 5_000; // 5s cache to avoid hammering DB
