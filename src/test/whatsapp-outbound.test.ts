@@ -51,8 +51,8 @@ vi.mock('@/integrations/supabase/externalClient', () => ({
       eq: vi.fn().mockReturnThis(),
       like: vi.fn().mockImplementation(() => {
         const map = secretsByProvider[activeProviderKey];
-        // Service expects column name `encrypted_value`
-        const data = Object.entries(map).map(([key_name, encrypted_value]) => ({ key_name, encrypted_value }));
+        // Service expects column name `key_value`
+        const data = Object.entries(map).map(([key_name, key_value]) => ({ key_name, key_value }));
         return Promise.resolve({ data, error: null });
       }),
     })),
@@ -60,7 +60,9 @@ vi.mock('@/integrations/supabase/externalClient', () => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: vi.fn(() => ({ select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis() })) },
+  supabase: {
+    from: vi.fn(() => ({ select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis() })),
+  },
 }));
 
 vi.mock('@/lib/agentService', () => ({
@@ -103,7 +105,7 @@ describe('whatsappOutboundService — sendWhatsAppMessage (Meta provider)', () =
     // Verify the URL was the Meta Graph API
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining('graph.facebook.com'),
-      expect.objectContaining({ method: 'POST' })
+      expect.objectContaining({ method: 'POST' }),
     );
     // Verify Authorization header
     const callArgs = mockFetch.mock.calls[0][1];
@@ -128,7 +130,11 @@ describe('whatsappOutboundService — sendWhatsAppMessage (Meta provider)', () =
       ok: true,
       json: async () => ({ messages: [{ id: 'wamid.doc-1' }] }),
     });
-    await sendWhatsAppDocument('+5511999999999', 'https://example.com/contract.pdf', 'contract.pdf');
+    await sendWhatsAppDocument(
+      '+5511999999999',
+      'https://example.com/contract.pdf',
+      'contract.pdf',
+    );
     const body = JSON.parse(mockFetch.mock.calls[0][1].body);
     expect(body.type).toBe('document');
     expect(body.document.link).toBe('https://example.com/contract.pdf');
@@ -140,7 +146,12 @@ describe('whatsappOutboundService — sendWhatsAppMessage (Meta provider)', () =
       ok: true,
       json: async () => ({ messages: [{ id: 'wamid.tpl-1' }] }),
     });
-    await sendWhatsAppTemplate('+5511999999999', 'order_confirmation', ['Joaquim', '#1234'], 'pt_BR');
+    await sendWhatsAppTemplate(
+      '+5511999999999',
+      'order_confirmation',
+      ['Joaquim', '#1234'],
+      'pt_BR',
+    );
     const body = JSON.parse(mockFetch.mock.calls[0][1].body);
     expect(body.type).toBe('template');
     expect(body.template.name).toBe('order_confirmation');
@@ -235,7 +246,8 @@ describe('whatsappOutboundService — Evolution provider', () => {
 describe('whatsappOutboundService — invalid provider config', () => {
   it('throws when active_provider is unknown', async () => {
     activeProviderKey = 'invalid';
-    await expect(sendWhatsAppMessage({ to: '+5511', text: 'x' }))
-      .rejects.toThrow(/Unknown active WhatsApp provider/);
+    await expect(sendWhatsAppMessage({ to: '+5511', text: 'x' })).rejects.toThrow(
+      /Unknown active WhatsApp provider/,
+    );
   });
 });
