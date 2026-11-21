@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ff7f06e0b039892a660c910caa7350606433fd15",
+  "commit": "15ba85e30d9e6e75576ee3a47b7bbf2b64982a1f",
   "branch": "main",
-  "data_commit": "2026-11-21T10:55:39-03:00",
+  "data_commit": "2026-11-21T10:59:51-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "15ba85e3",
+    "data": "2026-11-21",
+    "assunto": "chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)"
+   },
    {
     "sha": "ff7f06e0",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "d2249e59",
     "data": "2026-11-20",
     "assunto": "chore: contexto agendado de 10 min para 1x/hora (#98)"
-   },
-   {
-    "sha": "9a673de6",
-    "data": "2026-11-20",
-    "assunto": "chore(ci): unifica node 22 nos guards (#91)"
    }
   ],
-  "arquivos_mudados_7d": 94,
+  "arquivos_mudados_7d": 95,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 49
+    "commits": 50
    },
    {
     "autor": "dependabot[bot]",

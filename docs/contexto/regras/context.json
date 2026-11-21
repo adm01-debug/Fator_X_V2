@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "ff7f06e0b039892a660c910caa7350606433fd15",
+  "sha": "15ba85e30d9e6e75576ee3a47b7bbf2b64982a1f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 13:56 UTC",
+  "generated_at": "2026-11-21 14:01 UTC",
   "files_total": 2001,
   "code_files": 1789,
   "code_lines": 348397
@@ -190730,10 +190730,19 @@
   }
  },
  "git": {
-  "sha": "ff7f06e0b039892a660c910caa7350606433fd15",
+  "sha": "15ba85e30d9e6e75576ee3a47b7bbf2b64982a1f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "15ba85e",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)",
+    "files": [
+     ".env.example"
+    ]
+   },
    {
     "sha": "ff7f06e",
     "date": "2026-11-21",
@@ -191068,15 +191077,6 @@
      "supabase/deployment-manifest.json",
      "supabase/functions/whatsapp-webhook/index.ts"
     ]
-   },
-   {
-    "sha": "0f9c748",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(a11y): contraste do tip do tour 6.95:1 (#108)",
-    "files": [
-     "src/components/shared/OnboardingTour.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -191129,6 +191129,10 @@
     2
    ],
    [
+    ".env.example",
+    1
+   ],
+   [
     "supabase/config.toml",
     1
    ],
@@ -191154,10 +191158,6 @@
    ],
    [
     "docs/pendencias/_achados.md",
-    1
-   ],
-   [
-    "docs/pendencias/_linha-de-base.md",
     1
    ]
   ]
