@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "8554dc79471c72d41c1cec70bffdaf1ff8d7e710",
+  "sha": "d912348b7c2bbb75efc015a9d0ba99a06076ed46",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 19:20 UTC",
+  "generated_at": "2026-11-21 19:42 UTC",
   "files_total": 2007,
   "code_files": 1795,
   "code_lines": 349014
@@ -191001,10 +191001,20 @@
   }
  },
  "git": {
-  "sha": "8554dc79471c72d41c1cec70bffdaf1ff8d7e710",
+  "sha": "d912348b7c2bbb75efc015a9d0ba99a06076ed46",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "d912348",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)",
+    "files": [
+     "supabase/deployment-manifest.json",
+     "supabase/functions/browser-session-cancel/index.ts"
+    ]
+   },
    {
     "sha": "8554dc7",
     "date": "2026-11-21",
@@ -191332,17 +191342,6 @@
     "files": [
      "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
     ]
-   },
-   {
-    "sha": "71fcc76",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix(edge): contract tests verdes sem secrets — valida payload e assinatura antes de exigir key (#120)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/openclaw-webhook/index.ts",
-     "supabase/functions/quick-agent-test/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -191399,6 +191398,10 @@
     2
    ],
    [
+    "supabase/functions/browser-session-cancel/index.ts",
+    1
+   ],
+   [
     ".gitignore",
     1
    ],
@@ -191420,10 +191423,6 @@
    ],
    [
     "supabase/functions/whatsapp-outbound/index.ts",
-    1
-   ],
-   [
-    "src/services/settingsService.ts",
     1
    ]
   ]
