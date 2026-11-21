@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "665b5995957684ccd553fabf953ed97bac544537",
+  "commit": "10a1dd011bfbd63ed3fc467e4313b3dea724fbd2",
   "branch": "main",
-  "data_commit": "2026-11-21T12:25:54-03:00",
+  "data_commit": "2026-11-21T12:48:58-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "10a1dd01",
+    "data": "2026-11-21",
+    "assunto": "fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)"
+   },
    {
     "sha": "665b5995",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "bc0d0b86",
     "data": "2026-11-20",
     "assunto": "fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)"
-   },
-   {
-    "sha": "b35c28a4",
-    "data": "2026-11-20",
-    "assunto": "fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)"
    }
   ],
-  "arquivos_mudados_7d": 100,
+  "arquivos_mudados_7d": 102,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "pasta": "package-lock.json",
@@ -149,6 +149,10 @@
    },
    {
     "pasta": "supabase/functions/llm-gateway",
+    "mudancas": 7
+   },
+   {
+    "pasta": "supabase/functions/_shared",
     "mudancas": 6
    },
    {
@@ -169,10 +173,6 @@
    },
    {
     "pasta": "src/components/shared",
-    "mudancas": 4
-   },
-   {
-    "pasta": "supabase/functions/_shared",
     "mudancas": 4
    },
    {
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "supabase/functions/llm-gateway/index.ts",
-    "mudancas": 5
+    "mudancas": 6
    },
    {
     "arquivo": ".github/workflows/contexto.yml",
@@ -290,18 +290,18 @@
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/functions/cerebro-query/index.ts",
+    "arquivo": "supabase/functions/browser-agent-run/index.ts",
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/functions/crm-bitrix-sync/index.ts",
+    "arquivo": "supabase/functions/cerebro-query/index.ts",
     "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 51
+    "commits": 52
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1996,
   "arquivos_codigo": 1449,
-  "linhas_codigo": 318220,
+  "linhas_codigo": 318222,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -532,7 +532,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32186
+   "linhas": 32188
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -582,7 +582,7 @@
   },
   {
    "arquivo": "supabase/functions/llm-gateway/index.ts",
-   "linhas": 1640
+   "linhas": 1645
   },
   {
    "arquivo": "src/App.tsx",

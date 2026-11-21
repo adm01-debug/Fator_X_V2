@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: bun run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "665b5995957684ccd553fabf953ed97bac544537",
+ "commit_do_grafo": "10a1dd011bfbd63ed3fc467e4313b3dea724fbd2",
  "grafo_atual": true,
  "nos": 13961,
- "arestas": 37239,
- "comunidades_total": 911,
+ "arestas": 37238,
+ "comunidades_total": 907,
  "relacoes": {
   "calls": 4666,
   "cites": 5,
@@ -17,7 +17,7 @@
   "dynamic_import": 271,
   "extends": 5,
   "imports": 10536,
-  "imports_from": 7848,
+  "imports_from": 7847,
   "indexes": 636,
   "indirect_call": 198,
   "inherits": 23,
@@ -29,7 +29,7 @@
   "triggers": 124
  },
  "origem": {
-  "EXTRACTED": 36662,
+  "EXTRACTED": 36661,
   "INFERRED": 577
  },
  "comunidades": [
@@ -188,6 +188,23 @@
   },
   {
    "id": 9,
+   "nome": "logger.ts",
+   "nos": 119,
+   "callables": 83,
+   "arquivos": 35,
+   "exemplos_arquivos": [
+    "docs/FUNCIONALIDADES-SISTEMA-COMPLETO.md",
+    "package.json",
+    "src/components/admin/AuditTrailPanel.tsx",
+    "src/components/billing/RealTimeCostStream.tsx",
+    "src/components/rbac/DangerousActionDialog.tsx",
+    "src/components/security/GuardrailPolicies.tsx",
+    "src/components/super-cerebro/CitationDialog.tsx",
+    "src/components/super-cerebro/CitedMarkdown.tsx"
+   ]
+  },
+  {
+   "id": 10,
    "nome": "badge.tsx",
    "nos": 114,
    "callables": 62,
@@ -201,23 +218,6 @@
     "src/components/datahub/EntityDetailPanel.tsx",
     "src/components/datahub/HibernatedDatabasesPanel.tsx",
     "src/components/datahub/LiveRlsView.tsx"
-   ]
-  },
-  {
-   "id": 10,
-   "nome": "logger.ts",
-   "nos": 109,
-   "callables": 76,
-   "arquivos": 30,
-   "exemplos_arquivos": [
-    "docs/FUNCIONALIDADES-SISTEMA-COMPLETO.md",
-    "package.json",
-    "src/components/admin/AuditTrailPanel.tsx",
-    "src/components/billing/RealTimeCostStream.tsx",
-    "src/components/rbac/DangerousActionDialog.tsx",
-    "src/hooks/use-workflow-persistence.ts",
-    "src/hooks/useAgentVersions.ts",
-    "src/hooks/useOpenclawTemplates.ts"
    ]
   },
   {
@@ -293,6 +293,23 @@
   },
   {
    "id": 16,
+   "nome": "client.ts",
+   "nos": 80,
+   "callables": 66,
+   "arquivos": 16,
+   "exemplos_arquivos": [
+    "src/components/dashboard/CostAnomalyWidget.tsx",
+    "src/components/deployments/WebWidgetPanel.tsx",
+    "src/components/search/VisualSearchButton.tsx",
+    "src/hooks/useAutomationRules.ts",
+    "src/integrations/supabase/client.ts",
+    "src/pages/ChaosExperimentsPage.tsx",
+    "src/pages/ChaosLabPage.tsx",
+    "src/pages/CostAnomaliesPage.tsx"
+   ]
+  },
+  {
+   "id": 17,
    "nome": "retry.ts",
    "nos": 77,
    "callables": 46,
@@ -309,7 +326,24 @@
    ]
   },
   {
-   "id": 17,
+   "id": 18,
+   "nome": "DbRow",
+   "nos": 77,
+   "callables": 53,
+   "arquivos": 17,
+   "exemplos_arquivos": [
+    "src/components/agent-builder/modules/OrchestratorModule.tsx",
+    "src/components/agents/VersionDiffDialog.tsx",
+    "src/components/agents/wizard/WizardStepComponents.tsx",
+    "src/components/agents/wizard/draftStore.ts",
+    "src/components/replay/ForkHistoryPanel.tsx",
+    "src/components/replay/StateDiff.tsx",
+    "src/hooks/useAgentWorkflows.ts",
+    "src/lib/invokeWithRetry.ts"
+   ]
+  },
+  {
+   "id": 19,
    "nome": "react-router-dom",
    "nos": 76,
    "callables": 36,
@@ -326,47 +360,13 @@
    ]
   },
   {
-   "id": 18,
+   "id": 20,
    "nome": "generate.py",
    "nos": 75,
    "callables": 64,
    "arquivos": 1,
    "exemplos_arquivos": [
     "scripts/regras_negocio/generate.py"
-   ]
-  },
-  {
-   "id": 19,
-   "nome": "DbRow",
-   "nos": 74,
-   "callables": 52,
-   "arquivos": 17,
-   "exemplos_arquivos": [
-    "src/components/agent-builder/modules/OrchestratorModule.tsx",
-    "src/components/agents/VersionDiffDialog.tsx",
-    "src/components/agents/wizard/WizardStepComponents.tsx",
-    "src/components/agents/wizard/draftStore.ts",
-    "src/components/replay/ForkHistoryPanel.tsx",
-    "src/components/replay/StateDiff.tsx",
-    "src/hooks/useAgentWorkflows.ts",
-    "src/lib/invokeWithRetry.ts"
-   ]
-  },
-  {
-   "id": 20,
-   "nome": "client.ts",
-   "nos": 73,
-   "callables": 55,
-   "arquivos": 17,
-   "exemplos_arquivos": [
-    "src/components/dashboard/CostAnomalyWidget.tsx",
-    "src/components/deployments/WebWidgetPanel.tsx",
-    "src/components/search/VisualSearchButton.tsx",
-    "src/hooks/useAutomationRules.ts",
-    "src/hooks/useStreamingResponse.ts",
-    "src/integrations/supabase/client.ts",
-    "src/pages/ChaosExperimentsPage.tsx",
-    "src/pages/ChaosLabPage.tsx"
    ]
   },
   {
@@ -439,23 +439,6 @@
   },
   {
    "id": 25,
-   "nome": "tracing.ts",
-   "nos": 69,
-   "callables": 59,
-   "arquivos": 8,
-   "exemplos_arquivos": [
-    "src/components/monitoring/LangfuseExporterDialog.tsx",
-    "src/lib/tracing.ts",
-    "src/lib/tracing/tracingExporters.ts",
-    "src/lib/tracing/tracingTypes.ts",
-    "src/services/whatsappOutboundService.ts",
-    "src/test/tracing.test.ts",
-    "src/test/whatsapp-outbound.test.ts",
-    "supabase/functions/workflow-engine-v2/index.ts"
-   ]
-  },
-  {
-   "id": 26,
    "nome": "lib.ts",
    "nos": 69,
    "callables": 36,
@@ -468,24 +451,7 @@
    ]
   },
   {
-   "id": 27,
-   "nome": "CitationDialog.tsx",
-   "nos": 65,
-   "callables": 39,
-   "arquivos": 11,
-   "exemplos_arquivos": [
-    "docs/RUNBOOK.md",
-    "src/components/debug/SignedUrlCacheDebugPanel.tsx",
-    "src/components/super-cerebro/CitationDialog.tsx",
-    "src/components/super-cerebro/CitedMarkdown.tsx",
-    "src/components/super-cerebro/DocumentViewerDialog.tsx",
-    "src/lib/__tests__/citationValidation.test.ts",
-    "src/lib/citationHighlight.ts",
-    "src/lib/citationValidation.ts"
-   ]
-  },
-  {
-   "id": 28,
+   "id": 26,
    "nome": "E2EESyncPanel.tsx",
    "nos": 65,
    "callables": 56,
@@ -502,7 +468,7 @@
    ]
   },
   {
-   "id": 29,
+   "id": 27,
    "nome": "package.json",
    "nos": 64,
    "callables": 1,
@@ -516,7 +482,7 @@
    ]
   },
   {
-   "id": 30,
+   "id": 28,
    "nome": "ref_node_fs",
    "nos": 64,
    "callables": 24,
@@ -533,7 +499,7 @@
    ]
   },
   {
-   "id": 31,
+   "id": 29,
    "nome": "templateSkillRegistry.ts",
    "nos": 64,
    "callables": 31,
@@ -550,7 +516,7 @@
    ]
   },
   {
-   "id": 32,
+   "id": 30,
    "nome": "src_integrations_supabase_types",
    "nos": 63,
    "callables": 46,
@@ -567,7 +533,7 @@
    ]
   },
   {
-   "id": 33,
+   "id": 31,
    "nome": "fromTable",
    "nos": 62,
    "callables": 56,
@@ -584,7 +550,24 @@
    ]
   },
   {
-   "id": 34,
+   "id": 32,
+   "nome": "ChatWithAgentPage.tsx",
+   "nos": 61,
+   "callables": 42,
+   "arquivos": 16,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/App.tsx",
+    "src/components/chat/ChatBackground.tsx",
+    "src/components/chat/ChatComposer.tsx",
+    "src/components/chat/ClearChatDialog.tsx",
+    "src/components/chat/DaySeparator.tsx",
+    "src/components/chat/EmptyChatState.tsx",
+    "src/components/chat/MessageBubble.tsx"
+   ]
+  },
+  {
+   "id": 33,
    "nome": "skillEnrichmentService.ts",
    "nos": 60,
    "callables": 44,
@@ -601,7 +584,7 @@
    ]
   },
   {
-   "id": 35,
+   "id": 34,
    "nome": "lib.mjs",
    "nos": 58,
    "callables": 46,
@@ -615,7 +598,7 @@
    ]
   },
   {
-   "id": 36,
+   "id": 35,
    "nome": "notificationEngineService.ts",
    "nos": 58,
    "callables": 47,
@@ -632,7 +615,7 @@
    ]
   },
   {
-   "id": 37,
+   "id": 36,
    "nome": "vitest",
    "nos": 57,
    "callables": 28,
@@ -649,7 +632,7 @@
    ]
   },
   {
-   "id": 38,
+   "id": 37,
    "nome": "supabaseMock.ts",
    "nos": 56,
    "callables": 36,
@@ -666,7 +649,7 @@
    ]
   },
   {
-   "id": 39,
+   "id": 38,
    "nome": "AgentVersioningPage.tsx",
    "nos": 55,
    "callables": 43,
@@ -683,7 +666,7 @@
    ]
   },
   {
-   "id": 40,
+   "id": 39,
    "nome": "PromptContradictionAutoFixPanel.tsx",
    "nos": 55,
    "callables": 40,
@@ -700,7 +683,7 @@
    ]
   },
   {
-   "id": 41,
+   "id": 40,
    "nome": "automation.mjs",
    "nos": 54,
    "callables": 36,
@@ -714,24 +697,7 @@
    ]
   },
   {
-   "id": 42,
-   "nome": "ChatWithAgentPage.tsx",
-   "nos": 54,
-   "callables": 38,
-   "arquivos": 16,
-   "exemplos_arquivos": [
-    "package.json",
-    "src/App.tsx",
-    "src/components/chat/ChatBackground.tsx",
-    "src/components/chat/ChatComposer.tsx",
-    "src/components/chat/ClearChatDialog.tsx",
-    "src/components/chat/DaySeparator.tsx",
-    "src/components/chat/EmptyChatState.tsx",
-    "src/components/chat/MessageBubble.tsx"
-   ]
-  },
-  {
-   "id": 43,
+   "id": 41,
    "nome": "lint-ratchet.mjs",
    "nos": 54,
    "callables": 47,
@@ -743,7 +709,7 @@
    ]
   },
   {
-   "id": 44,
+   "id": 42,
    "nome": "WorkflowTimeTravelPanel.tsx",
    "nos": 53,
    "callables": 46,
@@ -757,7 +723,7 @@
    ]
   },
   {
-   "id": 45,
+   "id": 43,
    "nome": "useAgentBuilderStore",
    "nos": 52,
    "callables": 37,
@@ -774,7 +740,7 @@
    ]
   },
   {
-   "id": 46,
+   "id": 44,
    "nome": "promptSanitizer.ts",
    "nos": 52,
    "callables": 42,
@@ -790,7 +756,24 @@
    ]
   },
   {
-   "id": 47,
+   "id": 45,
+   "nome": "knowledgeService.ts",
+   "nos": 51,
+   "callables": 44,
+   "arquivos": 13,
+   "exemplos_arquivos": [
+    "BACKLOG-10-10.md",
+    "docs/FUNCIONALIDADES-SISTEMA-COMPLETO.md",
+    "src/components/agent-builder/modules/ObservabilityModule.tsx",
+    "src/components/dialogs/CreatePromptDialog.tsx",
+    "src/components/knowledge/KnowledgeBaseDetail.tsx",
+    "src/components/security/SessionManagement.tsx",
+    "src/components/super-cerebro/tabs/HealthTab.tsx",
+    "src/pages/KnowledgePage.tsx"
+   ]
+  },
+  {
+   "id": 46,
    "nome": "whatsapp-webhook/index.ts",
    "nos": 51,
    "callables": 36,
@@ -806,7 +789,7 @@
    ]
   },
   {
-   "id": 48,
+   "id": 47,
    "nome": "QuickCreateWizard.tsx",
    "nos": 51,
    "callables": 30,
@@ -819,6 +802,21 @@
     "src/lib/validations/quickAgentSchema.ts",
     "src/services/auditLogService.ts",
     "src/test/draft-store-skills.test.ts"
+   ]
+  },
+  {
+   "id": 48,
+   "nome": "tracing.ts",
+   "nos": 51,
+   "callables": 45,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "src/components/monitoring/LangfuseExporterDialog.tsx",
+    "src/lib/tracing.ts",
+    "src/lib/tracing/tracingExporters.ts",
+    "src/lib/tracing/tracingTypes.ts",
+    "src/test/tracing.test.ts",
+    "supabase/functions/workflow-engine-v2/index.ts"
    ]
   },
   {
@@ -869,6 +867,23 @@
   },
   {
    "id": 52,
+   "nome": "workflowsService.ts",
+   "nos": 50,
+   "callables": 35,
+   "arquivos": 12,
+   "exemplos_arquivos": [
+    "src/components/workflows/CanvasMinimap.tsx",
+    "src/components/workflows/WorkflowCanvas.tsx",
+    "src/components/workflows/nodes/index.ts",
+    "src/hooks/use-workflow-persistence.ts",
+    "src/lib/auditService.ts",
+    "src/lib/skills/installCapAudit.ts",
+    "src/lib/skills/promptAuditArtifact.ts",
+    "src/pages/WorkflowsPage.tsx"
+   ]
+  },
+  {
+   "id": 53,
    "nome": "🤖 Agentes a Implementar — Fator X / Promo Brindes",
    "nos": 49,
    "callables": 0,
@@ -878,7 +893,7 @@
    ]
   },
   {
-   "id": 53,
+   "id": 54,
    "nome": "AuthPage.tsx",
    "nos": 49,
    "callables": 25,
@@ -895,7 +910,7 @@
    ]
   },
   {
-   "id": 54,
+   "id": 55,
    "nome": "agentChangelog.ts",
    "nos": 49,
    "callables": 38,
@@ -912,7 +927,7 @@
    ]
   },
   {
-   "id": 55,
+   "id": 56,
    "nome": "BillingPage.tsx",
    "nos": 49,
    "callables": 20,
@@ -929,7 +944,7 @@
    ]
   },
   {
-   "id": 56,
+   "id": 57,
    "nome": "20260405220001_automation_services.sql",
    "nos": 49,
    "callables": 0,
@@ -939,7 +954,7 @@
    ]
   },
   {
-   "id": 57,
+   "id": 58,
    "nome": "snapshot.py",
    "nos": 48,
    "callables": 37,
@@ -949,7 +964,7 @@
    ]
   },
   {
-   "id": 58,
+   "id": 59,
    "nome": "notesService.ts",
    "nos": 48,
    "callables": 32,
@@ -966,7 +981,7 @@
    ]
   },
   {
-   "id": 59,
+   "id": 60,
    "nome": "ref_https",
    "nos": 48,
    "callables": 30,
@@ -983,7 +998,7 @@
    ]
   },
   {
-   "id": 60,
+   "id": 61,
    "nome": "rbacService.ts",
    "nos": 47,
    "callables": 22,
@@ -1000,7 +1015,22 @@
    ]
   },
   {
-   "id": 61,
+   "id": 62,
+   "nome": "signedUrlCache.ts",
+   "nos": 47,
+   "callables": 28,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "docs/RUNBOOK.md",
+    "src/components/debug/SignedUrlCacheDebugPanel.tsx",
+    "src/components/super-cerebro/DocumentChunkingDialog.tsx",
+    "src/components/super-cerebro/notebook/PodcastPanel.tsx",
+    "src/lib/signedUrlCache.ts",
+    "src/services/notebookPodcastsService.ts"
+   ]
+  },
+  {
+   "id": 63,
    "nome": "slack.ts",
    "nos": 47,
    "callables": 23,
@@ -1015,7 +1045,7 @@
    ]
   },
   {
-   "id": 62,
+   "id": 64,
    "nome": "SkillReclassifyDialog.tsx",
    "nos": 47,
    "callables": 33,
@@ -1028,40 +1058,6 @@
     "src/services/skillReclassificationReviewService.ts",
     "src/services/skillReclassificationService.ts",
     "src/test/skill-department-reclassification.test.ts"
-   ]
-  },
-  {
-   "id": 63,
-   "nome": "workflowsService.ts",
-   "nos": 46,
-   "callables": 27,
-   "arquivos": 14,
-   "exemplos_arquivos": [
-    "FUNCIONALIDADES-DO-SISTEMA.md",
-    "docs/FUNCIONALIDADES-SEM-INTERFACE-VISUAL-V2.md",
-    "docs/FUNCIONALIDADES-SEM-INTERFACE-VISUAL.md",
-    "docs/FUNCIONALIDADES-SISTEMA-COMPLETO.md",
-    "src/components/deployments/ApprovalQueuePanel.tsx",
-    "src/hooks/useAutomationRules.ts",
-    "src/pages/ApprovalQueuePage.tsx",
-    "src/pages/AutomationCenterPage.tsx"
-   ]
-  },
-  {
-   "id": 64,
-   "nome": "knowledgeService.ts",
-   "nos": 45,
-   "callables": 39,
-   "arquivos": 11,
-   "exemplos_arquivos": [
-    "BACKLOG-10-10.md",
-    "docs/FUNCIONALIDADES-SISTEMA-COMPLETO.md",
-    "src/components/agent-builder/modules/ObservabilityModule.tsx",
-    "src/components/dialogs/CreatePromptDialog.tsx",
-    "src/components/knowledge/KnowledgeBaseDetail.tsx",
-    "src/components/super-cerebro/tabs/HealthTab.tsx",
-    "src/pages/KnowledgePage.tsx",
-    "src/services/knowledgeService.ts"
    ]
   },
   {
@@ -1228,23 +1224,6 @@
   },
   {
    "id": 76,
-   "nome": "securityService.ts",
-   "nos": 42,
-   "callables": 30,
-   "arquivos": 10,
-   "exemplos_arquivos": [
-    "src/components/dashboard/ActivityFeed.tsx",
-    "src/components/security/ComplianceFrameworks.tsx",
-    "src/components/security/GuardrailPolicies.tsx",
-    "src/components/security/GuardrailsLibrary.tsx",
-    "src/components/security/SecurityPosture.tsx",
-    "src/components/security/SessionManagement.tsx",
-    "src/pages/SecurityPage.tsx",
-    "src/security.test.ts"
-   ]
-  },
-  {
-   "id": 77,
    "nome": "skill-departments.ts",
    "nos": 42,
    "callables": 14,
@@ -1260,7 +1239,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 77,
    "nome": "sidebar.tsx",
    "nos": 41,
    "callables": 7,
@@ -1276,7 +1255,7 @@
    ]
   },
   {
-   "id": 79,
+   "id": 78,
    "nome": "AgentDetailPage.tsx",
    "nos": 41,
    "callables": 32,
@@ -1290,6 +1269,23 @@
     "src/components/agents/detail/restoreDiffHelpers.ts",
     "src/components/agents/detail/restoreHelpers.ts",
     "src/pages/AgentDetailPage.tsx"
+   ]
+  },
+  {
+   "id": 79,
+   "nome": "AgentLivePreviewCard.tsx",
+   "nos": 41,
+   "callables": 22,
+   "arquivos": 15,
+   "exemplos_arquivos": [
+    "src/components/agents/versioning/TimelinePresetBar.tsx",
+    "src/components/agents/wizard/quickSteps/AgentLivePreviewCard.tsx",
+    "src/components/agents/wizard/quickSteps/PromptSectionGutter.tsx",
+    "src/components/chat/ChatComposer.tsx",
+    "src/components/crm/LeadScoreBadge.tsx",
+    "src/components/shared/BackButton.tsx",
+    "src/components/skills/SkillAttributionBadge.tsx",
+    "src/components/super-cerebro/CitedMarkdown.tsx"
    ]
   }
  ],
@@ -1648,7 +1644,7 @@
    "id": "ref_https",
    "rotulo": "ref_https",
    "arquivo": null,
-   "grau": 94,
+   "grau": 93,
    "comunidade": "ref_https"
   },
   {
@@ -2131,7 +2127,7 @@
   ".husky/commit-msg": "commit-msg",
   "@supabase/supabase-js": "mod.ts",
   "AGENTS.md": "AGENTS.md — Fator X V2 (Nexus Agents Studio)",
-  "BACKLOG-10-10.md": "WAVE 4 — Frontend wiring (services ignorados)",
+  "BACKLOG-10-10.md": "knowledgeService.ts",
   "CHANGELOG.md": "Autograph Memory Layer — Guia Técnico",
   "CLAUDE.md": "CLAUDE.md",
   "CODE_OF_CONDUCT.md": "Código de Conduta — Contributor Covenant v2.1",
@@ -2139,7 +2135,7 @@
   "COVERAGE-REPORT.md": "📊 Coverage Report — Nexus Agents Studio / FATOR X",
   "DESIGN.md": "🎨 DESIGN.md — Nexus Agents Studio / FATOR X",
   "ESTADO-ATUAL.md": "react-router-dom",
-  "FUNCIONALIDADES-DO-SISTEMA.md": "🚀 Nexus Agents Studio — Análise Exaustiva de Funcionalidades",
+  "FUNCIONALIDADES-DO-SISTEMA.md": "changeManagementService.ts",
   "GAP-ANALYSIS-GITHUB-TOPICS-AGENT-2026-04-05.md": "🔍 ANÁLISE EXAUSTIVA: GitHub /topics/agent vs NEXUS AGENTS STUDIO",
   "HANDOFF-AGENTIC-FRAMEWORK-ANALYSIS.md": "🔄 HANDOFF: Análise Exaustiva GitHub /topics/agentic-framework",
   "HANDOFF-AUTOMATION-ANALYSIS.md": "🔄 HANDOFF: Análise Exaustiva GitHub /topics/automation",
@@ -2151,7 +2147,7 @@
   "NEXUS-RELATORIO-TESTES-ABRANGENTE-V5.md": "pentestService.ts",
   "NEXUS-RELATORIO-TESTES-ABRANGENTE-V6.md": "NEXUS — Relatório de Testes Abrangente V6",
   "NEXUS-RELATORIO-TESTES-ABRANGENTE.md": "12 BATERIAS DE TESTE",
-  "README.md": "⚡ Nexus Agents Studio",
+  "README.md": "🔬 AUDITORIA TÉCNICA EXAUSTIVA — NEXUS AGENTS STUDIO",
   "RELATORIO-FINAL-50-ETAPAS.md": "mod.ts",
   "SECURITY.md": "Política de Segurança — Nexus Agents Studio",
   "agent.json": "agent.json",
@@ -2179,10 +2175,10 @@
   "docs/FASE8-OBSERVABILIDADE-PROFUNDA.md": "DbHealthCard",
   "docs/FASE8-TEST-REPORT.md": "📊 Relatório de Testes — Fase 8 (Observabilidade Profunda)",
   "docs/FASE9-PERF-TUNING.md": "Fase 9 — Perf Tuning e Alerting Automático de Queries Lentas",
-  "docs/FUNCIONALIDADES-SEM-INTERFACE-VISUAL-V2.md": "3. Funcionalidades por Domínio",
-  "docs/FUNCIONALIDADES-SEM-INTERFACE-VISUAL.md": "🚀 Nexus Agents Studio — Análise Exaustiva de Funcionalidades",
-  "docs/FUNCIONALIDADES-SISTEMA-COMPLETO.md": "logger.ts",
-  "docs/GAP-ANALYSIS-CLASSE-MUNDIAL-2026.md": "lgpdService.ts",
+  "docs/FUNCIONALIDADES-SEM-INTERFACE-VISUAL-V2.md": "approvalService.ts",
+  "docs/FUNCIONALIDADES-SEM-INTERFACE-VISUAL.md": "approvalService.ts",
+  "docs/FUNCIONALIDADES-SISTEMA-COMPLETO.md": "evaluationsService.ts",
+  "docs/GAP-ANALYSIS-CLASSE-MUNDIAL-2026.md": "🌍 Análise de Gaps — Classe Mundial vs Nexus Agents Studio",
   "docs/HYBRID-SEARCH-V2-SIMULATION-2026-07-21.md": "Simulação — Retrieval Híbrido v2 (pgvector) no `oracle-research`",
   "docs/ONBOARDING.md": "🚀 Onboarding — Nexus Agents Studio",
   "docs/QA-BASELINE-2026-07-15.md": "QA Baseline — 2026-07-15 (Fase 1 completa)",
@@ -2468,12 +2464,12 @@
   "src/components/agents/versioning/useRestoreDialogMemory.ts": "RestoreVersionDialog.tsx",
   "src/components/agents/wizard/DraftRecoveryBanner.tsx": "DraftRecoveryBanner.tsx",
   "src/components/agents/wizard/DraftRestoredNotification.tsx": "QuickAgentForm",
-  "src/components/agents/wizard/QuickCreateWizard.tsx": "QuickCreateWizard.tsx",
+  "src/components/agents/wizard/QuickCreateWizard.tsx": "QuickAgentForm",
   "src/components/agents/wizard/RestoreFeedbackBanner.tsx": "QuickAgentForm",
   "src/components/agents/wizard/WizardStepComponents.tsx": "DbRow",
   "src/components/agents/wizard/__tests__/RestoreFeedbackBanner.keyboard.test.tsx": "QuickAgentForm",
   "src/components/agents/wizard/__tests__/promptVariantState.test.ts": "StepQuickPrompt.tsx",
-  "src/components/agents/wizard/draftStore.ts": "DbRow",
+  "src/components/agents/wizard/draftStore.ts": "QuickAgentForm",
   "src/components/agents/wizard/promptHistoryStore.ts": "promptHistoryStore.ts",
   "src/components/agents/wizard/quickSteps/AgentLivePreviewCard.tsx": "QuickAgentForm",
   "src/components/agents/wizard/quickSteps/CompiledPromptPreview.tsx": "quickAgentSchema.ts",
@@ -2494,7 +2490,7 @@
   "src/components/agents/wizard/quickSteps/PromptVariantDiffDialog.tsx": "BillingPage.tsx",
   "src/components/agents/wizard/quickSteps/PromptVariantSelector.tsx": "StepQuickPrompt.tsx",
   "src/components/agents/wizard/quickSteps/QuickAgentTestPanel.tsx": "QuickAgentTestPanel.tsx",
-  "src/components/agents/wizard/quickSteps/RealExamplePreview.tsx": "lib/utils.ts",
+  "src/components/agents/wizard/quickSteps/RealExamplePreview.tsx": "QuickAgentForm",
   "src/components/agents/wizard/quickSteps/StepQuickIdentity.tsx": "QuickAgentForm",
   "src/components/agents/wizard/quickSteps/StepQuickModel.tsx": "QuickAgentForm",
   "src/components/agents/wizard/quickSteps/StepQuickPrompt.tsx": "StepQuickPrompt.tsx",
@@ -2558,7 +2554,7 @@
   "src/components/crm/IcpProfilePanel.tsx": "crmScoringService.ts",
   "src/components/crm/LeadScoreBadge.tsx": "getWorkspaceId",
   "src/components/crm/LeadScoreSimulator.tsx": "crmScoringService.ts",
-  "src/components/dashboard/ActivityFeed.tsx": "securityService.ts",
+  "src/components/dashboard/ActivityFeed.tsx": "security-service.test.ts",
   "src/components/dashboard/BudgetWidget.tsx": "AgentEvalsPage.tsx",
   "src/components/dashboard/CostAnomalyWidget.tsx": "client.ts",
   "src/components/dashboard/DashboardAlerts.tsx": "dashboardService.ts",
@@ -2587,8 +2583,8 @@
   "src/components/datahub/RecordDetail.tsx": "RecordSubComponents.tsx",
   "src/components/datahub/RecordFieldRenderers.tsx": "RecordSubComponents.tsx",
   "src/components/datahub/RecordSubComponents.tsx": "RecordSubComponents.tsx",
-  "src/components/debug/SignedUrlCacheDebugPanel.tsx": "CitationDialog.tsx",
-  "src/components/deployments/ApprovalQueuePanel.tsx": "workflowsService.ts",
+  "src/components/debug/SignedUrlCacheDebugPanel.tsx": "signedUrlCache.ts",
+  "src/components/deployments/ApprovalQueuePanel.tsx": "approvalService.ts",
   "src/components/deployments/DeploymentWizard.tsx": "sonner",
   "src/components/deployments/WebWidgetPanel.tsx": "button.tsx",
   "src/components/deployments/WhatsAppInboxPanel.tsx": "sonner",
@@ -2657,7 +2653,7 @@
   "src/components/prompts/CreateExperimentDialog.tsx": "react",
   "src/components/prompts/PromptDiff.tsx": "BillingPage.tsx",
   "src/components/rbac/AccessControl.tsx": "rbacService.ts",
-  "src/components/rbac/DangerousActionDialog.tsx": "logger.ts",
+  "src/components/rbac/DangerousActionDialog.tsx": "lib/utils.ts",
   "src/components/rbac/ProtectedRoute.tsx": "rbacService.ts",
   "src/components/rbac/index.ts": "lib/utils.ts",
   "src/components/replay/ForkHistoryPanel.tsx": "DbRow",
@@ -2670,9 +2666,9 @@
   "src/components/search/VisualSearchButton.tsx": "client.ts",
   "src/components/security/AccessControlPanel.tsx": "accessControlService.ts",
   "src/components/security/AuditLogSection.tsx": "lib/utils.ts",
-  "src/components/security/ComplianceFrameworks.tsx": "securityService.ts",
-  "src/components/security/GuardrailPolicies.tsx": "securityService.ts",
-  "src/components/security/GuardrailsLibrary.tsx": "securityService.ts",
+  "src/components/security/ComplianceFrameworks.tsx": "security-service.test.ts",
+  "src/components/security/GuardrailPolicies.tsx": "security-service.test.ts",
+  "src/components/security/GuardrailsLibrary.tsx": "security-service.test.ts",
   "src/components/security/GuardrailsSimulator.tsx": "lib/utils.ts",
   "src/components/security/OpenclawEventsPanel.tsx": "Badge",
   "src/components/security/PIIScannerPanel.tsx": "PIIScannerPanel.tsx",
@@ -2681,8 +2677,8 @@
   "src/components/security/RollbackRateCard.tsx": "Badge",
   "src/components/security/SecurityMonitoringPanel.test.tsx": "vitest",
   "src/components/security/SecurityMonitoringPanel.tsx": "Badge",
-  "src/components/security/SecurityPosture.tsx": "securityService.ts",
-  "src/components/security/SessionManagement.tsx": "securityService.ts",
+  "src/components/security/SecurityPosture.tsx": "security-service.test.ts",
+  "src/components/security/SessionManagement.tsx": "knowledgeService.ts",
   "src/components/security/TwoFactorSetup.tsx": "AuthPage.tsx",
   "src/components/security/WalGenerationCard.tsx": "Badge",
   "src/components/settings/ApiKeysTab.tsx": "settingsService.ts",
@@ -2772,14 +2768,14 @@
   "src/components/super-cerebro/AutoExtractionTab.tsx": "react",
   "src/components/super-cerebro/BrainSandboxTab.tsx": "react",
   "src/components/super-cerebro/CerebroTabNav.tsx": "lib/utils.ts",
-  "src/components/super-cerebro/CitationDialog.tsx": "CitationDialog.tsx",
-  "src/components/super-cerebro/CitedMarkdown.tsx": "CitationDialog.tsx",
+  "src/components/super-cerebro/CitationDialog.tsx": "logger.ts",
+  "src/components/super-cerebro/CitedMarkdown.tsx": "logger.ts",
   "src/components/super-cerebro/CommandPalette.tsx": "RunFilter.tsx",
   "src/components/super-cerebro/ContextTiersTab.tsx": "button.tsx",
   "src/components/super-cerebro/DecayDetectionTab.tsx": "lib/utils.ts",
   "src/components/super-cerebro/DocumentChunkingDialog.tsx": "react",
   "src/components/super-cerebro/DocumentUploadTab.tsx": "DocumentUploadTab.tsx",
-  "src/components/super-cerebro/DocumentViewerDialog.tsx": "CitationDialog.tsx",
+  "src/components/super-cerebro/DocumentViewerDialog.tsx": "sonner",
   "src/components/super-cerebro/EntityResolutionTab.tsx": "lib/utils.ts",
   "src/components/super-cerebro/ExpertDiscoveryTab.tsx": "react",
   "src/components/super-cerebro/IngestionHistoryDialog.tsx": "DocumentUploadTab.tsx",
@@ -2813,7 +2809,7 @@
   "src/components/super-cerebro/notebook/NoteQuickOpen.tsx": "foldForSearch",
   "src/components/super-cerebro/notebook/NotebookWorkspace.tsx": "lib/utils.ts",
   "src/components/super-cerebro/notebook/OutlinePanel.tsx": "useNote",
-  "src/components/super-cerebro/notebook/PodcastPanel.tsx": "PodcastPanel.tsx",
+  "src/components/super-cerebro/notebook/PodcastPanel.tsx": "signedUrlCache.ts",
   "src/components/super-cerebro/notebook/PropertiesPanel.tsx": "button.tsx",
   "src/components/super-cerebro/notebook/RelatedNotesPanel.tsx": "lib/utils.ts",
   "src/components/super-cerebro/notebook/SketchPanel.tsx": "react",
@@ -2885,11 +2881,11 @@
   "src/components/ui/use-toast.ts": "hooks/use-toast.ts",
   "src/components/voice/AudioVisualizer.tsx": "react",
   "src/components/voice/VoiceWaveform.tsx": "VoiceAgentsPage.tsx",
-  "src/components/workflows/CanvasMinimap.tsx": "WorkflowCanvas.tsx",
+  "src/components/workflows/CanvasMinimap.tsx": "workflowsService.ts",
   "src/components/workflows/SandboxExecutionPanel.tsx": "lucide-react",
   "src/components/workflows/StepComparePanel.tsx": "Badge",
   "src/components/workflows/TemplateCanvasPreview.tsx": "vitest",
-  "src/components/workflows/WorkflowCanvas.tsx": "WorkflowCanvas.tsx",
+  "src/components/workflows/WorkflowCanvas.tsx": "workflowsService.ts",
   "src/components/workflows/WorkflowCanvasTab.tsx": "WorkflowCanvasTab",
   "src/components/workflows/WorkflowHandoffVisualizer.tsx": "lib/utils.ts",
   "src/components/workflows/WorkflowListTab.tsx": "badge.tsx",
@@ -2898,7 +2894,7 @@
   "src/components/workflows/WorkflowSchedulerTab.tsx": "react",
   "src/components/workflows/WorkflowTemplatesGallery.tsx": "lucide-react",
   "src/components/workflows/WorkflowTimeTravelPanel.tsx": "WorkflowTimeTravelPanel.tsx",
-  "src/components/workflows/nodes/index.ts": "WorkflowCanvas.tsx",
+  "src/components/workflows/nodes/index.ts": "workflowsService.ts",
   "src/components/workflows/sandbox/SandboxFields.tsx": "lucide-react",
   "src/components/workflows/sandbox/sandboxTypes.ts": "lucide-react",
   "src/config/auto-facts.ts": "auto-facts.ts",
@@ -2927,7 +2923,7 @@
   "src/hooks/use-paginated-query.ts": "src_integrations_supabase_types",
   "src/hooks/use-toast.ts": "hooks/use-toast.ts",
   "src/hooks/use-unsaved-changes.tsx": "BillingPage.tsx",
-  "src/hooks/use-workflow-persistence.ts": "WorkflowCanvas.tsx",
+  "src/hooks/use-workflow-persistence.ts": "workflowsService.ts",
   "src/hooks/use2FA.ts": "useAuth",
   "src/hooks/useAgentDailyMetrics.ts": "AgentMetricsPage",
   "src/hooks/useAgentEvals.ts": "AgentEvalsPage.tsx",
@@ -2957,7 +2953,7 @@
   "src/hooks/useRetryAction.ts": "nexus-complete-test-suite.test.ts",
   "src/hooks/useSLOAlerts.ts": "useSLOAlerts.ts",
   "src/hooks/useSlackConfig.ts": "lib/utils.ts",
-  "src/hooks/useStreamingResponse.ts": "client.ts",
+  "src/hooks/useStreamingResponse.ts": "ChatWithAgentPage.tsx",
   "src/hooks/useTracesData.ts": "ObservabilityModule.tsx",
   "src/hooks/useWorkflowAutosave.ts": "useNLPAnalysis",
   "src/hooks/useWorkflowKeyboard.ts": "WorkflowCanvasTab",
@@ -2967,7 +2963,7 @@
   "src/integrations/supabase/client.ts": "client.ts",
   "src/integrations/supabase/externalClient.ts": "useAuth",
   "src/integrations/supabase/types.extended.ts": "types.extended.ts",
-  "src/lib/__tests__/citationValidation.test.ts": "CitationDialog.tsx",
+  "src/lib/__tests__/citationValidation.test.ts": "citationValidation.ts",
   "src/lib/a11y.ts": "lucide-react",
   "src/lib/ag-ui/index.ts": "createSSEEmitter",
   "src/lib/ag-ui/protocol.ts": "createSSEEmitter",
@@ -2977,9 +2973,9 @@
   "src/lib/agentReadiness.ts": "useAgentBuilderStore",
   "src/lib/agentService.ts": "assetInventoryService.ts",
   "src/lib/alertMetrics.ts": "alertRulesService.ts",
-  "src/lib/auditService.ts": "logger.ts",
-  "src/lib/citationHighlight.ts": "CitationDialog.tsx",
-  "src/lib/citationValidation.ts": "CitationDialog.tsx",
+  "src/lib/auditService.ts": "workflowsService.ts",
+  "src/lib/citationHighlight.ts": "logger.ts",
+  "src/lib/citationValidation.ts": "citationValidation.ts",
   "src/lib/commands.ts": "RunFilter.tsx",
   "src/lib/curationHighlight.ts": "RecentCurationsPanel.tsx",
   "src/lib/edgeUrl.ts": "ChatWithAgentPage.tsx",
@@ -3010,7 +3006,7 @@
   "src/lib/searchDsl.ts": "foldForSearch",
   "src/lib/securityGuards.ts": "PIIScannerPanel.tsx",
   "src/lib/sentry.ts": "main.tsx",
-  "src/lib/signedUrlCache.ts": "CitationDialog.tsx",
+  "src/lib/signedUrlCache.ts": "signedUrlCache.ts",
   "src/lib/skillComposer/skillDraft.ts": "button.tsx",
   "src/lib/skills/attribution.ts": "skill-license-filter.test.ts",
   "src/lib/skills/calibrationCsv.ts": "thresholdCalibration.ts",
@@ -3018,12 +3014,12 @@
   "src/lib/skills/classificationEfficacy.ts": "classificationEfficacy.ts",
   "src/lib/skills/departmentReclassification.ts": "skillReclassificationReviewService.ts",
   "src/lib/skills/descriptionEnrichment.ts": "skillEnrichmentService.ts",
-  "src/lib/skills/installCapAudit.ts": "logger.ts",
+  "src/lib/skills/installCapAudit.ts": "StepQuickSkills.tsx",
   "src/lib/skills/installCapLedger.ts": "installCapLedger.ts",
   "src/lib/skills/installGuard.ts": "StepQuickSkills.tsx",
   "src/lib/skills/llmClassificationQueue.ts": "skillEnrichmentService.ts",
   "src/lib/skills/observability.ts": "calibrationGovernance.ts",
-  "src/lib/skills/promptAuditArtifact.ts": "logger.ts",
+  "src/lib/skills/promptAuditArtifact.ts": "workflowsService.ts",
   "src/lib/skills/promptDiff.ts": "promptDiff.ts",
   "src/lib/skills/promptEvidenceLedger.ts": "promptEvidenceLedger.ts",
   "src/lib/skills/promptOverflowAlert.ts": "promptOverflowAlert.ts",
@@ -3036,7 +3032,7 @@
   "src/lib/slo/sloTargets.ts": "SLODashboard.tsx",
   "src/lib/slo/useDrilldownAuditLog.ts": "useDrilldownAuditLog.ts",
   "src/lib/sourceIdsSync.ts": "vitest",
-  "src/lib/supabaseExtended.ts": "logger.ts",
+  "src/lib/supabaseExtended.ts": "fromTable",
   "src/lib/templateEngine.ts": "noteTemplatesService.ts",
   "src/lib/traceBookmarks.ts": "ExecutionTimeline.tsx",
   "src/lib/tracing.ts": "tracing.ts",
@@ -3054,7 +3050,7 @@
   "src/lib/validations/guardrailPolicy.ts": "guardrailPolicy.ts",
   "src/lib/validations/promptContradictions.ts": "PromptContradictionAutoFixPanel.tsx",
   "src/lib/validations/promptSanitizer.ts": "promptSanitizer.ts",
-  "src/lib/validations/quickAgentSchema.ts": "PromptSectionUsage.tsx",
+  "src/lib/validations/quickAgentSchema.ts": "QuickAgentForm",
   "src/lib/validations/researchConfig.ts": "dialogSchemas.ts",
   "src/lib/validations/skillImport.ts": "skill-departments.ts",
   "src/lib/webVitals.ts": "main.tsx",
@@ -3082,12 +3078,12 @@
   "src/pages/AgentVersioningPage.tsx": "AgentVersioningPage.tsx",
   "src/pages/AgentWorkflowsPage.tsx": "sonner",
   "src/pages/AgentsPage.tsx": "lucide-react",
-  "src/pages/ApprovalQueuePage.tsx": "workflowsService.ts",
+  "src/pages/ApprovalQueuePage.tsx": "approvalService.ts",
   "src/pages/ArticleEditorPage.tsx": "knowledgeManagementService.ts",
   "src/pages/AssetInventoryPage.tsx": "Badge",
   "src/pages/AuthPage.tsx": "AuthPage.tsx",
-  "src/pages/AutomationCenterPage.tsx": "workflowsService.ts",
-  "src/pages/AutomationsPage.tsx": "workflowsService.ts",
+  "src/pages/AutomationCenterPage.tsx": "approvalService.ts",
+  "src/pages/AutomationsPage.tsx": "approvalService.ts",
   "src/pages/B": "cenarios.mjs",
   "src/pages/BCPPage.tsx": "bcpService.ts",
   "src/pages/BCPTestRunsPage.tsx": "react",
@@ -3112,16 +3108,16 @@
   "src/pages/CrmPage.tsx": "getWorkspaceId",
   "src/pages/DRDrillsPage.tsx": "DRDrillsPage",
   "src/pages/DashboardPage.tsx": "dashboardService.ts",
-  "src/pages/DataHubPage.tsx": "WAVE 4 — Frontend wiring (services ignorados)",
-  "src/pages/DataResidencyPage.tsx": "lgpdService.ts",
-  "src/pages/DataStoragePage.tsx": "🚀 Nexus Agents Studio — Análise Exaustiva de Funcionalidades",
+  "src/pages/DataHubPage.tsx": "monitoringService.ts",
+  "src/pages/DataResidencyPage.tsx": "changeManagementService.ts",
+  "src/pages/DataStoragePage.tsx": "3. Funcionalidades por Domínio",
   "src/pages/DeploymentsPage.tsx": "sonner",
-  "src/pages/DisasterRecoveryPage.tsx": "J. Resiliência & Operações",
+  "src/pages/DisasterRecoveryPage.tsx": "🔍 FASE 1 — ANÁLISE DAS 22 DIMENSÕES",
   "src/pages/E2EESimulationPage.tsx": "E2EESyncPanel.tsx",
   "src/pages/EmailCalendarTriggersPage.tsx": "lucide-react",
   "src/pages/EnterpriseSSOPage.tsx": "sbomService.ts",
   "src/pages/EntityResolutionLogsPage.tsx": "Badge",
-  "src/pages/EvaluationsPage.tsx": "evaluationsService.ts",
+  "src/pages/EvaluationsPage.tsx": "badge.tsx",
   "src/pages/FederatedLearningPage.tsx": "B. Inteligência & Modelos",
   "src/pages/FineTuningPage.tsx": "react",
   "src/pages/ForensicSnapshotsPage.tsx": "Badge",
@@ -3145,7 +3141,7 @@
   "src/pages/MemoryPage.tsx": "memoryService.ts",
   "src/pages/MobileSDKPage.tsx": "3. Funcionalidades por Domínio",
   "src/pages/MonitoringPage.tsx": "monitoringService.ts",
-  "src/pages/MultiTenancyPage.tsx": "🚀 Nexus Agents Studio — Análise Exaustiva de Funcionalidades",
+  "src/pages/MultiTenancyPage.tsx": "3. Funcionalidades por Domínio",
   "src/pages/NLPPipelinePage.tsx": "B. Inteligência & Modelos",
   "src/pages/NotFound.tsx": "AuthPage.tsx",
   "src/pages/ObservabilityOTelPage.tsx": "Badge",
@@ -3205,25 +3201,25 @@
   "src/pages/WidgetBuilderPage.tsx": "AgentEvalsPage.tsx",
   "src/pages/WorkflowsPage.tsx": "lib/utils.ts",
   "src/pages/admin/Admin": "gerar.unit.mjs",
-  "src/security.test.ts": "securityService.ts",
+  "src/security.test.ts": "logger.ts",
   "src/services/accessControlService.ts": "accessControlService.ts",
   "src/services/adminCrudService.ts": "logger.ts",
   "src/services/agentBehaviorImpactService.ts": "BehaviorImpactPanel.tsx",
   "src/services/agentCardService.ts": "services/index.ts",
   "src/services/agentDailyMetricsService.ts": "AgentMetricsPage",
-  "src/services/agentDayDetailsService.ts": "logger.ts",
+  "src/services/agentDayDetailsService.ts": "agentDayDetailsService.ts",
   "src/services/agentDraftVersionsService.ts": "useAgentBuilderStore",
   "src/services/agentEvolutionService.ts": "cerebroService.ts",
   "src/services/agentGraphService.ts": "src_integrations_supabase_types",
   "src/services/agentHandoffService.ts": "agentHandoffService.ts",
-  "src/services/agentPromptSimulationService.ts": "logger.ts",
+  "src/services/agentPromptSimulationService.ts": "promptSimulation.ts",
   "src/services/agentRoutingService.ts": "agentRoutingService.ts",
   "src/services/agentSkillLoadService.ts": "logger.ts",
   "src/services/agentTestSimulationService.ts": "agentTestSimulationService.ts",
   "src/services/agentTracesService.ts": "ExecutionTimeline.tsx",
   "src/services/agentsService.ts": "agentTestSimulationService.ts",
   "src/services/alertRulesService.ts": "alertRulesService.ts",
-  "src/services/approvalService.ts": "workflowsService.ts",
+  "src/services/approvalService.ts": "approvalService.ts",
   "src/services/assetInventoryService.ts": "assetInventoryService.ts",
   "src/services/audioService.ts": "audioService.ts",
   "src/services/auditLogService.ts": "logger.ts",
@@ -3241,7 +3237,7 @@
   "src/services/changeManagementService.ts": "changeManagementService.ts",
   "src/services/chaosService.ts": "client.ts",
   "src/services/chatThreadService.ts": "ChatWithAgentPage.tsx",
-  "src/services/citationTelemetryService.ts": "CitationDialog.tsx",
+  "src/services/citationTelemetryService.ts": "logger.ts",
   "src/services/codeInterpreterService.ts": "client.ts",
   "src/services/complianceService.ts": "BCPPage.tsx",
   "src/services/connectorRegistryService.ts": "connectorRegistryService.ts",
@@ -3262,22 +3258,22 @@
   "src/services/e2eeAutoSync.ts": "E2EESyncPanel.tsx",
   "src/services/e2eeService.ts": "E2EESyncPanel.tsx",
   "src/services/e2eeSimulationService.ts": "E2EESyncPanel.tsx",
-  "src/services/entityResolutionService.ts": "logger.ts",
+  "src/services/entityResolutionService.ts": "sonner",
   "src/services/evalEngineService.ts": "logger.ts",
   "src/services/evaluationsService.ts": "evaluationsService.ts",
   "src/services/executionHistoryService.ts": "services/index.ts",
   "src/services/fineTuningService.ts": "DbRow",
-  "src/services/freezeWindowService.ts": "freezeWindowService.ts",
+  "src/services/freezeWindowService.ts": "✅ FASE 5 — FRONTEND REFACTOR (Etapas 36-41) — CONCLUÍDA",
   "src/services/gameDayService.ts": "gameDayService.ts",
   "src/services/guardrailsMLService.ts": "GuardrailsModule.tsx",
-  "src/services/healthAlertsService.ts": "datahubService.ts",
+  "src/services/healthAlertsService.ts": "healthAlertsService.ts",
   "src/services/healthService.ts": "healthService.ts",
   "src/services/incidentService.ts": "incidentService.ts",
   "src/services/index.ts": "services/index.ts",
   "src/services/installCapLedgerService.ts": "installCapLedger.ts",
   "src/services/irPlaybookService.ts": "IRPlaybooksPage.tsx",
   "src/services/kanbanService.ts": "NotebookNote",
-  "src/services/knowledgeDecayService.ts": "logger.ts",
+  "src/services/knowledgeDecayService.ts": "lib/utils.ts",
   "src/services/knowledgeManagementService.ts": "knowledgeManagementService.ts",
   "src/services/knowledgeService.ts": "sonner",
   "src/services/lgpdService.ts": "lgpdService.ts",
@@ -3290,7 +3286,7 @@
   "src/services/nlpPipelineService.ts": "nlpPipelineService.ts",
   "src/services/noteTemplatesService.ts": "noteTemplatesService.ts",
   "src/services/noteVersionsService.ts": "noteVersionsService.ts",
-  "src/services/notebookPodcastsService.ts": "PodcastPanel.tsx",
+  "src/services/notebookPodcastsService.ts": "signedUrlCache.ts",
   "src/services/notebooksService.ts": "lib/utils.ts",
   "src/services/notesService.ts": "NotebookNote",
   "src/services/notificationEngineService.ts": "nexus-complete-test-suite.test.ts",
@@ -3311,17 +3307,17 @@
   "src/services/queueManagerService.ts": "queueManagerService.ts",
   "src/services/quickTypeTemplateMap.ts": "StepQuickSkills.tsx",
   "src/services/ragPipelineService.ts": "ragPipelineService.ts",
-  "src/services/rbacService.ts": "rbacService.ts",
+  "src/services/rbacService.ts": "badge.tsx",
   "src/services/relatedNotesService.ts": "NotebookNote",
   "src/services/replayForkService.ts": "DbRow",
   "src/services/restorePresetsService.ts": "RestorePresetMenu.tsx",
   "src/services/retryEngineService.ts": "nexus-complete-test-suite.test.ts",
-  "src/services/riskService.ts": "riskService.ts",
+  "src/services/riskService.ts": "client.ts",
   "src/services/savedTestRunsStore.ts": "agentTestSimulationService.ts",
   "src/services/sbomService.ts": "Badge",
   "src/services/searchService.ts": "client.ts",
   "src/services/secretsRotationService.ts": "secretsRotationService.ts",
-  "src/services/securityService.ts": "llmGatewayService.ts",
+  "src/services/securityService.ts": "security-service.test.ts",
   "src/services/settingsService.ts": "settingsService.ts",
   "src/services/shareService.ts": "PublicNoteView.tsx",
   "src/services/sketchService.ts": "sketchService.ts",
@@ -3366,7 +3362,7 @@
   "src/services/visionService.ts": "visionService.ts",
   "src/services/voiceAgentService.ts": "VoiceAgentsPage.tsx",
   "src/services/webhookTriggerService.ts": "webhookTriggerService.ts",
-  "src/services/whatsappOutboundService.ts": "tracing.ts",
+  "src/services/whatsappOutboundService.ts": "whatsappOutboundService.ts",
   "src/services/whatsappWebhookService.ts": "supabaseMock.ts",
   "src/services/widgetService.ts": "client.ts",
   "src/services/workflowCheckpointService.ts": "WorkflowTimeTravelPanel.tsx",
@@ -3378,7 +3374,7 @@
   "src/stores/cerebroStore.ts": "lib/utils.ts",
   "src/stores/datahubStore.ts": "react-router-dom",
   "src/stores/index.ts": "react-router-dom",
-  "src/stores/notificationStore.ts": "notificationStore.ts",
+  "src/stores/notificationStore.ts": "healthAlertsService.ts",
   "src/stores/oracleStore.ts": "oracleStore.ts",
   "src/stores/presets/oraclePresets.ts": "oracleStore.ts",
   "src/stores/types/oracleTypes.ts": "oracleStore.ts",
@@ -3439,7 +3435,7 @@
   "src/test/example.test.ts": "vitest",
   "src/test/execution-history.test.ts": "services/index.ts",
   "src/test/extended-services.test.ts": "cerebroService.ts",
-  "src/test/freeze-window-service.test.ts": "freezeWindowService.ts",
+  "src/test/freeze-window-service.test.ts": "✅ FASE 5 — FRONTEND REFACTOR (Etapas 36-41) — CONCLUÍDA",
   "src/test/frontmatter.test.ts": "kanbanService.ts",
   "src/test/guardrails-ml-service.test.ts": "GuardrailsModule.tsx",
   "src/test/harvest-checkpoint-bulk-purge.test.ts": "harvest-checkpoint-bulk-purge.test.ts",
@@ -3469,7 +3465,7 @@
   "src/test/normalize.test.ts": "foldForSearch",
   "src/test/notification-and-middleware.test.ts": "notificationEngineService.ts",
   "src/test/notification-engine.test.ts": "notificationEngineService.ts",
-  "src/test/notifications-drawer.test.tsx": "notificationStore.ts",
+  "src/test/notifications-drawer.test.tsx": "healthAlertsService.ts",
   "src/test/observability-governance-alerts.test.ts": "observability.ts",
   "src/test/openclaw-compiler.test.ts": "DeployModule.tsx",
   "src/test/openclaw-runtime.test.tsx": "@testing-library/react",
@@ -3496,7 +3492,7 @@
   "src/test/schema-contract.test.ts": "schema-contract.test.ts",
   "src/test/searchDsl.test.ts": "foldForSearch",
   "src/test/security-guards.test.ts": "PIIScannerPanel.tsx",
-  "src/test/security-service.test.ts": "securityService.ts",
+  "src/test/security-service.test.ts": "security-service.test.ts",
   "src/test/services.test.ts": "services.test.ts",
   "src/test/setup.ts": ".scrollIntoView",
   "src/test/sidebar-persistence.test.ts": "vitest",
@@ -3568,18 +3564,18 @@
   "src/test/vaultSync.test.ts": "vaultSyncService.ts",
   "src/test/voice-agents-service.test.ts": "VoiceAgentsPage.tsx",
   "src/test/webhook-trigger.test.ts": "webhookTriggerService.ts",
-  "src/test/whatsapp-outbound.test.ts": "tracing.ts",
+  "src/test/whatsapp-outbound.test.ts": "whatsappOutboundService.ts",
   "src/test/whatsapp-webhook.test.ts": "supabaseMock.ts",
   "src/test/wikilink.test.ts": "notesService.ts",
   "src/test/workflow-checkpoint.test.ts": "WorkflowTimeTravelPanel.tsx",
-  "src/test/workflow-nodes.test.ts": "WorkflowCanvas.tsx",
+  "src/test/workflow-nodes.test.ts": "workflowsService.ts",
   "src/test/workflow-tracer.test.ts": "DbRow",
   "src/test/workflows-service.test.ts": "workflowsService.ts",
   "src/test/workspace-context-service.test.ts": "workspaceContextService.ts",
   "src/tests/automation-services.test.ts": "nexus-complete-test-suite.test.ts",
   "src/tests/nexus-complete-test-suite.test.ts": "nexus-complete-test-suite.test.ts",
   "src/types/agentTypes.ts": "agentTypes.ts",
-  "src/types/cerebroCitations.ts": "CitationDialog.tsx",
+  "src/types/cerebroCitations.ts": "logger.ts",
   "src/types/dbRow.ts": "DbRow",
   "src/types/hfTypes.ts": "hfTypes.ts",
   "src/views/Home.vue": "cenarios.mjs",

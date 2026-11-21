@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `665b5995957684ccd553fabf953ed97bac544537` (2026-11-21T12:25:54-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `10a1dd011bfbd63ed3fc467e4313b3dea724fbd2` (2026-11-21T12:48:58-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 1996 |
 | arquivos_codigo | 1449 |
-| linhas_codigo | 318220 |
+| linhas_codigo | 318222 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -431,17 +431,17 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13961 nós · 37239 arestas · 911 comunidades · grafo do commit `665b5995`
-- comunidades maiores: Badge (291), react (205), lib/utils.ts (179), sonner (178), getCorsHeaders (161), button.tsx (154), lucide-react (146), App.tsx (145), cn (131), badge.tsx (114), logger.ts (109), mod.ts (102)
+- 13961 nós · 37238 arestas · 907 comunidades · grafo do commit `10a1dd01`
+- comunidades maiores: Badge (291), react (205), lib/utils.ts (179), sonner (178), getCorsHeaders (161), button.tsx (154), lucide-react (146), App.tsx (145), cn (131), logger.ts (119), badge.tsx (114), mod.ts (102)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (21)
 - package.json (20)
-- supabase/deployment-manifest.json (15)
+- supabase/deployment-manifest.json (16)
 - .github/workflows/ci.yml (7)
-- supabase/functions/llm-gateway/index.ts (5)
+- supabase/functions/llm-gateway/index.ts (6)
 - .github/workflows/contexto.yml (4)
 - .github/workflows/edge-deploy.yml (4)
 - supabase/functions/agent-conversational-builder/index.ts (4)
@@ -577,6 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-21 `10a1dd01` fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)
 - 2026-11-21 `665b5995` chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)
 - 2026-11-21 `15ba85e3` chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)
 - 2026-11-21 `ff7f06e0` fix: registra webhooks externos verify_jwt=false no config.toml (#135)
@@ -591,7 +592,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `efdc4b1a` fix(deps): declara @tiptap/core usado no teste do rich editor (#125)
 - 2026-11-20 `69df67d0` fix(deploy): remove SUPABASE_* do secrets set e usa --remote (CLI v3) (#123)
 - 2026-11-20 `db07b5db` chore(ci): workflow anti-stale para PRs dependabot com base atrasada (#124)
-- 2026-11-20 `e4460f85` chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -1379,7 +1379,7 @@
    "nome": "llm-gateway",
    "entrada": "supabase/functions/llm-gateway/index.ts",
    "arquivos": 9,
-   "linhas": 2029,
+   "linhas": 2034,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
