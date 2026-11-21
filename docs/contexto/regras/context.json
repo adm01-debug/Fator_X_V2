@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "10a1dd011bfbd63ed3fc467e4313b3dea724fbd2",
+  "sha": "6b7d90eb054cd37da2e3676b4c7cdb83d688eced",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 15:49 UTC",
-  "files_total": 2001,
-  "code_files": 1789,
-  "code_lines": 348434
+  "generated_at": "2026-11-21 16:16 UTC",
+  "files_total": 2002,
+  "code_files": 1790,
+  "code_lines": 348488
  },
  "version": "1.3.2",
- "facts_hash": "a3b8d08a041474a3",
+ "facts_hash": "a032099edaf9acff",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -237,7 +237,7 @@
   "languages": {
    ".tsx": 699,
    ".ts": 692,
-   ".sql": 339,
+   ".sql": 340,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -871,6 +871,13 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20260722172153_a3d226a9-fc30-446e-b0cd-9cc3897d8ac7.sql"
+     },
+     {
+      "name": "embed_attempts",
+      "type": "integer NOT NULL DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121103000_embed_retry_chunks.sql"
      },
      {
       "name": "embedded_at",
@@ -46144,6 +46151,14 @@
     "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
    },
    {
+    "name": "idx_chunks_embed_retry",
+    "table": "chunks",
+    "columns": "created_at",
+    "unique": false,
+    "where": "WHERE embedding IS NULL AND embed_attempts < 5",
+    "src": "supabase/migrations/20261121103000_embed_retry_chunks.sql"
+   },
+   {
     "name": "idx_chaos_active",
     "table": "chaos_experiments",
     "columns": "target, enabled, expires_at",
@@ -46736,6 +46751,7 @@
    "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
    "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
    "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
+   "supabase/migrations/20261121103000_embed_retry_chunks.sql",
    "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -55078,7 +55094,7 @@
     "env": [],
     "external": [],
     "invokes": [],
-    "doc": "Edge Function: rag-embed-backfill Popula embeddings vector(1536) em public.agent_memories_v2 para linhas com embedding IS NULL. Executada via cron a cada 5 min. Idempotente. Limite: 200 linhas/execução.",
+    "doc": "Edge Function: rag-embed-backfill Popula embeddings vector(1536) em public.agent_memories_v2 e public.chunks para linhas com embedding IS NULL. Executada via cron a cada 5 min (e pós doc-parse, escopada por document_id). Idempotente. Limite: 200 linhas/execução. Retry: chunks em 'pending' OU 'failed …",
     "errors": [
      "embed batch failed: ${res.status}",
      "embedder em modo degradado (hash); nenhum provedor real disponível",
@@ -59564,7 +59580,7 @@
   {
    "module": "supabase/functions",
    "files": 134,
-   "lines": 32188,
+   "lines": 32213,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -59807,8 +59823,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 336,
-   "lines": 29901,
+   "files": 337,
+   "lines": 29930,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -62343,6 +62359,7 @@
     "content",
     "created_at",
     "document_id",
+    "embed_attempts",
     "embedding",
     "embedding_status",
     "id",
@@ -72833,7 +72850,15 @@
    },
    {
     "file": "supabase/functions/rag-embed-backfill/index.ts",
-    "text": "Executada via cron a cada 5 min. Idempotente. Limite: 200 linhas/execução."
+    "text": "escopada por document_id). Idempotente. Limite: 200 linhas/execução."
+   },
+   {
+    "file": "supabase/functions/rag-embed-backfill/index.ts",
+    "text": "elevam o contador até o limite (5) — quando o provedor volta a funcionar, o"
+   },
+   {
+    "file": "supabase/functions/rag-embed-backfill/index.ts",
+    "text": "gravando o motivo. Falhas consecutivas elevam o contador até o limite (5):"
    },
    {
     "file": "supabase/functions/rag-embed-backfill/index.ts",
@@ -73283,6 +73308,11 @@
     "table": "chunks",
     "column": "chunk_version",
     "rule": "default 1"
+   },
+   {
+    "table": "chunks",
+    "column": "embed_attempts",
+    "rule": "default 0"
    },
    {
     "table": "chunks",
@@ -97957,18 +97987,6 @@
     "file": "supabase/functions/rag-embed-backfill/index.ts",
     "field": "embedding_status",
     "value": "done",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/rag-embed-backfill/index.ts",
-    "field": "embedding_status",
-    "value": "failed",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/rag-embed-backfill/index.ts",
-    "field": "embedding_status",
-    "value": "failed",
     "kind": "escreve"
    },
    {
@@ -185840,9 +185858,17 @@
   },
   "supabase/functions/rag-embed-backfill/index.ts": {
    "path": "supabase/functions/rag-embed-backfill/index.ts",
-   "lines": 259,
+   "lines": 284,
    "tables": [
     {
+     "table": "chunks",
+     "op": "select"
+    },
+    {
+     "table": "chunks",
+     "op": "update"
+    },
+    {
      "table": "agent_memories_v2",
      "op": "select"
     },
@@ -185861,18 +185887,6 @@
     {
      "table": "chunks",
      "op": "select"
-    },
-    {
-     "table": "chunks",
-     "op": "update"
-    },
-    {
-     "table": "chunks",
-     "op": "update"
-    },
-    {
-     "table": "chunks",
-     "op": "update"
     },
     {
      "table": "chunks",
@@ -185880,16 +185894,17 @@
     }
    ],
    "table_cols": {
+    "chunks": [
+     "content",
+     "embed_attempts",
+     "embedding",
+     "embedding_status",
+     "id"
+    ],
     "agent_memories_v2": [
      "content",
      "embed_attempts",
      "embedding",
-     "id"
-    ],
-    "chunks": [
-     "content",
-     "embedding",
-     "embedding_status",
      "id"
     ]
    },
@@ -185925,25 +185940,17 @@
     },
     {
      "field": "embedding_status",
-     "value": "failed",
-     "kind": "escreve"
-    },
-    {
-     "field": "embedding_status",
-     "value": "failed",
-     "kind": "escreve"
-    },
-    {
-     "field": "embedding_status",
      "value": "pending",
      "kind": "filtra"
     }
    ],
    "rule_comments": [
-    "Executada via cron a cada 5 min. Idempotente. Limite: 200 linhas/execução.",
+    "escopada por document_id). Idempotente. Limite: 200 linhas/execução.",
+    "elevam o contador até o limite (5) — quando o provedor volta a funcionar, o",
+    "gravando o motivo. Falhas consecutivas elevam o contador até o limite (5):",
     "increment atomicamente via RPC não existe; usamos update+fetch mínimo"
    ],
-   "doc": "Edge Function: rag-embed-backfill Popula embeddings vector(1536) em public.agent_memories_v2 para linhas com embedding IS NULL. Executada via cron a cada 5 min. Idempotente. Limite: 200 linhas/execução.",
+   "doc": "Edge Function: rag-embed-backfill Popula embeddings vector(1536) em public.agent_memories_v2 e public.chunks para linhas com embedding IS NULL. Executada via cron a cada 5 min (e pós doc-parse, escopada por document_id). Idempotente. Limite: 200 linhas/execução. Retry: chunks em 'pending' OU 'failed …",
    "uses_service_role": true
   },
   "supabase/functions/rag-embed-v2/embedder.ts": {
@@ -190568,6 +190575,10 @@
    "lines": 120,
    "uses_service_role": true
   },
+  "supabase/migrations/20261121103000_embed_retry_chunks.sql": {
+   "path": "supabase/migrations/20261121103000_embed_retry_chunks.sql",
+   "lines": 29
+  },
   "supabase/migrations/20261121120000_finish_partial_work_entidades.sql": {
    "path": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
    "lines": 441,
@@ -190737,10 +190748,21 @@
   }
  },
  "git": {
-  "sha": "10a1dd011bfbd63ed3fc467e4313b3dea724fbd2",
+  "sha": "6b7d90eb054cd37da2e3676b4c7cdb83d688eced",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "6b7d90e",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix(rag): retry automatico de chunks failed no emb-backfill (#133)",
+    "files": [
+     "supabase/deployment-manifest.json",
+     "supabase/functions/rag-embed-backfill/index.ts",
+     "supabase/migrations/20261121103000_embed_retry_chunks.sql"
+    ]
+   },
    {
     "sha": "10a1dd0",
     "date": "2026-11-21",
@@ -191059,43 +191081,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "b5951c7",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(edge): CORS no 429 e rate heavy em agentes — absorve pr19 (GAP-2/S24) (#118)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/a2a-server/index.ts",
-     "supabase/functions/agent-conversational-builder/index.ts",
-     "supabase/functions/audio-transcribe/index.ts",
-     "supabase/functions/bitrix24-api/index.ts",
-     "supabase/functions/bitrix24-oauth/index.ts",
-     "supabase/functions/crm-bitrix-sync/index.ts",
-     "supabase/functions/crm-enrich/index.ts",
-     "supabase/functions/cron-executor/index.ts",
-     "supabase/functions/doc-ocr/index.ts",
-     "supabase/functions/doc-parse/index.ts",
-     "supabase/functions/doc-rechunk/index.ts",
-     "supabase/functions/eval-engine-v2/index.ts",
-     "supabase/functions/guardrails-engine/index.ts",
-     "supabase/functions/guardrails-ml/index.ts",
-     "supabase/functions/health-check/index.ts",
-     "supabase/functions/image-analysis/index.ts",
-     "supabase/functions/memory-manager/index.ts",
-     "supabase/functions/nlp-pipeline/index.ts",
-     "supabase/functions/oracle-research/index.ts",
-     "supabase/functions/rag-embed-v2/index.ts",
-     "supabase/functions/rag-rerank-v2/index.ts",
-     "supabase/functions/rag-rerank/index.ts",
-     "supabase/functions/slack-agent-notify/index.ts",
-     "supabase/functions/slack-alert-dispatcher/index.ts",
-     "supabase/functions/slack-dlq-retry/index.ts",
-     "supabase/functions/smart-model-router/index.ts",
-     "supabase/functions/test-runner/index.ts",
-     "supabase/functions/text-to-speech/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -191116,6 +191101,10 @@
     3
    ],
    [
+    "supabase/functions/rag-embed-backfill/index.ts",
+    2
+   ],
+   [
     "supabase/functions/browser-agent-run/index.ts",
     2
    ],
@@ -191125,10 +191114,6 @@
    ],
    [
     ".env.example",
-    2
-   ],
-   [
-    "supabase/functions/agent-conversational-builder/index.ts",
     2
    ],
    [
@@ -191144,14 +191129,6 @@
     2
    ],
    [
-    "supabase/functions/doc-parse/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/doc-rechunk/index.ts",
-    2
-   ],
-   [
     "supabase/functions/rag-ingest/index.ts",
     2
    ],
@@ -191164,6 +191141,10 @@
     2
    ],
    [
+    "supabase/migrations/20261121103000_embed_retry_chunks.sql",
+    1
+   ],
+   [
     "supabase/functions/_shared/chaos.ts",
     1
    ],
@@ -191173,6 +191154,10 @@
    ],
    [
     "supabase/functions/_shared/ai-provider.ts",
+    1
+   ],
+   [
+    "supabase/functions/agent-conversational-builder/index.ts",
     1
    ],
    [

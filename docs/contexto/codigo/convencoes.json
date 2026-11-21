@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(rag): retry automatico de chunks failed no emb-backfill (#133)",
    "fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)",
    "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)",
    "chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)",
-   "fix: registra webhooks externos verify_jwt=false no config.toml (#135)",
-   "chore: registra analise funcionalidades planejadas x implementadas (#134)"
+   "fix: registra webhooks externos verify_jwt=false no config.toml (#135)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

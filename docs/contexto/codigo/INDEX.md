@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `10a1dd011bfbd63ed3fc467e4313b3dea724fbd2` (2026-11-21T12:48:58-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6b7d90eb054cd37da2e3676b4c7cdb83d688eced` (2026-11-21T13:16:16-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1391), SQL (339), Markdown (128), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
+- linguagens: TypeScript (1391), SQL (340), Markdown (128), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1996 |
+| arquivos_total | 1997 |
 | arquivos_codigo | 1449 |
-| linhas_codigo | 318222 |
+| linhas_codigo | 318247 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 75 |
 | edge_functions | 87 |
 | tabelas | 327 |
-| migrations | 336 |
+| migrations | 337 |
 | cron_jobs | 37 |
 | testes | 239 |
 | workflows | 10 |
@@ -431,15 +431,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13961 nós · 37238 arestas · 907 comunidades · grafo do commit `10a1dd01`
-- comunidades maiores: Badge (291), react (205), lib/utils.ts (179), sonner (178), getCorsHeaders (161), button.tsx (154), lucide-react (146), App.tsx (145), cn (131), logger.ts (119), badge.tsx (114), mod.ts (102)
+- 13964 nós · 37240 arestas · 906 comunidades · grafo do commit `6b7d90eb`
+- comunidades maiores: lucide-react (293), react (284), sonner (261), getCorsHeaders (169), input.tsx (169), App.tsx (164), cn (146), ui/index.ts (118), templateSkillLinkService.ts (114), ref_https (105), ref_node_fs (105), mod.ts (95)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (21)
 - package.json (20)
-- supabase/deployment-manifest.json (16)
+- supabase/deployment-manifest.json (17)
 - .github/workflows/ci.yml (7)
 - supabase/functions/llm-gateway/index.ts (6)
 - .github/workflows/contexto.yml (4)
@@ -577,6 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-21 `6b7d90eb` fix(rag): retry automatico de chunks failed no emb-backfill (#133)
 - 2026-11-21 `10a1dd01` fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)
 - 2026-11-21 `665b5995` chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)
 - 2026-11-21 `15ba85e3` chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)
@@ -591,7 +592,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `24731455` feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)
 - 2026-11-20 `efdc4b1a` fix(deps): declara @tiptap/core usado no teste do rich editor (#125)
 - 2026-11-20 `69df67d0` fix(deploy): remove SUPABASE_* do secrets set e usa --remote (CLI v3) (#123)
-- 2026-11-20 `db07b5db` chore(ci): workflow anti-stale para PRs dependabot com base atrasada (#124)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

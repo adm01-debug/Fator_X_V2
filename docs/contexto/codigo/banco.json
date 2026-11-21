@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 336,
+ "migrations": 337,
  "seeds": [],
  "avisos": [
   "45 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -9698,6 +9698,27 @@
      "default": null,
      "ref": "documents"
     },
+    "embed_attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "embed_last_attempt_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "embed_last_error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "embedded_at": {
      "tipo": "timestamptz",
      "nn": false,
@@ -9828,6 +9849,11 @@
      "unico": false
     },
     {
+     "nome": "idx_chunks_embed_retry",
+     "colunas": "created_at",
+     "unico": false
+    },
+    {
      "nome": "idx_chunks_embedding",
      "colunas": "embedding vector_cosine_ops",
      "unico": false
@@ -9899,7 +9925,10 @@
      "context_prefix",
      "parent_chunk_id",
      "chunk_level",
-     "bm25_tsvector"
+     "bm25_tsvector",
+     "embed_attempts",
+     "embed_last_error",
+     "embed_last_attempt_at"
     ],
     "so_no_types": []
    },

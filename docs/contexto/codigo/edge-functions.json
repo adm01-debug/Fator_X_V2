@@ -1942,7 +1942,7 @@
    "nome": "rag-embed-backfill",
    "entrada": "supabase/functions/rag-embed-backfill/index.ts",
    "arquivos": 1,
-   "linhas": 259,
+   "linhas": 284,
    "verify_jwt": false,
    "metodos": [
     "OPTIONS"

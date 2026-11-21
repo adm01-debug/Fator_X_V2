@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "10a1dd011bfbd63ed3fc467e4313b3dea724fbd2",
+  "commit": "6b7d90eb054cd37da2e3676b4c7cdb83d688eced",
   "branch": "main",
-  "data_commit": "2026-11-21T12:48:58-03:00",
+  "data_commit": "2026-11-21T13:16:16-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "6b7d90eb",
+    "data": "2026-11-21",
+    "assunto": "fix(rag): retry automatico de chunks failed no emb-backfill (#133)"
+   },
    {
     "sha": "10a1dd01",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "71fcc76c",
     "data": "2026-11-20",
     "assunto": "fix(edge): contract tests verdes sem secrets — valida payload e assinatura antes de exigir key (#120)"
-   },
-   {
-    "sha": "bc0d0b86",
-    "data": "2026-11-20",
-    "assunto": "fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)"
    }
   ],
-  "arquivos_mudados_7d": 102,
+  "arquivos_mudados_7d": 103,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "pasta": "package-lock.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 52
+    "commits": 53
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1996,
+  "arquivos_total": 1997,
   "arquivos_codigo": 1449,
-  "linhas_codigo": 318222,
+  "linhas_codigo": 318247,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -322,7 +322,7 @@
   "hooks": 75,
   "edge_functions": 87,
   "tabelas": 327,
-  "migrations": 336,
+  "migrations": 337,
   "cron_jobs": 37,
   "testes": 239,
   "workflows": 10,
@@ -532,7 +532,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32188
+   "linhas": 32213
   },
   "tailwind.config.ts": {
    "arquivos": 1,

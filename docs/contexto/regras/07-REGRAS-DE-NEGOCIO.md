@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `10a1dd011b` · branch `main` · 2026-11-21 15:49 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6b7d90eb05` · branch `main` · 2026-11-21 16:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -364,6 +364,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `chunks` | `created_at` | default now() |
 | `chunks` | `parent_chunk_id` | FK → chunks.id |
 | `chunks` | `chunk_version` | default 1 |
+| `chunks` | `embed_attempts` | default 0 |
 | `chunks` | `is_active` | obrigatório |
 | `chunks` | `(tabela)` | constraint chunks_embedding_provenance_ck CHECK ( (embedding IS NULL AND embedding_model IS NULL AND embedded_at IS NULL) OR (embedding IS NOT NULL AND embedding_model IS NOT NULL AND embedded_at IS NOT NULL) ) |
 | `vector_indexes` | `id` | PK; default gen_random_uuid() |
@@ -616,8 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `alert_rules` | `severity` | default 'warning'; CHECK severity IN ('info','warning','critical') |
 | `alert_rules` | `cooldown_minutes` | default 60 |
 | `alert_rules` | `is_enabled` | default true |
-| `alert_rules` | `created_at` | default now() |
-| … +2196 linhas — lista completa em `context.json` | | |
+| … +2197 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -4694,4 +4694,4 @@ _nenhum item encontrado_
 | 2 hits = fit máximo | `src/services/skillRecommenderService.ts` |
 | quando o ranking semântico devolve menos que `limit`. Desligado por padrão | `src/services/skillRecommenderService.ts` |
 | para preservar determinismo em fluxos que exigem apenas matches reais. | `src/services/skillRecommenderService.ts` |
-| … +161 linhas — lista completa em `context.json` | |
+| … +163 linhas — lista completa em `context.json` | |
