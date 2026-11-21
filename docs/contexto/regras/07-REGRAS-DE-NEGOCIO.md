@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `085a2e38fe` · branch `main` · 2026-11-21 18:21 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8554dc7947` · branch `main` · 2026-11-21 19:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1257,6 +1257,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `Inactive` | escreve | `src/pages/ObservabilityOTelPage.tsx` |
 | `status` | `Incidents` | escreve | `src/pages/DeploymentsPage.tsx` |
 | `status` | `Nominal` | compara, escreve | `src/pages/DashboardPage.tsx`<br>`src/pages/SettingsPage.tsx` |
+| `status` | `OK` | compara | `supabase/functions/geo-code/geo.ts` |
 | `status` | `Ok` | escreve | `src/components/deployments/DeploymentWizard.tsx` |
 | `status` | `Online` | escreve | `src/pages/DashboardPage.tsx` |
 | `status` | `Optimized` | escreve | `src/pages/DashboardPage.tsx` |
@@ -1355,8 +1356,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `passed` | compara | `src/components/agent-builder/modules/TestingModule.tsx`<br>`src/pages/ComplianceReportsPage.tsx` |
 | `status` | `paused` | compara, escreve | `src/components/agent-builder/modules/ExperimentsModule.tsx`<br>`src/pages/AgentExperimentsPage.tsx`<br>`src/services/batchProcessorService.ts`<br>`src/services/cronSchedulerService.ts`<br>`src/services/workflowCheckpointService.ts`<br>… +1 |
 | `status` | `pendente` | compara, escreve | `src/components/skills/SkillDescriptionEnrichPanel.tsx`<br>`src/components/skills/SkillReclassificationReviewPanel.tsx`<br>`src/lib/skills/llmClassificationQueue.ts`<br>`src/lib/skills/observability.ts`<br>`src/services/skillReclassificationReviewService.ts` |
-| `status` | `pending` | compara, escreve, filtra | `src/components/agent-builder/HandoffPanel.tsx`<br>`src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agent-builder/modules/TestingModule.tsx`<br>`src/components/chat/ChatComposer.tsx`<br>`src/components/datahub/DataHubSyncTab.tsx`<br>… +23 |
-| … +121 linhas — lista completa em `context.json` | | | |
+| … +122 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -2009,6 +2009,10 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 - **bodySchema** (`supabase/functions/eval-judge/index.ts`, z.object):
   ```ts
   { evaluation_run_id: z.string().uuid().optional(), agent_id: z.string().uuid(), test_cases: z.array(testCaseSchema).optional(), dataset_id: z.string().uuid().optional(), judge_model: z.string().max(100).optional(), mode: z.enum(['pointwise', 'pairwise', 'faithfulness', 'reward']).optional().default('pointwise'), }
+  ```
+- **SCHEMA** (`supabase/functions/geo-code/index.ts`, z.object):
+  ```ts
+  { action: z.enum(['geocode', 'reverse', 'health']), address: z.string().min(3).max(300).optional(), latitude: z.number().min(-90).max(90).optional(), longitude: z.number().min(-180).max(180).optional(), workspace_id: z.string().uuid().optional(), }
   ```
 - **InputSchema** (`supabase/functions/global-search/index.ts`, z.object):
   ```ts
@@ -3976,7 +3980,7 @@ _nenhum item encontrado_
 | Não foi possível concluir a classificação por IA. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ; import { Badge } from  | `src/components/slack/SlackOnboardingWizard.tsx` |
 | Workspace não identificado | `src/components/slack/SlackTestBroadcastButton.tsx` |
-| … +516 linhas — lista completa em `context.json` | |
+| … +524 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4011,7 +4015,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3006 testes em 212 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3013 testes em 213 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4167,6 +4171,7 @@ _nenhum item encontrado_
 | `src/test/template-skill-links-rebuild.test.ts` | 7 | rebuildTemplateSkillLinks · remove apenas vínculos automáticos ativos, preservando curadoria manual · ressuscita vínculos soft-deletados zerando deleted_at/deleted_by · grava somente vínculos com origem automática … |
 | `src/test/whatsapp-outbound.test.ts` | 7 | whatsappOutboundService — sendWhatsAppMessage · delegates to the whatsapp-outbound edge and returns its result · sends an image message with caption · sends a document message … |
 | `src/test/workflow-checkpoint.test.ts` | 7 | workflowCheckpointService — types · WorkflowExecution interface has expected shape · WorkflowCheckpoint interface has expected shape · CheckpointCreateInput allows optional fields … |
+| `supabase/functions/geo-code/geo.test.ts` | 7 | mapboxGeocode: normaliza endereço completo · mapboxReverse: inverte coordenadas · mapboxGeocode: sem resultados lança erro · mapboxGeocode: erro HTTP lança … |
 | `e2e/auth-flows.spec.ts` | 6 | Auth Flows (synthetic user) · login válido redireciona para área autenticada · login inválido mantém usuário em /auth com mensagem de erro · rota protegida sem auth redireciona para /auth … |
 | `e2e/security.spec.ts` | 6 | Security Headers · CSP meta tag is present · X-Frame-Options meta tag is present · Referrer policy meta tag is present … |
 | `src/components/agents/wizard/quickSteps/__tests__/PromptContradictionAutoFixPanel.test.tsx` | 6 | PromptContradictionAutoFixPanel · renders nothing when the prompt has no contradictions · shows a fix row for each detected contradiction · applies a fix, clears the contradiction, and surfaces the undo banner … |

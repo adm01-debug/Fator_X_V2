@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "085a2e38fec5a4223d26091a9fb67e8866430b0e",
+  "sha": "8554dc79471c72d41c1cec70bffdaf1ff8d7e710",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 18:21 UTC",
-  "files_total": 2004,
-  "code_files": 1792,
-  "code_lines": 348555
+  "generated_at": "2026-11-21 19:20 UTC",
+  "files_total": 2007,
+  "code_files": 1795,
+  "code_lines": 349014
  },
  "version": "1.3.2",
- "facts_hash": "404c53640834cf2e",
+ "facts_hash": "c08d330487d8359d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -236,7 +236,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 699,
-   ".ts": 693,
+   ".ts": 696,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -54347,6 +54347,32 @@
     "idempotency": false
    },
    {
+    "name": "geo-code",
+    "file": "supabase/functions/geo-code/index.ts",
+    "methods": [
+     "OPTIONS"
+    ],
+    "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
+    "tables": [
+     "agent_usage",
+     "api_keys",
+     "openclaw_events",
+     "webhook_delivery_logs",
+     "workspace_members"
+    ],
+    "env": [
+     "GOOGLE_MAPS_API_KEY",
+     "MAPBOX_ACCESS_TOKEN"
+    ],
+    "external": [],
+    "invokes": [],
+    "doc": "",
+    "errors": [],
+    "side_effects": [],
+    "webhook_events": [],
+    "idempotency": false
+   },
+   {
     "name": "global-search",
     "file": "supabase/functions/global-search/index.ts",
     "methods": [
@@ -59625,8 +59651,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 135,
-   "lines": 32631,
+   "files": 138,
+   "lines": 33090,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -59756,6 +59782,7 @@
     "webhookSender.ts: WebhookPayload, WebhookDeliveryResult, WebhookSenderOptions, deliverWebhook, deliverWebhookWithLogging",
     "webhookSignature.ts: hmacSha256Hex, verifyHmac, validateWebhookRequest",
     "index.ts: OcrPageEvent",
+    "geo.ts: GeoResult, mapboxGeocode, mapboxReverse, googleGeocode, googleReverse",
     "types.ts: LLMCallParams, LLMResult",
     "utils.ts: normalizeOpenAIResponse",
     "anthropic.ts: callAnthropic",
@@ -59767,8 +59794,7 @@
     "departments.ts: SKILL_DEPARTMENTS, SkillDepartment, DEPARTMENT_HINT, isDepartment",
     "index.ts: MIN_DESCRIPTION, MAX_DESCRIPTION, isPlaceholderDescription, isEcho",
     "departments.ts: SKILL_DEPARTMENTS, SkillDepartment, DEPARTMENT_LEXICON, ALLOWED_LICENSES, BLOCKED_LICENSES, isLicenseAllowed",
-    "github.ts: GitHubMode, resolveMode, GhResponse, ghGet, GhRepo, searchRepos",
-    "lib.ts: tokenize, stripUnsafe, shannonEntropy, scanContentRisks, MCP_HOST_ALLOWLIST, isMcpUrlAllowed"
+    "github.ts: GitHubMode, resolveMode, GhResponse, ghGet, GhRepo, searchRepos"
    ],
    "docs": [
     "ai-provider.ts: Provedor de IA (chat) das edge functions: OpenRouter (API compatível com OpenAI). Substitui o DeepSeek direto (DEEPSEEK_API_KEY) e o Lovable AI Gateway (LOVABLE_API_KEY), que não existem mais no projeto. Hermes API é suportada via HERMES_API_KEY (+ HERMES_BASE_URL). Secret obrigatório: OPENROUTER_AP …",
@@ -59843,6 +59869,9 @@
     "supabase/functions/dr-orchestrator/index.ts",
     "supabase/functions/eval-engine-v2/index.ts",
     "supabase/functions/eval-judge/index.ts",
+    "supabase/functions/geo-code/geo.test.ts",
+    "supabase/functions/geo-code/geo.ts",
+    "supabase/functions/geo-code/index.ts",
     "supabase/functions/global-search/index.ts",
     "supabase/functions/graph-execute/index.ts",
     "supabase/functions/guardrails-engine/index.ts",
@@ -59861,10 +59890,7 @@
     "supabase/functions/llm-gateway/providers/anthropic.ts",
     "supabase/functions/llm-gateway/providers/huggingface.ts",
     "supabase/functions/llm-gateway/providers/lovable.ts",
-    "supabase/functions/llm-gateway/providers/openai.ts",
-    "supabase/functions/llm-gateway/providers/openrouter.ts",
-    "supabase/functions/memory-manager/index.ts",
-    "supabase/functions/memory-tools/index.ts"
+    "supabase/functions/llm-gateway/providers/openai.ts"
    ]
   },
   {
@@ -63272,6 +63298,9 @@
    "GITHUB_TOKEN": [
     "supabase/functions/skill-harvester/github.ts"
    ],
+   "GOOGLE_MAPS_API_KEY": [
+    "supabase/functions/geo-code/index.ts"
+   ],
    "GRAPHIFY_FIXTURE_": [
     "scripts/graphify-local.unit.mjs"
    ],
@@ -63314,6 +63343,9 @@
    ],
    "MAINTENANCE_TEST_SECRET": [
     "scripts/maintenance/maintenance.unit.mjs"
+   ],
+   "MAPBOX_ACCESS_TOKEN": [
+    "supabase/functions/geo-code/index.ts"
    ],
    "MODE": [
     "src/lib/sentry.ts"
@@ -65822,6 +65854,14 @@
     "name": "bodySchema",
     "kind": "object",
     "body": "{ evaluation_run_id: z.string().uuid().optional(), agent_id: z.string().uuid(), test_cases: z.array(testCaseSchema).optional(), dataset_id: z.string().uuid().optional(), judge_model: z.string().max(100).optional(), mode: z.enum(['pointwise', 'pairwise', 'faithfulness', 'reward']).optional().default('pointwise'), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/geo-code/index.ts",
+    "name": "SCHEMA",
+    "kind": "object",
+    "body": "{ action: z.enum(['geocode', 'reverse', 'health']), address: z.string().min(3).max(300).optional(), latitude: z.number().min(-90).max(90).optional(), longitude: z.number().min(-180).max(180).optional(), workspace_id: z.string().uuid().optional(), }",
     "refines": [],
     "chain": []
    },
@@ -71008,6 +71048,38 @@
    {
     "file": "supabase/functions/doc-parse/index.ts",
     "msg": "OCR falhou (${resp.status}): ${err.slice(0, 200)}"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "msg": "google geocode http ${res.status}"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "msg": "google geocode: ${status}"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "msg": "google reverse http ${res.status}"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "msg": "google reverse: ${status}"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "msg": "mapbox geocode http ${res.status}"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "msg": "mapbox geocode: sem resultados"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "msg": "mapbox reverse http ${res.status}"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "msg": "mapbox reverse: sem resultados"
    },
    {
     "file": "supabase/functions/graph-execute/index.ts",
@@ -97287,6 +97359,18 @@
     "kind": "escreve"
    },
    {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "field": "status",
+    "value": "OK",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.ts",
+    "field": "status",
+    "value": "OK",
+    "kind": "compara"
+   },
+   {
     "file": "supabase/functions/global-search/index.ts",
     "field": "type",
     "value": "agent",
@@ -113463,6 +113547,34 @@
    {
     "file": "supabase/functions/_shared/retry.test.ts",
     "name": "fetchWithTimeout — aborta após timeoutMs"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.test.ts",
+    "name": "mapboxGeocode: normaliza endereço completo"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.test.ts",
+    "name": "mapboxReverse: inverte coordenadas"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.test.ts",
+    "name": "mapboxGeocode: sem resultados lança erro"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.test.ts",
+    "name": "mapboxGeocode: erro HTTP lança"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.test.ts",
+    "name": "googleGeocode: normaliza resposta do Google"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.test.ts",
+    "name": "googleReverse: normaliza latlng"
+   },
+   {
+    "file": "supabase/functions/geo-code/geo.test.ts",
+    "name": "googleGeocode: status ZERO_RESULTS lança"
    },
    {
     "file": "supabase/functions/rag-embed-v2/index.test.ts",
@@ -129739,6 +129851,9 @@
       "escreve:supabase/functions/rag-ingest/index.ts",
       "filtra:supabase/functions/doc-parse/index.ts"
      ],
+     "OK": [
+      "compara:supabase/functions/geo-code/geo.ts"
+     ],
      "repo_created": [
       "escreve:supabase/functions/hf-autotrain/index.ts"
      ],
@@ -140920,6 +141035,13 @@
     "msg": "valor `sql_generated` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "escreve:supabase/functions/datahub-query/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `OK` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:supabase/functions/geo-code/geo.ts"
     ]
    },
    {
@@ -180260,7 +180382,7 @@
   },
   "supabase/functions/_shared/edge-contract_test.ts": {
    "path": "supabase/functions/_shared/edge-contract_test.ts",
-   "lines": 295,
+   "lines": 297,
    "env": [
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL",
@@ -183719,6 +183841,72 @@
    ],
    "pagination": [
     "1"
+   ]
+  },
+  "supabase/functions/geo-code/geo.test.ts": {
+   "path": "supabase/functions/geo-code/geo.test.ts",
+   "lines": 129,
+   "is_test": true,
+   "doc": "Unit tests para os providers de geocodificação (Mapbox/Google). Rode com: deno test --allow-env --allow-net supabase/functions/geo-code/geo.test.ts",
+   "tests": [
+    "mapboxGeocode: normaliza endereço completo",
+    "mapboxReverse: inverte coordenadas",
+    "mapboxGeocode: sem resultados lança erro",
+    "mapboxGeocode: erro HTTP lança",
+    "googleGeocode: normaliza resposta do Google",
+    "googleReverse: normaliza latlng",
+    "googleGeocode: status ZERO_RESULTS lança"
+   ]
+  },
+  "supabase/functions/geo-code/geo.ts": {
+   "path": "supabase/functions/geo-code/geo.ts",
+   "lines": 182,
+   "exports": [
+    "type GeoResult",
+    "function mapboxGeocode",
+    "function mapboxReverse",
+    "function googleGeocode",
+    "function googleReverse"
+   ],
+   "errors": [
+    "google geocode http ${res.status}",
+    "google geocode: ${status}",
+    "google reverse http ${res.status}",
+    "google reverse: ${status}",
+    "mapbox geocode http ${res.status}",
+    "mapbox geocode: sem resultados",
+    "mapbox reverse http ${res.status}",
+    "mapbox reverse: sem resultados"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "OK",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "OK",
+     "kind": "compara"
+    }
+   ],
+   "doc": "Geo Code providers: Mapbox / Google — lógica pura testável."
+  },
+  "supabase/functions/geo-code/index.ts": {
+   "path": "supabase/functions/geo-code/index.ts",
+   "lines": 146,
+   "env": [
+    "GOOGLE_MAPS_API_KEY",
+    "MAPBOX_ACCESS_TOKEN"
+   ],
+   "zod": [
+    {
+     "name": "SCHEMA",
+     "kind": "object",
+     "body": "{ action: z.enum(['geocode', 'reverse', 'health']), address: z.string().min(3).max(300).optional(), latitude: z.number().min(-90).max(90).optional(), longitude: z.number().min(-180).max(180).optional(), workspace_id: z.string().uuid().optional(), }",
+     "refines": [],
+     "chain": []
+    }
    ]
   },
   "supabase/functions/global-search/index.ts": {
@@ -190813,10 +191001,25 @@
   }
  },
  "git": {
-  "sha": "085a2e38fec5a4223d26091a9fb67e8866430b0e",
+  "sha": "8554dc79471c72d41c1cec70bffdaf1ff8d7e710",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "8554dc7",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)",
+    "files": [
+     ".gitignore",
+     "docs/migration/MATRIZ_EDGE_TABELA.md",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/_shared/edge-contract_test.ts",
+     "supabase/functions/geo-code/geo.test.ts",
+     "supabase/functions/geo-code/geo.ts",
+     "supabase/functions/geo-code/index.ts"
+    ]
+   },
    {
     "sha": "085a2e3",
     "date": "2026-11-21",
@@ -191140,19 +191343,6 @@
      "supabase/functions/openclaw-webhook/index.ts",
      "supabase/functions/quick-agent-test/index.ts"
     ]
-   },
-   {
-    "sha": "bc0d0b8",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix(rag): grava embeddings de chunks e alinha cerebro-query ao schema real (#119)",
-    "files": [
-     "docs/migration/MATRIZ_EDGE_TABELA.md",
-     "supabase/deployment-manifest.json",
-     "supabase/functions/cerebro-query/index.ts",
-     "supabase/functions/rag-embed-backfill/index.ts",
-     "supabase/functions/rag-ingest/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -191189,10 +191379,6 @@
     2
    ],
    [
-    "supabase/functions/rag-embed-backfill/index.ts",
-    2
-   ],
-   [
     "supabase/functions/browser-agent-run/index.ts",
     2
    ],
@@ -191213,8 +191399,24 @@
     2
    ],
    [
-    "supabase/functions/rag-ingest/index.ts",
-    2
+    ".gitignore",
+    1
+   ],
+   [
+    "supabase/functions/_shared/edge-contract_test.ts",
+    1
+   ],
+   [
+    "supabase/functions/geo-code/geo.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/geo-code/geo.ts",
+    1
+   ],
+   [
+    "supabase/functions/geo-code/index.ts",
+    1
    ],
    [
     "supabase/functions/whatsapp-outbound/index.ts",
@@ -191222,18 +191424,6 @@
    ],
    [
     "src/services/settingsService.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql",
-    1
-   ],
-   [
-    "supabase/functions/rag-embed-v2/index.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261121103000_embed_retry_chunks.sql",
     1
    ]
   ]

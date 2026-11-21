@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "085a2e38fec5a4223d26091a9fb67e8866430b0e",
+  "commit": "8554dc79471c72d41c1cec70bffdaf1ff8d7e710",
   "branch": "main",
-  "data_commit": "2026-11-21T15:20:19-03:00",
+  "data_commit": "2026-11-21T16:19:24-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "8554dc79",
+    "data": "2026-11-21",
+    "assunto": "feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)"
+   },
    {
     "sha": "085a2e38",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "42dc7a0d",
     "data": "2026-11-20",
     "assunto": "chore(deps)(deps): bump @tanstack/react-query from 5.83.0 to 5.107.1 (#105)"
-   },
-   {
-    "sha": "3ad98132",
-    "data": "2026-11-20",
-    "assunto": "chore(deps)(deps): bump the radix group across 1 directory with 27 updates (#103)"
    }
   ],
-  "arquivos_mudados_7d": 107,
+  "arquivos_mudados_7d": 112,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "pasta": "package-lock.json",
@@ -148,12 +148,12 @@
     "mudancas": 12
    },
    {
-    "pasta": "supabase/functions/llm-gateway",
+    "pasta": "supabase/functions/_shared",
     "mudancas": 7
    },
    {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 6
+    "pasta": "supabase/functions/llm-gateway",
+    "mudancas": 7
    },
    {
     "pasta": ".github/workflows/ci.yml",
@@ -164,11 +164,11 @@
     "mudancas": 5
    },
    {
-    "pasta": ".github/workflows/contexto.yml",
-    "mudancas": 4
+    "pasta": "docs/migration/MATRIZ_EDGE_TABELA.md",
+    "mudancas": 5
    },
    {
-    "pasta": "docs/migration/MATRIZ_EDGE_TABELA.md",
+    "pasta": ".github/workflows/contexto.yml",
     "mudancas": 4
    },
    {
@@ -192,7 +192,7 @@
     "mudancas": 3
    },
    {
-    "pasta": "AGENTS.md",
+    "pasta": ".gitignore",
     "mudancas": 3
    }
   ],
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -222,11 +222,11 @@
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/contexto.yml",
-    "mudancas": 4
+    "arquivo": "docs/migration/MATRIZ_EDGE_TABELA.md",
+    "mudancas": 5
    },
    {
-    "arquivo": "docs/migration/MATRIZ_EDGE_TABELA.md",
+    "arquivo": ".github/workflows/contexto.yml",
     "mudancas": 4
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 57
+    "commits": 58
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1999,
-  "arquivos_codigo": 1450,
-  "linhas_codigo": 318296,
+  "arquivos_total": 2002,
+  "arquivos_codigo": 1453,
+  "linhas_codigo": 318755,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -320,11 +320,11 @@
   "modulos": 71,
   "componentes": 661,
   "hooks": 75,
-  "edge_functions": 88,
+  "edge_functions": 89,
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 239,
+  "testes": 240,
   "workflows": 10,
   "scripts": 45,
   "docs_md": 128
@@ -531,8 +531,8 @@
    "linhas": 530
   },
   "supabase/functions": {
-   "arquivos": 135,
-   "linhas": 32631
+   "arquivos": 138,
+   "linhas": 33090
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -786,6 +786,7 @@
   "edges_orfas": [
    "bitrix24-api",
    "bitrix24-oauth",
+   "geo-code",
    "guardrails-engine",
    "oracle-research",
    "pg-net-smoke-test",

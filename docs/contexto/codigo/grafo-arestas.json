@@ -6984,6 +6984,13 @@
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/retry.ts"
   ],
+  "supabase/functions/geo-code/geo.ts": [
+   "supabase/functions/_shared/retry.ts"
+  ],
+  "supabase/functions/geo-code/index.ts": [
+   "supabase/functions/_shared/mod.ts",
+   "supabase/functions/geo-code/geo.ts"
+  ],
   "supabase/functions/global-search/index.ts": [
    "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts"

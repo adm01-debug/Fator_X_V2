@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "pasta": "supabase/functions",
- "total": 88,
+ "total": 89,
  "verify_jwt_false": [
   "bitrix24-webhook",
   "migrate-helper",
@@ -1029,6 +1029,38 @@
    "chamada_por_sql_ou_cron": false,
    "orfa": false,
    "testes": 0
+  },
+  {
+   "nome": "geo-code",
+   "entrada": "supabase/functions/geo-code/index.ts",
+   "arquivos": 2,
+   "linhas": 328,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "GOOGLE_MAPS_API_KEY",
+    "MAPBOX_ACCESS_TOKEN"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.mapbox.com",
+    "maps.googleapis.com"
+   ],
+   "usa_shared": [
+    "mod.ts",
+    "retry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
   },
   {
    "nome": "global-search",

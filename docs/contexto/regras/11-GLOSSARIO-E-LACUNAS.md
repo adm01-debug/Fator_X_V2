@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `085a2e38fe` · branch `main` · 2026-11-21 18:21 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8554dc7947` · branch `main` · 2026-11-21 19:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -361,6 +361,7 @@ _nenhum item encontrado_
 | status | valor `todos` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/skillReclassificationReviewService.ts` |
 | status | valor `submitted` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/a2a-server/index.ts` |
 | status | valor `sql_generated` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/datahub-query/index.ts` |
+| status | valor `OK` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/geo-code/geo.ts` |
 | status | valor `repo_created` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/hf-autotrain/index.ts` |
 | status | valor `granted` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/lgpd-manager/index.ts` |
 | status | valor `thinking` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/smolagent-runtime/index.ts` |

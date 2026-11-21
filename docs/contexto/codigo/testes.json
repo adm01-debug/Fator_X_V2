@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 239,
+ "total": 240,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 224
+  "unit": 225
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 196
+   "arquivos": 197
   },
   {
    "padrao": "outro",
@@ -2231,6 +2231,15 @@
    "casos": 12
   },
   {
+   "arquivo": "supabase/functions/geo-code/geo.test.ts",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "supabase/functions/geo-code/geo.ts"
+   ],
+   "casos": 7
+  },
+  {
    "arquivo": "supabase/functions/rag-embed-v2/index.test.ts",
    "tipo": "unit",
    "linhas": 104,
@@ -2460,6 +2469,7 @@
   "supabase/functions/_shared/alternation.ts": 1,
   "supabase/functions/_shared/retry.ts": 1,
   "supabase/functions/_shared/skills.ts": 1,
+  "supabase/functions/geo-code/geo.ts": 1,
   "supabase/functions/rag-embed-v2/embedder.ts": 1,
   "supabase/functions/skill-harvester/departments.ts": 1,
   "supabase/functions/skill-harvester/lib.ts": 1

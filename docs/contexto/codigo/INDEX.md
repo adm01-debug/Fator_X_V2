@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `085a2e38fec5a4223d26091a9fb67e8866430b0e` (2026-11-21T15:20:19-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8554dc79471c72d41c1cec70bffdaf1ff8d7e710` (2026-11-21T16:19:24-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1392), SQL (341), Markdown (128), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
+- linguagens: TypeScript (1395), SQL (341), Markdown (128), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1999 |
-| arquivos_codigo | 1450 |
-| linhas_codigo | 318296 |
+| arquivos_total | 2002 |
+| arquivos_codigo | 1453 |
+| linhas_codigo | 318755 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -44,11 +44,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | modulos | 71 |
 | componentes | 661 |
 | hooks | 75 |
-| edge_functions | 88 |
+| edge_functions | 89 |
 | tabelas | 327 |
 | migrations | 338 |
 | cron_jobs | 37 |
-| testes | 239 |
+| testes | 240 |
 | workflows | 10 |
 | scripts | 45 |
 | docs_md | 128 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (516), src/pages (141), src/App.tsx (1)
 - hooks: src/hooks (43), src/components (9), src/services (9)
 - servicos_logica: src/services (166), src/lib (90), src/stores (12)
-- testes: co-localizado (*.test) (196), outro (23), e2e/ (9)
+- testes: co-localizado (*.test) (197), outro (23), e2e/ (9)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (11), scripts/inventario (4), scripts/maintenance (4)
@@ -302,6 +302,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `dr-orchestrator` — tabelas: dr_drills, dr_snapshots; chamada por 1 arquivo(s) do front
 - `eval-engine-v2` — tabelas: eval_runs; chamada por 1 arquivo(s) do front
 - `eval-judge` — tabelas: agents, evaluation_runs, test_cases, workspace_members, workspace_secrets; chamada por 1 arquivo(s) do front
+- `geo-code` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `global-search` — tabelas: agent_eval_datasets, agent_workflows, agents, automation_rules, documents, kb_articles, knowledge_bases; chamada por 1 arquivo(s) do front
 - `graph-execute` — tabelas: agent_graphs, agents, graph_executions; chamada por 1 arquivo(s) do front
 - `guardrails-engine` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
@@ -406,7 +407,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - SDKs: Sentry, Supabase, react-query, zod
 - hosts mais citados: router.huggingface.co, openrouter.ai, api.openai.com, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, ai.gateway.lovable.dev, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.hermes.ai, api.resend.com, api.slack.com
 - webhooks recebidos: bitrix24-webhook, migrate-helper, openclaw-webhook, rag-embed-backfill, slack-events-webhook, webhook-receiver, whatsapp-router, whatsapp-webhook, widget-proxy
-- env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, HERMES_API_KEY, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, OPENROUTER_API_KEY, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
+- env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, GOOGLE_MAPS_API_KEY, HERMES_API_KEY, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, MAPBOX_ACCESS_TOKEN, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, OPENROUTER_API_KEY, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
 
 ## Permissões / papéis
 - papéis no código: user (61), button (45), system (42), status (31), alert (16), assistant (15), group (7), admin (6), listbox (6), option (6), tab (6), tablist (6), progressbar (5), radio (5), radiogroup (5), dialog (4), region (4), agent (2), anon (2), img (2), log (2), navigation (2), presentation (2), service_role (2), article (1), ausente (1), authenticated (1), banner (1), combobox (1), editor (1), finance (1), link (1), list (1), logistics (1), manager (1), menuitem (1), purchasing (1), sales (1), searchbox (1), separator (1), string (1), sup (1), superadmin (1), support (1), switch (1), textbox (1), tool (1), toolbar (1), viewer (1), workspace_admin (1)
@@ -418,7 +419,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - rotas_sem_arquivo: 0
 - componentes_ambiguos: 0
 - menu_sem_destino: 7 — ex.: Coleções -> collections, Especialistas -> experts, Fatos -> facts
-- edges_orfas: 6 — ex.: bitrix24-api, bitrix24-oauth, guardrails-engine
+- edges_orfas: 7 — ex.: bitrix24-api, bitrix24-oauth, geo-code
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 9 — ex.: agent_traces_v2_2026_11, agent_traces_v2_2026_12, agent_traces_v2_2027_01
 - tabelas_usadas_sem_definicao: 0
@@ -432,20 +433,20 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13973 nós · 37255 arestas · 898 comunidades · grafo do commit `085a2e38`
-- comunidades maiores: react (278), badge.tsx (277), dialog.tsx (192), logger.ts (157), App.tsx (143), getCorsHeaders (137), notesService.ts (136), tabs.tsx (122), cn (114), handleCorsPreflight (106), ref_node_fs (105), lucide-react (95)
-- símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
+- 13990 nós · 37299 arestas · 912 comunidades · grafo do commit `8554dc79`
+- comunidades maiores: react (262), badge.tsx (255), sonner (244), PageHeader.tsx (165), getCorsHeaders (158), QuickCreateWizard.tsx (147), App.tsx (136), cn (112), ref_https (110), react-router-dom (109), ref_node_fs (105), logger.ts (101)
+- símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (21)
 - package.json (20)
-- supabase/deployment-manifest.json (19)
+- supabase/deployment-manifest.json (20)
 - .github/workflows/ci.yml (7)
 - supabase/functions/llm-gateway/index.ts (6)
 - .github/workflows/edge-deploy.yml (5)
+- docs/migration/MATRIZ_EDGE_TABELA.md (5)
 - .github/workflows/contexto.yml (4)
-- docs/migration/MATRIZ_EDGE_TABELA.md (4)
 - supabase/functions/agent-conversational-builder/index.ts (4)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/code-interpreter-execute/index.ts (4)
@@ -578,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-21 `8554dc79` feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)
 - 2026-11-21 `085a2e38` chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)
 - 2026-11-21 `e0772412` feat(whatsapp): move envio de mensagens para edge whatsapp-outbound (retomada) (#142)
 - 2026-11-21 `fbe64eef` fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)
@@ -592,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `96f5dac0` fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)
 - 2026-11-21 `b571324b` fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)
 - 2026-11-20 `10e7a1de` docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)
-- 2026-11-20 `3a23906d` fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
