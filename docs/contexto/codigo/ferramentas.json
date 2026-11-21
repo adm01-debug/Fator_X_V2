@@ -353,8 +353,8 @@
    ],
    "npm_scripts": [],
    "secrets": [
-    "DEEPSEEK_API_KEY",
-    "LOVABLE_API_KEY",
+    "HERMES_API_KEY",
+    "HERMES_BASE_URL",
     "OPENCLAW_WEBHOOK_SECRET",
     "OPENROUTER_API_KEY",
     "SUPABASE_ACCESS_TOKEN"
@@ -863,8 +863,13 @@
  "env": {
   "declaradas_no_env_example": [
    "ANTHROPIC_API_KEY",
+   "HERMES_API_KEY",
+   "HERMES_BASE_URL",
    "HUGGINGFACE_API_KEY",
    "OPENAI_API_KEY",
+   "OPENROUTER_API_KEY",
+   "OPENROUTER_MODEL",
+   "OPENROUTER_MODEL_PRO",
    "SLACK_BOT_TOKEN",
    "SLACK_SIGNING_SECRET",
    "TWILIO_AUTH_TOKEN",
@@ -902,8 +907,6 @@
    "BITRIX24_CLIENT_SECRET",
    "BITRIX24_DOMAIN",
    "COHERE_API_KEY",
-   "DEEPSEEK_MODEL",
-   "DEEPSEEK_MODEL_PRO",
    "DENO_ENV",
    "EMAIL_FROM",
    "ENABLE_AGENTIC_GUARDRAIL",
@@ -920,6 +923,8 @@
    "ENVIRONMENT",
    "GITHUB_API_KEY",
    "GITHUB_TOKEN",
+   "HERMES_API_KEY",
+   "HERMES_BASE_URL",
    "HF_API_TOKEN",
    "HUGGINGFACE_API_KEY",
    "LOVABLE_API_KEY",
@@ -928,6 +933,8 @@
    "OPENCLAW_URL",
    "OPENCLAW_WEBHOOK_SECRET",
    "OPENROUTER_API_KEY",
+   "OPENROUTER_MODEL",
+   "OPENROUTER_MODEL_PRO",
    "RESEND_API_KEY",
    "SB_FUNCTION_NAME",
    "SLACK_ALERT_WEBHOOK_URL",
@@ -974,9 +981,9 @@
   ],
   "secrets_em_workflows": [
    "DB_MCP_URL",
-   "DEEPSEEK_API_KEY",
    "GITHUB_TOKEN",
-   "LOVABLE_API_KEY",
+   "HERMES_API_KEY",
+   "HERMES_BASE_URL",
    "OPENCLAW_WEBHOOK_SECRET",
    "OPENROUTER_API_KEY",
    "SLACK_WEBHOOK_URL",
@@ -1026,15 +1033,11 @@
     "arquivos": 17
    },
    {
-    "host": "ai.gateway.lovable.dev",
-    "arquivos": 6
+    "host": "openrouter.ai",
+    "arquivos": 8
    },
    {
     "host": "api.openai.com",
-    "arquivos": 5
-   },
-   {
-    "host": "openrouter.ai",
     "arquivos": 5
    },
    {
@@ -1058,6 +1061,10 @@
     "arquivos": 3
    },
    {
+    "host": "ai.gateway.lovable.dev",
+    "arquivos": 2
+   },
+   {
     "host": "api-inference.huggingface.co",
     "arquivos": 2
    },
@@ -1067,6 +1074,10 @@
    },
    {
     "host": "api.exemplo.com",
+    "arquivos": 2
+   },
+   {
+    "host": "api.hermes.ai",
     "arquivos": 2
    },
    {
@@ -1116,10 +1127,6 @@
    {
     "host": "x.supabase.co",
     "arquivos": 2
-   },
-   {
-    "host": "api.deepseek.com",
-    "arquivos": 1
    },
    {
     "host": "api.duckduckgo.com",
@@ -1289,6 +1296,7 @@
    "COHERE_API_KEY",
    "GITHUB_API_KEY",
    "GITHUB_TOKEN",
+   "HERMES_API_KEY",
    "HF_API_TOKEN",
    "HUGGINGFACE_API_KEY",
    "LOVABLE_API_KEY",

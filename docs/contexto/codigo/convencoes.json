@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)",
    "chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)",
    "fix: registra webhooks externos verify_jwt=false no config.toml (#135)",
    "chore: registra analise funcionalidades planejadas x implementadas (#134)",
-   "fix: conclui entidades parciais (webhook/game day/chaos) criadas como boilerplate vazio (#132)",
-   "fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)"
+   "fix: conclui entidades parciais (webhook/game day/chaos) criadas como boilerplate vazio (#132)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

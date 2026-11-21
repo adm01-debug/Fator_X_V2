@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "15ba85e30d9e6e75576ee3a47b7bbf2b64982a1f",
+  "sha": "665b5995957684ccd553fabf953ed97bac544537",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 14:01 UTC",
+  "generated_at": "2026-11-21 15:26 UTC",
   "files_total": 2001,
   "code_files": 1789,
-  "code_lines": 348397
+  "code_lines": 348432
  },
  "version": "1.3.2",
- "facts_hash": "d7fb59ed3b639586",
+ "facts_hash": "e13a477aa518cd4c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -53536,7 +53536,7 @@
     "invokes": [],
     "doc": "Agent Conversational Builder — chat-to-agent via Lovable AI",
     "errors": [
-     "DEEPSEEK_API_KEY missing"
+     "OPENROUTER_API_KEY not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -53903,7 +53903,7 @@
     "doc": "",
     "errors": [
      "AI gateway error ${response.status}: ${txt}",
-     "DEEPSEEK_API_KEY not configured"
+     "OPENROUTER_API_KEY not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -54652,6 +54652,8 @@
      "ENABLE_OUTPUT_TOXICITY",
      "ENABLE_PII_ML",
      "ENABLE_TOXICITY_CHECK",
+     "HERMES_API_KEY",
+     "HERMES_BASE_URL",
      "HF_API_TOKEN",
      "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
@@ -55713,9 +55715,7 @@
      "workspace_members"
     ],
     "env": [],
-    "external": [
-     "https://ai.gateway.lovable.dev/v1/chat/…"
-    ],
+    "external": [],
     "invokes": [],
     "doc": "",
     "errors": [],
@@ -59564,7 +59564,7 @@
   {
    "module": "supabase/functions",
    "files": 134,
-   "lines": 32151,
+   "lines": 32186,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -59709,7 +59709,7 @@
     "lib.ts: tokenize, stripUnsafe, shannonEntropy, scanContentRisks, MCP_HOST_ALLOWLIST, isMcpUrlAllowed"
    ],
    "docs": [
-    "ai-provider.ts: Provedor de IA (chat) das edge functions: DeepSeek, API compatível com OpenAI. Substitui o Lovable AI Gateway (LOVABLE_API_KEY), que não existe neste projeto. Secret obrigatório: DEEPSEEK_API_KEY. Opcionais: DEEPSEEK_MODEL (padrão deepseek-flash) e DEEPSEEK_MODEL_PRO (padrão deepseek-v4-pro).",
+    "ai-provider.ts: Provedor de IA (chat) das edge functions: OpenRouter (API compatível com OpenAI). Substitui o DeepSeek direto (DEEPSEEK_API_KEY) e o Lovable AI Gateway (LOVABLE_API_KEY), que não existem mais no projeto. Hermes API é suportada via HERMES_API_KEY (+ HERMES_BASE_URL). Secret obrigatório: OPENROUTER_AP …",
     "auth.ts: Nexus Agents Studio — Shared Auth Helper (HARDENED) FIX P2-01: x-workspace-id header support FIX P2-02: HMAC-based API key validation (constant-time)",
     "breakerEvents.ts: _shared/breakerEvents.ts — persistência de transições do circuit breaker. Grava eventos em public.openclaw_events (source='other', kind='breaker.<state>') para dar observabilidade sem criar nova tabela. Fire-and-forget: nunca bloqueia o caller nem lança exceção. Uso: const cb = getBreaker('openai'); …",
     "chaos.ts: Chaos Engineering — fault injection middleware for edge functions Reads active experiments from `chaos_experiments` table and probabilistically injects faults (latency, errors, timeouts) for resilience validation. Zero overhead when no experiment is active for the target.",
@@ -63138,12 +63138,6 @@
    "DB_URL": [
     "scripts/ai-context/gerar.unit.mjs"
    ],
-   "DEEPSEEK_MODEL": [
-    "supabase/functions/_shared/ai-provider.ts"
-   ],
-   "DEEPSEEK_MODEL_PRO": [
-    "supabase/functions/_shared/ai-provider.ts"
-   ],
    "DENO_ENV": [
     "supabase/functions/_shared/cors.ts",
     "supabase/functions/_shared/otel-edge.ts"
@@ -63224,6 +63218,13 @@
    "GRAPHIFY_FIXTURE_SECRET": [
     "scripts/graphify-local.unit.mjs"
    ],
+   "HERMES_API_KEY": [
+    "supabase/functions/llm-gateway/index.ts"
+   ],
+   "HERMES_BASE_URL": [
+    "supabase/functions/llm-gateway/index.ts",
+    "supabase/functions/llm-gateway/providers/openai.ts"
+   ],
    "HF_API_TOKEN": [
     "supabase/functions/a2a-server/index.ts",
     "supabase/functions/audio-transcribe/index.ts",
@@ -63275,6 +63276,12 @@
    ],
    "OPENROUTER_API_KEY": [
     "supabase/functions/llm-gateway/index.ts"
+   ],
+   "OPENROUTER_MODEL": [
+    "supabase/functions/_shared/ai-provider.ts"
+   ],
+   "OPENROUTER_MODEL_PRO": [
+    "supabase/functions/_shared/ai-provider.ts"
    ],
    "PATH": [
     "scripts/ci/inventario-repo.unit.mjs",
@@ -64214,9 +64221,6 @@
    "https://${domain}": [
     "supabase/functions/bitrix24-api/index.ts",
     "supabase/functions/crm-bitrix-sync/index.ts"
-   ],
-   "https://ai.gateway.lovable.dev": [
-    "supabase/functions/visual-search/index.ts"
    ],
    "https://api.cohere.ai": [
     "supabase/functions/rag-rerank/index.ts"
@@ -70861,7 +70865,7 @@
    },
    {
     "file": "supabase/functions/agent-conversational-builder/index.ts",
-    "msg": "DEEPSEEK_API_KEY missing"
+    "msg": "OPENROUTER_API_KEY not configured"
    },
    {
     "file": "supabase/functions/agent-eval-runner/index.ts",
@@ -70925,7 +70929,7 @@
    },
    {
     "file": "supabase/functions/code-interpreter-execute/index.ts",
-    "msg": "DEEPSEEK_API_KEY not configured"
+    "msg": "OPENROUTER_API_KEY not configured"
    },
    {
     "file": "supabase/functions/crm-bitrix-sync/index.ts",
@@ -179882,7 +179886,7 @@
   },
   "supabase/functions/_shared/ai-provider.ts": {
    "path": "supabase/functions/_shared/ai-provider.ts",
-   "lines": 41,
+   "lines": 53,
    "exports": [
     "const AI_CHAT_COMPLETIONS_URL",
     "const AI_API_KEY_ENV",
@@ -179890,10 +179894,10 @@
     "function aiCostUsd"
    ],
    "env": [
-    "DEEPSEEK_MODEL",
-    "DEEPSEEK_MODEL_PRO"
+    "OPENROUTER_MODEL",
+    "OPENROUTER_MODEL_PRO"
    ],
-   "doc": "Provedor de IA (chat) das edge functions: DeepSeek, API compatível com OpenAI. Substitui o Lovable AI Gateway (LOVABLE_API_KEY), que não existe neste projeto. Secret obrigatório: DEEPSEEK_API_KEY. Opcionais: DEEPSEEK_MODEL (padrão deepseek-flash) e DEEPSEEK_MODEL_PRO (padrão deepseek-v4-pro)."
+   "doc": "Provedor de IA (chat) das edge functions: OpenRouter (API compatível com OpenAI). Substitui o DeepSeek direto (DEEPSEEK_API_KEY) e o Lovable AI Gateway (LOVABLE_API_KEY), que não existem mais no projeto. Hermes API é suportada via HERMES_API_KEY (+ HERMES_BASE_URL). Secret obrigatório: OPENROUTER_AP …"
   },
   "supabase/functions/_shared/alternation.test.ts": {
    "path": "supabase/functions/_shared/alternation.test.ts",
@@ -181074,7 +181078,7 @@
    "path": "supabase/functions/agent-conversational-builder/index.ts",
    "lines": 146,
    "errors": [
-    "DEEPSEEK_API_KEY missing"
+    "OPENROUTER_API_KEY not configured"
    ],
    "zod": [
     {
@@ -181655,7 +181659,7 @@
   },
   "supabase/functions/browser-agent-run/index.ts": {
    "path": "supabase/functions/browser-agent-run/index.ts",
-   "lines": 369,
+   "lines": 370,
    "tables": [
     {
      "table": "browser_sessions",
@@ -182342,7 +182346,7 @@
    ],
    "errors": [
     "AI gateway error ${response.status}: ${txt}",
-    "DEEPSEEK_API_KEY not configured"
+    "OPENROUTER_API_KEY not configured"
    ],
    "zod": [
     {
@@ -184534,7 +184538,7 @@
   },
   "supabase/functions/llm-gateway/index.ts": {
    "path": "supabase/functions/llm-gateway/index.ts",
-   "lines": 1627,
+   "lines": 1640,
    "tables": [
     {
      "table": "model_pricing",
@@ -184681,6 +184685,8 @@
     "ENABLE_OUTPUT_TOXICITY",
     "ENABLE_PII_ML",
     "ENABLE_TOXICITY_CHECK",
+    "HERMES_API_KEY",
+    "HERMES_BASE_URL",
     "HF_API_TOKEN",
     "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
@@ -184848,9 +184854,12 @@
   },
   "supabase/functions/llm-gateway/providers/openai.ts": {
    "path": "supabase/functions/llm-gateway/providers/openai.ts",
-   "lines": 36,
+   "lines": 42,
    "exports": [
     "function callOpenAICompatible"
+   ],
+   "env": [
+    "HERMES_BASE_URL"
    ],
    "doc": "OpenAI & Google (OpenAI-compatible) Provider"
   },
@@ -185114,7 +185123,7 @@
   },
   "supabase/functions/notebook-podcast-generate/index.ts": {
    "path": "supabase/functions/notebook-podcast-generate/index.ts",
-   "lines": 322,
+   "lines": 323,
    "tables": [
     {
      "table": "collections",
@@ -187904,10 +187913,7 @@
   },
   "supabase/functions/visual-search/index.ts": {
    "path": "supabase/functions/visual-search/index.ts",
-   "lines": 175,
-   "external_urls": [
-    "https://ai.gateway.lovable.dev/v1/chat/…"
-   ],
+   "lines": 176,
    "zod": [
     {
      "name": "VisualSearchBodySchema",
@@ -188066,7 +188072,7 @@
   },
   "supabase/functions/voice-transcribe/index.ts": {
    "path": "supabase/functions/voice-transcribe/index.ts",
-   "lines": 137,
+   "lines": 138,
    "tables": [
     {
      "table": "voice_sessions",
@@ -190730,10 +190736,30 @@
   }
  },
  "git": {
-  "sha": "15ba85e30d9e6e75576ee3a47b7bbf2b64982a1f",
+  "sha": "665b5995957684ccd553fabf953ed97bac544537",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "665b599",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)",
+    "files": [
+     ".env.example",
+     ".github/workflows/edge-deploy.yml",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/_shared/ai-provider.ts",
+     "supabase/functions/agent-conversational-builder/index.ts",
+     "supabase/functions/browser-agent-run/index.ts",
+     "supabase/functions/code-interpreter-execute/index.ts",
+     "supabase/functions/llm-gateway/index.ts",
+     "supabase/functions/llm-gateway/providers/openai.ts",
+     "supabase/functions/notebook-podcast-generate/index.ts",
+     "supabase/functions/visual-search/index.ts",
+     "supabase/functions/voice-transcribe/index.ts"
+    ]
+   },
    {
     "sha": "15ba85e",
     "date": "2026-11-21",
@@ -191067,16 +191093,6 @@
      "supabase/functions/cost-calculator/index.ts",
      "supabase/functions/product-mockup/index.ts"
     ]
-   },
-   {
-    "sha": "b983db1",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(edge): whatsapp-webhook GET sem token retorna 403, nao 500 (#115)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/whatsapp-webhook/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -191091,6 +191107,18 @@
    [
     "package.json",
     5
+   ],
+   [
+    ".github/workflows/edge-deploy.yml",
+    3
+   ],
+   [
+    ".env.example",
+    2
+   ],
+   [
+    "supabase/functions/agent-conversational-builder/index.ts",
+    2
    ],
    [
     "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
@@ -191117,10 +191145,6 @@
     2
    ],
    [
-    ".github/workflows/edge-deploy.yml",
-    2
-   ],
-   [
     ".github/workflows/contexto.yml",
     2
    ],
@@ -191129,35 +191153,27 @@
     2
    ],
    [
-    ".env.example",
+    "supabase/functions/_shared/ai-provider.ts",
     1
    ],
    [
-    "supabase/config.toml",
+    "supabase/functions/browser-agent-run/index.ts",
     1
    ],
    [
-    "docs/pendencias/_analise-funcionalidades-261121.md",
+    "supabase/functions/code-interpreter-execute/index.ts",
     1
    ],
    [
-    "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
+    "supabase/functions/llm-gateway/index.ts",
     1
    ],
    [
-    "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
+    "supabase/functions/llm-gateway/providers/openai.ts",
     1
    ],
    [
-    "supabase/migrations/20260905120000_rls_complete_reconciliation.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20260905140000_security_hotfix_validation.sql",
-    1
-   ],
-   [
-    "docs/pendencias/_achados.md",
+    "supabase/functions/notebook-podcast-generate/index.ts",
     1
    ]
   ]

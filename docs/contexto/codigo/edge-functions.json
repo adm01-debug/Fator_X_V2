@@ -350,7 +350,7 @@
    "nome": "browser-agent-run",
    "entrada": "supabase/functions/browser-agent-run/index.ts",
    "arquivos": 1,
-   "linhas": 369,
+   "linhas": 370,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -363,9 +363,10 @@
    "buckets": [],
    "chama_edges": [],
    "hosts_externos": [
-    "ai.gateway.lovable.dev"
+    "openrouter.ai"
    ],
    "usa_shared": [
+    "ai-provider.ts",
     "mod.ts",
     "retry.ts"
    ],
@@ -1378,7 +1379,7 @@
    "nome": "llm-gateway",
    "entrada": "supabase/functions/llm-gateway/index.ts",
    "arquivos": 9,
-   "linhas": 2010,
+   "linhas": 2029,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1411,6 +1412,8 @@
     "ENABLE_OUTPUT_TOXICITY",
     "ENABLE_PII_ML",
     "ENABLE_TOXICITY_CHECK",
+    "HERMES_API_KEY",
+    "HERMES_BASE_URL",
     "HF_API_TOKEN",
     "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
@@ -1421,6 +1424,7 @@
    "hosts_externos": [
     "ai.gateway.lovable.dev",
     "api.anthropic.com",
+    "api.hermes.ai",
     "api.lovable.dev",
     "api.openai.com",
     "generativelanguage.googleapis.com",
@@ -1577,7 +1581,7 @@
    "nome": "notebook-podcast-generate",
    "entrada": "supabase/functions/notebook-podcast-generate/index.ts",
    "arquivos": 1,
-   "linhas": 322,
+   "linhas": 323,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -1595,9 +1599,10 @@
    "buckets": [],
    "chama_edges": [],
    "hosts_externos": [
-    "ai.gateway.lovable.dev"
+    "openrouter.ai"
    ],
    "usa_shared": [
+    "ai-provider.ts",
     "mod.ts"
    ],
    "chamada_pelo_front": [
@@ -2740,7 +2745,7 @@
    "nome": "visual-search",
    "entrada": "supabase/functions/visual-search/index.ts",
    "arquivos": 1,
-   "linhas": 175,
+   "linhas": 176,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2752,10 +2757,9 @@
    "chama_edges": [
     "semantic-search"
    ],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "cors.ts",
     "mod.ts"
    ],
@@ -2833,7 +2837,7 @@
    "nome": "voice-transcribe",
    "entrada": "supabase/functions/voice-transcribe/index.ts",
    "arquivos": 1,
-   "linhas": 137,
+   "linhas": 138,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2845,10 +2849,9 @@
    "env": [],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai.gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "ai-provider.ts",
     "cors.ts",
     "mod.ts",
     "retry.ts"

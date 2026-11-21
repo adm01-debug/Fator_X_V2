@@ -4,10 +4,10 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: bun run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "15ba85e30d9e6e75576ee3a47b7bbf2b64982a1f",
+ "commit_do_grafo": "665b5995957684ccd553fabf953ed97bac544537",
  "grafo_atual": true,
  "nos": 13961,
- "arestas": 37229,
+ "arestas": 37239,
  "comunidades_total": 911,
  "relacoes": {
   "calls": 4666,
@@ -16,8 +16,8 @@
   "defines": 13,
   "dynamic_import": 271,
   "extends": 5,
-  "imports": 10530,
-  "imports_from": 7844,
+  "imports": 10536,
+  "imports_from": 7848,
   "indexes": 636,
   "indirect_call": 198,
   "inherits": 23,
@@ -29,7 +29,7 @@
   "triggers": 124
  },
  "origem": {
-  "EXTRACTED": 36652,
+  "EXTRACTED": 36662,
   "INFERRED": 577
  },
  "comunidades": [
@@ -104,9 +104,9 @@
   {
    "id": 4,
    "nome": "getCorsHeaders",
-   "nos": 157,
-   "callables": 56,
-   "arquivos": 48,
+   "nos": 161,
+   "callables": 58,
+   "arquivos": 49,
    "exemplos_arquivos": [
     "docs/EDGE-FUNCTIONS-AUDIT-2026-07-21.md",
     "supabase/functions/_shared/auth.ts",
@@ -223,36 +223,26 @@
   {
    "id": 11,
    "nome": "mod.ts",
-   "nos": 101,
-   "callables": 61,
+   "nos": 102,
+   "callables": 66,
    "arquivos": 18,
    "exemplos_arquivos": [
     "@supabase/supabase-js",
     "RELATORIO-FINAL-50-ETAPAS.md",
     "docs/pendencias/_analise-funcionalidades-261121.md",
+    "supabase/functions/_shared/auth.ts",
     "supabase/functions/_shared/json.ts",
     "supabase/functions/_shared/mod.ts",
     "supabase/functions/_shared/otel-edge.ts",
-    "supabase/functions/_shared/rate-limiter.ts",
-    "supabase/functions/_shared/requireEnv.ts"
+    "supabase/functions/_shared/rate-limiter.ts"
    ]
   },
   {
    "id": 12,
-   "nome": "dependencies",
-   "nos": 91,
-   "callables": 0,
-   "arquivos": 1,
-   "exemplos_arquivos": [
-    "package.json"
-   ]
-  },
-  {
-   "id": 13,
    "nome": "agent-workflow-runner/index.ts",
-   "nos": 89,
-   "callables": 45,
-   "arquivos": 18,
+   "nos": 102,
+   "callables": 49,
+   "arquivos": 20,
    "exemplos_arquivos": [
     "docs/RUNBOOK.md",
     "src/test/edge-shared-skills.test.ts",
@@ -265,24 +255,17 @@
    ]
   },
   {
-   "id": 14,
-   "nome": "whatsapp-webhook/index.ts",
-   "nos": 88,
-   "callables": 55,
-   "arquivos": 12,
+   "id": 13,
+   "nome": "dependencies",
+   "nos": 91,
+   "callables": 0,
+   "arquivos": 1,
    "exemplos_arquivos": [
-    "RELATORIO-FINAL-50-ETAPAS.md",
-    "docs/pendencias/_linha-de-base.md",
-    "supabase/functions/_shared/auth.ts",
-    "supabase/functions/_shared/crmNormalize.ts",
-    "supabase/functions/_shared/security.ts",
-    "supabase/functions/_shared/webhookSignature.ts",
-    "supabase/functions/bitrix24-webhook/index.ts",
-    "supabase/functions/crm-bitrix-sync/index.ts"
+    "package.json"
    ]
   },
   {
-   "id": 15,
+   "id": 14,
    "nome": "services/index.ts",
    "nos": 85,
    "callables": 71,
@@ -299,11 +282,21 @@
    ]
   },
   {
+   "id": 15,
+   "nome": "gerar.mjs",
+   "nos": 80,
+   "callables": 14,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "scripts/ai-context/gerar.mjs"
+   ]
+  },
+  {
    "id": 16,
    "nome": "retry.ts",
-   "nos": 81,
-   "callables": 48,
-   "arquivos": 19,
+   "nos": 77,
+   "callables": 46,
+   "arquivos": 18,
    "exemplos_arquivos": [
     "docs/EDGE-FUNCTIONS-AUDIT-2026-07-21.md",
     "docs/pendencias/int-003-notification-sender-mente.md",
@@ -317,16 +310,6 @@
   },
   {
    "id": 17,
-   "nome": "gerar.mjs",
-   "nos": 80,
-   "callables": 14,
-   "arquivos": 1,
-   "exemplos_arquivos": [
-    "scripts/ai-context/gerar.mjs"
-   ]
-  },
-  {
-   "id": 18,
    "nome": "react-router-dom",
    "nos": 76,
    "callables": 36,
@@ -343,7 +326,7 @@
    ]
   },
   {
-   "id": 19,
+   "id": 18,
    "nome": "generate.py",
    "nos": 75,
    "callables": 64,
@@ -353,7 +336,7 @@
    ]
   },
   {
-   "id": 20,
+   "id": 19,
    "nome": "DbRow",
    "nos": 74,
    "callables": 52,
@@ -370,7 +353,7 @@
    ]
   },
   {
-   "id": 21,
+   "id": 20,
    "nome": "client.ts",
    "nos": 73,
    "callables": 55,
@@ -387,7 +370,7 @@
    ]
   },
   {
-   "id": 22,
+   "id": 21,
    "nome": "nexus-complete-test-suite.test.ts",
    "nos": 73,
    "callables": 53,
@@ -404,7 +387,7 @@
    ]
   },
   {
-   "id": 23,
+   "id": 22,
    "nome": "ui/index.ts",
    "nos": 70,
    "callables": 36,
@@ -421,7 +404,7 @@
    ]
   },
   {
-   "id": 24,
+   "id": 23,
    "nome": "InteractiveSLOPanel.tsx",
    "nos": 70,
    "callables": 49,
@@ -438,7 +421,7 @@
    ]
   },
   {
-   "id": 25,
+   "id": 24,
    "nome": "getWorkspaceId",
    "nos": 70,
    "callables": 66,
@@ -455,7 +438,7 @@
    ]
   },
   {
-   "id": 26,
+   "id": 25,
    "nome": "tracing.ts",
    "nos": 69,
    "callables": 59,
@@ -472,7 +455,7 @@
    ]
   },
   {
-   "id": 27,
+   "id": 26,
    "nome": "lib.ts",
    "nos": 69,
    "callables": 36,
@@ -485,7 +468,7 @@
    ]
   },
   {
-   "id": 28,
+   "id": 27,
    "nome": "CitationDialog.tsx",
    "nos": 65,
    "callables": 39,
@@ -502,7 +485,7 @@
    ]
   },
   {
-   "id": 29,
+   "id": 28,
    "nome": "E2EESyncPanel.tsx",
    "nos": 65,
    "callables": 56,
@@ -519,7 +502,7 @@
    ]
   },
   {
-   "id": 30,
+   "id": 29,
    "nome": "package.json",
    "nos": 64,
    "callables": 1,
@@ -533,7 +516,7 @@
    ]
   },
   {
-   "id": 31,
+   "id": 30,
    "nome": "ref_node_fs",
    "nos": 64,
    "callables": 24,
@@ -550,7 +533,7 @@
    ]
   },
   {
-   "id": 32,
+   "id": 31,
    "nome": "templateSkillRegistry.ts",
    "nos": 64,
    "callables": 31,
@@ -567,7 +550,7 @@
    ]
   },
   {
-   "id": 33,
+   "id": 32,
    "nome": "src_integrations_supabase_types",
    "nos": 63,
    "callables": 46,
@@ -584,7 +567,7 @@
    ]
   },
   {
-   "id": 34,
+   "id": 33,
    "nome": "fromTable",
    "nos": 62,
    "callables": 56,
@@ -601,7 +584,7 @@
    ]
   },
   {
-   "id": 35,
+   "id": 34,
    "nome": "skillEnrichmentService.ts",
    "nos": 60,
    "callables": 44,
@@ -618,7 +601,7 @@
    ]
   },
   {
-   "id": 36,
+   "id": 35,
    "nome": "lib.mjs",
    "nos": 58,
    "callables": 46,
@@ -632,7 +615,7 @@
    ]
   },
   {
-   "id": 37,
+   "id": 36,
    "nome": "notificationEngineService.ts",
    "nos": 58,
    "callables": 47,
@@ -649,7 +632,7 @@
    ]
   },
   {
-   "id": 38,
+   "id": 37,
    "nome": "vitest",
    "nos": 57,
    "callables": 28,
@@ -666,7 +649,7 @@
    ]
   },
   {
-   "id": 39,
+   "id": 38,
    "nome": "supabaseMock.ts",
    "nos": 56,
    "callables": 36,
@@ -683,7 +666,7 @@
    ]
   },
   {
-   "id": 40,
+   "id": 39,
    "nome": "AgentVersioningPage.tsx",
    "nos": 55,
    "callables": 43,
@@ -700,7 +683,7 @@
    ]
   },
   {
-   "id": 41,
+   "id": 40,
    "nome": "PromptContradictionAutoFixPanel.tsx",
    "nos": 55,
    "callables": 40,
@@ -717,7 +700,7 @@
    ]
   },
   {
-   "id": 42,
+   "id": 41,
    "nome": "automation.mjs",
    "nos": 54,
    "callables": 36,
@@ -731,7 +714,7 @@
    ]
   },
   {
-   "id": 43,
+   "id": 42,
    "nome": "ChatWithAgentPage.tsx",
    "nos": 54,
    "callables": 38,
@@ -748,7 +731,7 @@
    ]
   },
   {
-   "id": 44,
+   "id": 43,
    "nome": "lint-ratchet.mjs",
    "nos": 54,
    "callables": 47,
@@ -760,7 +743,7 @@
    ]
   },
   {
-   "id": 45,
+   "id": 44,
    "nome": "WorkflowTimeTravelPanel.tsx",
    "nos": 53,
    "callables": 46,
@@ -774,7 +757,7 @@
    ]
   },
   {
-   "id": 46,
+   "id": 45,
    "nome": "useAgentBuilderStore",
    "nos": 52,
    "callables": 37,
@@ -791,7 +774,7 @@
    ]
   },
   {
-   "id": 47,
+   "id": 46,
    "nome": "promptSanitizer.ts",
    "nos": 52,
    "callables": 42,
@@ -804,6 +787,22 @@
     "src/lib/promptAutoFixers.ts",
     "src/lib/validations/agentVersionValidator.ts",
     "src/lib/validations/promptSanitizer.ts"
+   ]
+  },
+  {
+   "id": 47,
+   "nome": "whatsapp-webhook/index.ts",
+   "nos": 51,
+   "callables": 36,
+   "arquivos": 7,
+   "exemplos_arquivos": [
+    "docs/pendencias/_linha-de-base.md",
+    "supabase/functions/_shared/crmNormalize.ts",
+    "supabase/functions/_shared/security.ts",
+    "supabase/functions/_shared/webhookSignature.ts",
+    "supabase/functions/bitrix24-webhook/index.ts",
+    "supabase/functions/webhook-receiver/index.ts",
+    "supabase/functions/whatsapp-webhook/index.ts"
    ]
   },
   {
@@ -968,6 +967,23 @@
   },
   {
    "id": 59,
+   "nome": "ref_https",
+   "nos": 48,
+   "callables": 30,
+   "arquivos": 11,
+   "exemplos_arquivos": [
+    "https://esm.sh/unpdf@0.12.1",
+    "https://esm.sh/unzipit@1.4.3",
+    "supabase/functions/_shared/alternation.test.ts",
+    "supabase/functions/_shared/alternation.ts",
+    "supabase/functions/_shared/chunker.ts",
+    "supabase/functions/_shared/edge-contract_test.ts",
+    "supabase/functions/doc-parse/index.ts",
+    "supabase/functions/replay-fork-execute/index.ts"
+   ]
+  },
+  {
+   "id": 60,
    "nome": "rbacService.ts",
    "nos": 47,
    "callables": 22,
@@ -984,7 +1000,7 @@
    ]
   },
   {
-   "id": 60,
+   "id": 61,
    "nome": "slack.ts",
    "nos": 47,
    "callables": 23,
@@ -999,7 +1015,7 @@
    ]
   },
   {
-   "id": 61,
+   "id": 62,
    "nome": "SkillReclassifyDialog.tsx",
    "nos": 47,
    "callables": 33,
@@ -1015,7 +1031,7 @@
    ]
   },
   {
-   "id": 62,
+   "id": 63,
    "nome": "workflowsService.ts",
    "nos": 46,
    "callables": 27,
@@ -1032,7 +1048,7 @@
    ]
   },
   {
-   "id": 63,
+   "id": 64,
    "nome": "knowledgeService.ts",
    "nos": 45,
    "callables": 39,
@@ -1049,7 +1065,7 @@
    ]
   },
   {
-   "id": 64,
+   "id": 65,
    "nome": "skillDraft.ts",
    "nos": 45,
    "callables": 19,
@@ -1066,7 +1082,7 @@
    ]
   },
   {
-   "id": 65,
+   "id": 66,
    "nome": "ref_node_url",
    "nos": 45,
    "callables": 21,
@@ -1082,7 +1098,7 @@
    ]
   },
   {
-   "id": 66,
+   "id": 67,
    "nome": "RecordSubComponents.tsx",
    "nos": 45,
    "callables": 34,
@@ -1096,7 +1112,7 @@
    ]
   },
   {
-   "id": 67,
+   "id": 68,
    "nome": "thresholdCalibration.ts",
    "nos": 45,
    "callables": 26,
@@ -1113,7 +1129,7 @@
    ]
   },
   {
-   "id": 68,
+   "id": 69,
    "nome": "ESTADO ATUAL DO SISTEMA — Fator X V2 / Nexus Agents Studio",
    "nos": 44,
    "callables": 0,
@@ -1123,7 +1139,7 @@
    ]
   },
   {
-   "id": 69,
+   "id": 70,
    "nome": "graphify-local.mjs",
    "nos": 44,
    "callables": 36,
@@ -1135,7 +1151,7 @@
    ]
   },
   {
-   "id": 70,
+   "id": 71,
    "nome": "StepQuickPrompt.tsx",
    "nos": 44,
    "callables": 22,
@@ -1152,7 +1168,7 @@
    ]
   },
   {
-   "id": 71,
+   "id": 72,
    "nome": "foldForSearch",
    "nos": 43,
    "callables": 25,
@@ -1169,7 +1185,7 @@
    ]
   },
   {
-   "id": 72,
+   "id": 73,
    "nome": "classificationEfficacy.ts",
    "nos": 43,
    "callables": 28,
@@ -1183,7 +1199,7 @@
    ]
   },
   {
-   "id": 73,
+   "id": 74,
    "nome": "main",
    "nos": 42,
    "callables": 35,
@@ -1194,7 +1210,7 @@
    ]
   },
   {
-   "id": 74,
+   "id": 75,
    "nome": "skillsRegistryService.ts",
    "nos": 42,
    "callables": 25,
@@ -1211,7 +1227,7 @@
    ]
   },
   {
-   "id": 75,
+   "id": 76,
    "nome": "securityService.ts",
    "nos": 42,
    "callables": 30,
@@ -1228,7 +1244,7 @@
    ]
   },
   {
-   "id": 76,
+   "id": 77,
    "nome": "skill-departments.ts",
    "nos": 42,
    "callables": 14,
@@ -1244,7 +1260,7 @@
    ]
   },
   {
-   "id": 77,
+   "id": 78,
    "nome": "sidebar.tsx",
    "nos": 41,
    "callables": 7,
@@ -1260,7 +1276,7 @@
    ]
   },
   {
-   "id": 78,
+   "id": 79,
    "nome": "AgentDetailPage.tsx",
    "nos": 41,
    "callables": 32,
@@ -1274,23 +1290,6 @@
     "src/components/agents/detail/restoreDiffHelpers.ts",
     "src/components/agents/detail/restoreHelpers.ts",
     "src/pages/AgentDetailPage.tsx"
-   ]
-  },
-  {
-   "id": 79,
-   "nome": "AgentLivePreviewCard.tsx",
-   "nos": 41,
-   "callables": 22,
-   "arquivos": 15,
-   "exemplos_arquivos": [
-    "src/components/agents/versioning/TimelinePresetBar.tsx",
-    "src/components/agents/wizard/quickSteps/AgentLivePreviewCard.tsx",
-    "src/components/agents/wizard/quickSteps/PromptSectionGutter.tsx",
-    "src/components/chat/ChatComposer.tsx",
-    "src/components/crm/LeadScoreBadge.tsx",
-    "src/components/shared/BackButton.tsx",
-    "src/components/skills/SkillAttributionBadge.tsx",
-    "src/components/super-cerebro/CitedMarkdown.tsx"
    ]
   }
  ],
@@ -3588,7 +3587,7 @@
   "supabase/functions/_shared/ai-provider.ts": "agent-workflow-runner/index.ts",
   "supabase/functions/_shared/alternation.test.ts": "ref_https",
   "supabase/functions/_shared/alternation.ts": "ref_https",
-  "supabase/functions/_shared/auth.ts": "whatsapp-webhook/index.ts",
+  "supabase/functions/_shared/auth.ts": "mod.ts",
   "supabase/functions/_shared/breakerEvents.ts": "slack.ts",
   "supabase/functions/_shared/chaos.ts": "agent-workflow-runner/index.ts",
   "supabase/functions/_shared/chunker.ts": "ref_https",
@@ -3631,8 +3630,8 @@
   "supabase/functions/code-interpreter-execute/index.ts": "agent-workflow-runner/index.ts",
   "supabase/functions/computer-use-execute/index.ts": "getCorsHeaders",
   "supabase/functions/cost-calculator/index.ts": "getCorsHeaders",
-  "supabase/functions/crm-bitrix-sync/index.ts": "whatsapp-webhook/index.ts",
-  "supabase/functions/crm-cadence-runner/index.ts": "whatsapp-webhook/index.ts",
+  "supabase/functions/crm-bitrix-sync/index.ts": "crm-bitrix-sync/index.ts",
+  "supabase/functions/crm-cadence-runner/index.ts": "crm-bitrix-sync/index.ts",
   "supabase/functions/crm-enrich/index.ts": "agent-workflow-runner/index.ts",
   "supabase/functions/cron-executor/index.ts": "getCorsHeaders",
   "supabase/functions/datahub-mcp-server/index.ts": "datahub-mcp-server/index.ts",
@@ -3667,7 +3666,7 @@
   "supabase/functions/memory-tools/index.ts": "memory-tools/index.ts",
   "supabase/functions/migrate-helper/index.ts": "migrate-helper/index.ts",
   "supabase/functions/nlp-pipeline/index.ts": "nlp-pipeline/index.ts",
-  "supabase/functions/notebook-podcast-generate/index.ts": "mod.ts",
+  "supabase/functions/notebook-podcast-generate/index.ts": "agent-workflow-runner/index.ts",
   "supabase/functions/notification-sender/index.ts": "retry.ts",
   "supabase/functions/openclaw-proxy/index.ts": "agent-workflow-runner/index.ts",
   "supabase/functions/openclaw-webhook/index.ts": "contracts.ts",
@@ -3681,11 +3680,11 @@
   "supabase/functions/rag-embed-v2/embedder.ts": "rag-embed-v2/index.ts",
   "supabase/functions/rag-embed-v2/index.test.ts": "rag-embed-v2/index.ts",
   "supabase/functions/rag-embed-v2/index.ts": "rag-embed-v2/index.ts",
-  "supabase/functions/rag-ingest/index.ts": "retry.ts",
+  "supabase/functions/rag-ingest/index.ts": "getCorsHeaders",
   "supabase/functions/rag-rerank-v2/index.ts": "retry.ts",
   "supabase/functions/rag-rerank/index.ts": "getCorsHeaders",
   "supabase/functions/replay-fork-execute/index.ts": "ref_https",
-  "supabase/functions/sbom-scanner/index.ts": "sbom-scanner/index.ts",
+  "supabase/functions/sbom-scanner/index.ts": "ref_https",
   "supabase/functions/semantic-search/index.ts": "retry.ts",
   "supabase/functions/skill-classify-llm/departments.ts": "skill-describe-llm/index.ts",
   "supabase/functions/skill-classify-llm/index.ts": "skill-describe-llm/index.ts",
@@ -3717,7 +3716,7 @@
   "supabase/functions/webhook-receiver/index.ts": "whatsapp-webhook/index.ts",
   "supabase/functions/whatsapp-router/index.ts": "ref_https",
   "supabase/functions/whatsapp-webhook/index.ts": "whatsapp-webhook/index.ts",
-  "supabase/functions/widget-proxy/index.ts": "whatsapp-webhook/index.ts",
+  "supabase/functions/widget-proxy/index.ts": "agent-workflow-runner/index.ts",
   "supabase/functions/workflow-engine-v2/index.ts": "mod.ts",
   "supabase/migrations/20260330000001_schema_baseline.sql": "20260330000001_schema_baseline.sql",
   "supabase/migrations/20260330000002_agents_add_user_id.sql": "20260330000002_agents_add_user_id.sql",

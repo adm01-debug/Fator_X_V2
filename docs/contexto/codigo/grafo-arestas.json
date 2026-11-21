@@ -6911,6 +6911,7 @@
    "supabase/functions/_shared/webhookSignature.ts"
   ],
   "supabase/functions/browser-agent-run/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/retry.ts"
   ],
@@ -7085,6 +7086,7 @@
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/notebook-podcast-generate/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/notification-sender/index.ts": [
@@ -7241,6 +7243,7 @@
    "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/visual-search/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/mod.ts"
   ],
@@ -7255,6 +7258,7 @@
    "supabase/functions/_shared/retry.ts"
   ],
   "supabase/functions/voice-transcribe/index.ts": [
+   "supabase/functions/_shared/ai-provider.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/retry.ts"

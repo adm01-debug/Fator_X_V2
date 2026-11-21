@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "15ba85e30d9e6e75576ee3a47b7bbf2b64982a1f",
+  "commit": "665b5995957684ccd553fabf953ed97bac544537",
   "branch": "main",
-  "data_commit": "2026-11-21T10:59:51-03:00",
+  "data_commit": "2026-11-21T12:25:54-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "665b5995",
+    "data": "2026-11-21",
+    "assunto": "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)"
+   },
    {
     "sha": "15ba85e3",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "b35c28a4",
     "data": "2026-11-20",
     "assunto": "fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)"
-   },
-   {
-    "sha": "d2249e59",
-    "data": "2026-11-20",
-    "assunto": "chore: contexto agendado de 10 min para 1x/hora (#98)"
    }
   ],
-  "arquivos_mudados_7d": 95,
+  "arquivos_mudados_7d": 100,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "pasta": "package-lock.json",
@@ -148,11 +148,19 @@
     "mudancas": 12
    },
    {
+    "pasta": "supabase/functions/llm-gateway",
+    "mudancas": 6
+   },
+   {
     "pasta": ".github/workflows/ci.yml",
     "mudancas": 5
    },
    {
     "pasta": ".github/workflows/contexto.yml",
+    "mudancas": 4
+   },
+   {
+    "pasta": ".github/workflows/edge-deploy.yml",
     "mudancas": 4
    },
    {
@@ -164,12 +172,12 @@
     "mudancas": 4
    },
    {
-    "pasta": "supabase/functions/llm-gateway",
+    "pasta": "supabase/functions/_shared",
     "mudancas": 4
    },
    {
-    "pasta": ".github/workflows/edge-deploy.yml",
-    "mudancas": 3
+    "pasta": "supabase/functions/agent-conversational-builder",
+    "mudancas": 4
    },
    {
     "pasta": ".github/workflows/guards.yml",
@@ -186,14 +194,6 @@
    {
     "pasta": "docs/migration/MATRIZ_EDGE_TABELA.md",
     "mudancas": 3
-   },
-   {
-    "pasta": "scripts/automation.config.json",
-    "mudancas": 3
-   },
-   {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 3
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -207,18 +207,34 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 7
    },
    {
+    "arquivo": "supabase/functions/llm-gateway/index.ts",
+    "mudancas": 5
+   },
+   {
     "arquivo": ".github/workflows/contexto.yml",
     "mudancas": 4
    },
    {
+    "arquivo": ".github/workflows/edge-deploy.yml",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/agent-conversational-builder/index.ts",
+    "mudancas": 4
+   },
+   {
     "arquivo": "supabase/functions/agent-workflow-runner/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/code-interpreter-execute/index.ts",
     "mudancas": 4
    },
    {
@@ -230,20 +246,16 @@
     "mudancas": 4
    },
    {
-    "arquivo": "supabase/functions/llm-gateway/index.ts",
+    "arquivo": "supabase/functions/voice-synthesize/index.ts",
     "mudancas": 4
    },
    {
-    "arquivo": "supabase/functions/voice-synthesize/index.ts",
+    "arquivo": "supabase/functions/voice-transcribe/index.ts",
     "mudancas": 4
    },
    {
     "arquivo": "supabase/functions/workflow-engine-v2/index.ts",
     "mudancas": 4
-   },
-   {
-    "arquivo": ".github/workflows/edge-deploy.yml",
-    "mudancas": 3
    },
    {
     "arquivo": ".github/workflows/guards.yml",
@@ -278,30 +290,18 @@
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/functions/agent-conversational-builder/index.ts",
-    "mudancas": 3
-   },
-   {
     "arquivo": "supabase/functions/cerebro-query/index.ts",
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/functions/code-interpreter-execute/index.ts",
-    "mudancas": 3
-   },
-   {
     "arquivo": "supabase/functions/crm-bitrix-sync/index.ts",
-    "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/datahub-query/index.ts",
     "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 50
+    "commits": 51
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1996,
   "arquivos_codigo": 1449,
-  "linhas_codigo": 318185,
+  "linhas_codigo": 318220,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -532,7 +532,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32151
+   "linhas": 32186
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -582,7 +582,7 @@
   },
   {
    "arquivo": "supabase/functions/llm-gateway/index.ts",
-   "linhas": 1627
+   "linhas": 1640
   },
   {
    "arquivo": "src/App.tsx",
