@@ -460,8 +460,8 @@
     },
     {
       "path": "supabase/functions/rag-embed-v2/index.ts",
-      "bytes": 10683,
-      "sha256": "6e7bf382706b80794196e38a86ed1755c0392b5ae4fdfc30b6bb986a820e9d95"
+      "bytes": 10657,
+      "sha256": "e940cdd0eb795573ac19491c7b629961a28f3966a10b2ea7c436184251910d4d"
     },
     {
       "path": "supabase/functions/rag-ingest/index.ts",
@@ -1874,7 +1874,7 @@
       "name": "rag-embed-v2",
       "entrypoint": "supabase/functions/rag-embed-v2/index.ts",
       "verify_jwt": true,
-      "source_sha256": "fc982afcf8c50bf516c0e07e9fc6a98c2026b4fc5ccbc8ed8eb0ba900ef449d7",
+      "source_sha256": "b948de9d05c71560eeb223adec9f2224596419a4fdab34c5298680f0e7349623",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2602,5 +2602,5 @@
       ]
     }
   ],
-  "manifest_sha256": "28f7f6520cc509c2567cdc663589dadaab2d1071a969639244a43101af2b41f0"
+  "manifest_sha256": "528a38d758b2b5038aeea9d1a7406d39c4a734beb79a3f52b4130a22d9d22363"
 }
