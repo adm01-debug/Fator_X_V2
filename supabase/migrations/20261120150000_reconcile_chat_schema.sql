@@ -97,7 +97,6 @@ BEGIN
   END IF;
 END $$;
 
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Users read own chat attachments" ON storage.objects;
 CREATE POLICY "Users read own chat attachments"

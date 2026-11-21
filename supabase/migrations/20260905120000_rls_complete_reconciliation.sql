@@ -164,6 +164,7 @@ $$;
 
 ALTER TABLE rate_limit_entries ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS rate_limit_entries_no_direct_access ON rate_limit_entries;
 CREATE POLICY rate_limit_entries_no_direct_access ON rate_limit_entries
   FOR ALL
   USING (false);
