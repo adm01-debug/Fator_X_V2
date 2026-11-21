@@ -32771,7 +32771,7 @@
   },
   "storage.objects": {
    "colunas": {},
-   "rls": true,
+   "rls": false,
    "policies": [
     {
      "nome": "Users delete own chat attachments",

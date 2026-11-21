@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "10e7a1defae6071421926888edee507efb16aad8",
+  "commit": "b571324bf3163b3c7e52a5c157b5ec1009321e03",
   "branch": "main",
-  "data_commit": "2026-11-20T16:38:36-03:00",
+  "data_commit": "2026-11-21T08:29:58-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "b571324b",
+    "data": "2026-11-21",
+    "assunto": "fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)"
+   },
    {
     "sha": "10e7a1de",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "b983db1e",
     "data": "2026-11-19",
     "assunto": "fix(edge): whatsapp-webhook GET sem token retorna 403, nao 500 (#115)"
-   },
-   {
-    "sha": "0f9c748c",
-    "data": "2026-11-19",
-    "assunto": "fix(a11y): contraste do tip do tour 6.95:1 (#108)"
    }
   ],
-  "arquivos_mudados_7d": 90,
+  "arquivos_mudados_7d": 91,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 44
+    "commits": 45
    },
    {
     "autor": "dependabot[bot]",

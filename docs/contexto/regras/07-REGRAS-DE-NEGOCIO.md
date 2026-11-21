@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `10e7a1defa` · branch `main` · 2026-11-20 20:12 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b571324bf3` · branch `main` · 2026-11-21 11:30 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `change_requests` | Members view change requests | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `change_requests` | Members create change requests | INSERT | public | permissive |  | `requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |
 | `change_requests` | Requester or admin updates change requests | UPDATE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id) OR (requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())))` |  |
-| … +347 linhas — lista completa em `context.json` | | | | | | |
+| … +343 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -1341,7 +1341,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `no_budget` | escreve | `src/services/billingService.ts` |
 | `status` | `noop` | compara, escreve | `src/components/super-cerebro/DocumentChunkingDialog.tsx`<br>`supabase/functions/doc-rechunk/index.ts` |
 | `status` | `number` | compara | `src/services/skillEnrichmentService.ts`<br>`src/services/skillReclassificationService.ts` |
-| `status` | `offboarded` | compara | `src/pages/VendorsPage.tsx`<br>`src/services/vendorRiskService.ts`<br>`supabase/migrations/20260418140149_8c99b7b5-9e49-4a90-ac85-77c1f5136dbb.sql` |
+| `status` | `offboarded` | compara | `src/pages/VendorsPage.tsx`<br>`src/services/vendorRiskService.ts`<br>`supabase/migrations/20260418140149_8c99b7b5-9e49-4a90-ac85-77c1f5136dbb.sql`<br>`supabase/migrations/20260905140000_security_hotfix_validation.sql` |
 | `status` | `ok` | compara, escreve | `src/components/agents/wizard/quickSteps/PromptHighlightOverlay.tsx`<br>`src/components/agents/wizard/quickSteps/PromptSectionGutter.tsx`<br>`src/components/agents/wizard/quickSteps/PromptSectionUsage.tsx`<br>`src/components/agents/wizard/quickSteps/StepQuickPrompt.tsx`<br>`src/components/integrations/Bitrix24ApiTester.tsx`<br>… +17 |
 | `status` | `only-a` | compara, escreve | `src/components/agents/traces/CompareTracesSheet.tsx` |
 | `status` | `only-b` | compara | `src/components/agents/traces/CompareTracesSheet.tsx` |
@@ -3546,6 +3546,7 @@ _nenhum item encontrado_
 | `AND created_at > (now() - interval '15 minutes');` | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
 | `AND last_attempt_at > (now() - interval '15 minutes');` | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
 | `SET is_blocked = true, blocked_until = (now() + interval '15 minutes')` | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
+| `COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at BETWEEN now() AND now() + interval '30 days'),` | `supabase/migrations/20260905140000_security_hotfix_validation.sql` |
 
 ### H.3 Limites de paginação
 

@@ -1,17 +1,17 @@
-# Graph Report - Fator_X_V2  (2026-11-20)
+# Graph Report - Fator_X_V2  (2026-11-21)
 
 ## Corpus Check
-- 1934 files · ~1,346,618 words
+- 1934 files · ~1,346,877 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 26 file(s) not represented in the graph (top: (none) 10, .toml 5, .css 3)
 
 ## Summary
-- 13927 nodes · 37181 edges · 889 communities (601 shown, 288 thin omitted)
+- 13926 nodes · 37181 edges · 888 communities (601 shown, 287 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 575 edges (avg confidence: 0.91)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `10e7a1de`
+- Built from commit: `b571324b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -738,7 +738,6 @@
 - public.skill_reclassification_reviews
 - public.slack_event_dedupe
 - public.slack_user_cache
-- storage.objects
 - public.agents
 - public.chunks
 - public.knowledge_bases
@@ -803,7 +802,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (889 total, 288 thin omitted)
+## Communities (888 total, 287 thin omitted)
 
 ### Community 0 - "App.tsx"
 Cohesion: 0.01
@@ -3211,8 +3210,8 @@ Nodes (3): idx_mcp_tools_server_id, idx_mcp_tools_workspace_id, public.mcp_tools
 
 ## Knowledge Gaps
 - **3544 isolated node(s):** `session-start.sh script`, `PATH`, `$schema`, `config:recommended`, `:semanticCommits` (+3539 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 5174 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **288 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 5173 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **287 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

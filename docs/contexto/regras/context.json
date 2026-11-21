@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "10e7a1defae6071421926888edee507efb16aad8",
+  "sha": "b571324bf3163b3c7e52a5c157b5ec1009321e03",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-20 20:12 UTC",
+  "generated_at": "2026-11-21 11:30 UTC",
   "files_total": 1998,
   "code_files": 1787,
-  "code_lines": 347762
+  "code_lines": 347824
  },
  "version": "1.3.2",
- "facts_hash": "e7a655189c05a774",
+ "facts_hash": "c2206a6e5ba091dc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -34076,16 +34076,6 @@
     "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
    },
    {
-    "name": "Admins only",
-    "table": "agent_traces_v2_2026_05",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces_v2_2026_05.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
-    "check": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces_v2_2026_05.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
-    "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
-   },
-   {
     "name": "Workspace members read openclaw deployments",
     "table": "openclaw_deployments",
     "cmd": "SELECT",
@@ -36046,36 +36036,6 @@
     "src": "supabase/migrations/20260905120000_rls_complete_reconciliation.sql"
    },
    {
-    "name": "skill_reclass_service_only",
-    "table": "skill_reclassification_reviews_old",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "false",
-    "check": "",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
-   },
-   {
-    "name": "skill_harvest_runs_service_only",
-    "table": "skill_harvest_runs_old",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "false",
-    "check": "",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
-   },
-   {
-    "name": "audit_log_owner_all",
-    "table": "audit_log_old",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid())",
-    "check": "workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid())",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
-   },
-   {
     "name": "assets_member_select",
     "table": "assets",
     "cmd": "SELECT",
@@ -36371,7 +36331,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
     "check": "",
     "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
    },
@@ -36391,8 +36351,8 @@
     "cmd": "UPDATE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
-    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
     "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
    },
    {
@@ -36401,7 +36361,7 @@
     "cmd": "DELETE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
     "check": "",
     "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
    },
@@ -39189,16 +39149,19 @@
    },
    "get_vendor_summary": {
     "args": "p_workspace_id uuid",
-    "returns": "TABLE(total bigint, active bigint, critical bigint, dpa_expiring bigint, reviews_overdue bigint)",
+    "returns": "jsonb",
     "lang": "plpgsql",
     "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF NOT ( p_workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR current_setting('request.jwt.claim.role', true) = 'service_role' ) THEN RAISE EXCEPTION 'Acesso negado: workspace não pertence ao usuário' USING ERRCODE = '42501'; END IF; RETURN QUERY SELECT COUNT(*)::bigint, COUNT(*) FILTER (WHERE status = 'active')::bigint, COUNT(*) FILTER (WHERE criticality = 'critical')::bigint, COUNT(*) FILTER (WHERE dpa_expires_at IS NOT NULL AND dpa_expires_at < NOW() + INTERVAL '60 days')::bigint, COUNT(*) FILTER (WHERE next_review_at IS NOT NULL AND next_review_at < NOW())::bigint FROM public.vendors WHERE workspace_id = p_workspace_id; END;",
+    "body": "DECLARE v_total INTEGER; v_active INTEGER; v_critical INTEGER; v_dpa_expiring INTEGER; v_dpa_expired INTEGER; v_certs_expired INTEGER; v_overdue_reviews INTEGER; v_by_type jsonb; v_by_criticality jsonb; BEGIN IF NOT ( p_workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR current_setting('request.jwt.claim.role', true) = 'service_role' ) THEN RAISE EXCEPTION 'Acesso negado: workspace não pertence ao usuário' USING ERRCODE = '42501'; END IF; SELECT COUNT(*), COUNT(*) FILTER (WHERE status = 'active'), COUNT(*) FILTER (WHERE status = 'active' AND criticality = 'critical'), COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at BETWEEN now() AND now() + …",
     "raises": [
      "Acesso negado: workspace não pertence ao usuário"
     ],
     "tables": [
+     "v_by_criticality",
+     "v_by_type",
+     "v_total",
      "vendors"
     ]
    },
@@ -46994,8 +46957,7 @@
    "chat_threads": "enabled",
    "chat_messages": "enabled",
    "skill_reclassification_reviews": "enabled",
-   "skill_harvest_checkpoints": "enabled",
-   "storage.objects": "enabled"
+   "skill_harvest_checkpoints": "enabled"
   },
   "grants": [
    {
@@ -50149,22 +50111,6 @@
     "objkind": "table",
     "roles": "anon",
     "src": "supabase/migrations/20260905130000_revoke_anon_default_privileges.sql"
-   },
-   {
-    "kind": "revoke",
-    "privs": "execute",
-    "object": "exec_sql",
-    "objkind": "function",
-    "roles": "PUBLIC, anon, authenticated",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
-   },
-   {
-    "kind": "grant",
-    "privs": "execute",
-    "object": "exec_sql",
-    "objkind": "function",
-    "roles": "service_role",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
    },
    {
     "kind": "revoke",
@@ -59819,7 +59765,7 @@
   {
    "module": "supabase/migrations",
    "files": 334,
-   "lines": 29266,
+   "lines": 29328,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -99239,6 +99185,42 @@
     "kind": "compara"
    },
    {
+    "file": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+    "field": "status",
+    "value": "offboarded",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+    "field": "status",
+    "value": "offboarded",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+    "field": "status",
+    "value": "offboarded",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+    "field": "status",
+    "value": "offboarded",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+    "field": "status",
+    "value": "offboarded",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+    "field": "status",
+    "value": "offboarded",
+    "kind": "compara"
+   },
+   {
     "file": "tests/load/llm-gateway.k6.js",
     "field": "role",
     "value": "user",
@@ -101063,6 +101045,10 @@
    {
     "file": "supabase/migrations/20260805000001_security_bug_corrections.sql",
     "line": "SET is_blocked = true, blocked_until = (now() + interval '15 minutes')"
+   },
+   {
+    "file": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+    "line": "COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at BETWEEN now() AND now() + interval '30 days'),"
    }
   ],
   "percents": [
@@ -117887,16 +117873,6 @@
     "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
    },
    {
-    "name": "Admins only",
-    "table": "agent_traces_v2_2026_05",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces_v2_2026_05.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
-    "check": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces_v2_2026_05.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
-    "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
-   },
-   {
     "name": "Workspace members read openclaw deployments",
     "table": "openclaw_deployments",
     "cmd": "SELECT",
@@ -119857,36 +119833,6 @@
     "src": "supabase/migrations/20260905120000_rls_complete_reconciliation.sql"
    },
    {
-    "name": "skill_reclass_service_only",
-    "table": "skill_reclassification_reviews_old",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "false",
-    "check": "",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
-   },
-   {
-    "name": "skill_harvest_runs_service_only",
-    "table": "skill_harvest_runs_old",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "false",
-    "check": "",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
-   },
-   {
-    "name": "audit_log_owner_all",
-    "table": "audit_log_old",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid())",
-    "check": "workspace_id IN (SELECT workspaces.id FROM workspaces WHERE workspaces.owner_id = auth.uid())",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
-   },
-   {
     "name": "assets_member_select",
     "table": "assets",
     "cmd": "SELECT",
@@ -120182,7 +120128,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()",
+    "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
     "check": "",
     "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
    },
@@ -120202,8 +120148,8 @@
     "cmd": "UPDATE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
-    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "check": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()",
     "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
    },
    {
@@ -120212,7 +120158,7 @@
     "cmd": "DELETE",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
+    "using": "created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)",
     "check": "",
     "src": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql"
    },
@@ -123000,16 +122946,19 @@
    },
    "get_vendor_summary": {
     "args": "p_workspace_id uuid",
-    "returns": "TABLE(total bigint, active bigint, critical bigint, dpa_expiring bigint, reviews_overdue bigint)",
+    "returns": "jsonb",
     "lang": "plpgsql",
     "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF NOT ( p_workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR current_setting('request.jwt.claim.role', true) = 'service_role' ) THEN RAISE EXCEPTION 'Acesso negado: workspace não pertence ao usuário' USING ERRCODE = '42501'; END IF; RETURN QUERY SELECT COUNT(*)::bigint, COUNT(*) FILTER (WHERE status = 'active')::bigint, COUNT(*) FILTER (WHERE criticality = 'critical')::bigint, COUNT(*) FILTER (WHERE dpa_expires_at IS NOT NULL AND dpa_expires_at < NOW() + INTERVAL '60 days')::bigint, COUNT(*) FILTER (WHERE next_review_at IS NOT NULL AND next_review_at < NOW())::bigint FROM public.vendors WHERE workspace_id = p_workspace_id; END;",
+    "body": "DECLARE v_total INTEGER; v_active INTEGER; v_critical INTEGER; v_dpa_expiring INTEGER; v_dpa_expired INTEGER; v_certs_expired INTEGER; v_overdue_reviews INTEGER; v_by_type jsonb; v_by_criticality jsonb; BEGIN IF NOT ( p_workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR current_setting('request.jwt.claim.role', true) = 'service_role' ) THEN RAISE EXCEPTION 'Acesso negado: workspace não pertence ao usuário' USING ERRCODE = '42501'; END IF; SELECT COUNT(*), COUNT(*) FILTER (WHERE status = 'active'), COUNT(*) FILTER (WHERE status = 'active' AND criticality = 'critical'), COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at BETWEEN now() AND now() + …",
     "raises": [
      "Acesso negado: workspace não pertence ao usuário"
     ],
     "tables": [
+     "v_by_criticality",
+     "v_by_type",
+     "v_total",
      "vendors"
     ]
    },
@@ -129600,7 +129549,8 @@
      "offboarded": [
       "compara:src/pages/VendorsPage.tsx",
       "compara:src/services/vendorRiskService.ts",
-      "compara:supabase/migrations/20260418140149_8c99b7b5-9e49-4a90-ac85-77c1f5136dbb.sql"
+      "compara:supabase/migrations/20260418140149_8c99b7b5-9e49-4a90-ac85-77c1f5136dbb.sql",
+      "compara:supabase/migrations/20260905140000_security_hotfix_validation.sql"
      ],
      "ended": [
       "compara:src/pages/VoiceAgentsPage.tsx",
@@ -130439,18 +130389,10 @@
    },
    "agent_traces_v2_2026_05": {
     "rls": "não encontrado",
-    "SELECT": [
-     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces_v2_2026_05.agent_id AND public.is_workspace_admin((SELECT au"
-    ],
-    "INSERT": [
-     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces_v2_2026_05.agent_id AND public.is_workspace_admin((SELECT au"
-    ],
-    "UPDATE": [
-     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces_v2_2026_05.agent_id AND public.is_workspace_admin((SELECT au"
-    ],
-    "DELETE": [
-     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces_v2_2026_05.agent_id AND public.is_workspace_admin((SELECT au"
-    ]
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
    },
    "agent_traces_v2_2026_06": {
     "rls": "não encontrado",
@@ -132731,7 +132673,7 @@
     "rls": "enabled",
     "SELECT": [
      "public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
-     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR reporter_id = auth.uid()"
+     "authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR created_by = auth.uid()"
     ],
     "INSERT": [
      "public: public.is_workspace_admin(auth.uid(), workspace_id)",
@@ -132739,11 +132681,11 @@
     ],
     "UPDATE": [
      "public: public.is_workspace_admin(auth.uid(), workspace_id)",
-     "authenticated: reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
+     "authenticated: created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ],
     "DELETE": [
      "public: public.is_workspace_admin(auth.uid(), workspace_id)",
-     "authenticated: reporter_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
+     "authenticated: created_by = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)"
     ]
    },
    "permissions": {
@@ -138007,22 +137949,6 @@
     "objkind": "table",
     "roles": "anon",
     "src": "supabase/migrations/20260905130000_revoke_anon_default_privileges.sql"
-   },
-   {
-    "kind": "revoke",
-    "privs": "execute",
-    "object": "exec_sql",
-    "objkind": "function",
-    "roles": "PUBLIC, anon, authenticated",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
-   },
-   {
-    "kind": "grant",
-    "privs": "execute",
-    "object": "exec_sql",
-    "objkind": "function",
-    "roles": "service_role",
-    "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
    },
    {
     "kind": "revoke",
@@ -189789,7 +189715,7 @@
   },
   "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql": {
    "path": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
-   "lines": 61
+   "lines": 67
   },
   "supabase/migrations/20260712221141_8e272b4f-54a1-4f81-be5c-3f8cc75c1f27.sql": {
    "path": "supabase/migrations/20260712221141_8e272b4f-54a1-4f81-be5c-3f8cc75c1f27.sql",
@@ -190510,7 +190436,7 @@
   },
   "supabase/migrations/20260905120000_rls_complete_reconciliation.sql": {
    "path": "supabase/migrations/20260905120000_rls_complete_reconciliation.sql",
-   "lines": 247,
+   "lines": 248,
    "uses_service_role": true
   },
   "supabase/migrations/20260905130000_revoke_anon_default_privileges.sql": {
@@ -190519,12 +190445,47 @@
   },
   "supabase/migrations/20260905140000_security_hotfix_validation.sql": {
    "path": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
-   "lines": 172,
+   "lines": 227,
+   "status_values": [
+    {
+     "field": "status",
+     "value": "offboarded",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "offboarded",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "offboarded",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "offboarded",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "offboarded",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "offboarded",
+     "kind": "compara"
+    }
+   ],
+   "temporal": [
+    "COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at BETWEEN now() AND now() + interval '30 days'),"
+   ],
    "uses_service_role": true
   },
   "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql": {
    "path": "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
-   "lines": 266,
+   "lines": 267,
    "uses_service_role": true
   },
   "supabase/migrations/20261114094500_restore_log_audit_entry.sql": {
@@ -190538,7 +190499,7 @@
   },
   "supabase/migrations/20261120150000_reconcile_chat_schema.sql": {
    "path": "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
-   "lines": 116
+   "lines": 115
   },
   "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql": {
    "path": "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
@@ -190705,10 +190666,23 @@
   }
  },
  "git": {
-  "sha": "10e7a1defae6071421926888edee507efb16aad8",
+  "sha": "b571324bf3163b3c7e52a5c157b5ec1009321e03",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "b571324",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)",
+    "files": [
+     "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
+     "supabase/migrations/20260905120000_rls_complete_reconciliation.sql",
+     "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+     "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
+     "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+    ]
+   },
    {
     "sha": "10e7a1d",
     "date": "2026-11-20",
@@ -191045,15 +191019,6 @@
     "files": [
      "scripts/deploy-edge-functions.sh"
     ]
-   },
-   {
-    "sha": "9d6d1f4",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "infra: workflow de deploy automatico das Edge Functions (#95)",
-    "files": [
-     ".github/workflows/edge-deploy.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -191070,8 +191035,12 @@
     5
    ],
    [
-    ".github/workflows/edge-deploy.yml",
-    3
+    "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
+    2
+   ],
+   [
+    "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
+    2
    ],
    [
     "supabase/functions/doc-parse/index.ts",
@@ -191086,6 +191055,10 @@
     2
    ],
    [
+    ".github/workflows/edge-deploy.yml",
+    2
+   ],
+   [
     ".github/workflows/contexto.yml",
     2
    ],
@@ -191096,6 +191069,18 @@
    [
     "src/components/shared/OnboardingTour.tsx",
     2
+   ],
+   [
+    "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20260905120000_rls_complete_reconciliation.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20260905140000_security_hotfix_validation.sql",
+    1
    ],
    [
     "docs/pendencias/_achados.md",
@@ -191115,26 +191100,6 @@
    ],
    [
     "docs/pendencias/exfil-001-migrations-projeto-alheio.md",
-    1
-   ],
-   [
-    "docs/pendencias/int-001-keyvalue-para-encrypted.md",
-    1
-   ],
-   [
-    "docs/pendencias/int-002-bitrix24-webhook-config.md",
-    1
-   ],
-   [
-    "docs/pendencias/int-003-notification-sender-mente.md",
-    1
-   ],
-   [
-    "docs/pendencias/int-004-whatsapp-browser-risco.md",
-    1
-   ],
-   [
-    "docs/pendencias/int-005-env-example-segredo-fantasma.md",
     1
    ]
   ]
