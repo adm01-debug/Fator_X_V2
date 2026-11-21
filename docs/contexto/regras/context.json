@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "96fbd6fa6643d70c0d943ab3d8787ee33ef404a2",
+  "sha": "ff7f06e0b039892a660c910caa7350606433fd15",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 13:33 UTC",
-  "files_total": 2000,
+  "generated_at": "2026-11-21 13:56 UTC",
+  "files_total": 2001,
   "code_files": 1789,
   "code_lines": 348397
  },
  "version": "1.3.2",
- "facts_hash": "9d68f5d6c4b5a0d6",
+ "facts_hash": "d7fb59ed3b639586",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -251,7 +251,10 @@
     "rag-embed-backfill",
     "slack-events-webhook",
     "migrate-helper",
-    "widget-proxy"
+    "widget-proxy",
+    "bitrix24-webhook",
+    "whatsapp-webhook",
+    "webhook-receiver"
    ],
    "auth": {}
   },
@@ -53728,7 +53731,7 @@
     "methods": [
      "OPTIONS"
     ],
-    "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
+    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
     "tables": [
      "agent_routing_config",
      "agent_usage",
@@ -55800,7 +55803,7 @@
     "methods": [
      "OPTIONS"
     ],
-    "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
+    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
     "tables": [
      "agent_usage",
      "api_keys",
@@ -55851,7 +55854,7 @@
      "GET",
      "OPTIONS"
     ],
-    "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
+    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
     "tables": [
      "agent_routing_config",
      "agent_usage",
@@ -134806,7 +134809,10 @@
    "rag-embed-backfill",
    "slack-events-webhook",
    "migrate-helper",
-   "widget-proxy"
+   "widget-proxy",
+   "bitrix24-webhook",
+   "whatsapp-webhook",
+   "webhook-receiver"
   ],
   "auth_config": {},
   "grants": [
@@ -190724,10 +190730,28 @@
   }
  },
  "git": {
-  "sha": "96fbd6fa6643d70c0d943ab3d8787ee33ef404a2",
+  "sha": "ff7f06e0b039892a660c910caa7350606433fd15",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "ff7f06e",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: registra webhooks externos verify_jwt=false no config.toml (#135)",
+    "files": [
+     "supabase/config.toml"
+    ]
+   },
+   {
+    "sha": "0200f78",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: registra analise funcionalidades planejadas x implementadas (#134)",
+    "files": [
+     "docs/pendencias/_analise-funcionalidades-261121.md"
+    ]
+   },
    {
     "sha": "96fbd6f",
     "date": "2026-11-21",
@@ -191053,31 +191077,6 @@
     "files": [
      "src/components/shared/OnboardingTour.tsx"
     ]
-   },
-   {
-    "sha": "4775646",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "feat(automacao): preserva scripts de validacao exaustiva de edge functions (pr19-resolved) (#114)",
-    "files": [
-     "scripts/automation.config.json",
-     "scripts/edge-validation/test-exaustivo.cjs",
-     "scripts/edge-validation/validacao-exaustiva.cjs"
-    ]
-   },
-   {
-    "sha": "c3d5146",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(auth,a11y): mensagem certa na validação e 3 violações do axe na área logada (#97)",
-    "files": [
-     "src/components/layout/AppSidebar.tsx",
-     "src/components/shared/NotificationBell.tsx",
-     "src/components/shared/OnboardingTour.tsx",
-     "src/components/shared/SystemStatusIndicator.tsx",
-     "src/pages/AuthPage.tsx",
-     "src/pages/ResetPasswordPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -191130,8 +191129,12 @@
     2
    ],
    [
-    "src/components/shared/OnboardingTour.tsx",
-    2
+    "supabase/config.toml",
+    1
+   ],
+   [
+    "docs/pendencias/_analise-funcionalidades-261121.md",
+    1
    ],
    [
     "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
@@ -191155,10 +191158,6 @@
    ],
    [
     "docs/pendencias/_linha-de-base.md",
-    1
-   ],
-   [
-    "docs/pendencias/_ordem.md",
     1
    ]
   ]

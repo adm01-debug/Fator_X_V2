@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "96fbd6fa6643d70c0d943ab3d8787ee33ef404a2",
+  "commit": "ff7f06e0b039892a660c910caa7350606433fd15",
   "branch": "main",
-  "data_commit": "2026-11-21T10:32:29-03:00",
+  "data_commit": "2026-11-21T10:55:39-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "ff7f06e0",
+    "data": "2026-11-21",
+    "assunto": "fix: registra webhooks externos verify_jwt=false no config.toml (#135)"
+   },
+   {
+    "sha": "0200f78d",
+    "data": "2026-11-21",
+    "assunto": "chore: registra analise funcionalidades planejadas x implementadas (#134)"
+   },
    {
     "sha": "96fbd6fa",
     "data": "2026-11-21",
@@ -121,19 +131,9 @@
     "sha": "9a673de6",
     "data": "2026-11-20",
     "assunto": "chore(ci): unifica node 22 nos guards (#91)"
-   },
-   {
-    "sha": "7b3991fb",
-    "data": "2026-11-20",
-    "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 7 updates (#104)"
-   },
-   {
-    "sha": "b5951c72",
-    "data": "2026-11-19",
-    "assunto": "fix(edge): CORS no 429 e rate heavy em agentes — absorve pr19 (GAP-2/S24) (#118)"
    }
   ],
-  "arquivos_mudados_7d": 92,
+  "arquivos_mudados_7d": 94,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -274,6 +274,10 @@
     "mudancas": 3
    },
    {
+    "arquivo": "supabase/config.toml",
+    "mudancas": 3
+   },
+   {
     "arquivo": "supabase/functions/agent-conversational-builder/index.ts",
     "mudancas": 3
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "supabase/functions/datahub-query/index.ts",
     "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/doc-parse/index.ts",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 47
+    "commits": 49
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1995,
+  "arquivos_total": 1996,
   "arquivos_codigo": 1449,
   "linhas_codigo": 318185,
   "rotas": 151,
@@ -327,7 +327,7 @@
   "testes": 239,
   "workflows": 10,
   "scripts": 45,
-  "docs_md": 127
+  "docs_md": 128
  },
  "por_pasta": {
   "e2e/agent-builder.spec.ts": {

@@ -4,11 +4,14 @@
  "pasta": "supabase/functions",
  "total": 87,
  "verify_jwt_false": [
+  "bitrix24-webhook",
   "migrate-helper",
   "openclaw-webhook",
   "rag-embed-backfill",
   "slack-events-webhook",
+  "webhook-receiver",
   "whatsapp-router",
+  "whatsapp-webhook",
   "widget-proxy"
  ],
  "shared": [
@@ -313,7 +316,7 @@
    "entrada": "supabase/functions/bitrix24-webhook/index.ts",
    "arquivos": 1,
    "linhas": 417,
-   "verify_jwt": true,
+   "verify_jwt": false,
    "metodos": [
     "OPTIONS",
     "POST"
@@ -2863,7 +2866,7 @@
    "entrada": "supabase/functions/webhook-receiver/index.ts",
    "arquivos": 1,
    "linhas": 260,
-   "verify_jwt": true,
+   "verify_jwt": false,
    "metodos": [
     "OPTIONS"
    ],
@@ -2931,7 +2934,7 @@
    "entrada": "supabase/functions/whatsapp-webhook/index.ts",
    "arquivos": 1,
    "linhas": 599,
-   "verify_jwt": true,
+   "verify_jwt": false,
    "metodos": [
     "GET",
     "OPTIONS",

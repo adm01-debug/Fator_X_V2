@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `96fbd6fa66` · branch `main` · 2026-11-21 13:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ff7f06e0b0` · branch `main` · 2026-11-21 13:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -664,6 +664,9 @@
 - `slack-events-webhook`
 - `migrate-helper`
 - `widget-proxy`
+- `bitrix24-webhook`
+- `whatsapp-webhook`
+- `webhook-receiver`
 
 ## Rotas protegidas no front
 

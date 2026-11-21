@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix: registra webhooks externos verify_jwt=false no config.toml (#135)",
+   "chore: registra analise funcionalidades planejadas x implementadas (#134)",
    "fix: conclui entidades parciais (webhook/game day/chaos) criadas como boilerplate vazio (#132)",
    "fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)",
-   "fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)",
-   "docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)",
-   "fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)"
+   "fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

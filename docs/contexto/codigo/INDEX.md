@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `96fbd6fa6643d70c0d943ab3d8787ee33ef404a2` (2026-11-21T10:32:29-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ff7f06e0b039892a660c910caa7350606433fd15` (2026-11-21T10:55:39-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1391), SQL (339), Markdown (127), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
+- linguagens: TypeScript (1391), SQL (339), Markdown (128), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1995 |
+| arquivos_total | 1996 |
 | arquivos_codigo | 1449 |
 | linhas_codigo | 318185 |
 | rotas | 151 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 239 |
 | workflows | 10 |
 | scripts | 45 |
-| docs_md | 127 |
+| docs_md | 128 |
 
 ## Onde ficam as coisas
 - telas: src/pages (140)
@@ -282,7 +282,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `automation-pipeline` — tabelas: automation_logs, automation_rules; chamada por 1 arquivo(s) do front
 - `bitrix24-api` — tabelas: workspace_secrets; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `bitrix24-oauth` — tabelas: workspace_secrets; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `bitrix24-webhook` — tabelas: agent_routing_config, bitrix24_webhook_events, trace_events, workspace_secrets; chamada por 1 arquivo(s) do front
+- `bitrix24-webhook` (verify_jwt=false) — tabelas: agent_routing_config, bitrix24_webhook_events, trace_events, workspace_secrets; chamada por 1 arquivo(s) do front
 - `browser-agent-run` — tabelas: browser_sessions; chamada por 1 arquivo(s) do front
 - `browser-session-cancel` — tabelas: browser_sessions; chamada por 1 arquivo(s) do front
 - `cerebro-brain` — tabelas: agent_memories, agent_traces, agents, chunks, documents, entity_resolution_logs, knowledge_bases, knowledge_entities, knowledge_relations, tool_integrations, workflow_steps, workflows, workspace_members; chamada por 1 arquivo(s) do front
@@ -356,9 +356,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `voice-session` — tabelas: voice_sessions, workspaces; chamada por 1 arquivo(s) do front
 - `voice-synthesize` — tabelas: agents, voice_sessions; chamada por 1 arquivo(s) do front
 - `voice-transcribe` — tabelas: voice_sessions; chamada por 1 arquivo(s) do front
-- `webhook-receiver` — tabelas: webhook_endpoints, webhook_events; chamada por 1 arquivo(s) do front
+- `webhook-receiver` (verify_jwt=false) — tabelas: webhook_endpoints, webhook_events; chamada por 1 arquivo(s) do front
 - `whatsapp-router` (verify_jwt=false) — tabelas: openclaw_events, openclaw_whatsapp_instances, openclaw_whatsapp_messages; chamada por 0 arquivo(s) do front, por SQL/cron
-- `whatsapp-webhook` — tabelas: agent_routing_config, openclaw_events, trace_events, whatsapp_webhook_events, workspace_secrets; chamada por 1 arquivo(s) do front
+- `whatsapp-webhook` (verify_jwt=false) — tabelas: agent_routing_config, openclaw_events, trace_events, whatsapp_webhook_events, workspace_secrets; chamada por 1 arquivo(s) do front
 - `widget-proxy` (verify_jwt=false) — tabelas: agents; chamada por 3 arquivo(s) do front
 - `workflow-engine-v2` — tabelas: workflow_runs, workflow_steps, workflows; chamada por 2 arquivo(s) do front
 
@@ -404,7 +404,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
 - hosts mais citados: router.huggingface.co, ai.gateway.lovable.dev, api.openai.com, openrouter.ai, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.resend.com, api.slack.com, app.promobrindes.com.br
-- webhooks recebidos: migrate-helper, openclaw-webhook, rag-embed-backfill, slack-events-webhook, whatsapp-router, widget-proxy
+- webhooks recebidos: bitrix24-webhook, migrate-helper, openclaw-webhook, rag-embed-backfill, slack-events-webhook, webhook-receiver, whatsapp-router, whatsapp-webhook, widget-proxy
 - env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_WEBHOOK_TOKEN, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, OPENROUTER_API_KEY, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
 
 ## Permissões / papéis
@@ -431,8 +431,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13954 nós · 37221 arestas · 879 comunidades · grafo do commit `96fbd6fa`
-- comunidades maiores: badge.tsx (270), react (270), ref_https (183), PageHeader.tsx (178), cn (139), lucide-react (129), App.tsx (120), logger.ts (119), Button (117), getWorkspaceId (117), templateSkillLinkService.ts (104), mod.ts (103)
+- 13961 nós · 37229 arestas · 911 comunidades · grafo do commit `ff7f06e0`
+- comunidades maiores: Badge (291), react (205), lib/utils.ts (179), sonner (178), getCorsHeaders (157), button.tsx (154), lucide-react (146), App.tsx (145), cn (131), badge.tsx (114), logger.ts (109), mod.ts (101)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -573,10 +573,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/SLACK-INTEGRATION.md` — Integração Slack — Documentação Técnica (88 linhas)
 - `docs/TYPOGRAPHY-MIGRATION-REPORT.md` — Relatório da Migração de Tipografia — Fator X (79 linhas)
 - `docs/prod-readiness.md` (59 linhas)
-- subpastas de docs/: docs/pendencias (13), docs/auditoria-estado-2026-08 (11), docs/adr (7), docs/agentes (6), docs/architecture (2), docs/contexto (2), docs/runbooks (2), docs/migration (1)
+- subpastas de docs/: docs/pendencias (14), docs/auditoria-estado-2026-08 (11), docs/adr (7), docs/agentes (6), docs/architecture (2), docs/contexto (2), docs/runbooks (2), docs/migration (1)
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-21 `ff7f06e0` fix: registra webhooks externos verify_jwt=false no config.toml (#135)
+- 2026-11-21 `0200f78d` chore: registra analise funcionalidades planejadas x implementadas (#134)
 - 2026-11-21 `96fbd6fa` fix: conclui entidades parciais (webhook/game day/chaos) criadas como boilerplate vazio (#132)
 - 2026-11-21 `96f5dac0` fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)
 - 2026-11-21 `b571324b` fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)
@@ -590,8 +592,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `e4460f85` chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)
 - 2026-11-20 `33249304` chore(ci)(deps): bump peter-evans/create-pull-request (#99)
 - 2026-11-20 `849d83ce` chore(deps)(deps): bump otpauth from 9.5.1 to 9.6.0 (#106)
-- 2026-11-20 `42dc7a0d` chore(deps)(deps): bump @tanstack/react-query from 5.83.0 to 5.107.1 (#105)
-- 2026-11-20 `3ad98132` chore(deps)(deps): bump the radix group across 1 directory with 27 updates (#103)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1391)",
    "SQL (339)",
-   "Markdown (127)",
+   "Markdown (128)",
    "JavaScript (54)",
    "JSON (24)",
    "YAML (16)",
@@ -828,7 +828,7 @@
  "docs_em_subpastas": [
   {
    "pasta": "docs/pendencias",
-   "arquivos_md": 13
+   "arquivos_md": 14
   },
   {
    "pasta": "docs/auditoria-estado-2026-08",
@@ -1314,11 +1314,14 @@
    "WHATSAPP_ZAPI_TOKEN"
   ],
   "webhooks_recebidos": [
+   "bitrix24-webhook",
    "migrate-helper",
    "openclaw-webhook",
    "rag-embed-backfill",
    "slack-events-webhook",
+   "webhook-receiver",
    "whatsapp-router",
+   "whatsapp-webhook",
    "widget-proxy"
   ],
   "realtime": [
