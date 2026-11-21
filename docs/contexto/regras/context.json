@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "35f15a71ea86ef24fc9b33613f723b0aa4ffdd77",
+  "sha": "fbe64eef7d136edf5d4760ea920d27b631457c54",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 16:50 UTC",
-  "files_total": 2002,
-  "code_files": 1790,
-  "code_lines": 348567
+  "generated_at": "2026-11-21 17:12 UTC",
+  "files_total": 2003,
+  "code_files": 1791,
+  "code_lines": 348650
  },
  "version": "1.3.2",
- "facts_hash": "b6f7dbb23e07d756",
+ "facts_hash": "8e7a846f9578deab",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -237,7 +237,7 @@
   "languages": {
    ".tsx": 699,
    ".ts": 692,
-   ".sql": 340,
+   ".sql": 341,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -1409,6 +1409,13 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20260405224826_c699f4a7-cfca-468f-abe5-ca701c1883fc.sql"
+     },
+     {
+      "name": "key_value",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql"
      }
     ],
     "constraints": [
@@ -46752,6 +46759,7 @@
    "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
    "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
    "supabase/migrations/20261121103000_embed_retry_chunks.sql",
+   "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql",
    "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
    "src/integrations/supabase/types.ts"
   ],
@@ -51183,7 +51191,8 @@
    "column:skill_reclassification_reviews.confidence_threshold": "Limiar de confianca exigido pelo curador no momento da proposta. Sem ele, uma proposta de 0.60 aprovada ontem e indistinguivel de uma rejeitada hoje sob limiar 0.80.",
    "column:skill_registry.department_confidence": "Confianca [0,1] da classificacao departamental; herdada do candidato na promocao.",
    "column:skill_registry.department_source": "Procedencia da classificacao: unknown | heuristic | llm | human | import.",
-   "column:skill_registry.is_meta_collection": "true quando o item e uma coletanea (awesome-list, curso, roadmap, livro de links) e nao uma skill instalavel. Espelha isMetaRepository() do harvester. Excluido da fila de revisao departamental e da vitrine publica."
+   "column:skill_registry.is_meta_collection": "true quando o item e uma coletanea (awesome-list, curso, roadmap, livro de links) e nao uma skill instalavel. Espelha isMetaRepository() do harvester. Excluido da fila de revisao departamental e da vitrine publica.",
+   "column:workspace_secrets.key_value": "Valor da chave em texto. Restaurado em 2026-11-21 (Int-001): o esquema de criptografia (encrypted_value) nunca entrou em producao."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -58675,7 +58684,7 @@
   {
    "module": "src/integrations",
    "files": 5,
-   "lines": 15731,
+   "lines": 15734,
    "tables": [],
    "exports": [
     "index.ts: lovable",
@@ -59071,7 +59080,7 @@
   {
    "module": "src/services",
    "files": 166,
-   "lines": 33239,
+   "lines": 33289,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59400,7 +59409,7 @@
   {
    "module": "src/test",
    "files": 191,
-   "lines": 29039,
+   "lines": 29051,
    "tables": [
     "tabela"
    ],
@@ -59825,8 +59834,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 337,
-   "lines": 29930,
+   "files": 338,
+   "lines": 29948,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -62041,16 +62050,14 @@
    },
    "workspace_secrets": {
     "update": [
-     "src/services/llmGatewayService.ts"
+     "src/services/llmGatewayService.ts",
+     "src/services/settingsService.ts"
     ],
     "insert": [
      "src/services/llmGatewayService.ts",
      "src/services/settingsService.ts"
     ],
     "delete": [
-     "src/services/settingsService.ts"
-    ],
-    "ref": [
      "src/services/settingsService.ts"
     ],
     "select": [
@@ -63089,7 +63096,6 @@
     "workspace_id"
    ],
    "workspace_secrets": [
-    "encrypted_value",
     "id",
     "key_name",
     "key_value",
@@ -64998,10 +65004,6 @@
    {
     "table": "agent_memories",
     "column": "metadata"
-   },
-   {
-    "table": "workspace_secrets",
-    "column": "key_value"
    },
    {
     "table": "session_traces",
@@ -141139,11 +141141,6 @@
    },
    {
     "kind": "coluna",
-    "msg": "coluna `key_value` usada no código não existe no schema de `workspace_secrets`",
-    "where": []
-   },
-   {
-    "kind": "coluna",
     "msg": "coluna `user_id` usada no código não existe no schema de `session_traces`",
     "where": []
    },
@@ -157252,7 +157249,7 @@
   },
   "src/integrations/supabase/types.ts": {
    "path": "src/integrations/supabase/types.ts",
-   "lines": 15457,
+   "lines": 15460,
    "exports": [
     "type Json",
     "type Database",
@@ -172019,7 +172016,7 @@
     },
     {
      "table": "workspace_secrets",
-     "op": "ref"
+     "op": "update"
     },
     {
      "table": "workspaces",
@@ -173756,7 +173753,7 @@
   },
   "src/services/whatsappOutboundService.ts": {
    "path": "src/services/whatsappOutboundService.ts",
-   "lines": 385,
+   "lines": 435,
    "exports": [
     "type WhatsAppProvider",
     "interface WhatsAppMessageInput",
@@ -173775,8 +173772,8 @@
    ],
    "table_cols": {
     "workspace_secrets": [
-     "encrypted_value",
      "key_name",
+     "key_value",
      "workspace_id"
     ]
    },
@@ -179381,7 +179378,7 @@
   },
   "src/test/whatsapp-outbound.test.ts": {
    "path": "src/test/whatsapp-outbound.test.ts",
-   "lines": 242,
+   "lines": 254,
    "is_test": true,
    "doc": "whatsappOutboundService tests (sprint #4) Tests the public sendMessage entry point and the 4 provider-specific dispatchers via mocked fetch + workspace_secrets lookup.",
    "tests": [
@@ -190591,6 +190588,10 @@
    "path": "supabase/migrations/20261121103000_embed_retry_chunks.sql",
    "lines": 29
   },
+  "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql": {
+   "path": "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql",
+   "lines": 18
+  },
   "supabase/migrations/20261121120000_finish_partial_work_entidades.sql": {
    "path": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
    "lines": 441,
@@ -190760,10 +190761,23 @@
   }
  },
  "git": {
-  "sha": "35f15a71ea86ef24fc9b33613f723b0aa4ffdd77",
+  "sha": "fbe64eef7d136edf5d4760ea920d27b631457c54",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "fbe64ee",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)",
+    "files": [
+     "src/integrations/supabase/types.ts",
+     "src/services/settingsService.ts",
+     "src/services/whatsappOutboundService.ts",
+     "src/test/whatsapp-outbound.test.ts",
+     "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql"
+    ]
+   },
    {
     "sha": "35f15a7",
     "date": "2026-11-21",
@@ -191084,15 +191098,6 @@
     "files": [
      ".github/workflows/contexto.yml"
     ]
-   },
-   {
-    "sha": "9a673de",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore(ci): unifica node 22 nos guards (#91)",
-    "files": [
-     ".github/workflows/guards.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -191111,6 +191116,10 @@
    [
     ".github/workflows/edge-deploy.yml",
     3
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    2
    ],
    [
     "supabase/functions/rag-embed-backfill/index.ts",
@@ -191149,8 +191158,20 @@
     2
    ],
    [
-    ".github/workflows/guards.yml",
-    2
+    "src/services/settingsService.ts",
+    1
+   ],
+   [
+    "src/services/whatsappOutboundService.ts",
+    1
+   ],
+   [
+    "src/test/whatsapp-outbound.test.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql",
+    1
    ],
    [
     "supabase/functions/rag-embed-v2/index.ts",
@@ -191158,22 +191179,6 @@
    ],
    [
     "supabase/migrations/20261121103000_embed_retry_chunks.sql",
-    1
-   ],
-   [
-    "supabase/functions/_shared/chaos.ts",
-    1
-   ],
-   [
-    "supabase/functions/_shared/idempotency.ts",
-    1
-   ],
-   [
-    "supabase/functions/_shared/ai-provider.ts",
-    1
-   ],
-   [
-    "supabase/functions/agent-conversational-builder/index.ts",
     1
    ]
   ]

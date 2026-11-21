@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)",
    "fix(rag): aceita service role e fallback OpenRouter no rag-embed-v2 (#141)",
    "fix(rag): retry automatico de chunks failed no emb-backfill (#133)",
    "fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)",
-   "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)",
-   "chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)"
+   "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

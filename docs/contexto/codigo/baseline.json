@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "35f15a71ea86ef24fc9b33613f723b0aa4ffdd77",
+  "commit": "fbe64eef7d136edf5d4760ea920d27b631457c54",
   "branch": "main",
-  "data_commit": "2026-11-21T13:49:25-03:00",
+  "data_commit": "2026-11-21T14:11:39-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "fbe64eef",
+    "data": "2026-11-21",
+    "assunto": "fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)"
+   },
    {
     "sha": "35f15a71",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "60357f2b",
     "data": "2026-11-20",
     "assunto": "chore(ci)(deps): bump actions/setup-node from 6.5.0 to 7.1.0 (#101)"
-   },
-   {
-    "sha": "c5fffcfb",
-    "data": "2026-11-20",
-    "assunto": "fix(db): reconcilia schema de documentos com o contrato das edges (#122)"
    }
   ],
-  "arquivos_mudados_7d": 103,
+  "arquivos_mudados_7d": 107,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 54
+    "commits": 55
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1997,
+  "arquivos_total": 1998,
   "arquivos_codigo": 1449,
-  "linhas_codigo": 318326,
+  "linhas_codigo": 318391,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -322,7 +322,7 @@
   "hooks": 75,
   "edge_functions": 87,
   "tabelas": 327,
-  "migrations": 337,
+  "migrations": 338,
   "cron_jobs": 37,
   "testes": 239,
   "workflows": 10,
@@ -492,7 +492,7 @@
   },
   "src/integrations": {
    "arquivos": 5,
-   "linhas": 15731
+   "linhas": 15734
   },
   "src/lib": {
    "arquivos": 93,
@@ -512,7 +512,7 @@
   },
   "src/services": {
    "arquivos": 166,
-   "linhas": 33239
+   "linhas": 33289
   },
   "src/stores": {
    "arquivos": 12,
@@ -520,7 +520,7 @@
   },
   "src/test": {
    "arquivos": 191,
-   "linhas": 29039
+   "linhas": 29051
   },
   "src/tests": {
    "arquivos": 2,
@@ -566,7 +566,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 15457
+   "linhas": 15460
   },
   {
    "arquivo": "src/pages/SLODashboard.tsx",

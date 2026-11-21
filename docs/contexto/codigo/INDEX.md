@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `35f15a71ea86ef24fc9b33613f723b0aa4ffdd77` (2026-11-21T13:49:25-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fbe64eef7d136edf5d4760ea920d27b631457c54` (2026-11-21T14:11:39-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1391), SQL (340), Markdown (128), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
+- linguagens: TypeScript (1391), SQL (341), Markdown (128), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1997 |
+| arquivos_total | 1998 |
 | arquivos_codigo | 1449 |
-| linhas_codigo | 318326 |
+| linhas_codigo | 318391 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 75 |
 | edge_functions | 87 |
 | tabelas | 327 |
-| migrations | 337 |
+| migrations | 338 |
 | cron_jobs | 37 |
 | testes | 239 |
 | workflows | 10 |
@@ -431,7 +431,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13965 nós · 37243 arestas · 911 comunidades · grafo do commit `35f15a71`
+- 13967 nós · 37243 arestas · 913 comunidades · grafo do commit `fbe64eef`
 - comunidades maiores: lucide-react (293), react (284), sonner (261), input.tsx (169), App.tsx (164), getCorsHeaders (159), cn (145), templateSkillLinkService.ts (120), QuickCreateWizard.tsx (117), agent-workflow-runner/index.ts (113), ref_node_fs (102), InteractiveSLOPanel.tsx (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -577,6 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-21 `fbe64eef` fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)
 - 2026-11-21 `35f15a71` fix(rag): aceita service role e fallback OpenRouter no rag-embed-v2 (#141)
 - 2026-11-21 `6b7d90eb` fix(rag): retry automatico de chunks failed no emb-backfill (#133)
 - 2026-11-21 `10a1dd01` fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)
@@ -591,7 +592,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `3a23906d` fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)
 - 2026-11-20 `327f5f32` feat(storage): cria bucket knowledge-uploads reconciliado (#127)
 - 2026-11-20 `24731455` feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)
-- 2026-11-20 `efdc4b1a` fix(deps): declara @tiptap/core usado no teste do rich editor (#125)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
