@@ -7,8 +7,8 @@
  *  1. Autentica usuário e valida membership no workspace do notebook.
  *  2. Coleta notas + snippets de documentos do notebook (limite 40 fontes).
  *  3. Calcula content_hash SHA-256 — se `?force=false` e já existe podcast ready com o mesmo hash, retorna cache.
- *  4. Cria row `status=generating`, chama Lovable AI para gerar roteiro PT-BR (~5min de leitura).
- *  5. Chama OpenAI TTS (via Lovable AI Gateway) por parágrafo, concatena em MP3, faz upload no bucket `knowledge-uploads/podcasts/`.
+ *  4. Cria row `status=generating`, chama OpenRouter para gerar roteiro PT-BR (~5min de leitura).
+ *  5. Chama OpenAI TTS (via OpenRouter /audio/speech) por parágrafo, concatena em MP3, faz upload no bucket `knowledge-uploads/podcasts/`.
  *  6. Atualiza row com `audio_url` + `duration_seconds` + `status=ready`.
  *  7. Suporta cancelamento cooperativo via `cancel_requested=true` entre chunks.
  *
@@ -32,6 +32,7 @@ import {
   RATE_LIMITS,
   requireEnv,
 } from '../_shared/mod.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-provider.ts';
 
 const BodySchema = z.object({
   notebook_id: z.string().uuid(),
@@ -39,10 +40,10 @@ const BodySchema = z.object({
   force: z.boolean().default(false),
 });
 
-const LOVABLE_AI_URL = 'https://ai.gateway.lovable.dev/v1';
+const OPENROUTER_AI_URL = 'https://openrouter.ai/api/v1';
 const SUPABASE_URL = requireEnv('SUPABASE_URL');
 const SERVICE_KEY = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
-const LOVABLE_API_KEY = requireEnv('LOVABLE_API_KEY');
+const OPENROUTER_API_KEY = requireEnv(AI_API_KEY_ENV);
 
 async function sha256(text: string): Promise<string> {
   const buf = new TextEncoder().encode(text);
@@ -65,8 +66,8 @@ Deno.serve(async (req) => {
     });
   }
 
-  if (!LOVABLE_API_KEY) {
-    return new Response(JSON.stringify({ error: 'LOVABLE_API_KEY não configurado' }), {
+  if (!OPENROUTER_API_KEY) {
+    return new Response(JSON.stringify({ error: 'OPENROUTER_API_KEY não configurado' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -205,10 +206,10 @@ Deno.serve(async (req) => {
 
   // 1. Gera roteiro
   try {
-    const scriptRes = await fetch(`${LOVABLE_AI_URL}/chat/completions`, {
+    const scriptRes = await fetch(`${OPENROUTER_AI_URL}/chat/completions`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -246,7 +247,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 3. TTS via Lovable AI Gateway (OpenAI-compatible /audio/speech) com retry+backoff
+    // 3. TTS via OpenRouter (OpenAI-compatible /audio/speech) com retry+backoff
     async function callTts(): Promise<Response> {
       const backoffs = [0, 800, 2000, 4500]; // ms
       let lastErr = '';
@@ -254,10 +255,10 @@ Deno.serve(async (req) => {
         if (backoffs[attempt] > 0) {
           await new Promise((r) => setTimeout(r, backoffs[attempt]));
         }
-        const res = await fetch(`${LOVABLE_AI_URL}/audio/speech`, {
+        const res = await fetch(`${OPENROUTER_AI_URL}/audio/speech`, {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            Authorization: `Bearer ${OPENROUTER_API_KEY}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({

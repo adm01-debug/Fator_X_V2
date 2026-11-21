@@ -18,6 +18,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { z } from 'https://esm.sh/zod@3.23.8';
 
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-provider.ts';
 import {
   checkRateLimit,
   createRateLimitResponse,
@@ -75,13 +76,13 @@ serve(async (req) => {
       ? imageRaw
       : `data:image/jpeg;base64,${imageRaw}`;
 
-    const LOVABLE_API_KEY = requireEnv('LOVABLE_API_KEY');
+    const apiKey = requireEnv(AI_API_KEY_ENV);
 
     // ── 1. Vision extraction ─────────────────────────────────────
-    const visionResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const visionResp = await fetch(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -166,9 +167,9 @@ serve(async (req) => {
     );
   } catch (e) {
     console.error('visual-search error', e);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
-    );
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

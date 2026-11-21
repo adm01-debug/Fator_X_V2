@@ -78,7 +78,7 @@ async function simulateExecution(
 }> {
   const start = Date.now();
   const apiKey = Deno.env.get(AI_API_KEY_ENV);
-  if (!apiKey) throw new Error('DEEPSEEK_API_KEY not configured');
+  if (!apiKey) throw new Error('OPENROUTER_API_KEY not configured');
 
   const systemPrompt = `Você é um sandbox virtual de execução de ${runtime}. Analise o código estaticamente e retorne APENAS um JSON com os campos:
 {
@@ -408,9 +408,9 @@ Deno.serve(async (req) => {
     });
   } catch (e) {
     console.error('code-interpreter-execute error:', e);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
-    );
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });
