@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "e0772412882f66f2fb20072b798a55fb54721929",
+  "sha": "085a2e38fec5a4223d26091a9fb67e8866430b0e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 17:27 UTC",
+  "generated_at": "2026-11-21 18:21 UTC",
   "files_total": 2004,
   "code_files": 1792,
   "code_lines": 348555
@@ -190813,10 +190813,19 @@
   }
  },
  "git": {
-  "sha": "e0772412882f66f2fb20072b798a55fb54721929",
+  "sha": "085a2e38fec5a4223d26091a9fb67e8866430b0e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "085a2e3",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)",
+    "files": [
+     ".github/workflows/edge-deploy.yml"
+    ]
+   },
    {
     "sha": "e077241",
     "date": "2026-11-21",
@@ -191144,16 +191153,6 @@
      "supabase/functions/rag-embed-backfill/index.ts",
      "supabase/functions/rag-ingest/index.ts"
     ]
-   },
-   {
-    "sha": "b35c28a",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix(rls): adiciona policies para 17 tabelas sem policy no banco (#93)",
-    "files": [
-     "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
-     "supabase/migrations/20261114094500_restore_log_audit_entry.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -191166,12 +191165,12 @@
     5
    ],
    [
-    "package.json",
+    ".github/workflows/edge-deploy.yml",
     4
    ],
    [
-    ".github/workflows/edge-deploy.yml",
-    3
+    "package.json",
+    4
    ],
    [
     "docs/migration/MATRIZ_EDGE_TABELA.md",
@@ -191210,10 +191209,6 @@
     2
    ],
    [
-    "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
-    2
-   ],
-   [
     "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
     2
    ],
@@ -191235,6 +191230,10 @@
    ],
    [
     "supabase/functions/rag-embed-v2/index.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261121103000_embed_retry_chunks.sql",
     1
    ]
   ]

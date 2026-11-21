@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e0772412882f66f2fb20072b798a55fb54721929",
+  "commit": "085a2e38fec5a4223d26091a9fb67e8866430b0e",
   "branch": "main",
-  "data_commit": "2026-11-21T14:26:50-03:00",
+  "data_commit": "2026-11-21T15:20:19-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "085a2e38",
+    "data": "2026-11-21",
+    "assunto": "chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)"
+   },
    {
     "sha": "e0772412",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "3ad98132",
     "data": "2026-11-20",
     "assunto": "chore(deps)(deps): bump the radix group across 1 directory with 27 updates (#103)"
-   },
-   {
-    "sha": "02ed452c",
-    "data": "2026-11-20",
-    "assunto": "chore(deps)(deps): bump @sentry/react (#102)"
    }
   ],
   "arquivos_mudados_7d": 107,
@@ -160,11 +160,11 @@
     "mudancas": 5
    },
    {
-    "pasta": ".github/workflows/contexto.yml",
-    "mudancas": 4
+    "pasta": ".github/workflows/edge-deploy.yml",
+    "mudancas": 5
    },
    {
-    "pasta": ".github/workflows/edge-deploy.yml",
+    "pasta": ".github/workflows/contexto.yml",
     "mudancas": 4
    },
    {
@@ -218,11 +218,11 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/contexto.yml",
-    "mudancas": 4
+    "arquivo": ".github/workflows/edge-deploy.yml",
+    "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/edge-deploy.yml",
+    "arquivo": ".github/workflows/contexto.yml",
     "mudancas": 4
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 56
+    "commits": 57
    },
    {
     "autor": "dependabot[bot]",

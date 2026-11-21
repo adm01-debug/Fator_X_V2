@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e0772412882f66f2fb20072b798a55fb54721929` (2026-11-21T14:26:50-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `085a2e38fec5a4223d26091a9fb67e8866430b0e` (2026-11-21T15:20:19-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -432,7 +432,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13973 nós · 37255 arestas · 898 comunidades · grafo do commit `e0772412`
+- 13973 nós · 37255 arestas · 898 comunidades · grafo do commit `085a2e38`
 - comunidades maiores: react (278), badge.tsx (277), dialog.tsx (192), logger.ts (157), App.tsx (143), getCorsHeaders (137), notesService.ts (136), tabs.tsx (122), cn (114), handleCorsPreflight (106), ref_node_fs (105), lucide-react (95)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -443,8 +443,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - supabase/deployment-manifest.json (19)
 - .github/workflows/ci.yml (7)
 - supabase/functions/llm-gateway/index.ts (6)
+- .github/workflows/edge-deploy.yml (5)
 - .github/workflows/contexto.yml (4)
-- .github/workflows/edge-deploy.yml (4)
 - docs/migration/MATRIZ_EDGE_TABELA.md (4)
 - supabase/functions/agent-conversational-builder/index.ts (4)
 - supabase/functions/agent-workflow-runner/index.ts (4)
@@ -578,6 +578,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-21 `085a2e38` chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)
 - 2026-11-21 `e0772412` feat(whatsapp): move envio de mensagens para edge whatsapp-outbound (retomada) (#142)
 - 2026-11-21 `fbe64eef` fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)
 - 2026-11-21 `35f15a71` fix(rag): aceita service role e fallback OpenRouter no rag-embed-v2 (#141)
@@ -592,7 +593,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `b571324b` fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)
 - 2026-11-20 `10e7a1de` docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)
 - 2026-11-20 `3a23906d` fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)
-- 2026-11-20 `327f5f32` feat(storage): cria bucket knowledge-uploads reconciliado (#127)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -353,8 +353,10 @@
    ],
    "npm_scripts": [],
    "secrets": [
+    "GOOGLE_MAPS_API_KEY",
     "HERMES_API_KEY",
     "HERMES_BASE_URL",
+    "MAPBOX_ACCESS_TOKEN",
     "OPENCLAW_WEBHOOK_SECRET",
     "OPENROUTER_API_KEY",
     "SUPABASE_ACCESS_TOKEN"
@@ -982,8 +984,10 @@
   "secrets_em_workflows": [
    "DB_MCP_URL",
    "GITHUB_TOKEN",
+   "GOOGLE_MAPS_API_KEY",
    "HERMES_API_KEY",
    "HERMES_BASE_URL",
+   "MAPBOX_ACCESS_TOKEN",
    "OPENCLAW_WEBHOOK_SECRET",
    "OPENROUTER_API_KEY",
    "SLACK_WEBHOOK_URL",
