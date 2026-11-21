@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b571324bf3163b3c7e52a5c157b5ec1009321e03",
+  "commit": "96f5dac06ba9157304b8c038e2472b365b1f5b6a",
   "branch": "main",
-  "data_commit": "2026-11-21T08:29:58-03:00",
+  "data_commit": "2026-11-21T09:02:55-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "96f5dac0",
+    "data": "2026-11-21",
+    "assunto": "fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)"
+   },
    {
     "sha": "b571324b",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "bf1af82e",
     "data": "2026-11-19",
     "assunto": "feat(edge): rate limit pesado em cost-calculator e product-mockup (#116)"
-   },
-   {
-    "sha": "b983db1e",
-    "data": "2026-11-19",
-    "assunto": "fix(edge): whatsapp-webhook GET sem token retorna 403, nao 500 (#115)"
    }
   ],
-  "arquivos_mudados_7d": 91,
+  "arquivos_mudados_7d": 92,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 45
+    "commits": 46
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1993,
+  "arquivos_total": 1994,
   "arquivos_codigo": 1449,
   "linhas_codigo": 318185,
   "rotas": 151,
@@ -322,7 +322,7 @@
   "hooks": 75,
   "edge_functions": 87,
   "tabelas": 327,
-  "migrations": 334,
+  "migrations": 335,
   "cron_jobs": 37,
   "testes": 239,
   "workflows": 10,

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)",
    "fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)",
    "docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)",
    "fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)",
-   "feat(storage): cria bucket knowledge-uploads reconciliado (#127)",
-   "feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)"
+   "feat(storage): cria bucket knowledge-uploads reconciliado (#127)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

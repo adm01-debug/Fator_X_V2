@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b571324bf3163b3c7e52a5c157b5ec1009321e03",
+  "sha": "96f5dac06ba9157304b8c038e2472b365b1f5b6a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 11:30 UTC",
-  "files_total": 1998,
-  "code_files": 1787,
-  "code_lines": 347824
+  "generated_at": "2026-11-21 12:03 UTC",
+  "files_total": 1999,
+  "code_files": 1788,
+  "code_lines": 347956
  },
  "version": "1.3.2",
- "facts_hash": "c2206a6e5ba091dc",
+ "facts_hash": "02feee9f7f485e83",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -237,7 +237,7 @@
   "languages": {
    ".tsx": 699,
    ".ts": 692,
-   ".sql": 337,
+   ".sql": 338,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -34056,26 +34056,6 @@
     "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
    },
    {
-    "name": "Admins only",
-    "table": "trace_events_v2_2026_05",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.is_workspace_admin((SELECT auth.uid()), workspace_id)",
-    "check": "public.is_workspace_admin((SELECT auth.uid()), workspace_id)",
-    "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
-   },
-   {
-    "name": "Admins only",
-    "table": "trace_events_v2_2026_06",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.is_workspace_admin((SELECT auth.uid()), workspace_id)",
-    "check": "public.is_workspace_admin((SELECT auth.uid()), workspace_id)",
-    "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
-   },
-   {
     "name": "Workspace members read openclaw deployments",
     "table": "openclaw_deployments",
     "cmd": "SELECT",
@@ -40039,10 +40019,10 @@
     "args": "",
     "returns": "TRIGGER",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260721155600_72a5ec4e-2f3f-4e6c-920c-6ca21ac9fa07.sql",
+    "src": "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_auto BOOLEAN; v_agent UUID; v_url TEXT; v_token TEXT; BEGIN IF NEW.direction <> 'inbound' THEN RETURN NEW; END IF; SELECT i.auto_reply, i.agent_id INTO v_auto, v_agent FROM public.openclaw_whatsapp_instances i WHERE i.id = NEW.instance_id; IF COALESCE(v_auto, false) = false OR v_agent IS NULL THEN RETURN NEW; END IF; v_url := 'https://fqdohnmgmtaycfwsioik.supabase.co/functions/v1/whatsapp-router'; v_token := current_setting('app.whatsapp_router_token', true); PERFORM net.http_post( url := v_url, headers := jsonb_build_object( 'Content-Type', 'application/json', 'X-Router-Token', COALESCE(v_token, '') ), body := jsonb_build_object('message_id', NEW.id) ); RETURN NEW; EXCEPTION WHEN …",
+    "body": "DECLARE v_auto BOOLEAN; v_agent UUID; v_url TEXT; v_token TEXT; BEGIN IF NEW.direction <> 'inbound' THEN RETURN NEW; END IF; SELECT i.auto_reply, i.agent_id INTO v_auto, v_agent FROM public.openclaw_whatsapp_instances i WHERE i.id = NEW.instance_id; IF COALESCE(v_auto, false) = false OR v_agent IS NULL THEN RETURN NEW; END IF; v_url := 'https://qdlnzopxrlsoljcrcmzv.supabase.co/functions/v1/whatsapp-router'; v_token := current_setting('app.whatsapp_router_token', true); PERFORM net.http_post( url := v_url, headers := jsonb_build_object( 'Content-Type', 'application/json', 'X-Router-Token', COALESCE(v_token, '') ), body := jsonb_build_object('message_id', NEW.id) ); RETURN NEW; EXCEPTION WHEN …",
     "raises": [],
     "tables": [
      "openclaw_whatsapp_instances",
@@ -40199,10 +40179,10 @@
     "args": "",
     "returns": "TRIGGER",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260722112903_e4950969-c93b-49eb-bec1-8637aa5b7e08.sql",
+    "src": "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE fn_url TEXT; anon_key TEXT; BEGIN IF NEW.category = 'slack_integration' THEN RETURN NEW; END IF; IF NOT EXISTS ( SELECT 1 FROM public.slack_channel_routes WHERE workspace_id = NEW.workspace_id AND enabled = TRUE ) THEN RETURN NEW; END IF; fn_url := 'https://fqdohnmgmtaycfwsioik.supabase.co/functions/v1/slack-alert-dispatcher'; anon_key := '[REDACTED].yj2LQHGB0uE4pOams3Uf4taYTMdMJDAJtWCZsaRwVVM'; PERFORM extensions.http_post( url := fn_url, headers := jsonb_build_object( 'Content-Type', 'application/json', 'Authorization', 'Bearer ' || anon_key ), body := jsonb_build_object( 'record', jsonb_build_object( 'id', NEW.id, 'workspace_id', NEW.workspace_id, 'category', NEW.category, 'severi …",
+    "body": "DECLARE fn_url TEXT; anon_key TEXT; BEGIN IF NEW.category = 'slack_integration' THEN RETURN NEW; END IF; IF NOT EXISTS ( SELECT 1 FROM public.slack_channel_routes WHERE workspace_id = NEW.workspace_id AND enabled = TRUE ) THEN RETURN NEW; END IF; fn_url := 'https://qdlnzopxrlsoljcrcmzv.supabase.co/functions/v1/slack-alert-dispatcher'; anon_key := '[REDACTED].ulD_6yJcgkDnkkxk4XeTx36bpZhrrL7x6glT_uxU1rw'; PERFORM extensions.http_post( url := fn_url, headers := jsonb_build_object( 'Content-Type', 'application/json', 'Authorization', 'Bearer ' || anon_key ), body := jsonb_build_object( 'record', jsonb_build_object( 'id', NEW.id, 'workspace_id', NEW.workspace_id, 'category', NEW.category, 'severi …",
     "raises": [],
     "tables": [
      "slack_channel_routes"
@@ -46734,6 +46714,7 @@
    "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
    "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
    "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
+   "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -59764,8 +59745,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 334,
-   "lines": 29328,
+   "files": 335,
+   "lines": 29460,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -117853,26 +117834,6 @@
     "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
    },
    {
-    "name": "Admins only",
-    "table": "trace_events_v2_2026_05",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.is_workspace_admin((SELECT auth.uid()), workspace_id)",
-    "check": "public.is_workspace_admin((SELECT auth.uid()), workspace_id)",
-    "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
-   },
-   {
-    "name": "Admins only",
-    "table": "trace_events_v2_2026_06",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.is_workspace_admin((SELECT auth.uid()), workspace_id)",
-    "check": "public.is_workspace_admin((SELECT auth.uid()), workspace_id)",
-    "src": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql"
-   },
-   {
     "name": "Workspace members read openclaw deployments",
     "table": "openclaw_deployments",
     "cmd": "SELECT",
@@ -123836,10 +123797,10 @@
     "args": "",
     "returns": "TRIGGER",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260721155600_72a5ec4e-2f3f-4e6c-920c-6ca21ac9fa07.sql",
+    "src": "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_auto BOOLEAN; v_agent UUID; v_url TEXT; v_token TEXT; BEGIN IF NEW.direction <> 'inbound' THEN RETURN NEW; END IF; SELECT i.auto_reply, i.agent_id INTO v_auto, v_agent FROM public.openclaw_whatsapp_instances i WHERE i.id = NEW.instance_id; IF COALESCE(v_auto, false) = false OR v_agent IS NULL THEN RETURN NEW; END IF; v_url := 'https://fqdohnmgmtaycfwsioik.supabase.co/functions/v1/whatsapp-router'; v_token := current_setting('app.whatsapp_router_token', true); PERFORM net.http_post( url := v_url, headers := jsonb_build_object( 'Content-Type', 'application/json', 'X-Router-Token', COALESCE(v_token, '') ), body := jsonb_build_object('message_id', NEW.id) ); RETURN NEW; EXCEPTION WHEN …",
+    "body": "DECLARE v_auto BOOLEAN; v_agent UUID; v_url TEXT; v_token TEXT; BEGIN IF NEW.direction <> 'inbound' THEN RETURN NEW; END IF; SELECT i.auto_reply, i.agent_id INTO v_auto, v_agent FROM public.openclaw_whatsapp_instances i WHERE i.id = NEW.instance_id; IF COALESCE(v_auto, false) = false OR v_agent IS NULL THEN RETURN NEW; END IF; v_url := 'https://qdlnzopxrlsoljcrcmzv.supabase.co/functions/v1/whatsapp-router'; v_token := current_setting('app.whatsapp_router_token', true); PERFORM net.http_post( url := v_url, headers := jsonb_build_object( 'Content-Type', 'application/json', 'X-Router-Token', COALESCE(v_token, '') ), body := jsonb_build_object('message_id', NEW.id) ); RETURN NEW; EXCEPTION WHEN …",
     "raises": [],
     "tables": [
      "openclaw_whatsapp_instances",
@@ -123996,10 +123957,10 @@
     "args": "",
     "returns": "TRIGGER",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260722112903_e4950969-c93b-49eb-bec1-8637aa5b7e08.sql",
+    "src": "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE fn_url TEXT; anon_key TEXT; BEGIN IF NEW.category = 'slack_integration' THEN RETURN NEW; END IF; IF NOT EXISTS ( SELECT 1 FROM public.slack_channel_routes WHERE workspace_id = NEW.workspace_id AND enabled = TRUE ) THEN RETURN NEW; END IF; fn_url := 'https://fqdohnmgmtaycfwsioik.supabase.co/functions/v1/slack-alert-dispatcher'; anon_key := '[REDACTED].yj2LQHGB0uE4pOams3Uf4taYTMdMJDAJtWCZsaRwVVM'; PERFORM extensions.http_post( url := fn_url, headers := jsonb_build_object( 'Content-Type', 'application/json', 'Authorization', 'Bearer ' || anon_key ), body := jsonb_build_object( 'record', jsonb_build_object( 'id', NEW.id, 'workspace_id', NEW.workspace_id, 'category', NEW.category, 'severi …",
+    "body": "DECLARE fn_url TEXT; anon_key TEXT; BEGIN IF NEW.category = 'slack_integration' THEN RETURN NEW; END IF; IF NOT EXISTS ( SELECT 1 FROM public.slack_channel_routes WHERE workspace_id = NEW.workspace_id AND enabled = TRUE ) THEN RETURN NEW; END IF; fn_url := 'https://qdlnzopxrlsoljcrcmzv.supabase.co/functions/v1/slack-alert-dispatcher'; anon_key := '[REDACTED].ulD_6yJcgkDnkkxk4XeTx36bpZhrrL7x6glT_uxU1rw'; PERFORM extensions.http_post( url := fn_url, headers := jsonb_build_object( 'Content-Type', 'application/json', 'Authorization', 'Bearer ' || anon_key ), body := jsonb_build_object( 'record', jsonb_build_object( 'id', NEW.id, 'workspace_id', NEW.workspace_id, 'category', NEW.category, 'severi …",
     "raises": [],
     "tables": [
      "slack_channel_routes"
@@ -133612,33 +133573,17 @@
    },
    "trace_events_v2_2026_05": {
     "rls": "não encontrado",
-    "SELECT": [
-     "authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id)"
-    ],
-    "INSERT": [
-     "authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id)"
-    ],
-    "UPDATE": [
-     "authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id)"
-    ],
-    "DELETE": [
-     "authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id)"
-    ]
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
    },
    "trace_events_v2_2026_06": {
     "rls": "não encontrado",
-    "SELECT": [
-     "authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id)"
-    ],
-    "INSERT": [
-     "authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id)"
-    ],
-    "UPDATE": [
-     "authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id)"
-    ],
-    "DELETE": [
-     "authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id)"
-    ]
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
    },
    "trace_events_v2_2026_07": {
     "rls": "não encontrado",
@@ -134602,6 +134547,7 @@
    "supabase/migrations/20260905140000_security_hotfix_validation.sql",
    "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
    "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
+   "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
    "tests/load/llm-gateway.k6.js",
    "tests/rls/personas.test.ts",
    "tests/rls/setup.ts",
@@ -189715,7 +189661,7 @@
   },
   "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql": {
    "path": "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
-   "lines": 67
+   "lines": 79
   },
   "supabase/migrations/20260712221141_8e272b4f-54a1-4f81-be5c-3f8cc75c1f27.sql": {
    "path": "supabase/migrations/20260712221141_8e272b4f-54a1-4f81-be5c-3f8cc75c1f27.sql",
@@ -190505,6 +190451,11 @@
    "path": "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
    "lines": 52
   },
+  "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql": {
+   "path": "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
+   "lines": 120,
+   "uses_service_role": true
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -190666,10 +190617,20 @@
   }
  },
  "git": {
-  "sha": "b571324bf3163b3c7e52a5c157b5ec1009321e03",
+  "sha": "96f5dac06ba9157304b8c038e2472b365b1f5b6a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "96f5dac",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)",
+    "files": [
+     "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
+     "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql"
+    ]
+   },
    {
     "sha": "b571324",
     "date": "2026-11-21",
@@ -191010,15 +190971,6 @@
     "files": [
      ".github/workflows/dependency-review.yml"
     ]
-   },
-   {
-    "sha": "7978779",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "fix(infra): expoe falha no deploy das edge functions (#96)",
-    "files": [
-     "scripts/deploy-edge-functions.sh"
-    ]
    }
   ],
   "hot_files": [
@@ -191033,6 +190985,10 @@
    [
     "package.json",
     5
+   ],
+   [
+    "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
+    2
    ],
    [
     "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
@@ -191071,7 +191027,7 @@
     2
    ],
    [
-    "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
+    "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
     1
    ],
    [
@@ -191096,10 +191052,6 @@
    ],
    [
     "docs/pendencias/_regras-de-negocio.md",
-    1
-   ],
-   [
-    "docs/pendencias/exfil-001-migrations-projeto-alheio.md",
     1
    ]
   ]
