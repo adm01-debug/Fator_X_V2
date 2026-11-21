@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fbe64eef7d` · branch `main` · 2026-11-21 17:12 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e077241288` · branch `main` · 2026-11-21 17:27 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1099,7 +1099,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `bearer_token` | escreve | `src/services/presets/credentialPresets.ts` |
 | `type` | `bias` | escreve | `supabase/functions/automation-pipeline/index.ts` |
 | `type` | `blob` | compara, escreve | `src/services/vaultSyncService.ts`<br>`supabase/functions/skill-harvester/index.ts` |
-| `type` | `body` | escreve | `src/services/whatsappOutboundService.ts` |
+| `type` | `body` | escreve | `supabase/functions/whatsapp-outbound/index.ts` |
 | `type` | `boolean` | compara, escreve | `src/components/datahub/CreateRecordDialog.tsx`<br>`src/components/datahub/DataBrowser.tsx`<br>`src/components/datahub/DataBrowserFilters.tsx`<br>`src/config/datahub-columns.ts`<br>`supabase/functions/agent-conversational-builder/index.ts`<br>… +1 |
 | `type` | `button` | escreve | `src/components/agents/wizard/quickSteps/PromptSectionUsage.tsx`<br>`supabase/functions/_shared/slack.ts` |
 | `type` | `cache_opportunity` | escreve | `src/components/billing/CostOptimizationPanel.tsx` |
@@ -1130,7 +1130,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `disable_chaos` | compara | `supabase/functions/incident-orchestrator/index.ts` |
 | `type` | `disc` | escreve | `supabase/functions/automation-pipeline/index.ts` |
 | `type` | `doc` | escreve | `src/pages/KnowledgeManagementPage.tsx` |
-| `type` | `document` | escreve | `src/services/whatsappOutboundService.ts`<br>`supabase/functions/global-search/index.ts` |
+| `type` | `document` | escreve | `supabase/functions/global-search/index.ts`<br>`supabase/functions/whatsapp-outbound/index.ts` |
 | `type` | `email` | compara, escreve | `src/pages/EmailCalendarTriggersPage.tsx`<br>`supabase/functions/nlp-pipeline/index.ts` |
 | `type` | `end` | compara, escreve | `supabase/functions/workflow-engine-v2/index.ts` |
 | `type` | `enum` | compara, escreve | `src/components/skills/composer/InputsBuilder.tsx`<br>`src/lib/skillComposer/skillDraft.ts`<br>`src/services/skillsSimulationService.ts` |
@@ -1154,7 +1154,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `hitl_gate` | compara | `supabase/functions/workflow-engine-v2/index.ts` |
 | `type` | `human` | compara, escreve | `src/components/super-cerebro/ExpertDiscoveryTab.tsx`<br>`supabase/functions/cerebro-brain/index.ts` |
 | `type` | `idle_agent` | escreve | `src/components/billing/CostOptimizationPanel.tsx` |
-| `type` | `image` | compara, escreve | `src/components/super-cerebro/notebook/CanvasEditor.tsx`<br>`src/services/whatsappOutboundService.ts` |
+| `type` | `image` | compara, escreve | `src/components/super-cerebro/notebook/CanvasEditor.tsx`<br>`supabase/functions/whatsapp-outbound/index.ts` |
 | `type` | `image_url` | escreve | `supabase/functions/browser-agent-run/index.ts`<br>`supabase/functions/doc-ocr/index.ts`<br>`supabase/functions/image-analysis/index.ts`<br>`supabase/functions/visual-search/index.ts`<br>`supabase/functions/voice-transcribe/index.ts` |
 | `type` | `incremental` | escreve | `src/pages/DisasterRecoveryPage.tsx` |
 | `type` | `info` | escreve | `src/components/dashboard/DashboardInsight.tsx`<br>`src/components/super-cerebro/OverviewTab.tsx`<br>`src/stores/notificationStore.ts` |
@@ -1230,7 +1230,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `switch_provider` | compara, escreve | `src/services/incidentService.ts`<br>`supabase/functions/incident-orchestrator/index.ts` |
 | `type` | `table` | compara, escreve | `src/components/shared/GenerativeUI.tsx` |
 | `type` | `task` | escreve | `src/pages/SwarmOrchestrationPage.tsx` |
-| `type` | `template` | escreve | `src/services/whatsappOutboundService.ts` |
+| `type` | `template` | escreve | `supabase/functions/whatsapp-outbound/index.ts` |
 | `type` | `text` | compara, escreve | `src/components/datahub/CreateRecordDialog.tsx`<br>`src/components/integrations/A2APanel.tsx`<br>`src/components/shared/GenerativeUI.tsx`<br>`src/config/datahub-columns.ts`<br>`src/lib/mcp/mcpClient.ts`<br>… +10 |
 | `type` | `thought` | compara | `src/pages/ComputerUsePage.tsx` |
 | `type` | `threshold` | compara | `src/services/agentHandoffService.ts` |
@@ -1632,6 +1632,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | SpanStatus | unset \| ok \| error | `supabase/functions/_shared/otel.ts` |
 | SKILL_DEPARTMENTS | 'financeiro', 'comercial', 'rh', 'ti', 'marketing', 'juridico', 'logistica', 'pos_venda', 'dados', 'executivo', 'transversal', | `supabase/functions/skill-classify-llm/departments.ts` |
 | SKILL_DEPARTMENTS | 'financeiro', 'comercial', 'rh', 'ti', 'marketing', 'juridico', 'logistica', 'pos_venda', 'dados', 'executivo', 'transversal', | `supabase/functions/skill-harvester/departments.ts` |
+| WhatsAppProvider | twilio \| meta \| zapi \| evolution | `supabase/functions/whatsapp-outbound/index.ts` |
 
 ## F. Validações de entrada
 
@@ -2232,6 +2233,10 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 - **InputSchema** (`supabase/functions/voice-transcribe/index.ts`, z.object):
   ```ts
   { audio_base64: z.string().min(1).max(14_000_000, 'audio too large (max ~10MB)'), mime_type: z.string().min(3).max(64).default('audio/webm'), session_id: z.string().uuid().optional(), }
+  ```
+- **BodySchema** (`supabase/functions/whatsapp-outbound/index.ts`, z.object):
+  ```ts
+  { to: z.string().min(1).max(32), text: z.string().max(8000).optional(), imageUrl: z.string().url().optional(), documentUrl: z.string().url().optional(), documentFilename: z.string().max(255).optional(), caption: z.string().max(2000).optional(), templateName: z.string().max(255).optional(), templateLanguage: z.string().max(20).optional(), templateParams: z.array(z.string().max(4000)).max(40).optional(), }
   ```
 - **BodySchema** (`supabase/functions/whatsapp-router/index.ts`, z.object):
   ```ts
@@ -4006,7 +4011,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3015 testes em 212 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3006 testes em 212 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4074,7 +4079,6 @@ _nenhum item encontrado_
 | `src/test/memory-service.test.ts` | 16 | memoryService — envelope memory-tools · addMemory envia tool + params no formato aceito pela edge function · addMemory aplica defaults semantic/Manual quando omitidos · searchMemory devolve lista vazia — nunca undefined — quando não há memórias … |
 | `src/test/skill-install-guard.test.ts` | 16 | normalizeSkillName · remove acentos, caixa e espaços redundantes · trata entradas não string como vazio · evaluateInstallImpact — matriz combinatória … |
 | `src/test/skill-platform-tier.test.ts` | 16 | tier de plataforma · resolve tooling de agentes sem sinal de domínio como TI marcado para revisão · não sobrescreve um veredito de domínio com confiança alta · não sobrescreve o balde transversal (agregadores) … |
-| `src/test/whatsapp-outbound.test.ts` | 16 | whatsappOutboundService — sendWhatsAppMessage (Meta provider) · sends a plain text message via Meta · sends an image message with caption · sends a document message … |
 | `src/test/curation-feed-pagination.test.ts` | 15 | resolveNextCursor · devolve null quando a página veio incompleta (fim do dataset) · devolve null para página vazia · devolve o updated_at da última linha quando a página veio cheia … |
 | `src/test/edge-shared-skills.test.ts` | 15 | _shared/skills · retorna vazio sem skills · ordena alfabeticamente e é determinístico · deduplica por id e ignora skills sem nome … |
 | `src/test/freeze-window-service.test.ts` | 15 | freezeWindowService · listFreezeWindows · filtra por workspace e ordena por starts_at desc · retorna array vazio quando não há dados … |
@@ -4161,6 +4165,7 @@ _nenhum item encontrado_
 | `src/test/skill-recommender-pending.test.ts` | 7 | computePendingSkillIds · filtra as já instaladas · preserva a ordem de ranking · remove duplicatas … |
 | `src/test/skills-selection-diff.test.ts` | 7 | computeSkillSelectionDiff · detecta adições e remoções · seleção idêntica é no-op · limpar a seleção remove tudo … |
 | `src/test/template-skill-links-rebuild.test.ts` | 7 | rebuildTemplateSkillLinks · remove apenas vínculos automáticos ativos, preservando curadoria manual · ressuscita vínculos soft-deletados zerando deleted_at/deleted_by · grava somente vínculos com origem automática … |
+| `src/test/whatsapp-outbound.test.ts` | 7 | whatsappOutboundService — sendWhatsAppMessage · delegates to the whatsapp-outbound edge and returns its result · sends an image message with caption · sends a document message … |
 | `src/test/workflow-checkpoint.test.ts` | 7 | workflowCheckpointService — types · WorkflowExecution interface has expected shape · WorkflowCheckpoint interface has expected shape · CheckpointCreateInput allows optional fields … |
 | `e2e/auth-flows.spec.ts` | 6 | Auth Flows (synthetic user) · login válido redireciona para área autenticada · login inválido mantém usuário em /auth com mensagem de erro · rota protegida sem auth redireciona para /auth … |
 | `e2e/security.spec.ts` | 6 | Security Headers · CSP meta tag is present · X-Frame-Options meta tag is present · Referrer policy meta tag is present … |
@@ -4353,6 +4358,7 @@ _nenhum item encontrado_
 | `invoke(` | `src/services/visionService.ts` |
 | `invoke(` | `src/services/voiceAgentService.ts` |
 | `invoke(` | `src/services/webhookTriggerService.ts` |
+| `invoke(` | `src/services/whatsappOutboundService.ts` |
 | `sendWhatsAppDocument` | `src/services/whatsappOutboundService.ts` |
 | `sendWhatsAppImage` | `src/services/whatsappOutboundService.ts` |
 | `sendWhatsAppMessage` | `src/services/whatsappOutboundService.ts` |
@@ -4694,4 +4700,4 @@ _nenhum item encontrado_
 | 2 hits = fit máximo | `src/services/skillRecommenderService.ts` |
 | quando o ranking semântico devolve menos que `limit`. Desligado por padrão | `src/services/skillRecommenderService.ts` |
 | para preservar determinismo em fluxos que exigem apenas matches reais. | `src/services/skillRecommenderService.ts` |
-| … +163 linhas — lista completa em `context.json` | |
+| … +165 linhas — lista completa em `context.json` | |

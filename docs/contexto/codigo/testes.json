@@ -2100,11 +2100,11 @@
   {
    "arquivo": "src/test/whatsapp-outbound.test.ts",
    "tipo": "unit",
-   "linhas": 254,
+   "linhas": 123,
    "testa": [
     "src/services/whatsappOutboundService.ts"
    ],
-   "casos": 11
+   "casos": 6
   },
   {
    "arquivo": "src/test/whatsapp-webhook.test.ts",

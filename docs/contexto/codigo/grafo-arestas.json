@@ -6763,8 +6763,7 @@
    "src/services/types/webhookTriggerTypes.ts"
   ],
   "src/services/whatsappOutboundService.ts": [
-   "src/integrations/supabase/externalClient.ts",
-   "src/lib/agentService.ts",
+   "src/integrations/supabase/client.ts",
    "src/lib/logger.ts",
    "src/lib/tracing.ts"
   ],
@@ -7267,6 +7266,9 @@
    "supabase/functions/_shared/contracts.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/webhookSignature.ts"
+  ],
+  "supabase/functions/whatsapp-outbound/index.ts": [
+   "supabase/functions/_shared/mod.ts"
   ],
   "supabase/functions/whatsapp-router/index.ts": [
    "supabase/functions/_shared/alternation.ts",

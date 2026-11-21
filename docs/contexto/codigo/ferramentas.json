@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1391)",
+   "TypeScript (1392)",
    "SQL (341)",
    "Markdown (128)",
    "JavaScript (54)",
@@ -1121,10 +1121,6 @@
     "arquivos": 2
    },
    {
-    "host": "x.com",
-    "arquivos": 2
-   },
-   {
     "host": "x.supabase.co",
     "arquivos": 2
    },
@@ -1278,6 +1274,10 @@
    },
    {
     "host": "www.okta.com",
+    "arquivos": 1
+   },
+   {
+    "host": "x.com",
     "arquivos": 1
    },
    {

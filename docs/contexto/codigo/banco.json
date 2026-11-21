@@ -38913,7 +38913,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 3,
+   "usada_no_front": 2,
    "usada_em_edges": [
     "bitrix24-api",
     "bitrix24-oauth",
@@ -38925,6 +38925,7 @@
     "rag-ingest",
     "rag-rerank",
     "rag-rerank-v2",
+    "whatsapp-outbound",
     "whatsapp-webhook"
    ],
    "triggers": [],

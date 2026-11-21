@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fbe64eef7d136edf5d4760ea920d27b631457c54",
+  "sha": "e0772412882f66f2fb20072b798a55fb54721929",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 17:12 UTC",
-  "files_total": 2003,
-  "code_files": 1791,
-  "code_lines": 348650
+  "generated_at": "2026-11-21 17:27 UTC",
+  "files_total": 2004,
+  "code_files": 1792,
+  "code_lines": 348555
  },
  "version": "1.3.2",
- "facts_hash": "8e7a846f9578deab",
+ "facts_hash": "404c53640834cf2e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -236,7 +236,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 699,
-   ".ts": 692,
+   ".ts": 693,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -52102,18 +52102,18 @@
      "whatsapp_webhook_events",
      "workflow_runs",
      "workspace_members",
-     "workspace_secrets",
-     "workspaces"
+     "workspace_secrets"
     ],
     "invokes_transitive": [
      "health-check",
+     "whatsapp-outbound",
      "workflow-engine-v2"
     ],
     "rpc_transitive": [
      "get_masked_secrets",
      "is_user_locked_out"
     ],
-    "deps_count": 38
+    "deps_count": 35
    },
    {
     "path": "",
@@ -55850,6 +55850,41 @@
     "idempotency": true
    },
    {
+    "name": "whatsapp-outbound",
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "methods": [
+     "OPTIONS"
+    ],
+    "auth": "service_role (ignora RLS) + valida JWT do usuário",
+    "tables": [
+     "agent_usage",
+     "api_keys",
+     "openclaw_events",
+     "webhook_delivery_logs",
+     "workspace_members",
+     "workspace_secrets"
+    ],
+    "env": [],
+    "external": [
+     "https://api.twilio.com/2010-04-01/Accounts/${sid}/…",
+     "https://api.z-api.io/instances/${instanceId}/token/${token}/…",
+     "https://graph.facebook.com/v18.0/${phoneNumberId}/…"
+    ],
+    "invokes": [],
+    "doc": "whatsapp-outbound — envia mensagens WhatsApp/Twilio server-side. Int-004: move a leitura de credenciais de provedor do browser para o servidor. O cliente autentica por JWT e envia apenas o destino/conteúdo; a edge resolve workspace_secrets com service-role e chama o provedor. Seguranca: - Autorizaca …",
+    "errors": [
+     "Evolution config incomplete",
+     "Meta config incomplete",
+     "Twilio config incomplete",
+     "Unknown active WhatsApp provider: ${provider}",
+     "Unsupported provider: ${providerSecrets.provider}",
+     "Z-API config incomplete"
+    ],
+    "side_effects": [],
+    "webhook_events": [],
+    "idempotency": false
+   },
+   {
     "name": "whatsapp-router",
     "file": "supabase/functions/whatsapp-router/index.ts",
     "methods": [
@@ -59080,7 +59115,7 @@
   {
    "module": "src/services",
    "files": 166,
-   "lines": 33289,
+   "lines": 32986,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59409,7 +59444,7 @@
   {
    "module": "src/test",
    "files": 191,
-   "lines": 29051,
+   "lines": 28920,
    "tables": [
     "tabela"
    ],
@@ -59590,8 +59625,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 134,
-   "lines": 32292,
+   "files": 135,
+   "lines": 32631,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -62061,7 +62096,6 @@
      "src/services/settingsService.ts"
     ],
     "select": [
-     "src/services/whatsappOutboundService.ts",
      "supabase/functions/bitrix24-api/index.ts",
      "supabase/functions/bitrix24-oauth/index.ts",
      "supabase/functions/bitrix24-webhook/index.ts",
@@ -62072,6 +62106,7 @@
      "supabase/functions/rag-ingest/index.ts",
      "supabase/functions/rag-rerank-v2/index.ts",
      "supabase/functions/rag-rerank/index.ts",
+     "supabase/functions/whatsapp-outbound/index.ts",
      "supabase/functions/whatsapp-webhook/index.ts",
      "tests/rls/personas.test.ts"
     ],
@@ -64162,6 +64197,9 @@
    "webhook-receiver": [
     "src/services/webhookTriggerService.ts"
    ],
+   "whatsapp-outbound": [
+    "src/services/whatsappOutboundService.ts"
+   ],
    "workflow-engine-v2": [
     "src/services/approvalService.ts",
     "src/services/workflowsService.ts"
@@ -64265,16 +64303,16 @@
     "scripts/ai-context/gerar.unit.mjs"
    ],
    "https://api.twilio.com": [
-    "src/services/whatsappOutboundService.ts"
+    "supabase/functions/whatsapp-outbound/index.ts"
    ],
    "https://api.x.com": [
     "scripts/ai-context/cenarios.mjs"
    ],
    "https://api.z-api.io": [
-    "src/services/whatsappOutboundService.ts"
+    "supabase/functions/whatsapp-outbound/index.ts"
    ],
    "https://graph.facebook.com": [
-    "src/services/whatsappOutboundService.ts"
+    "supabase/functions/whatsapp-outbound/index.ts"
    ],
    "https://router.huggingface.co": [
     "supabase/functions/doc-ocr/index.ts",
@@ -66246,6 +66284,14 @@
     "chain": []
    },
    {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "name": "BodySchema",
+    "kind": "object",
+    "body": "{ to: z.string().min(1).max(32), text: z.string().max(8000).optional(), imageUrl: z.string().url().optional(), documentUrl: z.string().url().optional(), documentFilename: z.string().max(255).optional(), caption: z.string().max(2000).optional(), templateName: z.string().max(255).optional(), templateLanguage: z.string().max(20).optional(), templateParams: z.array(z.string().max(4000)).max(40).optional(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
     "file": "supabase/functions/whatsapp-router/index.ts",
     "name": "BodySchema",
     "kind": "object",
@@ -67843,6 +67889,11 @@
     "file": "supabase/functions/skill-harvester/departments.ts",
     "name": "SKILL_DEPARTMENTS",
     "values": "'financeiro', 'comercial', 'rh', 'ti', 'marketing', 'juridico', 'logistica', 'pos_venda', 'dados', 'executivo', 'transversal',"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "name": "WhatsAppProvider",
+    "values": "twilio | meta | zapi | evolution"
    }
   ],
   "error_messages": [
@@ -70695,30 +70746,6 @@
     "msg": "Forneça imageBase64 ou imageUrl"
    },
    {
-    "file": "src/services/whatsappOutboundService.ts",
-    "msg": "Evolution config incomplete"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "msg": "Meta config incomplete"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "msg": "Twilio config incomplete"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "msg": "Unknown active WhatsApp provider: ${provider}"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "msg": "Unsupported provider: ${providerSecrets.provider}"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "msg": "Z-API config incomplete"
-   },
-   {
     "file": "src/services/widgetService.ts",
     "msg": "agent_id and message are required"
    },
@@ -71081,6 +71108,30 @@
    {
     "file": "supabase/functions/test-runner/security_contract_test.ts",
     "msg": ",\n      severity: "
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "msg": "Evolution config incomplete"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "msg": "Meta config incomplete"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "msg": "Twilio config incomplete"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "msg": "Unknown active WhatsApp provider: ${provider}"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "msg": "Unsupported provider: ${providerSecrets.provider}"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "msg": "Z-API config incomplete"
    },
    {
     "file": "supabase/functions/workflow-engine-v2/index.ts",
@@ -72547,6 +72598,10 @@
     "text": "* Lê `audit_log` (RLS restrita a administradores). Usuário sem permissão"
    },
    {
+    "file": "src/services/whatsappOutboundService.ts",
+    "text": "- O service apenas autentica (JWT do usuário), envia o destino/conteúdo"
+   },
+   {
     "file": "src/services/presets/notificationPresets.ts",
     "text": "{{po_number}} criado por {{requester}}. Fornecedor: {{supplier}}. Valor: R$ {{amount}}. Prazo: {{deadline}}.',"
    },
@@ -73053,6 +73108,10 @@
    {
     "file": "supabase/functions/webhook-receiver/index.ts",
     "text": "Parse body with versioned contract validation"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "text": "servidor. O cliente autentica por JWT e envia apenas o destino/conteúdo;"
    },
    {
     "file": "supabase/functions/whatsapp-webhook/index.ts",
@@ -95356,42 +95415,6 @@
     "kind": "escreve"
    },
    {
-    "file": "src/services/whatsappOutboundService.ts",
-    "field": "type",
-    "value": "template",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "field": "type",
-    "value": "body",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "field": "type",
-    "value": "text",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "field": "type",
-    "value": "image",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "field": "type",
-    "value": "document",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/services/whatsappOutboundService.ts",
-    "field": "type",
-    "value": "text",
-    "kind": "escreve"
-   },
-   {
     "file": "src/services/whatsappWebhookService.ts",
     "field": "routing_status",
     "value": "pending",
@@ -98852,6 +98875,42 @@
     "field": "status",
     "value": "active",
     "kind": "filtra"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "field": "type",
+    "value": "template",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "field": "type",
+    "value": "body",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "field": "type",
+    "value": "text",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "field": "type",
+    "value": "image",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "field": "type",
+    "value": "document",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/whatsapp-outbound/index.ts",
+    "field": "type",
+    "value": "text",
+    "kind": "escreve"
    },
    {
     "file": "supabase/functions/whatsapp-router/index.ts",
@@ -112387,11 +112446,11 @@
    },
    {
     "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "whatsappOutboundService — sendWhatsAppMessage (Meta provider)"
+    "name": "whatsappOutboundService — sendWhatsAppMessage"
    },
    {
     "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "sends a plain text message via Meta"
+    "name": "delegates to the whatsapp-outbound edge and returns its result"
    },
    {
     "file": "src/test/whatsapp-outbound.test.ts",
@@ -112407,47 +112466,11 @@
    },
    {
     "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "returns ok:false on Meta API error"
+    "name": "returns ok:false result from the edge on provider error"
    },
    {
     "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "throws when Meta config is incomplete"
-   },
-   {
-    "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "whatsappOutboundService — Twilio provider"
-   },
-   {
-    "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "sends a text via Twilio with Basic auth"
-   },
-   {
-    "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "whatsappOutboundService — Z-API provider"
-   },
-   {
-    "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "sends text to Z-API endpoint"
-   },
-   {
-    "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "uses send-image endpoint for images"
-   },
-   {
-    "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "whatsappOutboundService — Evolution provider"
-   },
-   {
-    "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "sends text to Evolution endpoint with apikey header"
-   },
-   {
-    "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "whatsappOutboundService — invalid provider config"
-   },
-   {
-    "file": "src/test/whatsapp-outbound.test.ts",
-    "name": "throws when active_provider is unknown"
+    "name": "returns ok:false on edge invocation transport error"
    },
    {
     "file": "src/test/whatsapp-webhook.test.ts",
@@ -114019,6 +114042,10 @@
    },
    {
     "file": "src/services/webhookTriggerService.ts",
+    "call": "invoke("
+   },
+   {
+    "file": "src/services/whatsappOutboundService.ts",
     "call": "invoke("
    },
    {
@@ -128076,14 +128103,14 @@
       "escreve:src/lib/mcp/mcpClient.ts",
       "escreve:src/pages/SwarmOrchestrationPage.tsx",
       "escreve:src/services/types/agentHandoffTypes.ts",
-      "escreve:src/services/whatsappOutboundService.ts",
       "escreve:supabase/functions/a2a-server/index.ts",
       "escreve:supabase/functions/browser-agent-run/index.ts",
       "escreve:supabase/functions/datahub-mcp-server/index.ts",
       "escreve:supabase/functions/doc-ocr/index.ts",
       "escreve:supabase/functions/image-analysis/index.ts",
       "escreve:supabase/functions/visual-search/index.ts",
-      "escreve:supabase/functions/voice-transcribe/index.ts"
+      "escreve:supabase/functions/voice-transcribe/index.ts",
+      "escreve:supabase/functions/whatsapp-outbound/index.ts"
      ],
      "select": [
       "compara:src/components/datahub/CreateRecordDialog.tsx",
@@ -128227,7 +128254,7 @@
      ],
      "image": [
       "compara:src/components/super-cerebro/notebook/CanvasEditor.tsx",
-      "escreve:src/services/whatsappOutboundService.ts"
+      "escreve:supabase/functions/whatsapp-outbound/index.ts"
      ],
      "start": [
       "compara:src/components/workflows/WorkflowCanvas.tsx"
@@ -128524,16 +128551,6 @@
       "compara:supabase/functions/skill-harvester/index.ts",
       "escreve:src/services/vaultSyncService.ts"
      ],
-     "template": [
-      "escreve:src/services/whatsappOutboundService.ts"
-     ],
-     "body": [
-      "escreve:src/services/whatsappOutboundService.ts"
-     ],
-     "document": [
-      "escreve:src/services/whatsappOutboundService.ts",
-      "escreve:supabase/functions/global-search/index.ts"
-     ],
      "search": [
       "escreve:src/services/presets/connectorPresets.ts"
      ],
@@ -128630,6 +128647,10 @@
      "automation": [
       "escreve:supabase/functions/global-search/index.ts"
      ],
+     "document": [
+      "escreve:supabase/functions/global-search/index.ts",
+      "escreve:supabase/functions/whatsapp-outbound/index.ts"
+     ],
      "array": [
       "escreve:supabase/functions/global-search/index.ts"
      ],
@@ -128680,6 +128701,12 @@
       "compara:supabase/functions/slack-events-webhook/index.ts",
       "escreve:supabase/functions/test-runner/contract_test.ts",
       "escreve:supabase/functions/test-runner/versioning_contract_test.ts"
+     ],
+     "template": [
+      "escreve:supabase/functions/whatsapp-outbound/index.ts"
+     ],
+     "body": [
+      "escreve:supabase/functions/whatsapp-outbound/index.ts"
      ],
      "llm_call": [
       "compara:supabase/functions/workflow-engine-v2/index.ts",
@@ -134536,6 +134563,7 @@
    "supabase/functions/synthetic-runner/index.ts",
    "supabase/functions/validate-access/index.ts",
    "supabase/functions/visual-search/index.ts",
+   "supabase/functions/whatsapp-outbound/index.ts",
    "supabase/functions/whatsapp-router/index.ts",
    "supabase/migrations/20260405000001_shared_security_infrastructure.sql",
    "supabase/migrations/20260405000002_rbac_system.sql",
@@ -173753,7 +173781,7 @@
   },
   "src/services/whatsappOutboundService.ts": {
    "path": "src/services/whatsappOutboundService.ts",
-   "lines": 435,
+   "lines": 132,
    "exports": [
     "type WhatsAppProvider",
     "interface WhatsAppMessageInput",
@@ -173764,31 +173792,8 @@
     "function sendWhatsAppDocument",
     "function sendWhatsAppTemplate"
    ],
-   "tables": [
-    {
-     "table": "workspace_secrets",
-     "op": "select"
-    }
-   ],
-   "table_cols": {
-    "workspace_secrets": [
-     "key_name",
-     "key_value",
-     "workspace_id"
-    ]
-   },
-   "external_urls": [
-    "https://api.twilio.com/2010-04-01/Accounts/${sid}/…",
-    "https://api.z-api.io/instances/${instanceId}/token/${token}/…",
-    "https://graph.facebook.com/v18.0/${phoneNumberId}/…"
-   ],
-   "errors": [
-    "Evolution config incomplete",
-    "Meta config incomplete",
-    "Twilio config incomplete",
-    "Unknown active WhatsApp provider: ${provider}",
-    "Unsupported provider: ${providerSecrets.provider}",
-    "Z-API config incomplete"
+   "invokes": [
+    "whatsapp-outbound"
    ],
    "enums": [
     {
@@ -173796,39 +173801,11 @@
      "values": "twilio | meta | zapi | evolution"
     }
    ],
-   "status_values": [
-    {
-     "field": "type",
-     "value": "template",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "body",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "text",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "image",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "document",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "text",
-     "kind": "escreve"
-    }
+   "rule_comments": [
+    "- O service apenas autentica (JWT do usuário), envia o destino/conteúdo"
    ],
    "side_effects": [
+    "invoke(",
     "sendWhatsAppDocument",
     "sendWhatsAppImage",
     "sendWhatsAppMessage",
@@ -179378,33 +179355,23 @@
   },
   "src/test/whatsapp-outbound.test.ts": {
    "path": "src/test/whatsapp-outbound.test.ts",
-   "lines": 254,
+   "lines": 123,
    "is_test": true,
-   "doc": "whatsappOutboundService tests (sprint #4) Tests the public sendMessage entry point and the 4 provider-specific dispatchers via mocked fetch + workspace_secrets lookup.",
+   "doc": "whatsappOutboundService tests (sprint #4 + Int-004) Tests the public sendMessage entry point. Since Int-004 the service delegates to the `whatsapp-outbound` edge function (server-side), so these tests mock supabase.functions.invoke and verify request shaping and result mapping — the provider dispatc …",
    "tests": [
-    "whatsappOutboundService — sendWhatsAppMessage (Meta provider)",
-    "sends a plain text message via Meta",
+    "whatsappOutboundService — sendWhatsAppMessage",
+    "delegates to the whatsapp-outbound edge and returns its result",
     "sends an image message with caption",
     "sends a document message",
     "sends a template message with positional params",
-    "returns ok:false on Meta API error",
-    "throws when Meta config is incomplete",
-    "whatsappOutboundService — Twilio provider",
-    "sends a text via Twilio with Basic auth",
-    "whatsappOutboundService — Z-API provider",
-    "sends text to Z-API endpoint",
-    "uses send-image endpoint for images",
-    "whatsappOutboundService — Evolution provider",
-    "sends text to Evolution endpoint with apikey header",
-    "whatsappOutboundService — invalid provider config",
-    "throws when active_provider is unknown"
+    "returns ok:false result from the edge on provider error",
+    "returns ok:false on edge invocation transport error"
    ],
    "side_effects": [
     "sendWhatsAppDocument",
     "sendWhatsAppImage",
     "sendWhatsAppMessage",
-    "sendWhatsAppTemplate",
-    "sendWhatsAppText"
+    "sendWhatsAppTemplate"
    ]
   },
   "src/test/whatsapp-webhook.test.ts": {
@@ -188186,6 +188153,91 @@
     "Parse body with versioned contract validation"
    ]
   },
+  "supabase/functions/whatsapp-outbound/index.ts": {
+   "path": "supabase/functions/whatsapp-outbound/index.ts",
+   "lines": 339,
+   "exports": [
+    "type WhatsAppProvider"
+   ],
+   "tables": [
+    {
+     "table": "workspace_secrets",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "workspace_secrets": [
+     "key_name",
+     "key_value",
+     "workspace_id"
+    ]
+   },
+   "external_urls": [
+    "https://api.twilio.com/2010-04-01/Accounts/${sid}/…",
+    "https://api.z-api.io/instances/${instanceId}/token/${token}/…",
+    "https://graph.facebook.com/v18.0/${phoneNumberId}/…"
+   ],
+   "errors": [
+    "Evolution config incomplete",
+    "Meta config incomplete",
+    "Twilio config incomplete",
+    "Unknown active WhatsApp provider: ${provider}",
+    "Unsupported provider: ${providerSecrets.provider}",
+    "Z-API config incomplete"
+   ],
+   "zod": [
+    {
+     "name": "BodySchema",
+     "kind": "object",
+     "body": "{ to: z.string().min(1).max(32), text: z.string().max(8000).optional(), imageUrl: z.string().url().optional(), documentUrl: z.string().url().optional(), documentFilename: z.string().max(255).optional(), caption: z.string().max(2000).optional(), templateName: z.string().max(255).optional(), templateLanguage: z.string().max(20).optional(), templateParams: z.array(z.string().max(4000)).max(40).optional(), }",
+     "refines": [],
+     "chain": []
+    }
+   ],
+   "enums": [
+    {
+     "name": "WhatsAppProvider",
+     "values": "twilio | meta | zapi | evolution"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "type",
+     "value": "template",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "body",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "text",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "image",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "document",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "text",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "servidor. O cliente autentica por JWT e envia apenas o destino/conteúdo;"
+   ],
+   "doc": "whatsapp-outbound — envia mensagens WhatsApp/Twilio server-side. Int-004: move a leitura de credenciais de provedor do browser para o servidor. O cliente autentica por JWT e envia apenas o destino/conteúdo; a edge resolve workspace_secrets com service-role e chama o provedor. Seguranca: - Autorizaca …",
+   "uses_service_role": true
+  },
   "supabase/functions/whatsapp-router/index.ts": {
    "path": "supabase/functions/whatsapp-router/index.ts",
    "lines": 296,
@@ -190761,10 +190813,23 @@
   }
  },
  "git": {
-  "sha": "fbe64eef7d136edf5d4760ea920d27b631457c54",
+  "sha": "e0772412882f66f2fb20072b798a55fb54721929",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "e077241",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat(whatsapp): move envio de mensagens para edge whatsapp-outbound (retomada) (#142)",
+    "files": [
+     "docs/migration/MATRIZ_EDGE_TABELA.md",
+     "src/services/whatsappOutboundService.ts",
+     "src/test/whatsapp-outbound.test.ts",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/whatsapp-outbound/index.ts"
+    ]
+   },
    {
     "sha": "fbe64ee",
     "date": "2026-11-21",
@@ -191089,21 +191154,12 @@
      "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
      "supabase/migrations/20261114094500_restore_log_audit_entry.sql"
     ]
-   },
-   {
-    "sha": "d2249e5",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore: contexto agendado de 10 min para 1x/hora (#98)",
-    "files": [
-     ".github/workflows/contexto.yml"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    7
+    8
    ],
    [
     "package-lock.json",
@@ -191116,6 +191172,18 @@
    [
     ".github/workflows/edge-deploy.yml",
     3
+   ],
+   [
+    "docs/migration/MATRIZ_EDGE_TABELA.md",
+    2
+   ],
+   [
+    "src/services/whatsappOutboundService.ts",
+    2
+   ],
+   [
+    "src/test/whatsapp-outbound.test.ts",
+    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -191154,19 +191222,11 @@
     2
    ],
    [
-    ".github/workflows/contexto.yml",
-    2
+    "supabase/functions/whatsapp-outbound/index.ts",
+    1
    ],
    [
     "src/services/settingsService.ts",
-    1
-   ],
-   [
-    "src/services/whatsappOutboundService.ts",
-    1
-   ],
-   [
-    "src/test/whatsapp-outbound.test.ts",
     1
    ],
    [
@@ -191175,10 +191235,6 @@
    ],
    [
     "supabase/functions/rag-embed-v2/index.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261121103000_embed_retry_chunks.sql",
     1
    ]
   ]

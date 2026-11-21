@@ -3012,8 +3012,7 @@
     "whatsapp_webhook_events",
     "workflow_runs",
     "workspace_members",
-    "workspace_secrets",
-    "workspaces"
+    "workspace_secrets"
    ],
    "rpcs": [
     "get_masked_secrets",
@@ -3022,16 +3021,16 @@
    "edges": [
     "a2a-server",
     "health-check",
+    "whatsapp-outbound",
     "widget-proxy",
     "workflow-engine-v2"
    ],
    "canais_realtime": [],
    "flags": [],
    "papeis": [
-    "admin",
     "status"
    ],
-   "arquivos_puxados": 39
+   "arquivos_puxados": 36
   },
   {
    "protegida": true,

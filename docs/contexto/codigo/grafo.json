@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1210,
+ "nos": 1211,
  "arestas": 5257,
  "hubs": [
   {
@@ -26,7 +26,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 160
+   "importado_por": 161
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -42,7 +42,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/externalClient.ts",
-   "importado_por": 119
+   "importado_por": 118
   },
   {
    "arquivo": "src/components/ui/textarea.tsx",
@@ -58,7 +58,7 @@
   },
   {
    "arquivo": "supabase/functions/_shared/mod.ts",
-   "importado_por": 85
+   "importado_por": 86
   },
   {
    "arquivo": "src/components/ui/tabs.tsx",
@@ -90,7 +90,7 @@
   },
   {
    "arquivo": "src/lib/agentService.ts",
-   "importado_por": 40
+   "importado_por": 39
   },
   {
    "arquivo": "src/contexts/AuthContext.tsx",

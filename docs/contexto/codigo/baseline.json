@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fbe64eef7d136edf5d4760ea920d27b631457c54",
+  "commit": "e0772412882f66f2fb20072b798a55fb54721929",
   "branch": "main",
-  "data_commit": "2026-11-21T14:11:39-03:00",
+  "data_commit": "2026-11-21T14:26:50-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "e0772412",
+    "data": "2026-11-21",
+    "assunto": "feat(whatsapp): move envio de mensagens para edge whatsapp-outbound (retomada) (#142)"
+   },
    {
     "sha": "fbe64eef",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "02ed452c",
     "data": "2026-11-20",
     "assunto": "chore(deps)(deps): bump @sentry/react (#102)"
-   },
-   {
-    "sha": "60357f2b",
-    "data": "2026-11-20",
-    "assunto": "chore(ci)(deps): bump actions/setup-node from 6.5.0 to 7.1.0 (#101)"
    }
   ],
   "arquivos_mudados_7d": 107,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "pasta": "package-lock.json",
@@ -168,6 +168,10 @@
     "mudancas": 4
    },
    {
+    "pasta": "docs/migration/MATRIZ_EDGE_TABELA.md",
+    "mudancas": 4
+   },
+   {
     "pasta": "src/components/admin",
     "mudancas": 4
    },
@@ -190,10 +194,6 @@
    {
     "pasta": "AGENTS.md",
     "mudancas": 3
-   },
-   {
-    "pasta": "docs/migration/MATRIZ_EDGE_TABELA.md",
-    "mudancas": 3
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -223,6 +223,10 @@
    },
    {
     "arquivo": ".github/workflows/edge-deploy.yml",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "docs/migration/MATRIZ_EDGE_TABELA.md",
     "mudancas": 4
    },
    {
@@ -274,10 +278,6 @@
     "mudancas": 3
    },
    {
-    "arquivo": "docs/migration/MATRIZ_EDGE_TABELA.md",
-    "mudancas": 3
-   },
-   {
     "arquivo": "scripts/automation.config.json",
     "mudancas": 3
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 55
+    "commits": 56
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 1998,
-  "arquivos_codigo": 1449,
-  "linhas_codigo": 318391,
+  "arquivos_total": 1999,
+  "arquivos_codigo": 1450,
+  "linhas_codigo": 318296,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -320,7 +320,7 @@
   "modulos": 71,
   "componentes": 661,
   "hooks": 75,
-  "edge_functions": 87,
+  "edge_functions": 88,
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
@@ -512,7 +512,7 @@
   },
   "src/services": {
    "arquivos": 166,
-   "linhas": 33289
+   "linhas": 32986
   },
   "src/stores": {
    "arquivos": 12,
@@ -520,7 +520,7 @@
   },
   "src/test": {
    "arquivos": 191,
-   "linhas": 29051
+   "linhas": 28920
   },
   "src/tests": {
    "arquivos": 2,
@@ -531,8 +531,8 @@
    "linhas": 530
   },
   "supabase/functions": {
-   "arquivos": 134,
-   "linhas": 32292
+   "arquivos": 135,
+   "linhas": 32631
   },
   "tailwind.config.ts": {
    "arquivos": 1,

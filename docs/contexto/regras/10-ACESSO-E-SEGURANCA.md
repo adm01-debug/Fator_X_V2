@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fbe64eef7d` · branch `main` · 2026-11-21 17:12 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e077241288` · branch `main` · 2026-11-21 17:27 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 176 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 177 arquivo(s)
 
 - `e2e/auth-flows.spec.ts`
 - `e2e/helpers/auth-fixtures.ts`
@@ -384,6 +384,7 @@
 - `supabase/functions/synthetic-runner/index.ts`
 - `supabase/functions/validate-access/index.ts`
 - `supabase/functions/visual-search/index.ts`
+- `supabase/functions/whatsapp-outbound/index.ts`
 - `supabase/functions/whatsapp-router/index.ts`
 - `supabase/migrations/20260405000001_shared_security_infrastructure.sql`
 - `supabase/migrations/20260405000002_rbac_system.sql`
@@ -471,8 +472,7 @@
 - `supabase/migrations/20260726195702_c67b4a61-2895-4b1f-a3ab-2b98291792e3.sql`
 - `supabase/migrations/20260726200653_b8a5612b-6c59-4e82-b726-a0be5aee81dc.sql`
 - `supabase/migrations/20260726201930_d21d3920-77d2-411e-8f05-a64f62ecc59e.sql`
-- `supabase/migrations/20260726202014_612509e6-18c1-4b63-9f38-70c79cd5916b.sql`
-- … +26 (lista completa em `context.json`)
+- … +27 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 

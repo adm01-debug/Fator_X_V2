@@ -160,6 +160,7 @@
     "voice-synthesize",
     "voice-transcribe",
     "webhook-receiver",
+    "whatsapp-outbound",
     "whatsapp-webhook",
     "widget-proxy",
     "workflow-engine-v2"
@@ -1355,16 +1356,13 @@
    "hooks_locais": [],
    "hooks_definidos": [],
    "edges": [
+    "whatsapp-outbound",
     "widget-proxy",
     "workflow-engine-v2"
    ],
    "tabelas": [
-    "agents",
     "whatsapp_webhook_events",
-    "workflow_runs",
-    "workspace_members",
-    "workspace_secrets",
-    "workspaces"
+    "workflow_runs"
    ],
    "rpcs": [
     "is_user_locked_out"
@@ -1382,9 +1380,7 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [
-    "admin"
-   ],
+   "papeis": [],
    "diretos": {
     "edges": [],
     "tabelas": [
@@ -1884,6 +1880,7 @@
     "voice-synthesize",
     "voice-transcribe",
     "webhook-receiver",
+    "whatsapp-outbound",
     "whatsapp-webhook",
     "widget-proxy",
     "workflow-engine-v2"
@@ -4525,6 +4522,7 @@
     "voice-synthesize",
     "voice-transcribe",
     "webhook-receiver",
+    "whatsapp-outbound",
     "whatsapp-webhook",
     "widget-proxy",
     "workflow-engine-v2"
@@ -5682,6 +5680,7 @@
     "voice-synthesize",
     "voice-transcribe",
     "webhook-receiver",
+    "whatsapp-outbound",
     "whatsapp-webhook",
     "widget-proxy",
     "workflow-engine-v2"
@@ -6105,7 +6104,7 @@
    "modulo": "services",
    "arquivos": 146,
    "testes": 0,
-   "linhas": 32044,
+   "linhas": 31741,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6226,6 +6225,7 @@
     "voice-synthesize",
     "voice-transcribe",
     "webhook-receiver",
+    "whatsapp-outbound",
     "whatsapp-webhook",
     "widget-proxy",
     "workflow-engine-v2"
@@ -6497,6 +6497,7 @@
      "voice-synthesize",
      "voice-transcribe",
      "webhook-receiver",
+     "whatsapp-outbound",
      "whatsapp-webhook",
      "widget-proxy",
      "workflow-engine-v2"

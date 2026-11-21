@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "pasta": "supabase/functions",
- "total": 87,
+ "total": 88,
  "verify_jwt_false": [
   "bitrix24-webhook",
   "migrate-helper",
@@ -2899,6 +2899,39 @@
    "chamada_por_sql_ou_cron": false,
    "orfa": false,
    "testes": 0
+  },
+  {
+   "nome": "whatsapp-outbound",
+   "entrada": "supabase/functions/whatsapp-outbound/index.ts",
+   "arquivos": 1,
+   "linhas": 339,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "workspace_secrets"
+   ],
+   "rpcs": [],
+   "env": [],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.twilio.com",
+    "api.z-api.io",
+    "graph.facebook.com"
+   ],
+   "usa_shared": [
+    "mod.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/whatsappOutboundService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
   },
   {
    "nome": "whatsapp-router",
