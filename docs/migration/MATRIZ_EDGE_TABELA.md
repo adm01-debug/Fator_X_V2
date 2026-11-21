@@ -93,6 +93,7 @@
 | `voice-synthesize` | `agents`, `voice_sessions` |
 | `voice-transcribe` | `voice_sessions` |
 | `webhook-receiver` | `webhook_endpoints`, `webhook_events` |
+| `whatsapp-outbound` | `workspace_secrets` |
 | `whatsapp-router` | `openclaw_events`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages` |
 | `whatsapp-webhook` | `agent_routing_config`, `openclaw_events`, `trace_events`, `whatsapp_webhook_events`, `workspace_secrets` |
 | `widget-proxy` | `agents` |
@@ -193,5 +194,5 @@
 | `workflow_steps` | `cerebro-brain`, `workflow-engine-v2` |
 | `workflows` | `cerebro-brain`, `workflow-engine-v2` |
 | `workspace_members` | `cerebro-brain`, `cerebro-query`, `doc-rechunk`, `eval-judge`, `hf-autotrain`, `llm-gateway`, `memory-tools`, `notebook-podcast-generate`, `rag-embed-v2`, `rag-ingest`, `rag-rerank`, `rag-rerank-v2`, `smolagent-runtime` |
-| `workspace_secrets` | `bitrix24-api`, `bitrix24-oauth`, `bitrix24-webhook`, `crm-bitrix-sync`, `eval-judge`, `llm-gateway`, `rag-embed-v2`, `rag-ingest`, `rag-rerank`, `rag-rerank-v2`, `whatsapp-webhook` |
+| `workspace_secrets` | `bitrix24-api`, `bitrix24-oauth`, `bitrix24-webhook`, `crm-bitrix-sync`, `eval-judge`, `llm-gateway`, `rag-embed-v2`, `rag-ingest`, `rag-rerank`, `rag-rerank-v2`, `whatsapp-outbound`, `whatsapp-webhook` |
 | `workspaces` | `health-check`, `voice-session` |
