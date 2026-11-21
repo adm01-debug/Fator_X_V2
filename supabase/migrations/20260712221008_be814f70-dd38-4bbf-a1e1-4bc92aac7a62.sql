@@ -26,17 +26,29 @@ CREATE POLICY "Admins only" ON public.trace_events_v2
   USING (public.is_workspace_admin((SELECT auth.uid()), workspace_id))
   WITH CHECK (public.is_workspace_admin((SELECT auth.uid()), workspace_id));
 
-DROP POLICY IF EXISTS "Admins only" ON public.trace_events_v2_2026_05;
-CREATE POLICY "Admins only" ON public.trace_events_v2_2026_05
-  FOR ALL TO authenticated
-  USING (public.is_workspace_admin((SELECT auth.uid()), workspace_id))
-  WITH CHECK (public.is_workspace_admin((SELECT auth.uid()), workspace_id));
+-- trace_events_v2_2026_05 (dropada pela retenção de 90d em prod; ausente no preview)
+DO $$
+BEGIN
+  IF to_regclass('public.trace_events_v2_2026_05') IS NOT NULL THEN
+    DROP POLICY IF EXISTS "Admins only" ON public.trace_events_v2_2026_05;
+    CREATE POLICY "Admins only" ON public.trace_events_v2_2026_05
+      FOR ALL TO authenticated
+      USING (public.is_workspace_admin((SELECT auth.uid()), workspace_id))
+      WITH CHECK (public.is_workspace_admin((SELECT auth.uid()), workspace_id));
+  END IF;
+END $$;
 
-DROP POLICY IF EXISTS "Admins only" ON public.trace_events_v2_2026_06;
-CREATE POLICY "Admins only" ON public.trace_events_v2_2026_06
-  FOR ALL TO authenticated
-  USING (public.is_workspace_admin((SELECT auth.uid()), workspace_id))
-  WITH CHECK (public.is_workspace_admin((SELECT auth.uid()), workspace_id));
+-- trace_events_v2_2026_06 (dropada pela retenção de 90d em prod; ausente no preview)
+DO $$
+BEGIN
+  IF to_regclass('public.trace_events_v2_2026_06') IS NOT NULL THEN
+    DROP POLICY IF EXISTS "Admins only" ON public.trace_events_v2_2026_06;
+    CREATE POLICY "Admins only" ON public.trace_events_v2_2026_06
+      FOR ALL TO authenticated
+      USING (public.is_workspace_admin((SELECT auth.uid()), workspace_id))
+      WITH CHECK (public.is_workspace_admin((SELECT auth.uid()), workspace_id));
+  END IF;
+END $$;
 
 -- agent_traces_v2_2026_05 (workspace via agents.workspace_id)
 -- Partição criada em runtime pelo create_partition_if_not_exists (ausente em base limpa/preview)
