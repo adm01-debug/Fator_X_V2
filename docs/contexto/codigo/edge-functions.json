@@ -1971,7 +1971,7 @@
    "nome": "rag-embed-v2",
    "entrada": "supabase/functions/rag-embed-v2/index.ts",
    "arquivos": 2,
-   "linhas": 271,
+   "linhas": 350,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1983,13 +1983,16 @@
    "rpcs": [],
    "env": [
     "HUGGINGFACE_API_KEY",
-    "OPENAI_API_KEY"
+    "OPENAI_API_KEY",
+    "OPENROUTER_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY"
    ],
    "buckets": [],
    "chama_edges": [],
    "hosts_externos": [
     "api-inference.huggingface.co",
-    "api.openai.com"
+    "api.openai.com",
+    "openrouter.ai"
    ],
    "usa_shared": [
     "mod.ts",

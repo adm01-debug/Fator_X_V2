@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6b7d90eb054cd37da2e3676b4c7cdb83d688eced",
+  "commit": "35f15a71ea86ef24fc9b33613f723b0aa4ffdd77",
   "branch": "main",
-  "data_commit": "2026-11-21T13:16:16-03:00",
+  "data_commit": "2026-11-21T13:49:25-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "35f15a71",
+    "data": "2026-11-21",
+    "assunto": "fix(rag): aceita service role e fallback OpenRouter no rag-embed-v2 (#141)"
+   },
    {
     "sha": "6b7d90eb",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "c5fffcfb",
     "data": "2026-11-20",
     "assunto": "fix(db): reconcilia schema de documentos com o contrato das edges (#122)"
-   },
-   {
-    "sha": "71fcc76c",
-    "data": "2026-11-20",
-    "assunto": "fix(edge): contract tests verdes sem secrets — valida payload e assinatura antes de exigir key (#120)"
    }
   ],
   "arquivos_mudados_7d": 103,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "pasta": "package-lock.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 53
+    "commits": 54
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 1997,
   "arquivos_codigo": 1449,
-  "linhas_codigo": 318247,
+  "linhas_codigo": 318326,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -532,7 +532,7 @@
   },
   "supabase/functions": {
    "arquivos": 134,
-   "linhas": 32213
+   "linhas": 32292
   },
   "tailwind.config.ts": {
    "arquivos": 1,
