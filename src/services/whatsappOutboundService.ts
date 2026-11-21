@@ -35,15 +35,15 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 export type WhatsAppProvider = 'twilio' | 'meta' | 'zapi' | 'evolution';
 
 export interface WhatsAppMessageInput {
-  to: string;                            // E.164 phone number
-  text?: string;                         // Plain text body
-  imageUrl?: string;                     // Public URL to image
-  documentUrl?: string;                  // Public URL to document
-  documentFilename?: string;             // Display name for document
-  caption?: string;                      // Caption for image/document
-  templateName?: string;                 // Meta template name
-  templateLanguage?: string;             // Meta template language code (e.g., 'pt_BR')
-  templateParams?: string[];             // Positional template params
+  to: string; // E.164 phone number
+  text?: string; // Plain text body
+  imageUrl?: string; // Public URL to image
+  documentUrl?: string; // Public URL to document
+  documentFilename?: string; // Display name for document
+  caption?: string; // Caption for image/document
+  templateName?: string; // Meta template name
+  templateLanguage?: string; // Meta template language code (e.g., 'pt_BR')
+  templateParams?: string[]; // Positional template params
 }
 
 export interface WhatsAppSendResult {
@@ -67,14 +67,14 @@ async function loadActiveProviderConfig(): Promise<ProviderSecrets> {
   const wsId = await getWorkspaceId();
   const { data, error } = await supabaseExternal
     .from('workspace_secrets')
-    .select('key_name, encrypted_value')
+    .select('key_name, key_value')
     .eq('workspace_id', wsId)
     .like('key_name', 'whatsapp_outbound_%');
   if (error) throw error;
 
   const map: Record<string, string> = {};
-  for (const row of (data ?? [])) {
-    map[row.key_name] = row.encrypted_value ?? '';
+  for (const row of data ?? []) {
+    map[row.key_name] = row.key_value ?? '';
   }
 
   const provider = (map['whatsapp_outbound_active_provider'] ?? 'meta') as WhatsAppProvider;
@@ -116,14 +116,20 @@ async function sendViaTwilio(
   const resp = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
     method: 'POST',
     headers: {
-      'Authorization': `Basic ${auth}`,
+      Authorization: `Basic ${auth}`,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: body.toString(),
   });
   const data = (await resp.json()) as { sid?: string; message?: string };
   if (!resp.ok) {
-    return { ok: false, provider: 'twilio', message_id: null, raw_response: data, error: data.message ?? `HTTP ${resp.status}` };
+    return {
+      ok: false,
+      provider: 'twilio',
+      message_id: null,
+      raw_response: data,
+      error: data.message ?? `HTTP ${resp.status}`,
+    };
   }
   return { ok: true, provider: 'twilio', message_id: data.sid ?? null, raw_response: data };
 }
@@ -145,12 +151,15 @@ async function sendViaMeta(
       template: {
         name: input.templateName,
         language: { code: input.templateLanguage ?? 'pt_BR' },
-        components: input.templateParams && input.templateParams.length > 0
-          ? [{
-              type: 'body',
-              parameters: input.templateParams.map((text) => ({ type: 'text', text })),
-            }]
-          : [],
+        components:
+          input.templateParams && input.templateParams.length > 0
+            ? [
+                {
+                  type: 'body',
+                  parameters: input.templateParams.map((text) => ({ type: 'text', text })),
+                },
+              ]
+            : [],
       },
     };
   } else if (input.imageUrl) {
@@ -183,16 +192,30 @@ async function sendViaMeta(
   const resp = await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
   });
-  const data = (await resp.json()) as { messages?: Array<{ id?: string }>; error?: { message: string } };
+  const data = (await resp.json()) as {
+    messages?: Array<{ id?: string }>;
+    error?: { message: string };
+  };
   if (!resp.ok) {
-    return { ok: false, provider: 'meta', message_id: null, raw_response: data, error: data.error?.message ?? `HTTP ${resp.status}` };
+    return {
+      ok: false,
+      provider: 'meta',
+      message_id: null,
+      raw_response: data,
+      error: data.error?.message ?? `HTTP ${resp.status}`,
+    };
   }
-  return { ok: true, provider: 'meta', message_id: data.messages?.[0]?.id ?? null, raw_response: data };
+  return {
+    ok: true,
+    provider: 'meta',
+    message_id: data.messages?.[0]?.id ?? null,
+    raw_response: data,
+  };
 }
 
 async function sendViaZapi(
@@ -210,19 +233,37 @@ async function sendViaZapi(
     body = { phone: input.to, image: input.imageUrl, caption: input.caption ?? '' };
   } else if (input.documentUrl) {
     endpoint = 'send-document/pdf';
-    body = { phone: input.to, document: input.documentUrl, fileName: input.documentFilename ?? 'doc' };
+    body = {
+      phone: input.to,
+      document: input.documentUrl,
+      fileName: input.documentFilename ?? 'doc',
+    };
   }
 
-  const resp = await fetch(`https://api.z-api.io/instances/${instanceId}/token/${token}/${endpoint}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  const resp = await fetch(
+    `https://api.z-api.io/instances/${instanceId}/token/${token}/${endpoint}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    },
+  );
   const data = (await resp.json()) as { id?: string; messageId?: string; error?: string };
   if (!resp.ok) {
-    return { ok: false, provider: 'zapi', message_id: null, raw_response: data, error: data.error ?? `HTTP ${resp.status}` };
+    return {
+      ok: false,
+      provider: 'zapi',
+      message_id: null,
+      raw_response: data,
+      error: data.error ?? `HTTP ${resp.status}`,
+    };
   }
-  return { ok: true, provider: 'zapi', message_id: data.messageId ?? data.id ?? null, raw_response: data };
+  return {
+    ok: true,
+    provider: 'zapi',
+    message_id: data.messageId ?? data.id ?? null,
+    raw_response: data,
+  };
 }
 
 async function sendViaEvolution(
@@ -257,12 +298,18 @@ async function sendViaEvolution(
   const url = `${baseUrl.replace(/\/$/, '')}${endpoint}`;
   const resp = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'apikey': apikey },
+    headers: { 'Content-Type': 'application/json', apikey: apikey },
     body: JSON.stringify(body),
   });
   const data = (await resp.json()) as { key?: { id?: string }; error?: string };
   if (!resp.ok) {
-    return { ok: false, provider: 'evolution', message_id: null, raw_response: data, error: data.error ?? `HTTP ${resp.status}` };
+    return {
+      ok: false,
+      provider: 'evolution',
+      message_id: null,
+      raw_response: data,
+      error: data.error ?? `HTTP ${resp.status}`,
+    };
   }
   return { ok: true, provider: 'evolution', message_id: data.key?.id ?? null, raw_response: data };
 }
@@ -316,7 +363,10 @@ export async function sendWhatsAppMessage(
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        logger.error('sendWhatsAppMessage failed', { error: msg, provider: providerSecrets.provider });
+        logger.error('sendWhatsAppMessage failed', {
+          error: msg,
+          provider: providerSecrets.provider,
+        });
         span.setStatus('error', msg);
         return {
           ok: false,

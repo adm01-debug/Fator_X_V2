@@ -13679,6 +13679,7 @@ export type Database = {
           encrypted_value: string | null
           id: string
           key_name: string
+          key_value: string | null
           updated_at: string | null
           workspace_id: string | null
         }
@@ -13687,6 +13688,7 @@ export type Database = {
           encrypted_value?: string | null
           id?: string
           key_name: string
+          key_value?: string | null
           updated_at?: string | null
           workspace_id?: string | null
         }
@@ -13695,6 +13697,7 @@ export type Database = {
           encrypted_value?: string | null
           id?: string
           key_name?: string
+          key_value?: string | null
           updated_at?: string | null
           workspace_id?: string | null
         }

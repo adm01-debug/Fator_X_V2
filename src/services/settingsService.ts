@@ -83,13 +83,13 @@ export async function deleteWorkspaceSecret(id: string): Promise<void> {
 }
 
 /**
- * Rotates a workspace secret's encrypted value.
+ * Rotates a workspace secret value.
  */
 export async function rotateWorkspaceSecret(id: string, newValue: string): Promise<void> {
   if (!newValue.trim()) throw new Error('Novo valor é obrigatório');
   const { error } = await supabaseExternal
     .from('workspace_secrets')
-    .update({ encrypted_value: new TextEncoder().encode(newValue.trim()) } as never)
+    .update({ key_value: newValue.trim() } as never)
     .eq('id', id);
   if (error) {
     logger.error('Failed to rotate workspace secret', { id, error: error.message });
