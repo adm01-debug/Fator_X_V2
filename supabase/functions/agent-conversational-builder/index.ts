@@ -56,8 +56,8 @@ Deno.serve(async (req) => {
   if (!rateResult.allowed) return createRateLimitResponse(rateResult, corsHeaders);
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get(AI_API_KEY_ENV);
-    if (!LOVABLE_API_KEY) throw new Error('DEEPSEEK_API_KEY missing');
+    const OPENROUTER_API_KEY = Deno.env.get(AI_API_KEY_ENV);
+    if (!OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY not configured');
 
     const rawBody = await req.json().catch(() => null);
     const parsedBody = BuilderBodySchema.safeParse(rawBody);
@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
     const response = await fetch(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -137,9 +137,9 @@ Deno.serve(async (req) => {
     });
   } catch (e) {
     console.error('conversational-builder error:', e);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
-    );
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

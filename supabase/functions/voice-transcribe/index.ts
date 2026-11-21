@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { z } from 'https://esm.sh/zod@3.23.8';
 
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-provider.ts';
 import {
   checkRateLimit,
   createRateLimitResponse,
@@ -51,11 +52,11 @@ Deno.serve(async (req) => {
       );
     const { audio_base64, mime_type, session_id } = parsed.data;
 
-    const LOVABLE_API_KEY = requireEnv('LOVABLE_API_KEY');
+    const apiKey = requireEnv(AI_API_KEY_ENV);
 
-    const aiResp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResp = await fetchWithTimeout(AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [

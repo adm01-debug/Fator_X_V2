@@ -584,11 +584,11 @@ async function resolveFallbackChain(
       }
     }
   }
-  // Last resort: DeepSeek (DEEPSEEK_API_KEY) — substitui o Lovable AI Gateway
-  const deepseekApiKey = Deno.env.get(AI_API_KEY_ENV);
-  if (deepseekApiKey) {
+  // Last resort: provider padrão das edges (AI_API_KEY_ENV = OPENROUTER_API_KEY) — via ai-provider.ts
+  const defaultApiKey = Deno.env.get(AI_API_KEY_ENV);
+  if (defaultApiKey) {
     chain.push({
-      apiKey: deepseekApiKey,
+      apiKey: defaultApiKey,
       provider: 'deepseek',
       model: aiModel(requestedModel),
       priority: 4,
@@ -603,6 +603,17 @@ async function resolveFallbackChain(
       provider: 'openrouter',
       model: requestedModel,
       priority: 5,
+    });
+  }
+
+  // Hermes API via env (HERMES_API_KEY [+ HERMES_BASE_URL opcional]) — provider OpenAI-compatível extra
+  const hermesApiKey = Deno.env.get('HERMES_API_KEY');
+  if (hermesApiKey) {
+    chain.push({
+      apiKey: hermesApiKey,
+      provider: 'hermes',
+      model: aiModel(requestedModel),
+      priority: 6,
     });
   }
 
@@ -1098,7 +1109,9 @@ serve(async (req) => {
                         ? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
                         : opt.provider === 'openrouter'
                           ? 'https://openrouter.ai/api/v1/chat/completions'
-                          : 'https://api.openai.com/v1/chat/completions';
+                          : opt.provider === 'hermes'
+                            ? `${Deno.env.get('HERMES_BASE_URL') || 'https://api.hermes.ai/v1'}/chat/completions`
+                            : 'https://api.openai.com/v1/chat/completions';
               const headers: Record<string, string> = { 'Content-Type': 'application/json' };
               if (isAnthropic) {
                 headers['x-api-key'] = opt.apiKey;
