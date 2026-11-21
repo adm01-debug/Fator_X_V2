@@ -1,6 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { fetchWithTimeout } from '../_shared/retry.ts';
+import { AI_API_KEY_ENV } from '../_shared/ai-provider.ts';
 import {
   checkRateLimit,
   createRateLimitResponse,
@@ -172,11 +173,11 @@ Regras de Ouro:
     },
   ];
 
-  const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const resp = await fetchWithTimeout('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'google/gemini-2.0-flash', // Use o modelo flash mais recente para melhor custo-benefício e visão
+      model: 'google/gemini-2.5-flash', // Use o modelo flash mais recente para melhor custo-benefício e visão
       messages: [
         { role: 'system', content: systemPrompt },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Edge Function: fronteira JSON dinâmica (Supabase/HTTP), tipagem estrita adiciona ruído sem ganho de segurança.
@@ -219,16 +220,16 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_ANON_KEY'), {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: claimsData, error: claimsErr } = await supabase.auth.getClaims(
+    const { data: userData, error: userErr } = await supabase.auth.getUser(
       authHeader.replace('Bearer ', ''),
     );
-    if (claimsErr || !claimsData?.claims) {
+    if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    const userId = claimsData.claims.sub;
+    const userId = userData.user.id;
 
     const parsed = BodySchema.safeParse(await req.json());
     if (!parsed.success) {
@@ -239,7 +240,7 @@ Deno.serve(async (req: Request) => {
     }
     const { goal, start_url, agent_id, workspace_id, max_steps } = parsed.data;
 
-    const apiKey = requireEnv('LOVABLE_API_KEY');
+    const apiKey = requireEnv(AI_API_KEY_ENV);
 
     // Create session
     const { data: session, error: sessErr } = await supabase
