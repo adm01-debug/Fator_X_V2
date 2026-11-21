@@ -32,7 +32,7 @@ import {
   RATE_LIMITS,
   requireEnv,
 } from '../_shared/mod.ts';
-import { AI_API_KEY_ENV, AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-provider.ts';
+import { AI_API_KEY_ENV } from '../_shared/ai-provider.ts';
 
 const BodySchema = z.object({
   notebook_id: z.string().uuid(),

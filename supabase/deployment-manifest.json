@@ -400,8 +400,8 @@
     },
     {
       "path": "supabase/functions/notebook-podcast-generate/index.ts",
-      "bytes": 11367,
-      "sha256": "80b3c61afa47db3644a764aeba2f737e7c18a07840974eb4ecfdf7b7a6e2ad25"
+      "bytes": 11342,
+      "sha256": "648c189f4f63ab1b52266b196bb1fed89549a1630c6a5691e0ae1d93a953de52"
     },
     {
       "path": "supabase/functions/notification-sender/index.ts",
@@ -1636,7 +1636,7 @@
       "name": "notebook-podcast-generate",
       "entrypoint": "supabase/functions/notebook-podcast-generate/index.ts",
       "verify_jwt": true,
-      "source_sha256": "5e16739d97f2f23f68f930bf97128976fae7748414d915d07e939d31d82fea42",
+      "source_sha256": "4c942f5a1a86083b651ba923ad5579185a8238161d283769d9ac7d145a9f26d5",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -2602,5 +2602,5 @@
       ]
     }
   ],
-  "manifest_sha256": "c2c807bdc4a996e42c120b75c1a623f509474225c90ffbdd99fed64c603084d0"
+  "manifest_sha256": "0bf39f4c113c0e48a42115959706abf51b4d383d083dbdaa8ca15f73522e16df"
 }
