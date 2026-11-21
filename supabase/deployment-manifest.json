@@ -7,9 +7,9 @@
     "sha256": "70cd6c308cc3a2a82596d9322ee0b5e92d0c0f93abd599f3a9bee158e6c3d7b9"
   },
   "summary": {
-    "function_count": 87,
-    "source_file_count": 125,
-    "verify_jwt_true": 78,
+    "function_count": 88,
+    "source_file_count": 126,
+    "verify_jwt_true": 79,
     "verify_jwt_false": 9
   },
   "source_files": [
@@ -617,6 +617,11 @@
       "path": "supabase/functions/webhook-receiver/index.ts",
       "bytes": 7612,
       "sha256": "cfa2c41cd58eddbee0f3f1dc60637157d4edefda97ba4ca5c0228ba8e78af4b2"
+    },
+    {
+      "path": "supabase/functions/whatsapp-outbound/index.ts",
+      "bytes": 10929,
+      "sha256": "57abd93df5146482b3955462612e72e53e392defa6375e0105d45bb36a51f188"
     },
     {
       "path": "supabase/functions/whatsapp-router/index.ts",
@@ -2511,6 +2516,28 @@
       ]
     },
     {
+      "name": "whatsapp-outbound",
+      "entrypoint": "supabase/functions/whatsapp-outbound/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "8801f554bf48e35e9d503c77eaae750989f974f225a46aac17894df24ad93e12",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/whatsapp-outbound/index.ts"
+      ]
+    },
+    {
       "name": "whatsapp-router",
       "entrypoint": "supabase/functions/whatsapp-router/index.ts",
       "verify_jwt": false,
@@ -2602,5 +2629,5 @@
       ]
     }
   ],
-  "manifest_sha256": "528a38d758b2b5038aeea9d1a7406d39c4a734beb79a3f52b4130a22d9d22363"
+  "manifest_sha256": "4182aaa53cee87384154d155cc2d79d55dfb3a82e456d564690e833c1c519438"
 }
