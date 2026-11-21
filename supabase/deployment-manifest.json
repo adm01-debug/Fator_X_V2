@@ -450,8 +450,8 @@
     },
     {
       "path": "supabase/functions/rag-embed-backfill/index.ts",
-      "bytes": 9352,
-      "sha256": "72a6bcbb72474886046244c420fb513b2a2458118b1c91069849329f43675005"
+      "bytes": 10832,
+      "sha256": "31332a6ae24751e27830ef98f0f9393b8304978430db935f335e89ea36b165dd"
     },
     {
       "path": "supabase/functions/rag-embed-v2/embedder.ts",
@@ -1852,7 +1852,7 @@
       "name": "rag-embed-backfill",
       "entrypoint": "supabase/functions/rag-embed-backfill/index.ts",
       "verify_jwt": false,
-      "source_sha256": "bcfc2c7ffcf3151d3c276fe2f6b762e168e4b90727670e72a252ba7c1fcef016",
+      "source_sha256": "9ea4698d75ec5451c575e30c0cb59d5069ebbe4474ed3f4b8233e2e1781dfa91",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2602,5 +2602,5 @@
       ]
     }
   ],
-  "manifest_sha256": "6388f639855c7d8dcffa63831e508813964df4e989dbb617058d7479bb23933f"
+  "manifest_sha256": "456cb767f478c425f7979b51191e88d5a8ed0b5cfa57425b1af0270b6c82b966"
 }

@@ -1,6 +1,10 @@
 // Edge Function: rag-embed-backfill
-// Popula embeddings vector(1536) em public.agent_memories_v2 para linhas com embedding IS NULL.
-// Executada via cron a cada 5 min. Idempotente. Limite: 200 linhas/execução.
+// Popula embeddings vector(1536) em public.agent_memories_v2 e public.chunks para
+// linhas com embedding IS NULL. Executada via cron a cada 5 min (e pós doc-parse,
+// escopada por document_id). Idempotente. Limite: 200 linhas/execução.
+// Retry: chunks em 'pending' OU 'failed' com embed_attempts < 5 são reprocessados;
+// cada falha incrementa embed_attempts e grava o erro — sem reinício automático de
+// contagem (dead-letter em embed_attempts >= 5, evita loop infinito sem provedor).
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   getCorsHeaders,
@@ -26,6 +30,10 @@ interface EmbedBatchResult {
   model: string;
 }
 
+// Registra falha de embedding num chunk, incrementando embed_attempts e
+// gravando o motivo. Repete o padrão de agent_memories_v2: falhas consecutivas
+// elevam o contador até o limite (5) — quando o provedor volta a funcionar, o
+// rag-embed-backfill reprocessa chunk 'failed' com embed_attempts < 5.
 async function embedBatch(
   texts: string[],
   authHeader: string,
@@ -75,6 +83,28 @@ Deno.serve(async (req) => {
   const serviceKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
   const projectRef = new URL(supabaseUrl).hostname.split('.')[0];
   const admin = createClient(supabaseUrl, serviceKey);
+
+  // Registra falha de embedding num chunk, incrementando embed_attempts e
+  // gravando o motivo. Falhas consecutivas elevam o contador até o limite (5):
+  // quando o provedor volta, o chunk 'failed' com embed_attempts < 5 volta ao retry.
+  const markChunkFailure = async (id: string, errMsg: string) => {
+    const truncated = errMsg.slice(0, 500);
+    const { data: current } = await admin
+      .from('chunks')
+      .select('embed_attempts')
+      .eq('id', id)
+      .maybeSingle();
+    const attempts = ((current?.embed_attempts as number | undefined) ?? 0) + 1;
+    await admin
+      .from('chunks')
+      .update({
+        embedding_status: 'failed',
+        embed_attempts: attempts,
+        embed_last_error: truncated,
+        embed_last_attempt_at: new Date().toISOString(),
+      })
+      .eq('id', id);
+  };
 
   try {
     // Body opcional: doc-rechunk invoca esta edge com { document_id } para
@@ -166,17 +196,20 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 3. Processa chunks pendentes (embedding NULL + status 'pending'). O
-    // doc-rechunk arquiva e recria chunks aguardando embed — sem este passo o
-    // vetor nunca chega ao banco e `match_documents` fica sem dados. Quando o
-    // chamador escopa por document_id, processa só aquele documento.
+    // 3. Processa chunks pendentes/falhos (embedding NULL, status 'pending' ou
+    // 'failed', embed_attempts < 5). O doc-rechunk arquiva e recria chunks
+    // aguardando embed — sem este passo o vetor nunca chega ao banco e
+    // `match_documents` fica sem dados. 'failed' entra no retry para que chunks
+    // marcados quando o embedder degradou possam se recuperar quando o provedor
+    // voltar. Quando o chamador escopa por document_id, processa só aquele doc.
     let chunkPending: Array<{ id: string; content: string }> = [];
     if (scopeDocumentId || pending.length === 0) {
       let chunkQuery = admin
         .from('chunks')
         .select('id, content')
         .is('embedding', null)
-        .eq('embedding_status', 'pending')
+        .in('embedding_status', ['pending', 'failed'])
+        .lt('embed_attempts', 5)
         .not('content', 'is', null)
         .order('created_at', { ascending: true })
         .limit(MAX_ROWS);
@@ -198,10 +231,7 @@ Deno.serve(async (req) => {
           for (let j = 0; j < batch.length; j++) {
             if (vectors[j].length !== EMBED_DIM) {
               failed++;
-              await admin
-                .from('chunks')
-                .update({ embedding_status: 'failed' })
-                .eq('id', batch[j].id);
+              await markChunkFailure(batch[j].id, `invalid dim ${vectors[j].length}`);
               continue;
             }
             const { error: upErr } = await admin
@@ -211,14 +241,12 @@ Deno.serve(async (req) => {
                 embedding_model: model,
                 embedded_at: new Date().toISOString(),
                 embedding_status: 'done',
+                embed_last_error: null,
               })
               .eq('id', batch[j].id);
             if (upErr) {
               failed++;
-              await admin
-                .from('chunks')
-                .update({ embedding_status: 'failed' })
-                .eq('id', batch[j].id);
+              await markChunkFailure(batch[j].id, upErr.message);
             } else {
               processed++;
             }
@@ -227,10 +255,7 @@ Deno.serve(async (req) => {
           const msg = err instanceof Error ? err.message : String(err);
           failed += batch.length;
           console.error('[rag-embed-backfill] chunk batch error:', msg);
-          await admin
-            .from('chunks')
-            .update({ embedding_status: 'failed' })
-            .in('id', batch.map((r) => r.id));
+          await Promise.all(batch.map((r) => markChunkFailure(r.id, msg)));
           await new Promise((r) => setTimeout(r, 500));
         }
       }
