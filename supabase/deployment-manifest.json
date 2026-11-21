@@ -190,8 +190,8 @@
     },
     {
       "path": "supabase/functions/browser-session-cancel/index.ts",
-      "bytes": 2479,
-      "sha256": "fb2bd97fbff1e01d2269875022e1b05f8152cbbd82e98c191f5e75cfc14f31dd"
+      "bytes": 2484,
+      "sha256": "5062d48b4f72dda6d490753c263db73f5a38282c502b423e2f50cb0e6923b667"
     },
     {
       "path": "supabase/functions/cerebro-brain/index.ts",
@@ -888,7 +888,7 @@
       "name": "browser-session-cancel",
       "entrypoint": "supabase/functions/browser-session-cancel/index.ts",
       "verify_jwt": true,
-      "source_sha256": "8fe8735635aa5b196946998f5269886ff113baf6a88d2bf8a307eac5626b4a9a",
+      "source_sha256": "d1cdc1590687548949b94c0d22ce1bd7592bc700724e502debced74a0b89996e",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2662,5 +2662,5 @@
       ]
     }
   ],
-  "manifest_sha256": "e16c7a42cb23bda86459601610ecc322e5e8f0628757b65af7ae48aa16acada2"
+  "manifest_sha256": "ff5882efd10c9c06c31739e3fff19a32d564b467e95fd547cd608900b34aea32"
 }

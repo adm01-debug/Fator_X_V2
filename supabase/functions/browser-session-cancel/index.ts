@@ -28,10 +28,10 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(requireEnv('SUPABASE_URL'), requireEnv('SUPABASE_ANON_KEY'), {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: claims, error: cErr } = await supabase.auth.getClaims(
+    const { data: userData, error: userErr } = await supabase.auth.getUser(
       authHeader.replace('Bearer ', ''),
     );
-    if (cErr || !claims?.claims) {
+    if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -48,7 +48,7 @@ Deno.serve(async (req: Request) => {
       .from('browser_sessions')
       .update({ status: 'cancelled', ended_at: new Date().toISOString() })
       .eq('id', parsed.data.session_id)
-      .eq('user_id', claims.claims.sub)
+      .eq('user_id', userData.user.id)
       .eq('status', 'running');
     if (error) throw error;
     return new Response(JSON.stringify({ ok: true }), {
