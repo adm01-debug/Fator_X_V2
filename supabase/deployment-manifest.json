@@ -7,9 +7,9 @@
     "sha256": "70cd6c308cc3a2a82596d9322ee0b5e92d0c0f93abd599f3a9bee158e6c3d7b9"
   },
   "summary": {
-    "function_count": 88,
-    "source_file_count": 126,
-    "verify_jwt_true": 79,
+    "function_count": 89,
+    "source_file_count": 128,
+    "verify_jwt_true": 80,
     "verify_jwt_false": 9
   },
   "source_files": [
@@ -277,6 +277,16 @@
       "path": "supabase/functions/eval-judge/index.ts",
       "bytes": 12868,
       "sha256": "417738a6cbefb12fcf5c385f36decfe24b9f8e6c9b081a61ade7864e6c261217"
+    },
+    {
+      "path": "supabase/functions/geo-code/geo.ts",
+      "bytes": 6373,
+      "sha256": "a05e6a75a074a99847001958721828a8beba7753635e60acbdc17248162d1ef0"
+    },
+    {
+      "path": "supabase/functions/geo-code/index.ts",
+      "bytes": 5287,
+      "sha256": "deccd7b4fc6f02cac9a2e62c7f373b2f566355d142bd3409690755ccfee5475e"
     },
     {
       "path": "supabase/functions/global-search/index.ts",
@@ -1276,6 +1286,29 @@
         "supabase/functions/_shared/webhookSender.ts",
         "supabase/functions/_shared/webhookSignature.ts",
         "supabase/functions/eval-judge/index.ts"
+      ]
+    },
+    {
+      "name": "geo-code",
+      "entrypoint": "supabase/functions/geo-code/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "41926ab88c4ad331f63e970c3403ebc6fb5638995a30b88e715ebec12c77c456",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/geo-code/geo.ts",
+        "supabase/functions/geo-code/index.ts"
       ]
     },
     {
@@ -2629,5 +2662,5 @@
       ]
     }
   ],
-  "manifest_sha256": "4182aaa53cee87384154d155cc2d79d55dfb3a82e456d564690e833c1c519438"
+  "manifest_sha256": "e16c7a42cb23bda86459601610ecc322e5e8f0628757b65af7ae48aa16acada2"
 }
