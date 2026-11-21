@@ -4,13 +4,13 @@
   "legacy_unmanaged_functions": [],
   "config": {
     "path": "supabase/config.toml",
-    "sha256": "d2d04383dcf0e7cf30606191e1b97b205f536ee127147733be856011cd56c738"
+    "sha256": "70cd6c308cc3a2a82596d9322ee0b5e92d0c0f93abd599f3a9bee158e6c3d7b9"
   },
   "summary": {
-    "function_count": 87,
-    "source_file_count": 125,
-    "verify_jwt_true": 81,
-    "verify_jwt_false": 6
+    "function_count": 88,
+    "source_file_count": 126,
+    "verify_jwt_true": 79,
+    "verify_jwt_false": 9
   },
   "source_files": [
     {
@@ -619,6 +619,11 @@
       "sha256": "cfa2c41cd58eddbee0f3f1dc60637157d4edefda97ba4ca5c0228ba8e78af4b2"
     },
     {
+      "path": "supabase/functions/whatsapp-outbound/index.ts",
+      "bytes": 10929,
+      "sha256": "57abd93df5146482b3955462612e72e53e392defa6375e0105d45bb36a51f188"
+    },
+    {
       "path": "supabase/functions/whatsapp-router/index.ts",
       "bytes": 10112,
       "sha256": "ac117d6fff4fcc08d241e51f126c23d329a3f3f0ebe33f2c108e0cb7affc69ca"
@@ -826,8 +831,8 @@
     {
       "name": "bitrix24-webhook",
       "entrypoint": "supabase/functions/bitrix24-webhook/index.ts",
-      "verify_jwt": true,
-      "source_sha256": "0eabc09c6b630ec88a27ac4824f12de9249d066069ec53bb833922776f2a8a75",
+      "verify_jwt": false,
+      "source_sha256": "3f9c15556adf9ff0844a0ffcb218fb90e712af5812b10e400e9390cb627529b6",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2486,8 +2491,8 @@
     {
       "name": "webhook-receiver",
       "entrypoint": "supabase/functions/webhook-receiver/index.ts",
-      "verify_jwt": true,
-      "source_sha256": "259957325df31e635bd4d38d6bf96fe5c49a7d1979fd0787f3bc781b95208fb8",
+      "verify_jwt": false,
+      "source_sha256": "c6e869633e71273ba94c8a21f5947b0c45ef4a8dd9732639eb2e015026eb7ee1",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/contracts.ts",
@@ -2504,6 +2509,28 @@
         "supabase/functions/_shared/webhookSender.ts",
         "supabase/functions/_shared/webhookSignature.ts",
         "supabase/functions/webhook-receiver/index.ts"
+      ]
+    },
+    {
+      "name": "whatsapp-outbound",
+      "entrypoint": "supabase/functions/whatsapp-outbound/index.ts",
+      "verify_jwt": true,
+      "source_sha256": "8801f554bf48e35e9d503c77eaae750989f974f225a46aac17894df24ad93e12",
+      "source_files": [
+        "supabase/functions/_shared/auth.ts",
+        "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/json.ts",
+        "supabase/functions/_shared/mod.ts",
+        "supabase/functions/_shared/otel-edge.ts",
+        "supabase/functions/_shared/rate-limiter.ts",
+        "supabase/functions/_shared/requireEnv.ts",
+        "supabase/functions/_shared/retry.ts",
+        "supabase/functions/_shared/runtimeAlerts.ts",
+        "supabase/functions/_shared/security.ts",
+        "supabase/functions/_shared/validation.ts",
+        "supabase/functions/_shared/webhookSender.ts",
+        "supabase/functions/_shared/webhookSignature.ts",
+        "supabase/functions/whatsapp-outbound/index.ts"
       ]
     },
     {
@@ -2532,8 +2559,8 @@
     {
       "name": "whatsapp-webhook",
       "entrypoint": "supabase/functions/whatsapp-webhook/index.ts",
-      "verify_jwt": true,
-      "source_sha256": "d095efaea734ac47d246361e64f1578f8107fbaf3623c988715e44c42bce1477",
+      "verify_jwt": false,
+      "source_sha256": "76a52629a11520d97eeeefbffb6dbadfa00dbb4fb80088b4724781e2acb6b9c2",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/contracts.ts",
@@ -2598,5 +2625,5 @@
       ]
     }
   ],
-  "manifest_sha256": "72b39da8313a3b2833c1188f9a572cd14f5b8eaa09534fb14a25bb8b2f3dc136"
+  "manifest_sha256": "854b13e683737e48d1824ac23efa6f52d534d84f9e927f62aa5ca83d630c028f"
 }
