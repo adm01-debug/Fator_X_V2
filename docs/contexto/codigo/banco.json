@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 335,
+ "migrations": 336,
  "seeds": [],
  "avisos": [
   "45 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -9258,7 +9258,7 @@
     },
     "fault_type": {
      "tipo": "text",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": null,
      "ref": null
@@ -9293,7 +9293,7 @@
     },
     "target": {
      "tipo": "text",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": null,
      "ref": null
@@ -17777,14 +17777,14 @@
    "rls": true,
    "policies": [
     {
-     "nome": "members can view events",
-     "comando": "select",
+     "nome": "game_day_events_member_insert",
+     "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "participants can record events",
-     "comando": "insert",
+     "nome": "game_day_events_member_select",
+     "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
     }
@@ -17799,7 +17799,7 @@
    "fks": [
     "game_day_id->game_days"
    ],
-   "criada_em": "20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql",
+   "criada_em": "20261121120000_finish_partial_work_entidades.sql",
    "colunas_types": {
     "actor_id": "string",
     "description": "string",
@@ -17890,18 +17890,25 @@
      "pk": false,
      "default": null,
      "ref": null
+    },
+    "user_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
     }
    },
    "rls": true,
    "policies": [
     {
-     "nome": "facilitator or admin can create scorecard",
+     "nome": "game_day_scorecards_member_insert",
      "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "members can view scorecards",
+     "nome": "game_day_scorecards_member_select",
      "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
@@ -17911,7 +17918,7 @@
    "fks": [
     "game_day_id->game_days"
    ],
-   "criada_em": "20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql",
+   "criada_em": "20261121120000_finish_partial_work_entidades.sql",
    "colunas_types": {
     "created_at": "string",
     "created_by": "string",
@@ -17925,7 +17932,9 @@
     "score": "number | null"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "user_id"
+    ],
     "so_no_types": []
    },
    "usada_no_front": 1,
@@ -18034,37 +18043,44 @@
      "default": "now()",
      "ref": null
     },
+    "user_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "workspace_id": {
      "tipo": "uuid",
      "nn": true,
      "pk": false,
      "default": null,
-     "ref": "workspaces"
+     "ref": null
     }
    },
    "rls": true,
    "policies": [
     {
-     "nome": "admins can delete game days",
+     "nome": "game_days_member_delete",
      "comando": "delete",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "admins can schedule game days",
+     "nome": "game_days_member_insert",
      "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "facilitator or admin can update",
-     "comando": "update",
+     "nome": "game_days_member_select",
+     "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "members can view game days",
-     "comando": "select",
+     "nome": "game_days_member_update",
+     "comando": "update",
      "para": "authenticated",
      "tipo": "permissive"
     }
@@ -18081,10 +18097,8 @@
      "unico": false
     }
    ],
-   "fks": [
-    "workspace_id->workspaces"
-   ],
-   "criada_em": "20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql",
+   "fks": [],
+   "criada_em": "20261121120000_finish_partial_work_entidades.sql",
    "colunas_types": {
     "chaos_experiment_id": "string | null",
     "created_at": "string",
@@ -18103,7 +18117,9 @@
     "workspace_id": "string"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "user_id"
+    ],
     "so_no_types": []
    },
    "usada_no_front": 3,
@@ -36725,7 +36741,7 @@
      "tipo": "text",
      "nn": false,
      "pk": false,
-     "default": "'none'",
+     "default": "'hmac_sha256'",
      "ref": null
     },
     "created_at": {
@@ -36740,7 +36756,7 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": "auth"
+     "ref": null
     },
     "description": {
      "tipo": "text",
@@ -36767,14 +36783,7 @@
      "tipo": "text[]",
      "nn": false,
      "pk": false,
-     "default": null,
-     "ref": null
-    },
-    "is_public": {
-     "tipo": "boolean",
-     "nn": false,
-     "pk": false,
-     "default": "false",
+     "default": "ARRAY[]::TEXT[]",
      "ref": null
     },
     "last_triggered_at": {
@@ -36788,7 +36797,7 @@
      "tipo": "text[]",
      "nn": false,
      "pk": false,
-     "default": "'{POST}'",
+     "default": "ARRAY['POST']",
      "ref": null
     },
     "name": {
@@ -36821,9 +36830,9 @@
     },
     "secret": {
      "tipo": "text",
-     "nn": false,
+     "nn": true,
      "pk": false,
-     "default": null,
+     "default": "''",
      "ref": null
     },
     "status": {
@@ -36841,17 +36850,17 @@
      "ref": null
     },
     "target_id": {
-     "tipo": "uuid",
-     "nn": false,
+     "tipo": "text",
+     "nn": true,
      "pk": false,
-     "default": null,
+     "default": "''",
      "ref": null
     },
     "target_type": {
      "tipo": "text",
-     "nn": false,
+     "nn": true,
      "pk": false,
-     "default": null,
+     "default": "'workflow'",
      "ref": null
     },
     "transform_script": {
@@ -36868,6 +36877,13 @@
      "default": "now()",
      "ref": null
     },
+    "user_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "workspace_id": {
      "tipo": "uuid",
      "nn": true,
@@ -36879,15 +36895,27 @@
    "rls": true,
    "policies": [
     {
-     "nome": "Service role can manage webhook endpoints",
-     "comando": "all",
-     "para": "service_role",
+     "nome": "webhook_endpoints_member_delete",
+     "comando": "delete",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "webhooks_all",
-     "comando": "all",
-     "para": "public",
+     "nome": "webhook_endpoints_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "webhook_endpoints_member_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "webhook_endpoints_member_update",
+     "comando": "update",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],
@@ -36908,10 +36936,8 @@
      "unico": false
     }
    ],
-   "fks": [
-    "created_by->auth"
-   ],
-   "criada_em": "20260405220001_automation_services.sql",
+   "fks": [],
+   "criada_em": "20261121120000_finish_partial_work_entidades.sql",
    "colunas_types": {
     "auth_type": "string | null",
     "created_at": "string | null",
@@ -36938,9 +36964,12 @@
      "last_triggered_at",
      "headers_filter",
      "created_by",
-     "workspace_id"
+     "workspace_id",
+     "user_id"
     ],
-    "so_no_types": []
+    "so_no_types": [
+     "is_public"
+    ]
    },
    "usada_no_front": 0,
    "usada_em_edges": [
@@ -36984,7 +37013,7 @@
      "tipo": "jsonb",
      "nn": false,
      "pk": false,
-     "default": null,
+     "default": "'{}'",
      "ref": null
     },
     "id": {
@@ -37012,7 +37041,7 @@
      "tipo": "jsonb",
      "nn": false,
      "pk": false,
-     "default": null,
+     "default": "'{}'",
      "ref": null
     },
     "response_body": {
@@ -37026,7 +37055,7 @@
      "tipo": "integer",
      "nn": false,
      "pk": false,
-     "default": null,
+     "default": "200",
      "ref": null
     },
     "source": {
@@ -37047,12 +37076,12 @@
      "tipo": "text",
      "nn": false,
      "pk": false,
-     "default": null,
+     "default": "'received'",
      "ref": null
     },
     "webhook_id": {
      "tipo": "uuid",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": "webhook_endpoints"
@@ -37068,15 +37097,15 @@
    "rls": true,
    "policies": [
     {
-     "nome": "Service role can manage webhook events",
-     "comando": "all",
-     "para": "service_role",
+     "nome": "webhook_events_member_insert",
+     "comando": "insert",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "webhook_events_all",
-     "comando": "all",
-     "para": "public",
+     "nome": "webhook_events_member_select",
+     "comando": "select",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],
@@ -37092,18 +37121,8 @@
      "unico": true
     },
     {
-     "nome": "idx_webhook_events_source_ext",
-     "colunas": "source, external_event_id",
-     "unico": true
-    },
-    {
      "nome": "idx_webhook_events_webhook",
      "colunas": "webhook_id, created_at DESC",
-     "unico": false
-    },
-    {
-     "nome": "idx_webhook_events_webhook_id",
-     "colunas": "webhook_id",
      "unico": false
     },
     {
@@ -37115,7 +37134,7 @@
    "fks": [
     "webhook_id->webhook_endpoints"
    ],
-   "criada_em": "20260405220001_automation_services.sql",
+   "criada_em": "20261121120000_finish_partial_work_entidades.sql",
    "colunas_types": {
     "body": "Json | null",
     "created_at": "string | null",

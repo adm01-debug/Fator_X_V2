@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `96f5dac06b` · branch `main` · 2026-11-21 12:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `96fbd6fa66` · branch `main` · 2026-11-21 13:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -654,7 +654,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_agent_graphs_updated | BEFORE UPDATE | `agent_graphs` | `update_updated_at_column` |  |
 | update_synthetic_checks_updated_at | BEFORE UPDATE | `synthetic_checks` | `update_updated_at_column` |  |
 | trg_workspace_budgets_updated | BEFORE UPDATE | `workspace_budgets` | `update_updated_at_column` |  |
-| game_days_updated_at | BEFORE UPDATE | `game_days` | `update_updated_at_column` |  |
 | update_incident_playbooks_updated_at | BEFORE UPDATE | `incident_playbooks` | `update_updated_at_column` |  |
 | trg_dr_drills_updated_at | BEFORE UPDATE | `dr_drills` | `update_updated_at_column` |  |
 | trg_postmortems_updated_at | BEFORE UPDATE | `postmortems` | `update_updated_at_column` |  |
@@ -741,6 +740,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_log_ingestion_event_upd | AFTER UPDATE | `document_ingestions` | `log_ingestion_event` |  |
 | trg_chat_threads_updated_at | BEFORE UPDATE | `chat_threads` | `update_updated_at_column` |  |
 | trg_touch_chat_thread | AFTER INSERT OR DELETE | `chat_messages` | `touch_chat_thread` |  |
+| game_days_updated_at | BEFORE UPDATE | `game_days` | `update_updated_at_column` |  |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -756,11 +756,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `acknowledge_cost_alert` | forbidden: workspace admin required | `supabase/migrations/20260418011629_10215e66-8af6-43ef-8878-dfad3008e2ef.sql` |
 | `get_current_spend` | forbidden | `supabase/migrations/20260418102513_4d1ac25f-4111-4ff9-921c-33a1b4a8e0e2.sql` |
 | `reset_workspace_budget` | forbidden: workspace admin required | `supabase/migrations/20260418102513_4d1ac25f-4111-4ff9-921c-33a1b4a8e0e2.sql` |
-| `start_game_day` | game day not found | `supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql` |
-| `start_game_day` | forbidden: only facilitator or admin can start | `supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql` |
-| `start_game_day` | game day is not in scheduled state | `supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql` |
-| `complete_game_day` | game day not found | `supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql` |
-| `complete_game_day` | forbidden | `supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql` |
 | `complete_dr_drill` | drill not found | `supabase/migrations/20260418121735_2fa94f72-43dd-4a19-ba73-c3b0ac4301e5.sql` |
 | `complete_dr_drill` | forbidden | `supabase/migrations/20260418121735_2fa94f72-43dd-4a19-ba73-c3b0ac4301e5.sql` |
 | `generate_postmortem_from_incident` | incident run not found | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
@@ -875,6 +870,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `validate_table_names_for_drill` | Table "%" is not in allowed drill target list | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
 | `validate_table_names_for_drill` | Invalid table name format: "%" | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
 | `get_vendor_summary` | Acesso negado: workspace não pertence ao usuário | `supabase/migrations/20260905140000_security_hotfix_validation.sql` |
+| `start_game_day` | game day not found | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
+| `start_game_day` | forbidden: only facilitator or admin can start | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
+| `start_game_day` | game day is not in scheduled state | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
+| `complete_game_day` | game day not found | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
+| `complete_game_day` | forbidden | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -3547,6 +3547,7 @@ _nenhum item encontrado_
 | `AND last_attempt_at > (now() - interval '15 minutes');` | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
 | `SET is_blocked = true, blocked_until = (now() + interval '15 minutes')` | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
 | `COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at BETWEEN now() AND now() + interval '30 days'),` | `supabase/migrations/20260905140000_security_hotfix_validation.sql` |
+| `VALUES (gd.workspace_id, 'Game Day: ' \|\| gd.title, v_target, v_fault, 0.5, 2000, now() + interval '2 hours', true, auth.uid())` | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
 
 ### H.3 Limites de paginação
 

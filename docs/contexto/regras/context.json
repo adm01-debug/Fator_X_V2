@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "96f5dac06ba9157304b8c038e2472b365b1f5b6a",
+  "sha": "96fbd6fa6643d70c0d943ab3d8787ee33ef404a2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 12:03 UTC",
-  "files_total": 1999,
-  "code_files": 1788,
-  "code_lines": 347956
+  "generated_at": "2026-11-21 13:33 UTC",
+  "files_total": 2000,
+  "code_files": 1789,
+  "code_lines": 348397
  },
  "version": "1.3.2",
- "facts_hash": "02feee9f7f485e83",
+ "facts_hash": "9d68f5d6c4b5a0d6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -237,7 +237,7 @@
   "languages": {
    ".tsx": 699,
    ".ts": 692,
-   ".sql": 338,
+   ".sql": 339,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -36987,15 +36987,6 @@
     "src": "supabase/migrations/20260418102513_4d1ac25f-4111-4ff9-921c-33a1b4a8e0e2.sql"
    },
    {
-    "name": "game_days_updated_at",
-    "when": "BEFORE UPDATE",
-    "table": "game_days",
-    "function": "update_updated_at_column",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
     "name": "update_incident_playbooks_updated_at",
     "when": "BEFORE UPDATE",
     "table": "incident_playbooks",
@@ -37768,6 +37759,15 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "game_days_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "game_days",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
    }
   ],
   "functions": {
@@ -38044,14 +38044,16 @@
    },
    "increment_webhook_counter": {
     "args": "webhook_uuid UUID",
-    "returns": "void",
+    "returns": "VOID",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260521103753_556d7413-1276-4089-9e14-0a2f061c5db4.sql",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
     "security_definer": true,
-    "search_path": false,
-    "body": "BEGIN END;",
+    "search_path": true,
+    "body": "BEGIN UPDATE public.webhook_endpoints SET request_count = request_count + 1, last_triggered_at = now() WHERE id = webhook_uuid; END;",
     "raises": [],
-    "tables": []
+    "tables": [
+     "webhook_endpoints"
+    ]
    },
    "increment_template_installs": {
     "args": "template_uuid UUID",
@@ -38435,7 +38437,7 @@
     "args": "p_game_day_id UUID, p_inject_chaos BOOLEAN DEFAULT false",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE gd public.game_days%ROWTYPE; v_chaos_id UUID; v_target TEXT; v_fault TEXT; BEGIN SELECT * INTO gd FROM public.game_days WHERE id = p_game_day_id; IF NOT FOUND THEN RAISE EXCEPTION 'game day not found'; END IF; IF gd.facilitator_id <> auth.uid() AND NOT public.is_workspace_admin(auth.uid(), gd.workspace_id) THEN RAISE EXCEPTION 'forbidden: only facilitator or admin can start'; END IF; IF gd.status <> 'scheduled' THEN RAISE EXCEPTION 'game day is not in scheduled state'; END IF; UPDATE public.game_days SET status = 'running', started_at = now() WHERE id = p_game_day_id; IF p_inject_chaos THEN v_target := CASE gd.scenario WHEN 'provider_outage' THEN 'llm-gateway' WHEN 'db_slowdown' THEN …",
@@ -38456,7 +38458,7 @@
     "args": "p_game_day_id UUID, p_event_type TEXT, p_description TEXT, p_metadata JSONB DEFAULT '{}'::jsonb",
     "returns": "UUID",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_id UUID; BEGIN INSERT INTO public.game_day_events(game_day_id, event_type, actor_id, description, metadata) VALUES (p_game_day_id, p_event_type, auth.uid(), p_description, p_metadata) RETURNING id INTO v_id; RETURN v_id; END;",
@@ -38470,7 +38472,7 @@
     "args": "p_game_day_id UUID, p_runbook_followed BOOLEAN DEFAULT true, p_gaps_found TEXT[] DEFAULT '{}', p_score INTEGER DEFAULT NULL, p_retrospective TEXT DEFAULT NULL",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE gd public.game_days%ROWTYPE; v_fault_at TIMESTAMPTZ; v_detect_at TIMESTAMPTZ; v_resolved_at TIMESTAMPTZ; v_mttr INTEGER; v_mttd INTEGER; v_scorecard_id UUID; BEGIN SELECT * INTO gd FROM public.game_days WHERE id = p_game_day_id; IF NOT FOUND THEN RAISE EXCEPTION 'game day not found'; END IF; IF gd.facilitator_id <> auth.uid() AND NOT public.is_workspace_admin(auth.uid(), gd.workspace_id) THEN RAISE EXCEPTION 'forbidden'; END IF; SELECT MIN(occurred_at) INTO v_fault_at FROM public.game_day_events WHERE game_day_id = p_game_day_id AND event_type = 'fault_injected'; SELECT MIN(occurred_at) INTO v_detect_at FROM public.game_day_events WHERE game_day_id = p_game_day_id AND event_type = 'd …",
@@ -46137,6 +46139,22 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "idx_chaos_active",
+    "table": "chaos_experiments",
+    "columns": "target, enabled, expires_at",
+    "unique": false,
+    "where": "WHERE enabled = true",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "name": "idx_chaos_workspace",
+    "table": "chaos_experiments",
+    "columns": "workspace_id, created_at DESC",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
    }
   ],
   "cron_jobs": [
@@ -46715,6 +46733,7 @@
    "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
    "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql",
    "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
+   "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -50404,6 +50423,46 @@
     "objkind": "table",
     "roles": "service_role",
     "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_webhook_counter",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_webhook_counter",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "start_game_day",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "record_game_day_event",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "complete_game_day",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
    }
   ],
   "raises": [
@@ -50456,31 +50515,6 @@
     "function": "reset_workspace_budget",
     "msg": "forbidden: workspace admin required",
     "src": "supabase/migrations/20260418102513_4d1ac25f-4111-4ff9-921c-33a1b4a8e0e2.sql"
-   },
-   {
-    "function": "start_game_day",
-    "msg": "game day not found",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
-    "function": "start_game_day",
-    "msg": "forbidden: only facilitator or admin can start",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
-    "function": "start_game_day",
-    "msg": "game day is not in scheduled state",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
-    "function": "complete_game_day",
-    "msg": "game day not found",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
-    "function": "complete_game_day",
-    "msg": "forbidden",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
    },
    {
     "function": "complete_dr_drill",
@@ -51051,6 +51085,31 @@
     "function": "get_vendor_summary",
     "msg": "Acesso negado: workspace não pertence ao usuário",
     "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
+   },
+   {
+    "function": "start_game_day",
+    "msg": "game day not found",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "function": "start_game_day",
+    "msg": "forbidden: only facilitator or admin can start",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "function": "start_game_day",
+    "msg": "game day is not in scheduled state",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "function": "complete_game_day",
+    "msg": "game day not found",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "function": "complete_game_day",
+    "msg": "forbidden",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
    }
   ],
   "seed": [],
@@ -59745,8 +59804,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 335,
-   "lines": 29460,
+   "files": 336,
+   "lines": 29901,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -101030,6 +101089,10 @@
    {
     "file": "supabase/migrations/20260905140000_security_hotfix_validation.sql",
     "line": "COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at BETWEEN now() AND now() + interval '30 days'),"
+   },
+   {
+    "file": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
+    "line": "VALUES (gd.workspace_id, 'Game Day: ' || gd.title, v_target, v_fault, 0.5, 2000, now() + interval '2 hours', true, auth.uid())"
    }
   ],
   "percents": [
@@ -120765,15 +120828,6 @@
     "src": "supabase/migrations/20260418102513_4d1ac25f-4111-4ff9-921c-33a1b4a8e0e2.sql"
    },
    {
-    "name": "game_days_updated_at",
-    "when": "BEFORE UPDATE",
-    "table": "game_days",
-    "function": "update_updated_at_column",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
     "name": "update_incident_playbooks_updated_at",
     "when": "BEFORE UPDATE",
     "table": "incident_playbooks",
@@ -121546,6 +121600,15 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
+   },
+   {
+    "name": "game_days_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "game_days",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
    }
   ],
   "db_functions": {
@@ -121822,14 +121885,16 @@
    },
    "increment_webhook_counter": {
     "args": "webhook_uuid UUID",
-    "returns": "void",
+    "returns": "VOID",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260521103753_556d7413-1276-4089-9e14-0a2f061c5db4.sql",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
     "security_definer": true,
-    "search_path": false,
-    "body": "BEGIN END;",
+    "search_path": true,
+    "body": "BEGIN UPDATE public.webhook_endpoints SET request_count = request_count + 1, last_triggered_at = now() WHERE id = webhook_uuid; END;",
     "raises": [],
-    "tables": []
+    "tables": [
+     "webhook_endpoints"
+    ]
    },
    "increment_template_installs": {
     "args": "template_uuid UUID",
@@ -122213,7 +122278,7 @@
     "args": "p_game_day_id UUID, p_inject_chaos BOOLEAN DEFAULT false",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE gd public.game_days%ROWTYPE; v_chaos_id UUID; v_target TEXT; v_fault TEXT; BEGIN SELECT * INTO gd FROM public.game_days WHERE id = p_game_day_id; IF NOT FOUND THEN RAISE EXCEPTION 'game day not found'; END IF; IF gd.facilitator_id <> auth.uid() AND NOT public.is_workspace_admin(auth.uid(), gd.workspace_id) THEN RAISE EXCEPTION 'forbidden: only facilitator or admin can start'; END IF; IF gd.status <> 'scheduled' THEN RAISE EXCEPTION 'game day is not in scheduled state'; END IF; UPDATE public.game_days SET status = 'running', started_at = now() WHERE id = p_game_day_id; IF p_inject_chaos THEN v_target := CASE gd.scenario WHEN 'provider_outage' THEN 'llm-gateway' WHEN 'db_slowdown' THEN …",
@@ -122234,7 +122299,7 @@
     "args": "p_game_day_id UUID, p_event_type TEXT, p_description TEXT, p_metadata JSONB DEFAULT '{}'::jsonb",
     "returns": "UUID",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_id UUID; BEGIN INSERT INTO public.game_day_events(game_day_id, event_type, actor_id, description, metadata) VALUES (p_game_day_id, p_event_type, auth.uid(), p_description, p_metadata) RETURNING id INTO v_id; RETURN v_id; END;",
@@ -122248,7 +122313,7 @@
     "args": "p_game_day_id UUID, p_runbook_followed BOOLEAN DEFAULT true, p_gaps_found TEXT[] DEFAULT '{}', p_score INTEGER DEFAULT NULL, p_retrospective TEXT DEFAULT NULL",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE gd public.game_days%ROWTYPE; v_fault_at TIMESTAMPTZ; v_detect_at TIMESTAMPTZ; v_resolved_at TIMESTAMPTZ; v_mttr INTEGER; v_mttd INTEGER; v_scorecard_id UUID; BEGIN SELECT * INTO gd FROM public.game_days WHERE id = p_game_day_id; IF NOT FOUND THEN RAISE EXCEPTION 'game day not found'; END IF; IF gd.facilitator_id <> auth.uid() AND NOT public.is_workspace_admin(auth.uid(), gd.workspace_id) THEN RAISE EXCEPTION 'forbidden'; END IF; SELECT MIN(occurred_at) INTO v_fault_at FROM public.game_day_events WHERE game_day_id = p_game_day_id AND event_type = 'fault_injected'; SELECT MIN(occurred_at) INTO v_detect_at FROM public.game_day_events WHERE game_day_id = p_game_day_id AND event_type = 'd …",
@@ -124991,31 +125056,6 @@
     "src": "supabase/migrations/20260418102513_4d1ac25f-4111-4ff9-921c-33a1b4a8e0e2.sql"
    },
    {
-    "function": "start_game_day",
-    "msg": "game day not found",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
-    "function": "start_game_day",
-    "msg": "forbidden: only facilitator or admin can start",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
-    "function": "start_game_day",
-    "msg": "game day is not in scheduled state",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
-    "function": "complete_game_day",
-    "msg": "game day not found",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
-    "function": "complete_game_day",
-    "msg": "forbidden",
-    "src": "supabase/migrations/20260418104142_d63430cb-68ff-4115-aa71-60dd8fc6df48.sql"
-   },
-   {
     "function": "complete_dr_drill",
     "msg": "drill not found",
     "src": "supabase/migrations/20260418121735_2fa94f72-43dd-4a19-ba73-c3b0ac4301e5.sql"
@@ -125584,6 +125624,31 @@
     "function": "get_vendor_summary",
     "msg": "Acesso negado: workspace não pertence ao usuário",
     "src": "supabase/migrations/20260905140000_security_hotfix_validation.sql"
+   },
+   {
+    "function": "start_game_day",
+    "msg": "game day not found",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "function": "start_game_day",
+    "msg": "forbidden: only facilitator or admin can start",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "function": "start_game_day",
+    "msg": "game day is not in scheduled state",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "function": "complete_game_day",
+    "msg": "game day not found",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "function": "complete_game_day",
+    "msg": "forbidden",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
    }
   ],
   "db_generated": [
@@ -134548,6 +134613,7 @@
    "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
    "supabase/migrations/20261120124500_reconcile_doc_schema.sql",
    "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
+   "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
    "tests/load/llm-gateway.k6.js",
    "tests/rls/personas.test.ts",
    "tests/rls/setup.ts",
@@ -138207,6 +138273,46 @@
     "objkind": "table",
     "roles": "service_role",
     "src": "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_webhook_counter",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "increment_webhook_counter",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "start_game_day",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "record_game_day_event",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "complete_game_day",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
    }
   ],
   "guards": [
@@ -141530,13 +141636,6 @@
     "msg": "função `increment_skill_installs` é SECURITY DEFINER sem `set search_path` (risco de escalação)",
     "where": [
      "supabase/migrations/20260405200001_agent_evolution_and_skills.sql"
-    ]
-   },
-   {
-    "kind": "segurança",
-    "msg": "função `increment_webhook_counter` é SECURITY DEFINER sem `set search_path` (risco de escalação)",
-    "where": [
-     "supabase/migrations/20260521103753_556d7413-1276-4089-9e14-0a2f061c5db4.sql"
     ]
    },
    {
@@ -190456,6 +190555,14 @@
    "lines": 120,
    "uses_service_role": true
   },
+  "supabase/migrations/20261121120000_finish_partial_work_entidades.sql": {
+   "path": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
+   "lines": 441,
+   "temporal": [
+    "VALUES (gd.workspace_id, 'Game Day: ' || gd.title, v_target, v_fault, 0.5, 2000, now() + interval '2 hours', true, auth.uid())"
+   ],
+   "uses_service_role": true
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -190617,10 +190724,19 @@
   }
  },
  "git": {
-  "sha": "96f5dac06ba9157304b8c038e2472b365b1f5b6a",
+  "sha": "96fbd6fa6643d70c0d943ab3d8787ee33ef404a2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "96fbd6f",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: conclui entidades parciais (webhook/game day/chaos) criadas como boilerplate vazio (#132)",
+    "files": [
+     "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+    ]
+   },
    {
     "sha": "96f5dac",
     "date": "2026-11-21",
@@ -190962,15 +191078,6 @@
      "src/pages/AuthPage.tsx",
      "src/pages/ResetPasswordPage.tsx"
     ]
-   },
-   {
-    "sha": "8c28187",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "ci(security): dependency review barra CVE novo high/critical nos PRs (#107)",
-    "files": [
-     ".github/workflows/dependency-review.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -191027,6 +191134,10 @@
     2
    ],
    [
+    "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql",
     1
    ],
@@ -191048,10 +191159,6 @@
    ],
    [
     "docs/pendencias/_ordem.md",
-    1
-   ],
-   [
-    "docs/pendencias/_regras-de-negocio.md",
     1
    ]
   ]

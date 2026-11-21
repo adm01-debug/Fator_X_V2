@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `96f5dac06b` · branch `main` · 2026-11-21 12:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `96fbd6fa66` · branch `main` · 2026-11-21 13:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -474,7 +474,6 @@ _nenhum item encontrado_
 | segurança | função `user_has_permission` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260405000002_rbac_system.sql` |
 | segurança | função `auto_assign_admin_role` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260405000002_rbac_system.sql` |
 | segurança | função `increment_skill_installs` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260405200001_agent_evolution_and_skills.sql` |
-| segurança | função `increment_webhook_counter` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260521103753_556d7413-1276-4089-9e14-0a2f061c5db4.sql` |
 | segurança | função `create_partition_if_not_exists` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260513143630_cc1271a4-4da5-41f3-8c30-6527ccb75e84.sql` |
 | segurança | função `is_mfa_valid_for_role` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 | webhook | edge function `skill-harvester` processa eventos de webhook sem sinal de idempotência (evento duplicado = efeito duplicado) | `supabase/functions/skill-harvester/index.ts` |

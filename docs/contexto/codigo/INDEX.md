@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `96f5dac06ba9157304b8c038e2472b365b1f5b6a` (2026-11-21T09:02:55-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `96fbd6fa6643d70c0d943ab3d8787ee33ef404a2` (2026-11-21T10:32:29-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1391), SQL (338), Markdown (127), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
+- linguagens: TypeScript (1391), SQL (339), Markdown (127), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 1994 |
+| arquivos_total | 1995 |
 | arquivos_codigo | 1449 |
 | linhas_codigo | 318185 |
 | rotas | 151 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 75 |
 | edge_functions | 87 |
 | tabelas | 327 |
-| migrations | 335 |
+| migrations | 336 |
 | cron_jobs | 37 |
 | testes | 239 |
 | workflows | 10 |
@@ -421,7 +421,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 9 — ex.: agent_traces_v2_2026_11, agent_traces_v2_2026_12, agent_traces_v2_2027_01
 - tabelas_usadas_sem_definicao: 0
-- tabelas_com_drift_migration_vs_types: 41 — ex.: agent_installed_skills, agent_memories, agent_memories_v2
+- tabelas_com_drift_migration_vs_types: 43 — ex.: agent_installed_skills, agent_memories, agent_memories_v2
 - rpcs_sem_definicao: 1 — ex.: exec_sql
 - componentes_orfaos: 36 — ex.: src/components/agents/AgentCardGrid.tsx, src/components/agents/detail/SLOPanel.tsx, src/components/agents/wizard/WizardStepComponents.tsx
 - componentes_com_nome_duplicado: 18 — ex.: AddressCard, CommandPalette, CrossDbResults
@@ -431,8 +431,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 13929 nós · 37183 arestas · 897 comunidades · grafo do commit `96f5dac0`
-- comunidades maiores: lucide-react (325), react (210), button.tsx (179), input.tsx (168), getCorsHeaders (163), cn (163), agentTypes.ts (158), templateSkillLinkService.ts (128), VendorsPage.tsx (118), ref_node_fs (105), App.tsx (104), fromTable (100)
+- 13954 nós · 37221 arestas · 879 comunidades · grafo do commit `96fbd6fa`
+- comunidades maiores: badge.tsx (270), react (270), ref_https (183), PageHeader.tsx (178), cn (139), lucide-react (129), App.tsx (120), logger.ts (119), Button (117), getWorkspaceId (117), templateSkillLinkService.ts (104), mod.ts (103)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -577,6 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-21 `96fbd6fa` fix: conclui entidades parciais (webhook/game day/chaos) criadas como boilerplate vazio (#132)
 - 2026-11-21 `96f5dac0` fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)
 - 2026-11-21 `b571324b` fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)
 - 2026-11-20 `10e7a1de` docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)
@@ -591,7 +592,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `849d83ce` chore(deps)(deps): bump otpauth from 9.5.1 to 9.6.0 (#106)
 - 2026-11-20 `42dc7a0d` chore(deps)(deps): bump @tanstack/react-query from 5.83.0 to 5.107.1 (#105)
 - 2026-11-20 `3ad98132` chore(deps)(deps): bump the radix group across 1 directory with 27 updates (#103)
-- 2026-11-20 `02ed452c` chore(deps)(deps): bump @sentry/react (#102)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
