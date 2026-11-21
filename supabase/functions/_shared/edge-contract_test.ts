@@ -64,6 +64,8 @@ const TARGETS: Target[] = [
   { name: 'slack-events-webhook', invalidBody: { type: 'unknown_type' } },
   // messages: [] viola .min(1) em LLMGatewayContracts.v1
   { name: 'llm-gateway', invalidBody: { model: 'x', messages: [] } },
+  // geo-code: sem address viola o schema (action geocode exige address)
+  { name: 'geo-code', invalidBody: { action: 'geocode' } },
 ];
 
 const fnUrl = (name: string) => `${SUPABASE_URL}/functions/v1/${name}`;
