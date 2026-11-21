@@ -18,19 +18,20 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { fetchWithTimeout } from '../_shared/retry.ts';
 import {
+  authenticateRequest,
+  checkRateLimit,
+  constantTimeEqual,
+  createAdminClient,
+  createRateLimitResponse,
+  errorResponse,
   getCorsHeaders,
   handleCorsPreflight,
   jsonResponse,
-  errorResponse,
-  authenticateRequest,
-  checkRateLimit,
-  createRateLimitResponse,
-  getRateLimitIdentifier,
-  RATE_LIMITS,
   parseBody,
+  RATE_LIMITS,
   z,
 } from '../_shared/mod.ts';
-import { CANONICAL_DIM, HF_MODEL_MAP, hasExactDimension, hashEmbed } from './embedder.ts';
+import { CANONICAL_DIM, hasExactDimension, hashEmbed, HF_MODEL_MAP } from './embedder.ts';
 
 // ═══ Input Schema ═══
 // CANONICAL_DIM, HF_MODEL_MAP, hasExactDimension e hashEmbed vivem em
@@ -59,7 +60,10 @@ async function embedWithHF(
         Authorization: `Bearer ${hfKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ inputs: texts, options: { wait_for_model: true } }),
+      body: JSON.stringify({
+        inputs: texts,
+        options: { wait_for_model: true },
+      }),
     });
     if (!resp.ok) return null;
     const data = await resp.json();
@@ -103,48 +107,112 @@ async function embedWithOpenAI(
   }
 }
 
+// ═══ OpenRouter Embedding ═══
+// Provider usado quando a chave OPENROUTER_API_KEY esta disponivel (fallback
+// apos HF/OpenAI). text-embedding-3-large aceita `dimensions`, entao o vetor
+// sai exatamente em 1536 e casa com as colunas `vector(1536)`.
+async function embedWithOpenRouter(
+  texts: string[],
+  openrouterKey: string,
+  dimension: number,
+): Promise<number[][] | null> {
+  try {
+    const resp = await fetchWithTimeout('https://openrouter.ai/api/v1/embeddings', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${openrouterKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'openai/text-embedding-3-large',
+        input: texts,
+        dimensions: dimension,
+      }),
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    return (data.data as Array<{ embedding: number[] }>).map((d) => d.embedding);
+  } catch {
+    return null;
+  }
+}
+
 // ═══ Server ═══
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
 
   try {
-    const auth = await authenticateRequest(req);
-    if (auth.error) return auth.error;
-    const { user, supabase } = auth;
+    // Chamadas internas (rag-embed-backfill, semantic-search) usam a service
+    // role key no lugar de um JWT de usuario. Aceita-las aqui nao abre nada:
+    // a edge so gera embeddings, e o lookup de segredos do workspace segue
+    // restrito ao dono/assignee via workspace_members quando ha usuario.
+    const authHeader = req.headers.get('Authorization') ?? '';
+    const serviceRole = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const isInternal =
+      authHeader.length > 0 &&
+      constantTimeEqual(authHeader.replace(/^Bearer\s+/i, ''), serviceRole);
 
-    const identifier = getRateLimitIdentifier(req, user.id);
+    let user: { id: string; email?: string; role?: string } | null = null;
+    let supabase;
+    let wsId: string | null = null;
+    let identifier = 'unknown';
+
+    if (isInternal) {
+      supabase = createAdminClient();
+      identifier = 'service-role';
+      const { data: members } = await supabase
+        .from('workspace_members')
+        .select('workspace_id')
+        .limit(1);
+      wsId = members?.[0]?.workspace_id ?? null;
+    } else {
+      const auth = await authenticateRequest(req);
+      if (auth.error) return auth.error;
+      user = auth.user;
+      supabase = auth.supabase;
+      identifier = user.id;
+      const { data: members } = await supabase
+        .from('workspace_members')
+        .select('workspace_id')
+        .eq('user_id', user.id)
+        .limit(1);
+      wsId = members?.[0]?.workspace_id;
+    }
+
     const rateCheck = checkRateLimit(identifier, RATE_LIMITS.standard);
-    if (!rateCheck.allowed) return createRateLimitResponse(rateCheck, getCorsHeaders(req));
+    if (!rateCheck.allowed) {
+      return createRateLimitResponse(rateCheck, getCorsHeaders(req));
+    }
 
     const parsed = await parseBody(req, EmbedInput);
     if (parsed.error) return parsed.error;
-    const { texts, provider, dimension } = parsed.data;
-
-    // Look up workspace secrets
-    const { data: members } = await supabase
-      .from('workspace_members')
-      .select('workspace_id')
-      .eq('user_id', user.id)
-      .limit(1);
-    const wsId = members?.[0]?.workspace_id;
+    const { texts } = parsed.data;
+    // Refina os defaults do Zod: o generico parseBody nao propaga os defaults
+    // do schema, deixando campos como `number | undefined`/`string | undefined`
+    // sob strict TS.
+    const dimension: number = parsed.data.dimension ?? CANONICAL_DIM;
+    const provider: string = parsed.data.provider ?? 'qwen3-embedding-8b';
 
     let hfKey: string | undefined;
     let openaiKey: string | undefined;
+    let openrouterKey: string | undefined;
     if (wsId) {
       const { data: secrets } = await supabase
         .from('workspace_secrets')
         .select('key_name, key_value')
         .eq('workspace_id', wsId)
-        .in('key_name', ['huggingface_api_key', 'openai_api_key']);
+        .in('key_name', ['huggingface_api_key', 'openai_api_key', 'openrouter_api_key']);
       for (const s of secrets ?? []) {
         if (s.key_name === 'huggingface_api_key') hfKey = s.key_value;
         if (s.key_name === 'openai_api_key') openaiKey = s.key_value;
+        if (s.key_name === 'openrouter_api_key') openrouterKey = s.key_value;
       }
     }
 
     // Fallback to env vars
     hfKey ??= Deno.env.get('HUGGINGFACE_API_KEY') ?? undefined;
     openaiKey ??= Deno.env.get('OPENAI_API_KEY') ?? undefined;
+    openrouterKey ??= Deno.env.get('OPENROUTER_API_KEY') ?? undefined;
 
     let embeddings: number[][] | null = null;
     let usedProvider = 'fallback_hash';
@@ -174,6 +242,17 @@ serve(async (req) => {
         usedProvider = 'openai:text-embedding-3-large';
       } else if (oa) {
         rejected.push(`openai devolveu dim=${oa[0]?.length}, esperado ${dimension}`);
+      }
+    }
+
+    // Try OpenRouter (fallback com a key real do projeto)
+    if (!embeddings && openrouterKey) {
+      const or = await embedWithOpenRouter(texts, openrouterKey, dimension);
+      if (or && hasExactDimension(or, dimension)) {
+        embeddings = or;
+        usedProvider = 'openrouter:text-embedding-3-large';
+      } else if (or) {
+        rejected.push(`openrouter devolveu dim=${or[0]?.length}, esperado ${dimension}`);
       }
     }
 
