@@ -80,7 +80,7 @@ E o CI certifica a versão errada: `.github/workflows/guards.yml:125` roda
 **nunca com o script de deploy**. Enquanto os dois documentos concordarem, o CI fica verde.
 O deploy é automático: `.github/workflows/edge-deploy.yml:9-16,62`.
 
-Das 89, **24 não têm nenhum mecanismo de autenticação do chamador** (EXECUTADO: varredura por
+Das 89, **21 não têm nenhum mecanismo de autenticação do chamador** (medição inicial: 24; ver reconciliação abaixo) (EXECUTADO: varredura por
 `auth.getUser`, `authenticateRequest`, `hmacSha256Hex`, `constantTimeEqual`, `x-access-key`, `CRON_SECRET`,
 `WEBHOOK_SECRET`, `x-signature`, `x-hub-signature`, `x-slack-signature`, `SIGNING_SECRET`, `verify_token`),
 e **16 delas instanciam cliente com `SUPABASE_SERVICE_ROLE_KEY`**, que ignora a RLS:
@@ -95,9 +95,16 @@ Prova detalhada em `cron-executor/index.ts:10-35`: CORS (11-12) → rate limit (
 `z.object({}).passthrough().optional()` (8, 19-27) → `createClient(url, serviceRoleKey)` (28-35).
 **Nenhuma checagem de quem chamou, em nenhum ponto.**
 
-> Reconciliação: minha varredura deu 24; a do agente de inventário da camada edge deu **21**. A diferença é de
-> critério de busca, não de fato. O plano trata **function por function**; as duas listas concordam nas que
-> usam `service_role` sem autenticar.
+> **Reconciliação da contagem — três medições, e a terceira resolve.** Minha varredura por padrão de busca
+> deu **24**; a do inventário da camada edge deu **21**. Para escrever o plano, cada uma das 24 functions foi
+> **aberta e lida individualmente** — e essa leitura mostrou que **três delas de fato autenticam**:
+> `skill-classify-llm`, `skill-describe-llm` e `geo-code` (esta por cascata). Minha varredura as classificou
+> errado porque o mecanismo que usam não casava com nenhum dos padrões de busca. **O número correto é 21**, o
+> mesmo do inventário da camada — e as etapas 025, 026 e 028 do plano existem para confirmar e endurecer
+> essas três, não para criar autenticação onde já há.
+> A leitura individual também encontrou uma function **sem nenhum chamador** (`slack-agent-notify`), cuja
+> etapa (018) é remover, não autenticar. As três listas concordam no que importa: as que usam `service_role`
+> sem autenticar o chamador.
 
 Causa raiz: uma flag posta no laço do script de deploy — provavelmente para destravar os webhooks, que
 legitimamente não recebem JWT — e nunca restringida a eles; somada a um guard de CI que valida documentos

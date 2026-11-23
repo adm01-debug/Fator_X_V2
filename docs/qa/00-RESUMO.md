@@ -45,8 +45,7 @@ sem senha, sem login e sem deixar registro de quem foi.
 
 ### 2. Qualquer pessoa pode disparar as tarefas internas do sistema
 
-O script que publica as funções de servidor desliga a verificação de login de **todas as 89**. E 24 delas não
-conferem nada por conta própria. Entre elas: a que executa todas as tarefas agendadas, a que processa a fila
+O script que publica as funções de servidor desliga a verificação de login de **todas as 89**. E **21 delas** não conferem nada por conta própria. Entre elas: a que executa todas as tarefas agendadas, a que processa a fila
 de trabalho, as que enviam mensagem no Slack da empresa.
 **O que isso permite:** uma pessoa de fora roda as rotinas internas do sistema quantas vezes quiser.
 → Etapas 006 a 032
