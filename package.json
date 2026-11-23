@@ -84,7 +84,7 @@
     "@radix-ui/react-toggle-group": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.4.1",
     "@sentry/react": "^11",
-    "@supabase/supabase-js": "2.119.0",
+    "@supabase/supabase-js": "2.119.2",
     "@tanstack/react-query": "^5.107.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/user-event": "^14.6.4",
