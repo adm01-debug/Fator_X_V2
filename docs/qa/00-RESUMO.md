@@ -174,16 +174,16 @@ que esta auditoria quase fez.
 
 | Gravidade   | Quantos | O que significa                                                          |
 | ----------- | ------: | ------------------------------------------------------------------------ |
-| **Crítica** |  **12** | perda ou vazamento de dado, falha de segurança, fluxo principal quebrado |
-| **Alta**    |  **28** | função importante falha ou dá resultado errado                           |
-| **Média**   |  **36** | funciona com defeito ou fragilidade                                      |
-| **Baixa**   |   **9** | acabamento e higiene                                                     |
-| **Total**   |  **85** | agrupados pelas 14 causas que os produzem                                |
+| **Crítica** |  **13** | perda ou vazamento de dado, falha de segurança, fluxo principal quebrado |
+| **Alta**    |  **34** | função importante falha ou dá resultado errado                           |
+| **Média**   |  **44** | funciona com defeito ou fragilidade                                      |
+| **Baixa**   |  **12** | acabamento e higiene                                                     |
+| **Total**   | **103** | agrupados pelas 14 causas que os produzem                                |
 
-De 85, **78 estão confirmados** (li o código que roda, ou executei e vi o resultado) e **7 são hipóteses**,
+De 103, **97 estão confirmados** (li o código que roda, ou executei e vi o resultado) e **6 são hipóteses**,
 cada uma dizendo o que faltou para confirmar.
 
-Registrei também **9 verificações que deram "sem defeito"** — coisas que pareciam problema e não são — para
+Registrei também **15 verificações que deram "sem defeito"** — coisas que pareciam problema e não são — para
 que o próximo agente não gaste tempo nelas.
 
 **O plano de correção tem 300 etapas**, em 8 ondas, da mais urgente para a menos. Cada etapa é uma mudança

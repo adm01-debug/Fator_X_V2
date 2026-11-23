@@ -12,16 +12,16 @@ que faltou.
 
 ## Contagem
 
-| Severidade  | Confirmados | Hipóteses |  Total |
-| ----------- | ----------: | --------: | -----: |
-| **Crítica** |          11 |         1 | **12** |
-| **Alta**    |          25 |         3 | **28** |
-| **Média**   |          33 |         3 | **36** |
-| **Baixa**   |           9 |         0 |  **9** |
-| **Total**   |      **78** |     **7** | **85** |
+| Severidade  | Confirmados | Hipóteses |   Total |
+| ----------- | ----------: | --------: | ------: |
+| **Crítica** |          12 |         1 |  **13** |
+| **Alta**    |          32 |         2 |  **34** |
+| **Média**   |          41 |         3 |  **44** |
+| **Baixa**   |          12 |         0 |  **12** |
+| **Total**   |      **97** |     **6** | **103** |
 
-Além dos 85, há **9 verificações que deram "sem defeito"** e estão registradas na §9 — para o executor não
-gastar etapa nelas.
+Além dos 103, há **15 verificações que deram "sem defeito"** — 9 na §9 e 6 nos adendos — registradas para o
+executor não gastar etapa nelas.
 
 ---
 
