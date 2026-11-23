@@ -285,16 +285,30 @@ devolve 401 para quem não manda header e por isso parece protegida em qualquer 
 minha primeira varredura. Ambas gastam LLM.
 → Etapas **034, 035**
 
-### SEC-06 · Alta · CONFIRMADO · Backend (edge)
+### SEC-06 · Alta · CONFIRMADO (com impacto corrigido) · Backend (edge)
 
-**O executor de tarefas agendadas manda requisição autenticada para qualquer endereço que estiver no banco.**
-`supabase/functions/cron-executor/index.ts:62-70` monta `${baseUrl}/functions/v1/${schedule.target_id}` a
-partir da tabela `cron_schedules`, **sem validar `target_id`**, e põe o próprio `service_role` no header
-`Authorization`. O ramo de webhook (`:79-82`) usa `schedule.target_id` como URL inteira.
-Causa raiz: destino de requisição vindo de dado, combinado com credencial privilegiada no header.
-Impacto: quem conseguir escrever uma linha em `cron_schedules` — ou simplesmente chamar a função, que é
-pública (SEC-02) — faz o sistema entregar a chave do banco para um servidor escolhido por ele.
-→ Etapa **038**
+**O executor de tarefas agendadas usa o destino que estiver no banco, sem validar — e os dois caminhos têm
+efeitos diferentes.**
+
+`supabase/functions/cron-executor/index.ts`, lidos os dois ramos do `switch (schedule.target_type)`:
+
+| Ramo            | Linhas   | O que faz                                                                                             | Efeito real                                                                                                                                                                                                                                                                                                        |
+| --------------- | -------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `edge_function` | `:60-71` | `fnUrl = ${baseUrl}/functions/v1/${schedule.target_id}` com `Authorization: Bearer ${serviceRoleKey}` | **o host é fixo** (`baseUrl` vem de `Deno.env.get('SUPABASE_URL')`, com fallback literal no `:62`): `target_id` é só o segmento de caminho. A `service_role` **não sai** do projeto. O que se consegue é **invocar qualquer edge function do próprio projeto com privilégio total**, escolhendo o nome pelo banco. |
+| `webhook`       | `:79-82` | `webhookUrl = schedule.target_id` usado como **URL inteira**                                          | **SSRF de verdade**: requisição para qualquer host, incluindo endereço interno. Vai sem a `service_role` (só `Content-Type`), mas leva no corpo `schedule_id`, `schedule_name`, `triggered_at` e `config` (`:84-89`).                                                                                              |
+
+> **Correção de rumo.** A primeira versão deste achado dizia que isto "faz o sistema entregar a chave do banco
+> para um servidor escolhido por ele". **Está errado**, e a refutação veio de quem escrevia a etapa
+> correspondente. Reconferi os dois ramos: o que carrega a `service_role` tem host fixo, e o que aceita host
+> arbitrário não carrega a chave. O achado continua Alta — são dois problemas reais —, mas não é exfiltração
+> de credencial.
+
+Causa raiz: destino de requisição vindo de dado, sem allowlist, nos dois ramos; e uso de `service_role` como
+credencial de chamada interna, sem distinguir qual function pode ser alvo.
+
+Impacto: combinado com SEC-02 (a function é pública), um chamador anônimo consegue (a) disparar qualquer edge
+function do projeto com privilégio de `service_role` e (b) fazer o servidor emitir requisição para um endereço
+escolhido por ele, levando o conteúdo de `target_config`.
 
 ### SEC-04 · Alta · CONFIRMADO (código) / HIPÓTESE (desfecho) · Backend (edge)
 
@@ -358,9 +372,17 @@ custo não contabilizado em silêncio.
 `agent-workflow-runner`, `browser-agent-run`, `code-interpreter-execute`, `crm-enrich`, `global-search`,
 `graph-execute`, `kb-analyze-gaps`, `kb-translate-article`, `llm-gateway`, `notebook-podcast-generate`,
 `quick-agent-test`, `skill-classify-llm`, `skill-describe-llm`, `visual-search`, `voice-synthesize`,
-`voice-transcribe`, `widget-proxy`. **Sete delas não exigem nenhuma autenticação** (cruzamento com SEC-02):
-`agent-conversational-builder`, `kb-analyze-gaps`, `kb-translate-article`, `quick-agent-test`,
-`skill-classify-llm`, `skill-describe-llm`, `visual-search`.
+`voice-transcribe`, `widget-proxy`. **Cinco delas não exigem autenticação de verdade** (cruzamento com SEC-02, já com a correção abaixo):
+`agent-conversational-builder`, `quick-agent-test` e `visual-search` não verificam nada; `kb-analyze-gaps` e
+`kb-translate-article` só conferem se o header `Authorization` **existe**, sem validar o token (SEC-03) —
+contam como abertas.
+
+> **Correção de rumo.** A primeira versão listava **sete**, incluindo `skill-classify-llm` e
+> `skill-describe-llm`. **Erro meu:** as duas autenticam. `skill-classify-llm/index.ts:133-134` faz
+> `const userId = await getAuthUserId(req); if (!userId) return 401`, e o comentário do `:132` mostra que o
+> autor sabia do problema do deploy — _"verify_jwt = false é o padrão do deploy; a validação é feita aqui"_.
+> `skill-describe-llm/index.ts:238-240` faz o mesmo. Ambas ainda gastam LLM fora do `llm-gateway`, então
+> continuam no achado — mas como **autenticadas**, não como portas abertas.
 
 O único freio nessas 7 é frágil e foi medido: usam `checkRateLimit` (5 com `RATE_LIMITS.heavy` = 5/min), mas
 `supabase/functions/_shared/rate-limiter.ts:40` guarda o estado em `const store = new Map<string, number[]>()`
@@ -636,7 +658,7 @@ const backupCodes = Array.from({ length: 8 }, () =>
 );
 ```
 
-e `:50-53` grava os 8 em `user_2fa.backup_codes`.
+e `:50-51` grava os 8 em `user_2fa.backup_codes`.
 
 Três problemas na mesma linha:
 

@@ -88,11 +88,12 @@ cuida de LGPD não entra, e quem mexe em chave de API entra em tudo.
 
 ### 6. Qualquer pessoa na internet pode gastar seu crédito de inteligência artificial
 
-Sete endereços do sistema chamam a OpenRouter — que você paga por uso — sem exigir login e **sem passar pelo
+Cinco endereços do sistema chamam a OpenRouter — que você paga por uso — sem exigir login e **sem passar pelo
 controle de orçamento**. Há um controle de orçamento bem feito no sistema, mas essas sete funções usam um
 atalho que não passa por ele. E o próprio controle tem uma brecha: se o pedido não informar de qual cliente
 é, ele libera sem verificar nada.
 **O que isso permite:** esvaziar o saldo de IA. Quanto já foi gasto assim eu não consegui medir.
+(Correção: minha primeira contagem disse sete. Duas das sete autenticam — ver o achado COST-01.)
 → Etapas 033, 039 a 045
 
 ### 7. Você tem dois sites no ar: o oficial está atualizado e não abre nenhuma tela; o outro funciona e está velho
