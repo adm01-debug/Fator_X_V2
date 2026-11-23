@@ -77,28 +77,28 @@ exercidas de verdade. Isso não é uma escolha de escopo: é a limitação da se
 
 ### 1.5 Produção viva, ator = visitante (somente GET, sem tentativa de login)
 
-| #    | Cenário                                  | Esperado                  | Encontrado                                                                                            | Veredito                       |
-| ---- | ---------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ |
-| E-33 | `GET https://superagent-lab.lovable.app` | 200, app renderiza        | 200, título e login renderizados                                                                      | ✅                             |
-| E-34 | `GET /dashboard` sem sessão              | tela de login             | tela de login                                                                                         | ✅                             |
-| E-35 | `GET /rota-que-nao-existe-qa-audit`      | 404 (como no local, E-15) | **tela de login, não 404**                                                                            | ❌ **DEPLOY-01** (build velha) |
-| E-36 | HTML servido × `index.html` do HEAD      | iguais                    | **`dns-prefetch` para projeto abandonado, CSP sem `*.sentry.io`, sem `media-src`, sem `form-action`** | ❌ **DEPLOY-01**               |
+| #    | Cenário                                            | Esperado                  | Encontrado                                                                                            | Veredito                       |
+| ---- | -------------------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ |
+| E-33 | `GET https://superagent-lab.lovable.app`           | 200, app renderiza        | 200, título e login renderizados                                                                      | ✅                             |
+| E-34 | `GET /dashboard` sem sessão                        | tela de login             | tela de login                                                                                         | ✅                             |
+| E-35 | `GET /rota-que-nao-existe-qa-audit` **no Lovable** | 404 (como no local, E-15) | **tela de login, não 404**                                                                            | ❌ **DEPLOY-01** (build velha) |
+| E-36 | HTML servido × `index.html` do HEAD                | iguais                    | **`dns-prefetch` para projeto abandonado, CSP sem `*.sentry.io`, sem `media-src`, sem `form-action`** | ❌ **DEPLOY-01**               |
 
 ### 1.6 Plataforma: GitHub, CI e deploy (ator = sistema)
 
-| #    | Cenário                                                       | Esperado                  | Encontrado                                                                                                                         | Veredito                         |
-| ---- | ------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| E-37 | push na `main` dispara os 5 checks obrigatórios               | 5 rodam e passam          | run 44942293202: 5 `success`                                                                                                       | ✅                               |
-| E-38 | push na `main` roda E2E / Lighthouse / k6 / contratos de edge | deveriam cobrir a main    | **4 `skipped`** (`if: pull_request`) e **nenhum é obrigatório**                                                                    | ❌ **E2E-01**                    |
-| E-39 | `Security Audit` barra vulnerabilidade                        | barrar o que existe       | `npm audit` completo: **23 (15 moderadas, 6 altas, 2 críticas)**; o comando do gate devolve **4 (3 moderadas, 1 alta)** e sai 0    | ❌ **CI-01**                     |
-| E-40 | `DB Drift Check` no CI                                        | verificar banco × repo    | **rodou de verdade**: `MCP conectado: supabase-fatorx-v2-mcp 5.3.0`, `repo=338 banco=338`, `RLS: 221/221`, zero escrita anon       | ✅ (e corrige `ESTADO-ATUAL.md`) |
-| E-41 | merge na `main` publica edge functions                        | sim                       | run 44942293262: `✅ Deployed: 89 \| ❌ Failed: 0`, incluindo `migrate-helper`                                                     | ✅ (e é parte do **SEC-01**)     |
-| E-42 | merge na `main` publica o front                               | sim                       | Vercel: **0 projetos, 0 deployments**; nenhum workflow publica front                                                               | ❌ **DEPLOY-01**                 |
-| E-43 | CodeQL produz alertas                                         | sim                       | **830 execuções `success`** e `list_code_scanning_alerts` → **404 "no analysis found"** (`upload: never`)                          | ❌ **CQL-01**                    |
-| E-44 | falha de CI avisa alguém                                      | Slack                     | `SLACK_WEBHOOK_URL` **não existe** nos secrets → só um `::warning::`                                                               | ❌ **SLACK-01**                  |
-| E-45 | PR exige aprovação humana                                     | sim                       | `required_pull_request_reviews` **ausente** → merge com zero aprovação                                                             | ❌ **CI-03**                     |
-| E-46 | repositório é privado                                         | sim (`AGENTS.md`)         | **`private: false`, `visibility: public`**; secret scanning e push protection **disabled**                                         | ❌ **SEC-01** (agravante)        |
-| E-47 | manifest de deploy reflete o deploy                           | sim (guard de CI confere) | manifest diz **`verify_jwt_true: 80`**; o script deploya **89 com `--no-verify-jwt`**; o guard só compara manifest × `config.toml` | ❌ **SEC-02**                    |
+| #    | Cenário                                                       | Esperado                  | Encontrado                                                                                                                                                | Veredito                           |
+| ---- | ------------------------------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| E-37 | push na `main` dispara os 5 checks obrigatórios               | 5 rodam e passam          | run 44942293202: 5 `success`                                                                                                                              | ✅                                 |
+| E-38 | push na `main` roda E2E / Lighthouse / k6 / contratos de edge | deveriam cobrir a main    | **4 `skipped`** (`if: pull_request`) e **nenhum é obrigatório**                                                                                           | ❌ **E2E-01**                      |
+| E-39 | `Security Audit` barra vulnerabilidade                        | barrar o que existe       | `npm audit` completo: **23 (15 moderadas, 6 altas, 2 críticas)**; o comando do gate devolve **4 (3 moderadas, 1 alta)** e sai 0                           | ❌ **CI-01**                       |
+| E-40 | `DB Drift Check` no CI                                        | verificar banco × repo    | **rodou de verdade**: `MCP conectado: supabase-fatorx-v2-mcp 5.3.0`, `repo=338 banco=338`, `RLS: 221/221`, zero escrita anon                              | ✅ (e corrige `ESTADO-ATUAL.md`)   |
+| E-41 | merge na `main` publica edge functions                        | sim                       | run 44942293262: `✅ Deployed: 89 \| ❌ Failed: 0`, incluindo `migrate-helper`                                                                            | ✅ (e é parte do **SEC-01**)       |
+| E-42 | merge na `main` publica o front                               | sim                       | **sim na Vercel** (o `vercel[bot]` buildou o preview desta branch às 01:02Z), **não** no Lovable (botão manual); nenhum workflow deste repo publica front | ⚠️ **DEPLOY-01** — ver E-50 a E-53 |
+| E-43 | CodeQL produz alertas                                         | sim                       | **830 execuções `success`** e `list_code_scanning_alerts` → **404 "no analysis found"** (`upload: never`)                                                 | ❌ **CQL-01**                      |
+| E-44 | falha de CI avisa alguém                                      | Slack                     | `SLACK_WEBHOOK_URL` **não existe** nos secrets → só um `::warning::`                                                                                      | ❌ **SLACK-01**                    |
+| E-45 | PR exige aprovação humana                                     | sim                       | `required_pull_request_reviews` **ausente** → merge com zero aprovação                                                                                    | ❌ **CI-03**                       |
+| E-46 | repositório é privado                                         | sim (`AGENTS.md`)         | **`private: false`, `visibility: public`**; secret scanning e push protection **disabled**                                                                | ❌ **SEC-01** (agravante)          |
+| E-47 | manifest de deploy reflete o deploy                           | sim (guard de CI confere) | manifest diz **`verify_jwt_true: 80`**; o script deploya **89 com `--no-verify-jwt`**; o guard só compara manifest × `config.toml`                        | ❌ **SEC-02**                      |
 
 ### 1.7 Banco e MCP (ator = auditor)
 
@@ -107,7 +107,19 @@ exercidas de verdade. Isso não é uma escolha de escopo: é a limitação da se
 | E-48 | ler o banco oficial `qdlnzopxrlsoljcrcmzv` por MCP | conseguir | **nenhum MCP aponta para ele**; os 5 conectados são de outros produtos (um deles com `401`) | ⛔ camada não coberta   |
 | E-49 | os MCPs conectados são o Fator X?                  | não       | ZAPP: 227 tabelas, sem `agents`/`workspace_members`/`audit_log`; FINANCE: 286, idem         | ✅ (confirmado que não) |
 
-**Total EXECUTADO: 49 cenários.**
+### 1.8 Correção de rumo — os dois front-ends (ator: visitante; executado em 2026-11-23T01:07Z)
+
+Estes quatro cenários foram executados **depois** da primeira consolidação, quando o `vercel[bot]` comentou na
+PR desta auditoria e provou que o projeto Vercel existe. Eles corrigem o achado DEPLOY-01.
+
+| #    | Cenário                                                            | Esperado                        | Encontrado                                                                                                                     | Veredito                                               |
+| ---- | ------------------------------------------------------------------ | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| E-50 | `GET https://fator-x-v2.vercel.app/` (endereço oficial)            | serve a aplicação, versão atual | **serve, e é a versão atual** — `dns-prefetch` para `qdlnzopxrlsoljcrcmzv`, CSP com `*.sentry.io`, `form-action` e `media-src` | ✅                                                     |
+| E-51 | `GET https://fator-x-v2.vercel.app/auth`                           | tela de login                   | **`404: NOT_FOUND` da Vercel** — falta `vercel.json` com `rewrites` de SPA                                                     | ❌ **DEPLOY-01**                                       |
+| E-52 | `GET https://fator-x-v2.vercel.app/rota-inexistente-qa-audit`      | 404 da aplicação                | **404 da Vercel** (o catch-all da aplicação nunca é alcançado)                                                                 | ❌ **DEPLOY-01**                                       |
+| E-53 | `get_project` com o `projectId` exato que o `vercel[bot]` publicou | dados do projeto                | **404 `not_found`** — a credencial desta sessão não vê o projeto                                                               | ⛔ não coberto (e causa de um erro meu, ver DEPLOY-01) |
+
+**Total EXECUTADO: 53 cenários.**
 
 ---
 
@@ -221,11 +233,11 @@ lido; o achado correspondente traz o `arquivo:linha` completo.
 
 |                                                             | Quantidade |
 | ----------------------------------------------------------- | ---------- |
-| Cenários **EXECUTADOS**                                     | **49**     |
+| Cenários **EXECUTADOS**                                     | **53**     |
 | Cenários **RASTREADOS**                                     | **46**     |
-| Total                                                       | **95**     |
-| Divergência esperado × encontrado (viraram achado)          | **38**     |
-| Conforme o esperado (registrados para ninguém gastar etapa) | **53**     |
+| Total                                                       | **99**     |
+| Divergência esperado × encontrado (viraram achado)          | **41**     |
+| Conforme o esperado (registrados para ninguém gastar etapa) | **54**     |
 | NÃO VERIFICADO dentro do rastreio                           | **4**      |
 
 ### O que a matriz **não** cobre, e por quê

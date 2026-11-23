@@ -24,8 +24,8 @@ arquivo, nunca contra o deploy de verdade.
 
 **Três coisas precisam de decisão sua hoje, antes de qualquer outra:** uma chave que dá controle total do
 banco de dados está publicada na internet (item 1 abaixo); o repositório está público, não privado como a
-documentação do projeto afirma; e o site que está no ar não é a versão atual do código — é de antes de
-11 de novembro, e não existe nada que publique o site automaticamente.
+documentação do projeto afirma; e os dois sites no ar estão cada um com um problema diferente — o endereço
+oficial só abre a página inicial, e o endereço canônico está 11 dias atrasado (item 7).
 
 ---
 
@@ -95,17 +95,24 @@ atalho que não passa por ele. E o próprio controle tem uma brecha: se o pedido
 **O que isso permite:** esvaziar o saldo de IA. Quanto já foi gasto assim eu não consegui medir.
 → Etapas 033, 039 a 045
 
-### 7. O site no ar é de antes de 11 de novembro, e nada publica o site automaticamente
+### 7. Você tem dois sites no ar: o oficial está atualizado e não abre nenhuma tela; o outro funciona e está velho
 
-Comparei o que o navegador recebe de `superagent-lab.lovable.app` com o código atual: são versões diferentes,
-e a diferença identifica o build como anterior a 11/11. A Vercel, que a documentação do projeto aponta como o
-caminho oficial de publicação, **não tem nenhum projeto** nesta conta. O Lovable publica por botão, manualmente.
-**O que isso significa:** as correções mergeadas nos últimos 11 dias não chegaram a nenhum usuário. E quem
-mergear uma correção de tela e disser "está em produção" vai estar errado. (Funções de servidor, ao contrário,
-sobem sozinhas no merge — a diferença não está escrita em lugar nenhum.)
-**Efeito colateral:** o monitoramento de erros (Sentry) está bloqueado na versão publicada. Erro de usuário
-real hoje não chega a ninguém.
-→ Etapas 063 a 068
+- **`fator-x-v2.vercel.app`** (o endereço oficial, que está no cadastro do repositório): serve a versão
+  **atual** do código — mas **só a página inicial**. Qualquer outro endereço — `/auth`, `/dashboard`,
+  `/agents`, qualquer link que alguém compartilhe, qualquer recarregamento de página — devolve a tela de erro
+  "404 NOT_FOUND" da própria Vercel. Falta um arquivo de configuração de uma linha (`vercel.json`) que diz à
+  Vercel para entregar a aplicação em todos os endereços. **Quem acessa pelo endereço oficial não consegue
+  nem abrir a tela de login.**
+- **`superagent-lab.lovable.app`** (o endereço que o próprio código declara como o canônico, usado por busca
+  e por link compartilhado): **funciona em todas as telas e está 11 dias atrasado** — é de antes de 11/11.
+  Nele, o monitoramento de erro (Sentry) está bloqueado, então erro de usuário real não chega a ninguém.
+
+**Correção que eu devo registrar:** minha primeira leitura disse que a Vercel não tinha projeto nenhum, porque
+a consulta de API voltou vazia. Estava errado — o robô da Vercel comentou na PR desta auditoria com o build da
+minha própria branch, provando que o projeto existe. A credencial desta sessão simplesmente não vê esse
+projeto (ainda devolve 404 com o ID exato). Vazio de API não é prova de ausência, e eu tratei como se fosse.
+Consequência prática para você: **a configuração do deploy na Vercel não pôde ser lida** e precisa ser
+conferida no painel antes de qualquer mexida.
 
 ### 8. Cinco telas do produto estão quebradas em produção por uma variável que ninguém define
 
@@ -195,7 +202,7 @@ pequena, verificável sozinha, com o comando exato que prova que funcionou.
 
 Essa distinção é a parte mais importante deste resumo, porque define no que você pode confiar.
 
-- **49 cenários executados**: rodei o comando, a consulta ou a requisição e vi o resultado.
+- **53 cenários executados**: rodei o comando, a consulta ou a requisição e vi o resultado.
 - **46 cenários rastreados**: segui o caminho lendo o código, sem executar.
 
 Nunca escrevi "testado" para algo que apenas li.

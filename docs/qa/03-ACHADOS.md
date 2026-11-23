@@ -114,40 +114,67 @@ Impacto: **qualquer pessoa na internet pode disparar tarefas internas do sistema
 agendados, drenar a fila de trabalho, mandar mensagem no Slack da empresa, gastar crédito de IA.
 → Etapas **006–032**
 
-### DEPLOY-01 · Crítica · CONFIRMADO · Infraestrutura
+### DEPLOY-01 · **Crítica** · EXECUTADO · Infraestrutura
 
-**O site que está no ar não é a versão do código, e nada publica o front-end automaticamente.**
+**Existem dois front-ends no ar. Um está atualizado e quebrado; o outro funciona e está velho.**
 
-Evidência (EXECUTADO, Playwright MCP contra produção + `ls` + MCP da Vercel + API do GitHub):
+> **Correção de rumo registrada em 2026-11-23T01:07Z.** A primeira versão deste achado dizia que "a Vercel não
+> tem projeto algum nesta conta", com base em `list_projects` e `list_deployments` devolvendo vazio e
+> `filter_project_envs` devolvendo 404. **Isso estava errado, e a prova chegou sozinha:** ao abrir a PR desta
+> auditoria, o `vercel[bot]` comentou nela com o build de preview da minha própria branch
+> (`projectId: prj_xuVWFlazuE2AgkJJGos4FpYak0mc`, `teamId: team_QyN41X0q8hrqhW80AwokbFLv`, status `Ready`).
+> Reconsultei com o ID exato: `get_project prj_xuVWFlazuE2AgkJJGos4FpYak0mc` ainda devolve **404
+> `not_found`**. Logo o problema é de **escopo da credencial Vercel desta sessão**, que não vê esse projeto —
+> não de o projeto não existir. Vazio de API não é prova de ausência, e eu tratei como se fosse.
 
-| Elemento                        | HEAD (`index.html`)                                                     | Servido em produção                                         |
-| ------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `dns-prefetch`                  | `qdlnzopxrlsoljcrcmzv.supabase.co` (linha 17)                           | **`tdprnylgyrogbbhgdoik.supabase.co`** (projeto abandonado) |
-| CSP `connect-src`               | inclui `*.lovable.app`, `*.lovable.dev`, `cdn.gpteng.co`, `*.sentry.io` | **nenhum deles**                                            |
-| CSP `media-src` / `form-action` | presentes                                                               | **ausentes**                                                |
-| `/rota-inexistente`             | 404 (confirmado local: "404 Página não encontrada")                     | **tela de login**                                           |
+Medido depois da correção (EXECUTADO, Playwright MCP):
 
-A linha `index.html:17` com o ID antigo foi corrigida pela **PR #80, mergeada em 2026-11-11T23:30:39Z** (o
-corpo da PR a lista explicitamente). Logo o build em produção é **anterior a 2026-11-11**, e não contém as
-PRs #80 a #145 — incluindo a correção da validação do login (#97), a restauração de `key_value` em
-`workspace_secrets` (#137) e a migração do WhatsApp para edge (#142).
+|                         | `fator-x-v2.vercel.app` (Vercel)                                                                                     | `superagent-lab.lovable.app` (Lovable)                                                                                                                 |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Declarado no código     | `homepage` do repositório no GitHub                                                                                  | **`<link rel="canonical">` em `index.html:38`**                                                                                                        |
+| Build                   | **atual** — `dns-prefetch` para `qdlnzopxrlsoljcrcmzv`, CSP com `*.sentry.io`, `form-action` e `media-src` presentes | **anterior a 2026-11-11** — `dns-prefetch` para `tdprnylgyrogbbhgdoik` (projeto abandonado), CSP sem `*.sentry.io`, sem `form-action`, sem `media-src` |
+| `GET /`                 | serve a aplicação                                                                                                    | serve a aplicação                                                                                                                                      |
+| `GET /auth`             | **`404: NOT_FOUND` da própria Vercel**                                                                               | serve a tela de login                                                                                                                                  |
+| `GET /rota-inexistente` | **`404: NOT_FOUND` da Vercel**                                                                                       | tela de login (o catch-all da aplicação nunca é alcançado)                                                                                             |
 
-E não há caminho automático: Vercel com **0 projetos e 0 deployments** no único time da conta
-(`list_projects`, `list_deployments`, `filter_project_envs` → 404); sem `vercel.json` nem `.vercel/`; nenhum
-workflow publica o front; o Lovable publica por **botão manual** (`docs/RUNBOOK.md`).
-`docs/agentes/deploy.md:14-16` declara a Vercel como caminho oficial.
+**Portanto, somando os dois:**
 
-Causa raiz: o caminho de publicação do front-end foi perdido (Vercel desfeita) e substituído por uma ação
-manual que ninguém executa, sem nada no repositório que sinalize isso. Edge functions, ao contrário, sobem
-automaticamente — a assimetria não está documentada em lugar nenhum.
+1. **O deploy da Vercel está atualizado e é inútil para o usuário.** Só a raiz funciona. Qualquer rota —
+   `/auth`, `/dashboard`, `/agents`, qualquer link profundo, qualquer recarregamento de página fora da raiz —
+   devolve o 404 da Vercel. A causa é a que eu já havia confirmado por outro caminho: **não existe
+   `vercel.json`** no repositório (EXECUTADO: `ls` e `git ls-files`), e uma SPA de Vite precisa da regra de
+   `rewrites` para `/index.html`. Sem ela, a Vercel procura um arquivo chamado `auth` e não acha.
+2. **O deploy do Lovable funciona em todas as rotas e está 11+ dias atrasado.** É ele que o `index.html:38`
+   declara como canônico — então é para a cópia velha que apontam o SEO, o Open Graph e qualquer link gerado
+   a partir do canônico.
+3. **As consequências que eu havia atribuído ao "site velho" valem para a cópia do Lovable**, que é a que
+   atende rota: o Sentry bloqueado pela CSP em vigor, a ausência de `form-action`, e o `dns-prefetch` para o
+   projeto abandonado. A cópia da Vercel não tem esses problemas — e também não tem usuários, porque 404a.
 
-Impacto: **correções mergeadas há 11 dias não chegaram ao usuário**, e ninguém sabe disso. Pior: quem mergear
-uma correção de front e disser "está em produção" estará errado.
+E `docs/agentes/deploy.md:7-16`, que declara a Vercel como caminho oficial, **estava certo**; fui eu que
+concluí errado a partir de uma API que não enxergava o projeto. O que o documento não diz é que o caminho
+oficial está quebrado para toda rota que não seja `/`.
 
-Consequência direta (Alta): **o Sentry não funciona em produção.** `src/main.tsx:7` chama `initSentry`,
-`src/lib/sentry.ts:8` e `src/lib/webVitals.ts:16` enviam eventos — e a CSP em vigor não permite
-`*.sentry.io` em `connect-src`. Erro de usuário real não chega a lugar nenhum.
-→ Etapas **063–068**
+Causa raiz: a aplicação foi publicada em dois hosts, com uma única `canonical` apontando para o host
+secundário, e o host oficial nunca recebeu a configuração de rewrite que uma SPA exige. Nada no repositório
+cruza "onde o build é publicado" com "o build publicado responde às rotas".
+
+Impacto: **quem acessa pelo endereço oficial não consegue nem abrir a tela de login.** Quem acessa pelo
+endereço canônico usa um sistema de antes de 11/11, sem monitoramento de erro.
+
+**Como verificar a correção:**
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" https://fator-x-v2.vercel.app/auth
+```
+
+Esperado hoje: **404**. Esperado depois de adicionar o `vercel.json` com o rewrite: **200**.
+E `curl -s https://superagent-lab.lovable.app | grep -o 'dns-prefetch[^>]*'` deve passar a citar
+`qdlnzopxrlsoljcrcmzv`, provando que a cópia do Lovable foi republicada.
+
+**Limite que permanece:** a credencial Vercel desta sessão não vê o projeto, então **não foi possível ler o
+estado dos deploys de produção, as variáveis de ambiente do projeto nem a configuração de Git dele**. Isso
+fica como **não coberto** — e é a primeira coisa a conferir no painel antes de mexer no deploy.
 
 ### CQL-01 · Alta · CONFIRMADO · Infraestrutura (CI)
 
