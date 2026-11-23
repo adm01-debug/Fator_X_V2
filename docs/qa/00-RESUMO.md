@@ -51,7 +51,22 @@ de trabalho, as que enviam mensagem no Slack da empresa.
 **O que isso permite:** uma pessoa de fora roda as rotinas internas do sistema quantas vezes quiser.
 → Etapas 006 a 032
 
-### 3. Um cliente consegue ver — e trocar — as senhas de integração de outro cliente
+### 3. Um cliente consegue gravar dados dentro da conta de outro cliente — e assinar em nome de terceiros
+
+As regras de acesso do banco foram criadas em massa, por um laço que percorreu todas as tabelas de uma vez.
+Duas das quatro regras saíram com a condição errada, e o erro foi aplicado a todas as tabelas:
+
+- **Mover registro entre clientes:** a regra de alteração aceita a linha se ela for "do usuário" — e não
+  confere o cliente no valor **novo**. Resultado: o usuário altera o próprio registro apontando-o para o
+  workspace de outro cliente.
+- **Assinar em nome de outro:** a regra de inserção confere só o workspace, nunca de quem é a linha. Um
+  membro comum insere registro com o nome de outra pessoa. Em tabelas de log, aprovação e execução, isso é
+  **forjar autoria** — a trilha de auditoria pode ser escrita por quem ela deveria auditar.
+  **Por que ninguém viu:** o verificador do CI confere se a proteção está **ligada** (e está: 221 de 221
+  tabelas) e não lê **o que ela diz**.
+  → Etapas de Onda 1
+
+### 4. Um cliente consegue ver — e trocar — as senhas de integração de outro cliente
 
 Esta é uma corrente de quatro elos, e nenhum deles isolado chamaria atenção. O sistema guarda no banco todos
 os cabeçalhos das requisições que recebe das integrações, inclusive os que carregam senha. A regra de acesso
@@ -61,7 +76,18 @@ consulta sem filtrar por cliente. E imprime os cabeçalhos na tela.
 os outros. Com elas, passa a enviar dados em nome deles.
 → Etapas 057 a 062
 
-### 4. Qualquer pessoa na internet pode gastar seu crédito de inteligência artificial
+### 5. O controle de permissões não é operável: ou a pessoa pode tudo, ou não pode nada
+
+Não existe nenhuma tela ou caminho no produto que atribua um papel a um usuário. As funções que fariam isso
+não têm chamador; as três telas de permissões são somente leitura. Na prática, um gatilho do banco dá poder
+total ao **primeiro** usuário de cada conta, e todos os seguintes ficam sem papel nenhum — sem acesso às 38
+telas que exigem permissão, e sem nenhuma forma de receber acesso.
+**O que isso significa no dia a dia:** você não consegue dar acesso parcial a ninguém. E as 26 telas de
+segurança e conformidade estão todas sob a mesma permissão, que é a de "gerenciar chaves de API" — quem
+cuida de LGPD não entra, e quem mexe em chave de API entra em tudo.
+→ Etapas de Onda 1 e 2
+
+### 6. Qualquer pessoa na internet pode gastar seu crédito de inteligência artificial
 
 Sete endereços do sistema chamam a OpenRouter — que você paga por uso — sem exigir login e **sem passar pelo
 controle de orçamento**. Há um controle de orçamento bem feito no sistema, mas essas sete funções usam um
@@ -70,7 +96,7 @@ atalho que não passa por ele. E o próprio controle tem uma brecha: se o pedido
 **O que isso permite:** esvaziar o saldo de IA. Quanto já foi gasto assim eu não consegui medir.
 → Etapas 033, 039 a 045
 
-### 5. O site no ar é de antes de 11 de novembro, e nada publica o site automaticamente
+### 7. O site no ar é de antes de 11 de novembro, e nada publica o site automaticamente
 
 Comparei o que o navegador recebe de `superagent-lab.lovable.app` com o código atual: são versões diferentes,
 e a diferença identifica o build como anterior a 11/11. A Vercel, que a documentação do projeto aponta como o
@@ -82,7 +108,17 @@ sobem sozinhas no merge — a diferença não está escrita em lugar nenhum.)
 real hoje não chega a ninguém.
 → Etapas 063 a 068
 
-### 6. Um botão da interface grava 50 medições falsas no banco — e elas liberam uma decisão real
+### 8. Cinco telas do produto estão quebradas em produção por uma variável que ninguém define
+
+O código lê uma variável de ambiente que não existe nem no modelo de configuração do projeto nem na
+publicação. O resultado está no arquivo que o navegador baixa: a credencial vai literalmente como
+`undefined`. Afeta Interpretador de Código, Computer Use, Agent Builder, Oráculo e o detalhe de Base de
+Conhecimento.
+**Por que o CI não pega:** variável ausente não quebra o build, e nenhum dos 6.226 testes exercita esses
+cinco caminhos de rede.
+→ Etapas de Onda 2
+
+### 9. Um botão da interface grava 50 medições falsas no banco — e elas liberam uma decisão real
 
 Na tela de experimentos de prompt existe um botão que gera 50 resultados aleatórios e **grava no banco de
 produção**, misturados com as medições reais, sem nenhuma marca de que são inventados. Em seguida, a regra que
@@ -93,7 +129,7 @@ inventados, e depois não há como separar, na tabela, o que foi medido do que f
 As próprias regras do projeto já proibiam isso, apontando este mesmo arquivo. O código continua lá.
 → Etapas 105 a 107
 
-### 7. Salvar um workflow pode apagá-lo, com mensagem de sucesso na tela
+### 10. Salvar um workflow pode apagá-lo, com mensagem de sucesso na tela
 
 Ao salvar, o sistema primeiro apaga todas as etapas do workflow e depois grava as novas. Se a segunda parte
 falhar — por rede, por permissão, por qualquer motivo — as etapas antigas já foram apagadas, a falha só vai
@@ -101,7 +137,11 @@ para o log, e o usuário vê **"Canvas salvo!"**.
 **O que isso significa:** perda definitiva do trabalho, sem aviso.
 → Etapas 063 a 065
 
-### 8. Não existe proteção contra sua tela de login ser embutida em site de terceiro
+---
+
+## E mais três que pedem decisão sua, não correção técnica
+
+#### Não existe proteção contra sua tela de login ser embutida em site de terceiro
 
 As proteções de segurança do navegador estão declaradas no lugar errado do arquivo — numa forma que o
 navegador ignora. O próprio navegador avisa isso no console, em todas as páginas, em todos os carregamentos.
@@ -111,7 +151,7 @@ proteção está em vigor.
 (o golpe conhecido como clickjacking).
 → Etapas 047 a 052
 
-### 9. O sistema promete "SOC 2" na tela de login, e cita um cliente que não existe no repositório
+#### O sistema promete "SOC 2" na tela de login, e cita um cliente que não existe no repositório
 
 A tela de login exibe, para todo visitante: "Criptografia ponta-a-ponta · SOC 2 · LGPD Compliant", e um
 depoimento com nome, cargo e empresa ("Marcos Costa, Head de Operações, TechBR") com uma métrica de 60 %.
@@ -120,7 +160,7 @@ Nenhuma dessas afirmações tem fonte no repositório.
 Isso é decisão sua: remover ou comprovar.
 → Etapas 269 a 271
 
-### 10. A documentação do projeto contradiz a realidade nos pontos que mais importam
+#### A documentação do projeto contradiz a realidade nos pontos que mais importam
 
 O arquivo de regras diz que o repositório é privado (é público). O de deploy aponta a Vercel (que não tem
 projeto). O de estado diz que três falhas graves de banco estão abertas — e elas foram corrigidas entre
@@ -129,20 +169,19 @@ setembro e novembro.
 esses arquivos. Hoje eles mandam consertar o que já está consertado e não mencionam o que está aberto. Foi o
 que esta auditoria quase fez.
 → Etapas 060 a 062, 068
-
 ---
 
 ## Quanto foi encontrado
 
 | Gravidade   | Quantos | O que significa                                                          |
 | ----------- | ------: | ------------------------------------------------------------------------ |
-| **Crítica** |   **9** | perda ou vazamento de dado, falha de segurança, fluxo principal quebrado |
-| **Alta**    |  **20** | função importante falha ou dá resultado errado                           |
-| **Média**   |  **29** | funciona com defeito ou fragilidade                                      |
-| **Baixa**   |   **6** | acabamento e higiene                                                     |
-| **Total**   |  **64** | agrupados pelas 12 causas que os produzem                                |
+| **Crítica** |  **12** | perda ou vazamento de dado, falha de segurança, fluxo principal quebrado |
+| **Alta**    |  **28** | função importante falha ou dá resultado errado                           |
+| **Média**   |  **36** | funciona com defeito ou fragilidade                                      |
+| **Baixa**   |   **9** | acabamento e higiene                                                     |
+| **Total**   |  **85** | agrupados pelas 14 causas que os produzem                                |
 
-De 64, **58 estão confirmados** (li o código que roda, ou executei e vi o resultado) e **6 são hipóteses**,
+De 85, **78 estão confirmados** (li o código que roda, ou executei e vi o resultado) e **7 são hipóteses**,
 cada uma dizendo o que faltou para confirmar.
 
 Registrei também **9 verificações que deram "sem defeito"** — coisas que pareciam problema e não são — para

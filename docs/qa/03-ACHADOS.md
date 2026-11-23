@@ -14,13 +14,13 @@ que faltou.
 
 | Severidade  | Confirmados | Hipóteses |  Total |
 | ----------- | ----------: | --------: | -----: |
-| **Crítica** |           8 |         1 |  **9** |
-| **Alta**    |          18 |         2 | **20** |
-| **Média**   |          26 |         3 | **29** |
-| **Baixa**   |           6 |         0 |  **6** |
-| **Total**   |      **58** |     **6** | **64** |
+| **Crítica** |          11 |         1 | **12** |
+| **Alta**    |          25 |         3 | **28** |
+| **Média**   |          33 |         3 | **36** |
+| **Baixa**   |           9 |         0 |  **9** |
+| **Total**   |      **78** |     **7** | **85** |
 
-Além dos 64, há **9 verificações que deram "sem defeito"** e estão registradas na §9 — para o executor não
+Além dos 85, há **9 verificações que deram "sem defeito"** e estão registradas na §9 — para o executor não
 gastar etapa nelas.
 
 ---
@@ -948,3 +948,291 @@ O inventário da camada de services esclareceu dois pontos do **ADR-01** que mud
 - `agent_configs` é a **única** tabela referenciada e inexistente: `grep -rn agent_configs supabase/` → zero
   resultados (confirma **SRV-DEAD-01**).
 - Os 5 webhooks receptores verificam assinatura com comparação em tempo constante (confirma a §9).
+
+---
+
+## CAUSA RAIZ M — "variável de ambiente que o código lê e ninguém define"
+
+### ENV-01 · **Alta** · EXECUTADO · Infraestrutura / Front-end
+
+**Cinco telas enviam `apikey: undefined` ao backend, e o build fica verde.**
+
+`VITE_SUPABASE_ANON_KEY` é lida em **5 lugares** de `src/`:
+`src/stores/oracleStore.ts:167` · `src/components/knowledge/KnowledgeBaseDetail.tsx:129` ·
+`src/services/codeInterpreterService.ts:59` · `src/lib/otel-genai.ts:91` ·
+`src/pages/ComputerUsePage.tsx:46`.
+
+E ela **não existe em nenhum dos dois lugares que a definiriam**:
+
+- `.env.example` **não a declara** (EXECUTADO: `grep -n "VITE_SUPABASE_ANON_KEY" .env.example` → nada). O
+  template declara `VITE_SUPABASE_PUBLISHABLE_KEY` (`:11`) e `VITE_EXTERNAL_SUPABASE_ANON_KEY` (`:20`), que
+  são outros nomes.
+- O job **`Build`**, que é check obrigatório, injeta só duas variáveis (`.github/workflows/ci.yml:205-208`):
+  `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY`.
+  (O secret `VITE_SUPABASE_ANON_KEY` **existe** no repositório desde 2026-11-13 — e nenhum job o usa.)
+
+**A prova está no bundle que eu gerei nesta sessão** (mesmo comando do CI, `npx vite build`):
+
+```
+dist/assets/CodeInterpreterPage-BbXteBEF.js : apikey:void 0}
+dist/assets/ComputerUsePage-BD9wb91Y.js     : apikey:void 0}
+dist/assets/AgentBuilder-DUSYTlOQ.js        : apikey:void 0}
+```
+
+`void 0` é `undefined` minificado. O Vite substitui `import.meta.env.VITE_*` em tempo de build; sem a
+variável, o valor substituído é literalmente `undefined`.
+
+Causa raiz: o nome da variável divergiu (`ANON_KEY` × `PUBLISHABLE_KEY`) e nada no projeto cruza "o que o
+código lê" com "o que o build injeta". O build não falha por variável ausente, porque `import.meta.env` de
+variável inexistente é um valor válido (`undefined`), não um erro.
+
+Impacto: **Interpretador de Código, Computer Use, Agent Builder, Oráculo e detalhe de Base de Conhecimento
+mandam requisição sem credencial** e falham — em produção, para o usuário final. Os 6.226 testes passam
+porque nenhum deles exercita esses cinco caminhos de rede.
+
+Agravante: `src/lib/otel-genai.ts:91-97` monta `Authorization: Bearer` com essa variável, em vez de usar o
+token de sessão como as outras chamadas do projeto — então mesmo definindo a variável, esse caminho usaria a
+credencial errada.
+
+**Como verificar a correção:**
+
+```bash
+npx vite build && grep -c "apikey:void 0" dist/assets/*.js
+```
+
+Esperado hoje: ≥ 3 arquivos. Esperado depois: **0**.
+→ Etapas (Onda 2, dentro da faixa 063-100)
+
+### ENV-02 · Média · CONFIRMADO · Infraestrutura
+
+**Cinco segredos referenciados por workflow não existem no repositório.**
+`SLACK_WEBHOOK_URL`, `HERMES_API_KEY`, `HERMES_BASE_URL`, `OPENCLAW_WEBHOOK_SECRET` e `SUPABASE_DB_URL` são
+citados em workflows e **não estão** entre os 15 secrets (EXECUTADO, `github_list_actions_secrets`).
+Consequências medidas: o job `notify-failure` (`ci.yml:293-322`) sempre cai no ramo do `::warning::`; e
+`edge-deploy.yml:48-60` aplica `apply_secret` apenas quando o valor não é vazio, então `HERMES_*` e
+`OPENCLAW_WEBHOOK_SECRET` são **ignorados em silêncio** — integrações que dependem deles falham em produção
+sem erro de deploy.
+Além disso `BITRIX24_APP_TOKEN`, que `supabase/functions/bitrix24-webhook/index.ts:94` exige com `requireEnv`
+para validar a assinatura do webhook, **não está no `.env.example` nem em nenhum script de provisionamento**.
+
+### ENV-03 · Média · CONFIRMADO · Infraestrutura
+
+**O deploy de edge functions roda mesmo quando o passo de segredos desistiu.**
+`.github/workflows/edge-deploy.yml:44-47` faz `exit 0` no passo "Aplica secrets" quando
+`SUPABASE_ACCESS_TOKEN` está ausente — mas o passo seguinte (`:61-62`) **não tem condição** e executa
+`bash scripts/deploy-edge-functions.sh` de qualquer forma. Com o token ausente, o `supabase link` do script
+(`:11`) falha e o `set -euo pipefail` (`:6`) encerra — então o job fica **vermelho** em vez de "pulado",
+poluindo o sinal. O desenho pretendido era claramente pular.
+
+### ENV-04 · Baixa · CONFIRMADO · Infraestrutura
+
+**Três versões de Node em cinco workflows, sem `.nvmrc` nem `engines`.**
+Node **22** em `ci.yml`, `guards.yml`, `edge-deploy.yml`; **24** em `automation-local.yml:35`; **20** em
+`contexto.yml:133` e `inventario-estado-semanal.yml:54`. Não existe `.nvmrc` nem campo `engines` em
+`package.json` (EXECUTADO). O `AGENTS.md` afirma que "o CI roda Node 20 e o Vercel builda com 24.x" — o CI
+roda **22**.
+
+### ENV-05 · Baixa · CONFIRMADO · Infraestrutura
+
+**9 das 24 variáveis do `.env.example` nunca são lidas por nenhum código**, e uma delas é um segredo de
+servidor com prefixo de navegador: `VITE_LANGFUSE_SECRET_KEY` (`.env.example:43`, modelo `sk_REPLACE_ME`).
+Qualquer variável `VITE_*` **vai para o bundle do navegador**. Hoje ela não é lida por código algum, então
+não há vazamento — mas o template instrui o dono a preenchê-la, e preencher significa publicar o segredo.
+As outras 8 não lidas: `ANTHROPIC_API_KEY` (`:25`), `TWILIO_AUTH_TOKEN` (`:34`),
+`VITE_LANGFUSE_PUBLIC_KEY` (`:42`), `VITE_LANGFUSE_HOST` (`:44`), `VITE_OTEL_EXPORTER_OTLP_ENDPOINT` e mais.
+
+### ENV-06 · Baixa · CONFIRMADO · Infraestrutura
+
+**Três lockfiles no repositório, um em uso.** O CI usa exclusivamente `npm ci` com `package-lock.json`
+(10 passos: `ci.yml` ×6, `guards.yml` ×3, `edge-deploy.yml` ×1). `bun.lock` (435 KB) e `bun.lockb` (247 KB)
+não são referenciados por nenhum workflow ou script. Remover é seguro — mas **`package.json`/lock têm fila
+permanente do Dependabot** (`AGENTS.md`), então mexer nesses dois arquivos exige falar com o dono.
+
+### Verificações que NÃO se confirmaram (registradas para não gastar etapa)
+
+1. **`whatsapp-webhook` com segredo vazio NÃO aceita assinatura inválida.** A suspeita era que
+   `WHATSAPP_TWILIO_AUTH_TOKEN` com fallback `?? ''` (`supabase/functions/whatsapp-webhook/index.ts:271`)
+   fizesse o HMAC passar trivialmente. Verifiquei: a linha seguinte (`:272`) é `if (!authToken) return false;`
+   — **falha fechado**. E `_shared/webhookSignature.ts:38-41` também: `if (!receivedSignature || !secret) return false;`.
+   Os dois níveis rejeitam. **Sem defeito.**
+2. **O `PROJECT_ID` do script de deploy está correto**: `scripts/deploy-edge-functions.sh:8` usa
+   `qdlnzopxrlsoljcrcmzv`, igual a `supabase/config.toml:1`.
+
+---
+
+## CAUSA RAIZ N — "as regras de acesso foram criadas em massa por um laço, e o laço errou a condição"
+
+A migration `supabase/migrations/20260905120000_rls_complete_reconciliation.sql` liga RLS e cria quatro
+policies genéricas (`_member_select`, `_member_insert`, `_member_update`, `_member_delete`) para **todas** as
+tabelas, por um laço `DO $$ ... FOR r IN ... LOOP`. É o que produziu o número `RLS: 221/221` que o CI
+reporta. Duas das quatro policies têm a condição errada, e o erro foi aplicado a todas as tabelas de uma vez.
+
+### TEN-01 · **Crítica** · CONFIRMADO · Banco (RLS) / Multi-inquilino
+
+**Um usuário consegue mover o próprio registro para dentro do workspace de outro cliente.**
+
+`supabase/migrations/20260905120000_rls_complete_reconciliation.sql:202-204`:
+
+```sql
+CREATE POLICY %I ON public.%I FOR UPDATE TO authenticated
+  USING (user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id))
+  WITH CHECK (workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR user_id = auth.uid())
+```
+
+O `WITH CHECK` tem **`OR user_id = auth.uid()`**. Em Postgres, `WITH CHECK` valida a linha **depois** do
+UPDATE. Então: o usuário passa no `USING` porque a linha é dele (`user_id = auth.uid()`), e passa no
+`WITH CHECK` **pelo mesmo ramo**, com `workspace_id` valendo **qualquer coisa** — inclusive o workspace de
+outro cliente.
+
+Causa raiz: o `OR user_id = auth.uid()` foi escrito para permitir que o dono edite a própria linha, e acabou
+desativando a verificação de inquilino no único ponto onde ela importa — a validação do valor **novo**.
+
+Impacto: **escrita entre clientes.** Um usuário injeta registros seus dentro dos dados de outro cliente —
+em qualquer tabela que o laço cobriu.
+
+### TEN-02 · **Crítica** · CONFIRMADO · Banco (RLS) / Integridade de auditoria
+
+**Qualquer membro grava linhas em nome de outro usuário.**
+`:200-201` — a policy de INSERT valida **só** `workspace_id IN (SELECT get_user_workspace_ids(auth.uid()))`.
+**Não valida `user_id = auth.uid()`.**
+Impacto: um membro comum insere linha com o `user_id` de outra pessoa. Em tabelas de log, de aprovação e de
+execução, isso é **forjar autoria**: a trilha de auditoria passa a poder ser escrita por quem ela deveria
+auditar. Toda decisão tomada a partir de `audit_log`, aprovações e `*_runs` perde valor probatório.
+
+### TEN-03 · Alta · CONFIRMADO · Banco / Edge
+
+**Três funções de servidor leem dados por id com a chave do sistema, sem conferir de quem é o dado.**
+
+- `supabase/functions/graph-execute/index.ts:102,132-140,153-164` — autentica o usuário e **depois** lê
+  `agent_graphs` **por id, com `SERVICE_KEY`**, sem conferir inquilino; grava `graph_executions` no
+  `workspace_id` do grafo alheio.
+- `supabase/functions/agent-eval-runner/index.ts:170-195` — mesmo padrão com `agent_eval_datasets` e `agents`.
+- `supabase/functions/llm-gateway/index.ts:750-756` — `workspaceId = member?.workspace_id || workspace_id`:
+  sem linha em `workspace_members`, o inquilino vem do **corpo da requisição**.
+  (Mitigado para segredos: o client é anon+JWT do usuário em `:702-706`, então a RLS de `workspace_secrets`
+  ainda barra — `20260522143137_…sql:62-72`.)
+  Causa raiz: autenticar ("quem é você") foi confundido com autorizar ("este dado é seu"). O `service_role`
+  usado logo depois apaga a diferença.
+
+### TEN-04 · Alta · CONFIRMADO · Edge / Integrações
+
+**Uma função sem autenticação posta mensagem no Slack do cliente com texto escolhido por quem chamar.**
+`supabase/functions/slack-alert-dispatcher/index.ts:36-44,55-84,100-125`: nenhuma autenticação em código,
+`workspace_id` vem do corpo, lê `slack_channel_routes` com `service_role` e posta no Slack do inquilino com
+`title`, `description` e **`action_url`** controlados pelo chamador. Não está em `supabase/config.toml`.
+Impacto: canal de **phishing para dentro do Slack do cliente**, com a aparência de alerta legítimo do produto.
+
+### TEN-05 · Alta · CONFIRMADO · Banco / Funções
+
+**A variante global de `is_workspace_admin` deixa admin de um cliente escrever no catálogo de todos.**
+`supabase/functions/skill-harvester/index.ts:132-140` usa a variante de **1 argumento**
+(`is_workspace_admin(auth.uid())`), que não recebe workspace: admin de qualquer inquilino passa o guard de
+uma função que escreve no **catálogo global de skills** (`20260721222207_…sql:26-37`).
+O mesmo em `openclaw_agent_templates`, cujas policies de escrita usam a variante de 1 argumento
+(`20260721222207_…sql:43-51`): admin de um inquilino edita os templates de todos.
+
+### RBAC-05 · **Crítica** · CONFIRMADO · RBAC / Fluxo principal
+
+**Não existe caminho no produto para atribuir um papel. As 38 rotas com permissão ficam inacessíveis.**
+
+- `assignRole` e `removeRole` (`src/services/rbacService.ts:170-200`) **não têm nenhum chamador**
+  (EXECUTADO: grep em `src/`).
+- `updateMemberRole` (`src/services/teamsService.ts:90`) é referenciada **apenas** por um teste de fumaça
+  que verifica `typeof === 'function'` (`src/test/extended-services.test.ts:145`).
+- As três telas de RBAC — `RolesPage.tsx`, `RolePermissionsPage.tsx`, `PermissionsPage.tsx`
+  (114/145/122 linhas) — só têm `useState` + listagem: **nenhum insert, update ou upsert**.
+
+Logo `user_roles` nunca recebe linha pela interface → `useRBAC` devolve `role = null` → `can()` é falso para
+tudo → **as 38 rotas protegidas por `ProtectedRoute` não abrem para ninguém**.
+
+A única coisa que faz o sistema funcionar hoje é um gatilho: `trg_auto_assign_admin`
+(`…000002:232-251`) dá `workspace_admin` ao **primeiro** membro inserido em qualquer workspace, quando não há
+nenhum admin em `user_roles`. Ou seja: o primeiro usuário vira admin e `useRBAC.ts:105`
+(`if (role === 'workspace_admin') return true`) libera tudo para ele; **o segundo usuário em diante não tem
+papel nenhum e não acessa as 38 rotas**.
+
+Impacto: o controle de permissões do produto não é operável. Ou a pessoa é o primeiro membro e pode tudo, ou
+não pode nada — não existe meio-termo, e não há tela para mudar isso.
+
+### RBAC-06 · Alta · CONFIRMADO · RBAC / Modelo de dados
+
+**Existem dois modelos de papel, com vocabulários que não se cruzam.**
+
+| Modelo | Onde                     | Valores escritos                        | Quem lê                                                                             |
+| ------ | ------------------------ | --------------------------------------- | ----------------------------------------------------------------------------------- |
+| RBAC   | `user_roles.role_key`    | **ninguém escreve** (RBAC-05)           | `useRBAC.ts:67-68`, `is_workspace_admin`, `AuthContext.tsx:93-99`                   |
+| Equipe | `workspace_members.role` | `admin`, `editor`, `viewer`, `operator` | `is_workspace_admin` (ramo `role IN ('owner','admin')`), RLS de `workspace_secrets` |
+
+Os conjuntos **não se intersectam**: `agent_editor` × `editor`, `agent_viewer` × `viewer`,
+`workspace_admin` × `admin`. Duas fontes de verdade sobre a mesma pergunta, lidas por caminhos diferentes.
+
+### RBAC-07 · Alta · CONFIRMADO · Banco / Escalada de privilégio
+
+**A função de convite aceita qualquer texto como papel, e qualquer usuário como convidado.**
+`invite_workspace_member` (`20260418174123_…sql:58,79-83`):
+
+- `p_role text` **sem `CHECK` nem validação** → um admin grava `role = 'owner'`, aceito por
+  `is_workspace_admin` no ramo `workspace_members.role IN ('owner','admin')`
+  (`20260905120000_…sql:62-64`);
+- aceita `p_user_id` vindo do chamador → um admin insere uma linha de `workspace_members` para o UUID de um
+  usuário **de outro inquilino**, que passa a ter esse workspace em `get_user_workspace_ids`.
+
+### RBAC-08 · Média · CONFIRMADO · RBAC / Banco
+
+**Remover um membro não remove o privilégio dele.**
+`src/services/teamsService.ts:65-73` (`removeMember`) apaga só de `workspace_members`; a linha de
+`user_roles` sobrevive, e `is_workspace_admin(uid, ws)` continua verdadeiro pelo ramo de `user_roles`
+(`20260905120000_…sql:65-68`). **Privilégio residual depois da remoção.**
+
+### RBAC-09 · Média · CONFIRMADO · Banco
+
+**Policies permissivas se somam, e a mais frouxa vence.**
+`"Admins can manage user roles"` (`FOR ALL USING …`, **sem `WITH CHECK`**, `…000002:98-107`) coexiste com
+`user_roles_admin_manage` (`20260905120000_…sql:243-246`). Em Postgres, policies permissivas são combinadas
+com **OR** — a mais frouxa define o acesso efetivo.
+E `user_has_permission` é `SECURITY DEFINER` **sem `SET search_path`** (`…000002:213-229`); a correção de
+`search_path` aplicada em `20260522151827_…sql:14-35` **não a inclui**.
+
+### TEN-06 · Alta · **HIPÓTESE — tensão com medição ao vivo** · Banco
+
+**O laço que criou as policies pode ter deixado tabelas sem RLS.**
+`20260905120000_rls_complete_reconciliation.sql:176-218` roda `ENABLE ROW LEVEL SECURITY` + os quatro
+`CREATE POLICY` dentro de um bloco com `EXCEPTION WHEN OTHERS` (`:211-213`). Em Postgres, o handler de
+exceção cria uma subtransação: se o `CREATE POLICY` falhar numa tabela sem coluna `workspace_id`/`user_id`,
+**o `ENABLE ROW LEVEL SECURITY` é revertido junto** — a tabela fica sem RLS, e o cabeçalho da própria
+migration (`:16-18`) afirma "RLS em 216/216 tabelas".
+**Tensão a resolver antes de agir:** o `DB Drift Check` de 2026-11-21 mediu **`RLS: 221/221`** ao vivo. Ou o
+problema não ocorreu, ou foi corrigido depois. **NÃO VERIFICADO** — faltou consultar
+`SELECT relname FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r' AND NOT c.relrowsecurity;`
+O executor deve rodar essa consulta **antes** de qualquer correção; se vier vazia, feche como não confirmado.
+
+### DATA-02 · Alta · CONFIRMADO · Services / Multi-inquilino
+
+**Agente salvo sem workspace vira registro órfão, invisível a qualquer regra de acesso.**
+`src/lib/agentService.ts:111-121` (`saveAgent`) engole a falha de `getWorkspaceId()` e grava
+`workspace_id: null`. Uma linha com `workspace_id` nulo não casa com nenhuma policy baseada em
+`workspace_id IN (…)` — nem para ler, nem para apagar. O agente some da interface e permanece no banco.
+
+### TEN-07 · Média · CONFIRMADO · Edge
+
+**Um guard de administrador chama a função com o nome de argumento errado e nunca funciona.**
+`supabase/functions/slack-dlq-discard/index.ts:70-71` chama `is_workspace_admin` com `p_workspace_id` e
+**sem** o id do usuário, usando client `service_role` (portanto sem `auth.uid()`), e descarta o erro
+(`const { data: isAdmin }`). Nenhuma das assinaturas existentes aceita `p_workspace_id`
+(`src/integrations/supabase/types.ts:14888-14893`) → a RPC falha, `isAdmin` fica `null`, e a função responde
+**403 sempre**. Falha fechada — mas o guard não funciona e a função está inutilizável.
+
+### RBAC-10 · Média · CONFIRMADO · Interface
+
+**O botão de convidar membro não tem guard de permissão.**
+`src/pages/TeamPage.tsx:63` não é envolvido por `AccessControl`, enquanto a remoção, 60 linhas abaixo
+(`:122`), é. Só a RPC barra. Pelo ADR-005 isso é UX, não fronteira — mas a inconsistência dentro da mesma
+tela indica que o guard foi esquecido, não decidido.
+
+### RBAC-11 · Média · CONFIRMADO · Regra de negócio
+
+**Só administradores conseguem usar a chave de IA do próprio cliente.**
+`workspace_secrets` só é legível por `workspace_members.role IN ('admin','owner')`
+(`20260522143137_…sql:62-72`), e é de lá que o `llm-gateway` lê a chave do inquilino
+(`index.ts:515-551`). Resultado: `operator`, `editor` e `viewer` **caem silenciosamente nas chaves de
+ambiente** — ou seja, consomem o crédito do dono da plataforma em vez do crédito do cliente.
