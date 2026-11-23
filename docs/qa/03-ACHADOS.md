@@ -14,13 +14,13 @@ que faltou.
 
 | Severidade  | Confirmados | Hipóteses |  Total |
 | ----------- | ----------: | --------: | -----: |
-| **Crítica** |           7 |         1 |  **8** |
-| **Alta**    |          16 |         2 | **18** |
-| **Média**   |          21 |         3 | **24** |
+| **Crítica** |           8 |         1 |  **9** |
+| **Alta**    |          18 |         2 | **20** |
+| **Média**   |          26 |         3 | **29** |
 | **Baixa**   |           6 |         0 |  **6** |
-| **Total**   |      **50** |     **6** | **56** |
+| **Total**   |      **58** |     **6** | **64** |
 
-Além dos 56, há **9 verificações que deram "sem defeito"** e estão registradas na §9 — para o executor não
+Além dos 64, há **9 verificações que deram "sem defeito"** e estão registradas na §9 — para o executor não
 gastar etapa nelas.
 
 ---
@@ -802,7 +802,149 @@ drift check indica as 338 migrations registradas no banco.
 
 ---
 
-> **Adendo pendente:** as camadas _integrações externas_, _infraestrutura/env_, _RBAC e jornadas_ e _regras de
-> negócio_ fecharam o inventário depois desta consolidação. Achados exclusivos dessas camadas entram como
-> adendo no commit seguinte desta mesma branch, com IDs nos prefixos `INT-`, `ENV-`, `RBAC-` e `REGRA-`.
-> Nenhum ID já atribuído acima muda.
+# ADENDO — Achados das camadas fechadas depois da consolidação
+
+## CAUSA RAIZ L — "RLS ligado com policy que não restringe nada"
+
+Esta causa raiz é a prova concreta da ressalva que a auditoria fez sobre o drift check: ele mede
+`RLS: 221/221 tabelas com RLS` e **não lê o conteúdo das policies**. Ter RLS ligado com
+`USING (auth.uid() IS NOT NULL)` é o mesmo que não ter RLS entre inquilinos — qualquer pessoa logada vê
+tudo de todos.
+
+### INT-01 · **Crítica** · CONFIRMADO · Banco + Edge + Interface
+
+**Qualquer usuário logado lê, em uma tela do produto, as credenciais de entrada das integrações de todos os outros clientes.**
+
+A cadeia completa, verificada arquivo por arquivo:
+
+1. **A edge guarda todos os cabeçalhos da requisição.**
+   `supabase/functions/webhook-receiver/index.ts:74-77`:
+   ```ts
+   const headers: Record<string, string> = {};
+   req.headers.forEach((v, k) => {
+     headers[k] = v;
+   });
+   ```
+   Sem allowlist, sem redação. E `_shared/cors.ts:23-42` admite explicitamente `authorization`,
+   `x-api-key`, `x-hub-signature-256`, `x-signature` e `x-twilio-signature` — exatamente os que carregam
+   credencial.
+2. **E grava no banco.** `:198-204` → `supabase.from('webhook_events').insert({ … headers, … })`.
+   O mesmo acontece nos caminhos de **rejeição** (`logEvent`, `:248-258`, chamado em `:83-93`, `:102-112`,
+   `:121-131`, `:138-…`): até a tentativa recusada tem seus cabeçalhos persistidos.
+3. **A policy não separa inquilino.**
+   `supabase/migrations/20260405220001_automation_services.sql:118`:
+   `CREATE POLICY "webhook_events_all" ON public.webhook_events FOR ALL USING (auth.uid() IS NOT NULL);`
+   **`FOR ALL`** — SELECT, INSERT, UPDATE e DELETE — para **qualquer** usuário autenticado, de **qualquer**
+   workspace. EXECUTADO: só essa migration menciona a policy; nenhuma posterior a substitui ou remove.
+4. **A tela lê sem filtro e mostra.**
+   `src/pages/WebhookEventsPage.tsx:69-73` → `.from("webhook_events" as never).select("*")`, **sem filtro de
+   workspace** (e com `as never` contornando o tipo); `:363` → `{JSON.stringify(selectedEvent.headers ?? {}, null, 2)}`
+   renderizado na tela.
+
+E o mesmo padrão na tabela das configurações:
+`:86` → `CREATE POLICY "webhooks_all" ON public.webhook_endpoints FOR ALL USING (auth.uid() IS NOT NULL);`
+com `:63` → `secret TEXT NOT NULL` — **o segredo HMAC do webhook guardado em texto claro**, legível e
+**alterável** por qualquer usuário logado.
+
+Causa raiz: duas policies escritas como "basta estar logado" numa aplicação multi-inquilino, somadas a uma
+edge que persiste cabeçalho sem filtrar e a uma tela que lê sem escopo. Nenhuma das três, isolada, seria
+crítica; juntas entregam credencial de terceiro na tela.
+
+Impacto: **um cliente vê e pode trocar o segredo de integração de outro cliente.** Com o segredo, forja
+chamadas de webhook em nome dele; com os cabeçalhos guardados, obtém tokens de API dos provedores externos.
+
+Por que o guard de CI não viu: o `DB Drift Check` valida três invariantes (migrations, RLS ligada, zero
+escrita `anon`) e **as três passam** aqui — a RLS está ligada e a escrita permitida é para `authenticated`,
+não para `anon`.
+→ Etapas de Onda 1 (a serem acrescentadas na faixa de aprovação humana — DDL em produção)
+
+### INT-02 · Alta · CONFIRMADO · Services / Segurança
+
+**O segredo HMAC e o endereço do webhook são gerados com gerador de número aleatório comum.**
+`src/services/webhookTriggerService.ts:49-57` (`generateWebhookSecret`) e `:39-47` (`generateWebhookPath`)
+usam `Math.random()` — **no mesmo arquivo que usa `crypto.subtle` em `:62-77`** para assinar. Ou seja: a
+assinatura é criptográfica e a chave que a sustenta é previsível.
+Mesma causa raiz de **SEC-11** (códigos de 2FA com `Math.random()`): o gerador de conveniência usado onde o
+requisito é imprevisibilidade.
+Impacto: quem adivinhar o segredo forja requisições de webhook válidas; quem adivinhar o path encontra
+endpoints de outros clientes.
+
+### INT-03 · Média · CONFIRMADO · Integrações / Robustez
+
+**O webhook do Slack espera a resposta da IA antes de confirmar o recebimento.**
+`supabase/functions/slack-events-webhook/index.ts:182` faz `await callLlmGateway(...)` **antes** de responder
+(`:203`), e `callLlmGateway` (`:41-62`) usa `fetch` **sem `AbortController`, sem `fetchWithTimeout`, sem
+`withRetry` e sem circuit breaker** — embora os três helpers existam em `_shared/`
+(`retry.ts` é importado por 35 functions).
+Impacto: o Slack corta em 3 segundos e **reenvia** o evento. Cada reenvio dispara outra chamada de LLM: a
+lentidão da IA virou duplicação de resposta e multiplicação de custo.
+
+### INT-04 · Média · CONFIRMADO · Banco / Integrações
+
+**A proteção contra evento duplicado não é atômica em duas das três filas de webhook.**
+Só `openclaw-webhook/index.ts:135-161` faz dedupe atômico (INSERT + tratamento do erro `23505`), apoiado no
+índice `idx_webhook_events_source_ext (source, external_event_id)`. Já
+`whatsapp_webhook_events` e `bitrix24_webhook_events` **não têm índice único** — os únicos índices são os
+não-únicos `idx_whatsapp_received` e `idx_bitrix_received`
+(`supabase/migrations/20260726210258_4f29d314-f420-4fba-…sql`). O dedupe desses dois é "consulta e depois
+insere", que duas entregas simultâneas atravessam.
+
+### INT-05 · Média · CONFIRMADO · Integrações
+
+**A detecção de evento duplicado do Slack interpreta a resposta do banco ao contrário.**
+`supabase/functions/_shared/slack.ts:253-266` (`isDuplicateEvent`) envia
+`Prefer: resolution=ignore-duplicates,return=minimal` e trata **201 como "novo"** e **409 como duplicata**.
+Mas `ignore-duplicates` faz `ON CONFLICT DO NOTHING`, e o PostgREST responde **201 também quando ignorou** —
+nunca 409. Resultado: todo evento é classificado como novo, e o dedupe não acontece.
+
+### INT-06 · Média · CONFIRMADO · Integrações / Robustez
+
+**Só 3 de 16 integrações externas têm disjuntor; o helper existe e não é usado.**
+`_shared/circuitBreaker.ts` é importado por **2** functions (e `retry.ts` por 35). O inventário mediu
+**3 edges com circuit breaker contra 13 sem**, entre 44 integrações de terceiro (8 COMPLETA, 33 PARCIAL,
+3 SÓ DECLARADA), 21 hosts externos.
+Impacto: quando um provedor cai, o sistema insiste em vez de abrir o circuito — e nas 7 functions públicas
+que gastam LLM (COST-01) cada insistência é dinheiro.
+
+### INT-07 · Média · CONFIRMADO · Infraestrutura / Segredos
+
+**Dos ~25 segredos que as edge functions leem, o CI aplica 6.**
+`.github/workflows/edge-deploy.yml:48-60` aplica `OPENROUTER_API_KEY`, `HERMES_API_KEY`, `HERMES_BASE_URL`,
+`OPENCLAW_WEBHOOK_SECRET`, `GOOGLE_MAPS_API_KEY`, `MAPBOX_ACCESS_TOKEN`. O inventário contou **54 variáveis
+de ambiente** lidas nas edges. E três dos seis (`HERMES_API_KEY`, `HERMES_BASE_URL`,
+`OPENCLAW_WEBHOOK_SECRET`) **não existem** na lista de 15 secrets do repositório (EXECUTADO,
+`github_list_actions_secrets`) — e `apply_secret` só age quando o valor não é vazio, então são ignorados em
+silêncio.
+Impacto: integrações que dependem desses segredos falham em produção sem nenhum erro de deploy.
+
+### SRV-ADR-01 · Correção de escopo do achado ADR-01 (não é achado novo)
+
+O inventário da camada de services esclareceu dois pontos do **ADR-01** que mudam a correção:
+
+- `src/lib/supabaseExtended.ts:23,29,47-49` ancora `fromTable`/`rpcCall` no client **externo**
+  (`looseClient = supabaseExternal`). Portanto os services que usam `fromTable` **não** violam o ADR por esse
+  caminho, mesmo importando `client.ts`. As 220 violações são as chamadas `supabase.from()`/`supabase.rpc()`
+  diretas.
+- A maior concentração é `src/services/knowledgeManagementService.ts`: **28 ocorrências** (import em `:1`;
+  chamadas em `:5,15,35,41,52,61,74,86,96,106,128,138,149,158,166,176,187,204,210,230,240,252,…`).
+- Quatro services de notebook usam **os dois clients no mesmo arquivo**, mandando o dado ao externo e a
+  auditoria ao de auth: `notesService.ts:6,7` → `:277` `rpc('log_audit_entry')`; `notebooksService.ts:6,7` →
+  `:142`; `noteTemplatesService.ts`; e o quarto. **Efeito prático: o registro de auditoria vai para um banco
+  diferente do dado auditado** — no dia em que os dois projetos se separarem, a trilha de auditoria fica
+  órfã do dado.
+- O guard que deveria cobrir isso existe e não cobre: `src/test/architecture-dual-client.test.ts` tem 4
+  testes (`:45-53` `fromTable`, `:55-61` `rpcCall`, `:63-74` `isUserLockedOut`, `:76-89` `syncExternalAuth`)
+  e **nenhuma asserção contra `supabase.from(`**.
+- O ADR-006 ainda está com status **`Proposed`** (`docs/adr/006-dual-client-architecture.md:3-4`), embora
+  seja tratado como regra.
+
+### Confirmações adicionais (sem defeito novo, registradas)
+
+- As **59 RPCs** chamadas via `.rpc()` e as **7** via `rpcCall()` estão **todas** declaradas em
+  `supabase/migrations/` (184 `CREATE [OR REPLACE] FUNCTION` distintas) — RASTREADO. Declarada ≠ aplicada,
+  mas o drift check de 2026-11-21 indica as 338 migrations registradas.
+- As **117 tabelas** usadas via `.from('literal')` existem todas em `supabase/migrations/`
+  (237 `CREATE TABLE` + 22 `CREATE VIEW`/`MATERIALIZED VIEW`) — RASTREADO.
+- `agent_configs` é a **única** tabela referenciada e inexistente: `grep -rn agent_configs supabase/` → zero
+  resultados (confirma **SRV-DEAD-01**).
+- Os 5 webhooks receptores verificam assinatura com comparação em tempo constante (confirma a §9).
