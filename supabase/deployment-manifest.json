@@ -4,13 +4,13 @@
   "legacy_unmanaged_functions": [],
   "config": {
     "path": "supabase/config.toml",
-    "sha256": "70cd6c308cc3a2a82596d9322ee0b5e92d0c0f93abd599f3a9bee158e6c3d7b9"
+    "sha256": "230818133dd10e889f3ba2e24f945f0eae6cdf14bbc67bcf5e4005d7890f19c3"
   },
   "summary": {
-    "function_count": 89,
-    "source_file_count": 128,
+    "function_count": 88,
+    "source_file_count": 127,
     "verify_jwt_true": 80,
-    "verify_jwt_false": 9
+    "verify_jwt_false": 8
   },
   "source_files": [
     {
@@ -397,11 +397,6 @@
       "path": "supabase/functions/memory-tools/index.ts",
       "bytes": 9218,
       "sha256": "6f184f8ebdf685193cfc70119b0cca8126fe1ad1e6fc8600eb8e6f5420d0664b"
-    },
-    {
-      "path": "supabase/functions/migrate-helper/index.ts",
-      "bytes": 1777,
-      "sha256": "cf7c40079d14638f06779b2dbbeadd933039d81d34b4c065a8a572d5ee6c8382"
     },
     {
       "path": "supabase/functions/nlp-pipeline/index.ts",
@@ -1640,15 +1635,6 @@
       ]
     },
     {
-      "name": "migrate-helper",
-      "entrypoint": "supabase/functions/migrate-helper/index.ts",
-      "verify_jwt": false,
-      "source_sha256": "e15acbb16a71e08afb90d03ee34977ed0efade37fe183bf6417a1eaf6fd23466",
-      "source_files": [
-        "supabase/functions/migrate-helper/index.ts"
-      ]
-    },
-    {
       "name": "nlp-pipeline",
       "entrypoint": "supabase/functions/nlp-pipeline/index.ts",
       "verify_jwt": true,
@@ -2662,5 +2648,5 @@
       ]
     }
   ],
-  "manifest_sha256": "ff5882efd10c9c06c31739e3fff19a32d564b467e95fd547cd608900b34aea32"
+  "manifest_sha256": "94d2669badf95e01a760355deb407a882089bd87665e6a613b6e011f6a5b1bf0"
 }

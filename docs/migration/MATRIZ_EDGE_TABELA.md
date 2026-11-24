@@ -53,7 +53,6 @@
 | `llm-gateway` | `agent_traces`, `agent_usage`, `agents`, `audit_events`, `budgets`, `model_pricing`, `session_traces`, `sessions`, `trace_events`, `usage_records`, `workspace_members`, `workspace_secrets` |
 | `memory-manager` | `agent_memories` |
 | `memory-tools` | `agent_memories`, `workspace_members` |
-| `migrate-helper` | — |
 | `nlp-pipeline` | — |
 | `notebook-podcast-generate` | `collections`, `document_ingestions`, `notebook_notes`, `notebook_podcasts`, `workspace_members` |
 | `notification-sender` | `notification_templates`, `notifications` |
