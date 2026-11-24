@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d8094801823c2f435078d505e6cc52af07fb8151",
+  "commit": "ef5746c7191e14e82f130ee19bda065c33354cfa",
   "branch": "main",
-  "data_commit": "2026-11-24T12:49:47-03:00",
+  "data_commit": "2026-11-24T13:24:22-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "ef5746c7",
+    "data": "2026-11-24",
+    "assunto": "fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)"
+   },
    {
     "sha": "d8094801",
     "data": "2026-11-24",
@@ -126,18 +131,13 @@
     "sha": "24731455",
     "data": "2026-11-20",
     "assunto": "feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)"
-   },
-   {
-    "sha": "efdc4b1a",
-    "data": "2026-11-20",
-    "assunto": "fix(deps): declara @tiptap/core usado no teste do rich editor (#125)"
    }
   ],
-  "arquivos_mudados_7d": 119,
+  "arquivos_mudados_7d": 120,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "pasta": "package-lock.json",
@@ -156,15 +156,15 @@
     "mudancas": 7
    },
    {
+    "pasta": "docs/migration/MATRIZ_EDGE_TABELA.md",
+    "mudancas": 6
+   },
+   {
     "pasta": ".github/workflows/ci.yml",
     "mudancas": 5
    },
    {
     "pasta": ".github/workflows/edge-deploy.yml",
-    "mudancas": 5
-   },
-   {
-    "pasta": "docs/migration/MATRIZ_EDGE_TABELA.md",
     "mudancas": 5
    },
    {
@@ -207,11 +207,15 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 7
+   },
+   {
+    "arquivo": "docs/migration/MATRIZ_EDGE_TABELA.md",
+    "mudancas": 6
    },
    {
     "arquivo": "supabase/functions/llm-gateway/index.ts",
@@ -222,11 +226,11 @@
     "mudancas": 5
    },
    {
-    "arquivo": "docs/migration/MATRIZ_EDGE_TABELA.md",
-    "mudancas": 5
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 4
    },
    {
-    "arquivo": ".github/workflows/contexto.yml",
+    "arquivo": "supabase/config.toml",
     "mudancas": 4
    },
    {
@@ -286,10 +290,6 @@
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/config.toml",
-    "mudancas": 3
-   },
-   {
     "arquivo": "supabase/functions/browser-agent-run/index.ts",
     "mudancas": 3
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 60
+    "commits": 61
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2008,
-  "arquivos_codigo": 1453,
-  "linhas_codigo": 318755,
+  "arquivos_total": 2007,
+  "arquivos_codigo": 1452,
+  "linhas_codigo": 318704,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -320,7 +320,7 @@
   "modulos": 71,
   "componentes": 661,
   "hooks": 75,
-  "edge_functions": 89,
+  "edge_functions": 88,
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
@@ -531,8 +531,8 @@
    "linhas": 530
   },
   "supabase/functions": {
-   "arquivos": 138,
-   "linhas": 33090
+   "arquivos": 137,
+   "linhas": 33039
   },
   "tailwind.config.ts": {
    "arquivos": 1,

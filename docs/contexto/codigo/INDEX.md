@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d8094801823c2f435078d505e6cc52af07fb8151` (2026-11-24T12:49:47-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ef5746c7191e14e82f130ee19bda065c33354cfa` (2026-11-24T13:24:22-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1395), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
+- linguagens: TypeScript (1394), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2008 |
-| arquivos_codigo | 1453 |
-| linhas_codigo | 318755 |
+| arquivos_total | 2007 |
+| arquivos_codigo | 1452 |
+| linhas_codigo | 318704 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -44,7 +44,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | modulos | 71 |
 | componentes | 661 |
 | hooks | 75 |
-| edge_functions | 89 |
+| edge_functions | 88 |
 | tabelas | 327 |
 | migrations | 338 |
 | cron_jobs | 37 |
@@ -317,7 +317,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `llm-gateway` — tabelas: agent_traces, agent_usage, agents, audit_events, budgets, model_pricing, session_traces, sessions, trace_events, usage_records, workspace_members, workspace_secrets; chamada por 3 arquivo(s) do front
 - `memory-manager` — tabelas: agent_memories; chamada por 1 arquivo(s) do front
 - `memory-tools` — tabelas: agent_memories, workspace_members; chamada por 1 arquivo(s) do front
-- `migrate-helper` (verify_jwt=false) — tabelas: -; chamada por 0 arquivo(s) do front
 - `nlp-pipeline` — tabelas: -; chamada por 1 arquivo(s) do front
 - `notebook-podcast-generate` — tabelas: collections, document_ingestions, notebook_notes, notebook_podcasts, workspace_members; chamada por 1 arquivo(s) do front
 - `notification-sender` — tabelas: notification_templates, notifications; chamada por 1 arquivo(s) do front
@@ -406,7 +405,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
 - hosts mais citados: router.huggingface.co, openrouter.ai, api.openai.com, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, ai.gateway.lovable.dev, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.hermes.ai, api.resend.com, api.slack.com
-- webhooks recebidos: bitrix24-webhook, migrate-helper, openclaw-webhook, rag-embed-backfill, slack-events-webhook, webhook-receiver, whatsapp-router, whatsapp-webhook, widget-proxy
+- webhooks recebidos: bitrix24-webhook, openclaw-webhook, rag-embed-backfill, slack-events-webhook, webhook-receiver, whatsapp-router, whatsapp-webhook, widget-proxy
 - env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, GOOGLE_MAPS_API_KEY, HERMES_API_KEY, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, MAPBOX_ACCESS_TOKEN, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, OPENROUTER_API_KEY, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
 
 ## Permissões / papéis
@@ -433,27 +432,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14553 nós · 38425 arestas · 922 comunidades · grafo do commit `d8094801`
-- comunidades maiores: button.tsx (316), card.tsx (287), App.tsx (218), react (196), mod.ts (164), cn (133), whatsapp-webhook/index.ts (117), handleCorsPreflight (110), BCPPage.tsx (110), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (109), ref_node_fs (98), templateSkillLinkService.ts (96)
+- 14551 nós · 38424 arestas · 916 comunidades · grafo do commit `ef5746c7`
+- comunidades maiores: badge.tsx (351), react (333), ref_https (200), App.tsx (180), logger.ts (146), lucide-react (127), templateSkillLinkService.ts (121), cn (120), KnowledgePage.tsx (119), SuperCerebroPage.tsx (116), mod.ts (113), agent-workflow-runner/index.ts (107)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (25)
 - package.json (23)
-- supabase/deployment-manifest.json (21)
+- supabase/deployment-manifest.json (22)
 - .github/workflows/ci.yml (7)
+- docs/migration/MATRIZ_EDGE_TABELA.md (6)
 - supabase/functions/llm-gateway/index.ts (6)
 - .github/workflows/edge-deploy.yml (5)
-- docs/migration/MATRIZ_EDGE_TABELA.md (5)
 - .github/workflows/contexto.yml (4)
+- supabase/config.toml (4)
 - supabase/functions/agent-conversational-builder/index.ts (4)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/code-interpreter-execute/index.ts (4)
 - supabase/functions/crm-enrich/index.ts (4)
 - supabase/functions/doc-rechunk/index.ts (4)
 - supabase/functions/voice-synthesize/index.ts (4)
-- supabase/functions/voice-transcribe/index.ts (4)
 
 ## Workflows
 - `anti-stale-dependabot.yml` — Anti-stale dependabot (schedule, workflow_dispatch; cron 42 6 * * 5)
@@ -579,6 +578,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-24 `ef5746c7` fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)
 - 2026-11-24 `d8094801` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)
 - 2026-11-24 `cbe4351d` chore(deps)(deps): bump @sentry/react (#151)
 - 2026-11-24 `b1ace074` chore(deps)(deps): bump @supabase/supabase-js (#149)
@@ -593,7 +593,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `6b7d90eb` fix(rag): retry automatico de chunks failed no emb-backfill (#133)
 - 2026-11-21 `10a1dd01` fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)
 - 2026-11-21 `665b5995` chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)
-- 2026-11-21 `15ba85e3` chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

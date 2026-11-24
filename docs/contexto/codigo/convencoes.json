@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)",
    "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)",
    "chore(deps)(deps): bump @sentry/react (#151)",
    "chore(deps)(deps): bump @supabase/supabase-js (#149)",
-   "chore(deps)(deps): bump react-router-dom (#148)",
-   "chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)"
+   "chore(deps)(deps): bump react-router-dom (#148)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2719,7 +2719,6 @@
    "llm-gateway",
    "memory-manager",
    "memory-tools",
-   "migrate-helper",
    "nlp-pipeline",
    "notebook-podcast-generate",
    "notification-sender",

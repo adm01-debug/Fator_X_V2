@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1395)",
+   "TypeScript (1394)",
    "SQL (341)",
    "Markdown (134)",
    "JavaScript (54)",
@@ -948,7 +948,6 @@
    "SLACK_ALERT_WEBHOOK_URL",
    "SLACK_BOT_TOKEN",
    "SUPABASE_ANON_KEY",
-   "SUPABASE_DB_URL",
    "SUPABASE_SERVICE_ROLE_KEY",
    "SUPABASE_URL",
    "VITE_SUPABASE_PUBLISHABLE_KEY",
@@ -1341,7 +1340,6 @@
   ],
   "webhooks_recebidos": [
    "bitrix24-webhook",
-   "migrate-helper",
    "openclaw-webhook",
    "rag-embed-backfill",
    "slack-events-webhook",

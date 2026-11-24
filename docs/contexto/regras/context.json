@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d8094801823c2f435078d505e6cc52af07fb8151",
+  "sha": "ef5746c7191e14e82f130ee19bda065c33354cfa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-24 15:51 UTC",
-  "files_total": 2013,
-  "code_files": 1795,
-  "code_lines": 349014
+  "generated_at": "2026-11-24 16:25 UTC",
+  "files_total": 2012,
+  "code_files": 1794,
+  "code_lines": 348963
  },
  "version": "1.3.2",
- "facts_hash": "002d30fa7ed73831",
+ "facts_hash": "4d91005b87bd2083",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -236,7 +236,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 699,
-   ".ts": 696,
+   ".ts": 695,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -250,7 +250,6 @@
     "whatsapp-router",
     "rag-embed-backfill",
     "slack-events-webhook",
-    "migrate-helper",
     "widget-proxy",
     "bitrix24-webhook",
     "whatsapp-webhook",
@@ -54780,27 +54779,6 @@
     "idempotency": false
    },
    {
-    "name": "migrate-helper",
-    "file": "supabase/functions/migrate-helper/index.ts",
-    "methods": [
-     "OPTIONS"
-    ],
-    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
-    "tables": [],
-    "env": [
-     "SUPABASE_DB_URL",
-     "SUPABASE_SERVICE_ROLE_KEY",
-     "SUPABASE_URL"
-    ],
-    "external": [],
-    "invokes": [],
-    "doc": "Edge function temporária para migração de banco. Cole em: Cloud > Edge Functions > migrate-helper > View code Após a migração, remova esta função.",
-    "errors": [],
-    "side_effects": [],
-    "webhook_events": [],
-    "idempotency": false
-   },
-   {
     "name": "nlp-pipeline",
     "file": "supabase/functions/nlp-pipeline/index.ts",
     "methods": [
@@ -59651,8 +59629,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 138,
-   "lines": 33090,
+   "files": 137,
+   "lines": 33039,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -63470,8 +63448,7 @@
     "scripts/inventario/gerar-banco.mjs"
    ],
    "SUPABASE_DB_URL": [
-    "scripts/supabase_snapshot/snapshot.py",
-    "supabase/functions/migrate-helper/index.ts"
+    "scripts/supabase_snapshot/snapshot.py"
    ],
    "SUPABASE_PROJECT_REF": [
     "scripts/inventario/gerar-banco.mjs",
@@ -63496,7 +63473,6 @@
     "supabase/functions/doc-parse/index.ts",
     "supabase/functions/doc-rechunk/index.ts",
     "supabase/functions/health-check/index.ts",
-    "supabase/functions/migrate-helper/index.ts",
     "supabase/functions/notification-sender/index.ts",
     "supabase/functions/openclaw-proxy/index.ts",
     "supabase/functions/openclaw-webhook/index.ts",
@@ -63528,7 +63504,6 @@
     "supabase/functions/eval-engine-v2/index.ts",
     "supabase/functions/health-check/index.ts",
     "supabase/functions/llm-gateway/index.ts",
-    "supabase/functions/migrate-helper/index.ts",
     "supabase/functions/notification-sender/index.ts",
     "supabase/functions/openclaw-proxy/index.ts",
     "supabase/functions/openclaw-webhook/index.ts",
@@ -134657,7 +134632,6 @@
    "supabase/functions/incident-orchestrator/index.ts",
    "supabase/functions/kb-analyze-gaps/index.ts",
    "supabase/functions/kb-translate-article/index.ts",
-   "supabase/functions/migrate-helper/index.ts",
    "supabase/functions/notebook-podcast-generate/index.ts",
    "supabase/functions/notification-sender/index.ts",
    "supabase/functions/openclaw-proxy/index.ts",
@@ -134980,7 +134954,6 @@
    "whatsapp-router",
    "rag-embed-backfill",
    "slack-events-webhook",
-   "migrate-helper",
    "widget-proxy",
    "bitrix24-webhook",
    "whatsapp-webhook",
@@ -185227,17 +185200,6 @@
     "20"
    ]
   },
-  "supabase/functions/migrate-helper/index.ts": {
-   "path": "supabase/functions/migrate-helper/index.ts",
-   "lines": 51,
-   "env": [
-    "SUPABASE_DB_URL",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "SUPABASE_URL"
-   ],
-   "doc": "Edge function temporária para migração de banco. Cole em: Cloud > Edge Functions > migrate-helper > View code Após a migração, remova esta função.",
-   "uses_service_role": true
-  },
   "supabase/functions/nlp-pipeline/index.ts": {
    "path": "supabase/functions/nlp-pipeline/index.ts",
    "lines": 238,
@@ -191001,10 +190963,22 @@
   }
  },
  "git": {
-  "sha": "d8094801823c2f435078d505e6cc52af07fb8151",
+  "sha": "ef5746c7191e14e82f130ee19bda065c33354cfa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "ef5746c",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)",
+    "files": [
+     "docs/migration/MATRIZ_EDGE_TABELA.md",
+     "supabase/config.toml",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/migrate-helper/index.ts"
+    ]
+   },
    {
     "sha": "d809480",
     "date": "2026-11-24",
@@ -191335,37 +191309,31 @@
     "files": [
      ".github/workflows/inventario-estado-semanal.yml"
     ]
-   },
-   {
-    "sha": "849d83c",
-    "date": "2026-11-20",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump otpauth from 9.5.1 to 9.6.0 (#106)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    8
+    9
    ],
    [
     "package-lock.json",
-    6
+    5
    ],
    [
     "package.json",
-    5
+    4
+   ],
+   [
+    "docs/migration/MATRIZ_EDGE_TABELA.md",
+    3
    ],
    [
     ".github/workflows/edge-deploy.yml",
     3
    ],
    [
-    "docs/migration/MATRIZ_EDGE_TABELA.md",
+    "supabase/config.toml",
     2
    ],
    [
@@ -191401,6 +191369,10 @@
     2
    ],
    [
+    "supabase/functions/migrate-helper/index.ts",
+    1
+   ],
+   [
     "docs/qa/00-RESUMO.md",
     1
    ],
@@ -191418,14 +191390,6 @@
    ],
    [
     "docs/qa/04-PLANO.md",
-    1
-   ],
-   [
-    "docs/qa/05-PROGRESSO.md",
-    1
-   ],
-   [
-    "supabase/functions/browser-session-cancel/index.ts",
     1
    ]
   ]
