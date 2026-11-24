@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "chore(ci)(deps): bump actions/dependency-review-action (#147)",
    "infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)",
    "fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)",
    "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)",
-   "chore(deps)(deps): bump @sentry/react (#151)",
-   "chore(deps)(deps): bump @supabase/supabase-js (#149)"
+   "chore(deps)(deps): bump @sentry/react (#151)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

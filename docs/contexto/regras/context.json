@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "7fc063aa1007a301508d912255ece33bf3cd78d3",
+  "sha": "266f5fdf3deea5fcea9611019eab8029629982f0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-24 16:34 UTC",
+  "generated_at": "2026-11-24 17:37 UTC",
   "files_total": 2013,
   "code_files": 1794,
   "code_lines": 348963
@@ -190970,10 +190970,19 @@
   }
  },
  "git": {
-  "sha": "7fc063aa1007a301508d912255ece33bf3cd78d3",
+  "sha": "266f5fdf3deea5fcea9611019eab8029629982f0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "266f5fd",
+    "date": "2026-11-24",
+    "author": "dependabot[bot]",
+    "subject": "chore(ci)(deps): bump actions/dependency-review-action (#147)",
+    "files": [
+     ".github/workflows/dependency-review.yml"
+    ]
+   },
    {
     "sha": "7fc063a",
     "date": "2026-11-24",
@@ -191307,15 +191316,6 @@
     "files": [
      ".github/workflows/anti-stale-dependabot.yml"
     ]
-   },
-   {
-    "sha": "e4460f8",
-    "date": "2026-11-20",
-    "author": "dependabot[bot]",
-    "subject": "chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)",
-    "files": [
-     ".github/workflows/contexto.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -191376,6 +191376,10 @@
     2
    ],
    [
+    ".github/workflows/dependency-review.yml",
+    1
+   ],
+   [
     ".github/workflows/edge-prune.yml",
     1
    ],
@@ -191393,10 +191397,6 @@
    ],
    [
     "docs/qa/02-CENARIOS.md",
-    1
-   ],
-   [
-    "docs/qa/03-ACHADOS.md",
     1
    ]
   ]

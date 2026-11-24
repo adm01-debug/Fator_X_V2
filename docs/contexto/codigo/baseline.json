@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7fc063aa1007a301508d912255ece33bf3cd78d3",
+  "commit": "266f5fdf3deea5fcea9611019eab8029629982f0",
   "branch": "main",
-  "data_commit": "2026-11-24T13:33:15-03:00",
+  "data_commit": "2026-11-24T14:35:04-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "266f5fdf",
+    "data": "2026-11-24",
+    "assunto": "chore(ci)(deps): bump actions/dependency-review-action (#147)"
+   },
    {
     "sha": "7fc063aa",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "3a23906d",
     "data": "2026-11-20",
     "assunto": "fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)"
-   },
-   {
-    "sha": "327f5f32",
-    "data": "2026-11-20",
-    "assunto": "feat(storage): cria bucket knowledge-uploads reconciliado (#127)"
    }
   ],
   "arquivos_mudados_7d": 121,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 17
+    "commits": 18
    }
   ]
  },
