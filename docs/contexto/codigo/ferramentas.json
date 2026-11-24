@@ -86,7 +86,7 @@
   "dependencias": 90,
   "dev_dependencias": 25,
   "principais": {
-   "@supabase/supabase-js": "2.119.0",
+   "@supabase/supabase-js": "2.119.2",
    "@tanstack/react-query": "^5.107.1",
    "date-fns": "^3.6.0",
    "next-themes": "^0.3.0",
@@ -1029,7 +1029,7 @@
    {
     "pacote": "@supabase/supabase-js",
     "servico": "Supabase",
-    "versao": "2.119.0"
+    "versao": "2.119.2"
    },
    {
     "pacote": "zod",

@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "796a52cefbc840773b544382cdcc4d50d29f49da",
+  "commit": "d8094801823c2f435078d505e6cc52af07fb8151",
   "branch": "main",
-  "data_commit": "2026-11-24T12:49:21-03:00",
+  "data_commit": "2026-11-24T12:49:47-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "d8094801",
+    "data": "2026-11-24",
+    "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)"
+   },
+   {
+    "sha": "cbe4351d",
+    "data": "2026-11-24",
+    "assunto": "chore(deps)(deps): bump @sentry/react (#151)"
+   },
+   {
+    "sha": "b1ace074",
+    "data": "2026-11-24",
+    "assunto": "chore(deps)(deps): bump @supabase/supabase-js (#149)"
+   },
    {
     "sha": "796a52ce",
     "data": "2026-11-24",
@@ -116,21 +131,6 @@
     "sha": "efdc4b1a",
     "data": "2026-11-20",
     "assunto": "fix(deps): declara @tiptap/core usado no teste do rich editor (#125)"
-   },
-   {
-    "sha": "69df67d0",
-    "data": "2026-11-20",
-    "assunto": "fix(deploy): remove SUPABASE_* do secrets set e usa --remote (CLI v3) (#123)"
-   },
-   {
-    "sha": "db07b5db",
-    "data": "2026-11-20",
-    "assunto": "chore(ci): workflow anti-stale para PRs dependabot com base atrasada (#124)"
-   },
-   {
-    "sha": "e4460f85",
-    "data": "2026-11-20",
-    "assunto": "chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)"
    }
   ],
   "arquivos_mudados_7d": 119,
@@ -141,11 +141,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 14
+    "mudancas": 17
    },
    {
     "pasta": "package.json",
-    "mudancas": 13
+    "mudancas": 15
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 22
+    "mudancas": 25
    },
    {
     "arquivo": "package.json",
-    "mudancas": 21
+    "mudancas": 23
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 14
+    "commits": 17
    }
   ]
  },

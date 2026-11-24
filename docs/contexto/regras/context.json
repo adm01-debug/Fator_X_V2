@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "796a52cefbc840773b544382cdcc4d50d29f49da",
+  "sha": "d8094801823c2f435078d505e6cc52af07fb8151",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-24 15:49 UTC",
+  "generated_at": "2026-11-24 15:51 UTC",
   "files_total": 2013,
   "code_files": 1795,
   "code_lines": 349014
  },
  "version": "1.3.2",
- "facts_hash": "33b6a5a0f347a5af",
+ "facts_hash": "002d30fa7ed73831",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -22,7 +22,7 @@
     "in": "package.json"
    },
    "@supabase/supabase-js": {
-    "version": "2.119.0",
+    "version": "2.119.2",
     "role": "Supabase (DB/Auth/Storage/Functions)",
     "in": "package.json"
    },
@@ -77,7 +77,7 @@
     "in": "package.json"
    },
    "@playwright/test": {
-    "version": "^1.65.0",
+    "version": "^1.65.1",
     "role": "E2E Playwright",
     "in": "package.json"
    },
@@ -191001,10 +191001,39 @@
   }
  },
  "git": {
-  "sha": "796a52cefbc840773b544382cdcc4d50d29f49da",
+  "sha": "d8094801823c2f435078d505e6cc52af07fb8151",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "d809480",
+    "date": "2026-11-24",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "cbe4351",
+    "date": "2026-11-24",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps): bump @sentry/react (#151)",
+    "files": [
+     "package-lock.json"
+    ]
+   },
+   {
+    "sha": "b1ace07",
+    "date": "2026-11-24",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps): bump @supabase/supabase-js (#149)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "796a52c",
     "date": "2026-11-24",
@@ -191315,35 +191344,6 @@
     "files": [
      "package-lock.json",
      "package.json"
-    ]
-   },
-   {
-    "sha": "42dc7a0",
-    "date": "2026-11-20",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @tanstack/react-query from 5.83.0 to 5.107.1 (#105)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "3ad9813",
-    "date": "2026-11-20",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump the radix group across 1 directory with 27 updates (#103)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "02ed452",
-    "date": "2026-11-20",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @sentry/react (#102)",
-    "files": [
-     "package-lock.json"
     ]
    }
   ],

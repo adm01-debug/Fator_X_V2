@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `796a52cefbc840773b544382cdcc4d50d29f49da` (2026-11-24T12:49:21-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d8094801823c2f435078d505e6cc52af07fb8151` (2026-11-24T12:49:47-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -433,14 +433,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14553 nós · 38425 arestas · 922 comunidades · grafo do commit `796a52ce`
+- 14553 nós · 38425 arestas · 922 comunidades · grafo do commit `d8094801`
 - comunidades maiores: button.tsx (316), card.tsx (287), App.tsx (218), react (196), mod.ts (164), cn (133), whatsapp-webhook/index.ts (117), handleCorsPreflight (110), BCPPage.tsx (110), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (109), ref_node_fs (98), templateSkillLinkService.ts (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (22)
-- package.json (21)
+- package-lock.json (25)
+- package.json (23)
 - supabase/deployment-manifest.json (21)
 - .github/workflows/ci.yml (7)
 - supabase/functions/llm-gateway/index.ts (6)
@@ -579,6 +579,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-24 `d8094801` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)
+- 2026-11-24 `cbe4351d` chore(deps)(deps): bump @sentry/react (#151)
+- 2026-11-24 `b1ace074` chore(deps)(deps): bump @supabase/supabase-js (#149)
 - 2026-11-24 `796a52ce` chore(deps)(deps): bump react-router-dom (#148)
 - 2026-11-24 `7190245d` chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)
 - 2026-11-21 `d912348b` fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)
@@ -591,9 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `10a1dd01` fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)
 - 2026-11-21 `665b5995` chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)
 - 2026-11-21 `15ba85e3` chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)
-- 2026-11-21 `ff7f06e0` fix: registra webhooks externos verify_jwt=false no config.toml (#135)
-- 2026-11-21 `0200f78d` chore: registra analise funcionalidades planejadas x implementadas (#134)
-- 2026-11-21 `96fbd6fa` fix: conclui entidades parciais (webhook/game day/chaos) criadas como boilerplate vazio (#132)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
