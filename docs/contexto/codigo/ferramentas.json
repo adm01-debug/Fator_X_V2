@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1395)",
    "SQL (341)",
-   "Markdown (128)",
+   "Markdown (134)",
    "JavaScript (54)",
    "JSON (24)",
    "YAML (16)",
@@ -97,7 +97,7 @@
    "react-hook-form": "^7.61.1",
    "react-markdown": "^10.1.0",
    "react-resizable-panels": "^2.1.9",
-   "react-router-dom": "^7.18.5",
+   "react-router-dom": "^7.18.6",
    "reactflow": "^11.11.4",
    "recharts": "^3.10.1",
    "tailwindcss-animate": "^1.0.7",
@@ -842,6 +842,10 @@
   },
   {
    "pasta": "docs/agentes",
+   "arquivos_md": 6
+  },
+  {
+   "pasta": "docs/qa",
    "arquivos_md": 6
   },
   {

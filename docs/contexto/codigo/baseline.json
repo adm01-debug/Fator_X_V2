@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d912348b7c2bbb75efc015a9d0ba99a06076ed46",
+  "commit": "796a52cefbc840773b544382cdcc4d50d29f49da",
   "branch": "main",
-  "data_commit": "2026-11-21T16:41:38-03:00",
+  "data_commit": "2026-11-24T12:49:21-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "796a52ce",
+    "data": "2026-11-24",
+    "assunto": "chore(deps)(deps): bump react-router-dom (#148)"
+   },
+   {
+    "sha": "7190245d",
+    "data": "2026-11-24",
+    "assunto": "chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)"
+   },
    {
     "sha": "d912348b",
     "data": "2026-11-21",
@@ -121,19 +131,9 @@
     "sha": "e4460f85",
     "data": "2026-11-20",
     "assunto": "chore(ci)(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (#100)"
-   },
-   {
-    "sha": "33249304",
-    "data": "2026-11-20",
-    "assunto": "chore(ci)(deps): bump peter-evans/create-pull-request (#99)"
-   },
-   {
-    "sha": "849d83ce",
-    "data": "2026-11-20",
-    "assunto": "chore(deps)(deps): bump otpauth from 9.5.1 to 9.6.0 (#106)"
    }
   ],
-  "arquivos_mudados_7d": 113,
+  "arquivos_mudados_7d": 119,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -141,11 +141,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "pasta": "package.json",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
+    "mudancas": 22
+   },
+   {
+    "arquivo": "package.json",
     "mudancas": 21
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
     "mudancas": 21
-   },
-   {
-    "arquivo": "package.json",
-    "mudancas": 20
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -301,16 +301,16 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 59
+    "commits": 60
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 13
+    "commits": 14
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 2002,
+  "arquivos_total": 2008,
   "arquivos_codigo": 1453,
   "linhas_codigo": 318755,
   "rotas": 151,
@@ -327,7 +327,7 @@
   "testes": 240,
   "workflows": 10,
   "scripts": 45,
-  "docs_md": 128
+  "docs_md": 134
  },
  "por_pasta": {
   "e2e/agent-builder.spec.ts": {

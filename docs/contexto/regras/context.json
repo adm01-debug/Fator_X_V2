@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d912348b7c2bbb75efc015a9d0ba99a06076ed46",
+  "sha": "796a52cefbc840773b544382cdcc4d50d29f49da",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-21 19:42 UTC",
-  "files_total": 2007,
+  "generated_at": "2026-11-24 15:49 UTC",
+  "files_total": 2013,
   "code_files": 1795,
   "code_lines": 349014
  },
  "version": "1.3.2",
- "facts_hash": "c08d330487d8359d",
+ "facts_hash": "33b6a5a0f347a5af",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -57,7 +57,7 @@
     "in": "package.json"
    },
    "react-router-dom": {
-    "version": "^7.18.5",
+    "version": "^7.18.6",
     "role": "Roteamento (React Router)",
     "in": "package.json"
    },
@@ -191001,10 +191001,34 @@
   }
  },
  "git": {
-  "sha": "d912348b7c2bbb75efc015a9d0ba99a06076ed46",
+  "sha": "796a52cefbc840773b544382cdcc4d50d29f49da",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "796a52c",
+    "date": "2026-11-24",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps)(deps): bump react-router-dom (#148)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "7190245",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)",
+    "files": [
+     "docs/qa/00-RESUMO.md",
+     "docs/qa/01-INVENTARIO.md",
+     "docs/qa/02-CENARIOS.md",
+     "docs/qa/03-ACHADOS.md",
+     "docs/qa/04-PLANO.md",
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
    {
     "sha": "d912348",
     "date": "2026-11-21",
@@ -191321,27 +191345,6 @@
     "files": [
      "package-lock.json"
     ]
-   },
-   {
-    "sha": "60357f2",
-    "date": "2026-11-20",
-    "author": "dependabot[bot]",
-    "subject": "chore(ci)(deps): bump actions/setup-node from 6.5.0 to 7.1.0 (#101)",
-    "files": [
-     ".github/workflows/automation-local.yml",
-     ".github/workflows/ci.yml",
-     ".github/workflows/edge-deploy.yml",
-     ".github/workflows/guards.yml"
-    ]
-   },
-   {
-    "sha": "c5fffcf",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix(db): reconcilia schema de documentos com o contrato das edges (#122)",
-    "files": [
-     "supabase/migrations/20261120124500_reconcile_doc_schema.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -191351,15 +191354,15 @@
    ],
    [
     "package-lock.json",
+    6
+   ],
+   [
+    "package.json",
     5
    ],
    [
     ".github/workflows/edge-deploy.yml",
-    4
-   ],
-   [
-    "package.json",
-    4
+    3
    ],
    [
     "docs/migration/MATRIZ_EDGE_TABELA.md",
@@ -191398,31 +191401,31 @@
     2
    ],
    [
+    "docs/qa/00-RESUMO.md",
+    1
+   ],
+   [
+    "docs/qa/01-INVENTARIO.md",
+    1
+   ],
+   [
+    "docs/qa/02-CENARIOS.md",
+    1
+   ],
+   [
+    "docs/qa/03-ACHADOS.md",
+    1
+   ],
+   [
+    "docs/qa/04-PLANO.md",
+    1
+   ],
+   [
+    "docs/qa/05-PROGRESSO.md",
+    1
+   ],
+   [
     "supabase/functions/browser-session-cancel/index.ts",
-    1
-   ],
-   [
-    ".gitignore",
-    1
-   ],
-   [
-    "supabase/functions/_shared/edge-contract_test.ts",
-    1
-   ],
-   [
-    "supabase/functions/geo-code/geo.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/geo-code/geo.ts",
-    1
-   ],
-   [
-    "supabase/functions/geo-code/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/whatsapp-outbound/index.ts",
     1
    ]
   ]
