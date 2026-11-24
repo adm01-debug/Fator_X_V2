@@ -8,7 +8,7 @@
    "Markdown (134)",
    "JavaScript (54)",
    "JSON (24)",
-   "YAML (16)",
+   "YAML (17)",
    "Shell (10)",
    "Python (5)"
   ],
@@ -359,6 +359,30 @@
     "MAPBOX_ACCESS_TOKEN",
     "OPENCLAW_WEBHOOK_SECRET",
     "OPENROUTER_API_KEY",
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/edge-prune.yml",
+   "nome": "Edge Prune",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "prune"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
     "SUPABASE_ACCESS_TOKEN"
    ],
    "actions": [

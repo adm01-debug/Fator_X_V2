@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ef5746c7191e14e82f130ee19bda065c33354cfa",
+  "commit": "7fc063aa1007a301508d912255ece33bf3cd78d3",
   "branch": "main",
-  "data_commit": "2026-11-24T13:24:22-03:00",
+  "data_commit": "2026-11-24T13:33:15-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "7fc063aa",
+    "data": "2026-11-24",
+    "assunto": "infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)"
+   },
    {
     "sha": "ef5746c7",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "327f5f32",
     "data": "2026-11-20",
     "assunto": "feat(storage): cria bucket knowledge-uploads reconciliado (#127)"
-   },
-   {
-    "sha": "24731455",
-    "data": "2026-11-20",
-    "assunto": "feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)"
    }
   ],
-  "arquivos_mudados_7d": 120,
+  "arquivos_mudados_7d": 121,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 61
+    "commits": 62
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2007,
+  "arquivos_total": 2008,
   "arquivos_codigo": 1452,
   "linhas_codigo": 318704,
   "rotas": 151,
@@ -325,7 +325,7 @@
   "migrations": 338,
   "cron_jobs": 37,
   "testes": 240,
-  "workflows": 10,
+  "workflows": 11,
   "scripts": 45,
   "docs_md": 134
  },

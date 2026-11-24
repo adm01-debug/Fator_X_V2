@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ef5746c7191e14e82f130ee19bda065c33354cfa",
+  "sha": "7fc063aa1007a301508d912255ece33bf3cd78d3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-24 16:25 UTC",
-  "files_total": 2012,
+  "generated_at": "2026-11-24 16:34 UTC",
+  "files_total": 2013,
   "code_files": 1794,
   "code_lines": 348963
  },
  "version": "1.3.2",
- "facts_hash": "4d91005b87bd2083",
+ "facts_hash": "381fdebcbc3b34cc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -204,6 +204,13 @@
     "name": "Edge Deploy",
     "triggers": [
      "push",
+     "workflow_dispatch"
+    ]
+   },
+   {
+    "file": ".github/workflows/edge-prune.yml",
+    "name": "Edge Prune",
+    "triggers": [
      "workflow_dispatch"
     ]
    },
@@ -190963,10 +190970,19 @@
   }
  },
  "git": {
-  "sha": "ef5746c7191e14e82f130ee19bda065c33354cfa",
+  "sha": "7fc063aa1007a301508d912255ece33bf3cd78d3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "7fc063a",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)",
+    "files": [
+     ".github/workflows/edge-prune.yml"
+    ]
+   },
    {
     "sha": "ef5746c",
     "date": "2026-11-24",
@@ -191300,15 +191316,6 @@
     "files": [
      ".github/workflows/contexto.yml"
     ]
-   },
-   {
-    "sha": "3324930",
-    "date": "2026-11-20",
-    "author": "dependabot[bot]",
-    "subject": "chore(ci)(deps): bump peter-evans/create-pull-request (#99)",
-    "files": [
-     ".github/workflows/inventario-estado-semanal.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -191369,6 +191376,10 @@
     2
    ],
    [
+    ".github/workflows/edge-prune.yml",
+    1
+   ],
+   [
     "supabase/functions/migrate-helper/index.ts",
     1
    ],
@@ -191386,10 +191397,6 @@
    ],
    [
     "docs/qa/03-ACHADOS.md",
-    1
-   ],
-   [
-    "docs/qa/04-PLANO.md",
     1
    ]
   ]

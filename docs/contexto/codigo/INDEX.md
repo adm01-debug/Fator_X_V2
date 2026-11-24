@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ef5746c7191e14e82f130ee19bda065c33354cfa` (2026-11-24T13:24:22-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7fc063aa1007a301508d912255ece33bf3cd78d3` (2026-11-24T13:33:15-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1394), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (16), Shell (10), Python (5)
+- linguagens: TypeScript (1394), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (17), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2007 |
+| arquivos_total | 2008 |
 | arquivos_codigo | 1452 |
 | linhas_codigo | 318704 |
 | rotas | 151 |
@@ -49,7 +49,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | migrations | 338 |
 | cron_jobs | 37 |
 | testes | 240 |
-| workflows | 10 |
+| workflows | 11 |
 | scripts | 45 |
 | docs_md | 134 |
 
@@ -432,7 +432,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14551 nós · 38424 arestas · 916 comunidades · grafo do commit `ef5746c7`
+- 14551 nós · 38424 arestas · 916 comunidades · grafo do commit `7fc063aa`
 - comunidades maiores: badge.tsx (351), react (333), ref_https (200), App.tsx (180), logger.ts (146), lucide-react (127), templateSkillLinkService.ts (121), cn (120), KnowledgePage.tsx (119), SuperCerebroPage.tsx (116), mod.ts (113), agent-workflow-runner/index.ts (107)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -462,6 +462,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3 * * * *)
 - `dependency-review.yml` — Dependency Review (pull_request)
 - `edge-deploy.yml` — Edge Deploy (push, workflow_dispatch)
+- `edge-prune.yml` — Edge Prune (workflow_dispatch)
 - `guards.yml` — Guards (pull_request, push, workflow_dispatch)
 - `inventario-estado-semanal.yml` — Inventário do estado real (semanal) (schedule, workflow_dispatch; cron 23 10 * * 1)
 - `release-drafter.yml` — release-drafter (pull_request, push)
@@ -578,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-24 `7fc063aa` infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)
 - 2026-11-24 `ef5746c7` fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)
 - 2026-11-24 `d8094801` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)
 - 2026-11-24 `cbe4351d` chore(deps)(deps): bump @sentry/react (#151)
@@ -592,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `35f15a71` fix(rag): aceita service role e fallback OpenRouter no rag-embed-v2 (#141)
 - 2026-11-21 `6b7d90eb` fix(rag): retry automatico de chunks failed no emb-backfill (#133)
 - 2026-11-21 `10a1dd01` fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)
-- 2026-11-21 `665b5995` chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
