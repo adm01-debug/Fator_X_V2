@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "266f5fdf3deea5fcea9611019eab8029629982f0",
+  "sha": "bb13d20535e94cf8dd07a61d1960e962e4d7a5fd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-24 17:37 UTC",
+  "generated_at": "2026-11-24 17:41 UTC",
   "files_total": 2013,
   "code_files": 1794,
   "code_lines": 348963
@@ -190970,10 +190970,33 @@
   }
  },
  "git": {
-  "sha": "266f5fdf3deea5fcea9611019eab8029629982f0",
+  "sha": "bb13d20535e94cf8dd07a61d1960e962e4d7a5fd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "bb13d20",
+    "date": "2026-11-24",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "140960a",
+    "date": "2026-11-24",
+    "author": "dependabot[bot]",
+    "subject": "chore(ci)(deps): bump actions/checkout from 6.1.0 to 7.0.1 (#150)",
+    "files": [
+     ".github/workflows/automation-local.yml",
+     ".github/workflows/ci.yml",
+     ".github/workflows/codeql.yml",
+     ".github/workflows/edge-deploy.yml",
+     ".github/workflows/guards.yml"
+    ]
+   },
    {
     "sha": "266f5fd",
     "date": "2026-11-24",
@@ -191298,24 +191321,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "69df67d",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix(deploy): remove SUPABASE_* do secrets set e usa --remote (CLI v3) (#123)",
-    "files": [
-     ".github/workflows/edge-deploy.yml"
-    ]
-   },
-   {
-    "sha": "db07b5d",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore(ci): workflow anti-stale para PRs dependabot com base atrasada (#124)",
-    "files": [
-     ".github/workflows/anti-stale-dependabot.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -191325,18 +191330,18 @@
    ],
    [
     "package-lock.json",
-    5
+    6
    ],
    [
     "package.json",
-    4
-   ],
-   [
-    "docs/migration/MATRIZ_EDGE_TABELA.md",
-    3
+    5
    ],
    [
     ".github/workflows/edge-deploy.yml",
+    3
+   ],
+   [
+    "docs/migration/MATRIZ_EDGE_TABELA.md",
     3
    ],
    [
@@ -191376,27 +191381,27 @@
     2
    ],
    [
+    ".github/workflows/automation-local.yml",
+    1
+   ],
+   [
+    ".github/workflows/ci.yml",
+    1
+   ],
+   [
+    ".github/workflows/codeql.yml",
+    1
+   ],
+   [
+    ".github/workflows/guards.yml",
+    1
+   ],
+   [
     ".github/workflows/dependency-review.yml",
     1
    ],
    [
     ".github/workflows/edge-prune.yml",
-    1
-   ],
-   [
-    "supabase/functions/migrate-helper/index.ts",
-    1
-   ],
-   [
-    "docs/qa/00-RESUMO.md",
-    1
-   ],
-   [
-    "docs/qa/01-INVENTARIO.md",
-    1
-   ],
-   [
-    "docs/qa/02-CENARIOS.md",
     1
    ]
   ]

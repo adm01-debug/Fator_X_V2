@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "266f5fdf3deea5fcea9611019eab8029629982f0",
+  "commit": "bb13d20535e94cf8dd07a61d1960e962e4d7a5fd",
   "branch": "main",
-  "data_commit": "2026-11-24T14:35:04-03:00",
+  "data_commit": "2026-11-24T14:35:15-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "bb13d205",
+    "data": "2026-11-24",
+    "assunto": "chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)"
+   },
+   {
+    "sha": "140960ac",
+    "data": "2026-11-24",
+    "assunto": "chore(ci)(deps): bump actions/checkout from 6.1.0 to 7.0.1 (#150)"
+   },
    {
     "sha": "266f5fdf",
     "data": "2026-11-24",
@@ -121,19 +131,9 @@
     "sha": "b571324b",
     "data": "2026-11-21",
     "assunto": "fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)"
-   },
-   {
-    "sha": "10e7a1de",
-    "data": "2026-11-20",
-    "assunto": "docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)"
-   },
-   {
-    "sha": "3a23906d",
-    "data": "2026-11-20",
-    "assunto": "fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)"
    }
   ],
-  "arquivos_mudados_7d": 121,
+  "arquivos_mudados_7d": 122,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -141,11 +141,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "pasta": "package.json",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -156,19 +156,23 @@
     "mudancas": 7
    },
    {
+    "pasta": ".github/workflows/ci.yml",
+    "mudancas": 6
+   },
+   {
+    "pasta": ".github/workflows/edge-deploy.yml",
+    "mudancas": 6
+   },
+   {
     "pasta": "docs/migration/MATRIZ_EDGE_TABELA.md",
     "mudancas": 6
    },
    {
-    "pasta": ".github/workflows/ci.yml",
-    "mudancas": 5
-   },
-   {
-    "pasta": ".github/workflows/edge-deploy.yml",
-    "mudancas": 5
-   },
-   {
     "pasta": ".github/workflows/contexto.yml",
+    "mudancas": 4
+   },
+   {
+    "pasta": ".github/workflows/guards.yml",
     "mudancas": 4
    },
    {
@@ -184,26 +188,22 @@
     "mudancas": 4
    },
    {
-    "pasta": ".github/workflows/guards.yml",
+    "pasta": ".github/workflows/automation-local.yml",
     "mudancas": 3
    },
    {
     "pasta": ".github/workflows/inventario-estado-semanal.yml",
-    "mudancas": 3
-   },
-   {
-    "pasta": ".gitignore",
     "mudancas": 3
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 25
+    "mudancas": 26
    },
    {
     "arquivo": "package.json",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
@@ -211,7 +211,11 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 7
+    "mudancas": 8
+   },
+   {
+    "arquivo": ".github/workflows/edge-deploy.yml",
+    "mudancas": 6
    },
    {
     "arquivo": "docs/migration/MATRIZ_EDGE_TABELA.md",
@@ -222,11 +226,11 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/edge-deploy.yml",
-    "mudancas": 5
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 4
    },
    {
-    "arquivo": ".github/workflows/contexto.yml",
+    "arquivo": ".github/workflows/guards.yml",
     "mudancas": 4
    },
    {
@@ -266,7 +270,7 @@
     "mudancas": 4
    },
    {
-    "arquivo": ".github/workflows/guards.yml",
+    "arquivo": ".github/workflows/automation-local.yml",
     "mudancas": 3
    },
    {
@@ -292,10 +296,6 @@
    {
     "arquivo": "supabase/functions/browser-agent-run/index.ts",
     "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/browser-session-cancel/index.ts",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
@@ -305,7 +305,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 18
+    "commits": 20
    }
   ]
  },
