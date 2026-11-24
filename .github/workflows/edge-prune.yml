@@ -1,7 +1,8 @@
 # docs:
 #   gatilho: manual via workflow_dispatch (sem gatilho automatico de proposito).
-#   prova: cada nome informado esta ausente de supabase/functions/ no repositorio e
-#          deixa de aparecer em "supabase functions list" do projeto remoto.
+#   prova: cada nome informado esta ausente de supabase/functions/ no repositorio,
+#          nao aparece em "supabase functions list" do projeto remoto e responde 404
+#          no gateway de producao.
 #   falha: aborta ANTES de remover quando o nome existe no repositorio.
 #   avisa: resumo do run no GitHub Actions.
 
@@ -50,9 +51,11 @@ jobs:
 
       - name: Abortar se algum nome ainda existe no repositorio
         shell: bash
+        env:
+          FUNCS: ${{ inputs.functions }}
         run: |
           set -euo pipefail
-          for fn in ${{ inputs.functions }}; do
+          for fn in ${FUNCS}; do
             if [ -d "supabase/functions/${fn}" ]; then
               echo "::error::${fn} existe em supabase/functions/ - remover o diretorio do repositorio primeiro."
               exit 1
@@ -62,23 +65,51 @@ jobs:
 
       - name: Remover no projeto remoto
         shell: bash
+        env:
+          FUNCS: ${{ inputs.functions }}
         run: |
           set -euo pipefail
-          for fn in ${{ inputs.functions }}; do
+          for fn in ${FUNCS}; do
             npx --yes supabase functions delete "${fn}" --remote="${PROJECT_REF}" --yes
             echo "removida: ${fn}"
           done
 
       - name: Provar a remocao
         shell: bash
+        env:
+          FUNCS: ${{ inputs.functions }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           set -euo pipefail
           npx --yes supabase functions list --remote="${PROJECT_REF}" --output-format json > /tmp/remotas.json
-          for fn in ${{ inputs.functions }}; do
-            if grep -q "\"${fn}\"" /tmp/remotas.json; then
+          # a listagem pode falhar com 403 e devolver um objeto de erro: isso nao prova nada
+          if ! jq -e 'type == "array"' /tmp/remotas.json > /dev/null 2>&1; then
+            echo "::error::a listagem remota nao retornou uma lista: $(cat /tmp/remotas.json)"
+            exit 1
+          fi
+          for fn in ${FUNCS}; do
+            if jq -e --arg n "${fn}" 'any(.[]; (.name // .slug) == $n)' /tmp/remotas.json > /dev/null; then
               echo "::error::${fn} ainda aparece na listagem remota apos a remocao."
               exit 1
             fi
-            echo "confirmado ausente no projeto remoto: ${fn}"
+            echo "confirmado ausente na listagem remota: ${fn}"
           done
-          echo "total de funcoes remotas: $(python3 -c "import json;print(len(json.load(open('/tmp/remotas.json'))))")"
+          echo "total de funcoes remotas: $(jq 'length' /tmp/remotas.json)"
+
+          # prova direta em producao: funcao removida responde 404 no gateway
+          if [ -z "${SUPABASE_ANON_KEY:-}" ]; then
+            echo "::warning::SUPABASE_ANON_KEY ausente - pulando a prova HTTP."
+            exit 0
+          fi
+          for fn in ${FUNCS}; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+              -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+              -H "apikey: ${SUPABASE_ANON_KEY}" \
+              -H "Content-Type: application/json" -d '{}' \
+              "https://${PROJECT_REF}.supabase.co/functions/v1/${fn}")
+            if [ "${code}" != "404" ]; then
+              echo "::error::${fn} respondeu HTTP ${code} em producao (esperado 404)."
+              exit 1
+            fi
+            echo "confirmado 404 em producao: ${fn}"
+          done
