@@ -8,7 +8,7 @@
   },
   "summary": {
     "function_count": 88,
-    "source_file_count": 127,
+    "source_file_count": 128,
     "verify_jwt_true": 80,
     "verify_jwt_false": 8
   },
@@ -62,6 +62,11 @@
       "path": "supabase/functions/_shared/crmNormalize.ts",
       "bytes": 7987,
       "sha256": "ca821fc36a78996b7e50126a9ce997517bf68ef2bfb798967995893fa33abf43"
+    },
+    {
+      "path": "supabase/functions/_shared/hf-config.ts",
+      "bytes": 4558,
+      "sha256": "bb53ce6fc8fb3fecfd1ddfdf140744004f5e80fc2f0eaf7a7c422817c43dafd0"
     },
     {
       "path": "supabase/functions/_shared/idempotency.ts",
@@ -345,8 +350,8 @@
     },
     {
       "path": "supabase/functions/llm-gateway/index.ts",
-      "bytes": 62793,
-      "sha256": "638e81a8813010ad6bbec0302fca19c88b5cb621d24d09ffbfb7ef8a9d41b738"
+      "bytes": 62927,
+      "sha256": "bc6642811851c361ed52ff2460ca2634fde2a8a90a2e6f0fba5177e2e74bcda9"
     },
     {
       "path": "supabase/functions/llm-gateway/providers.ts",
@@ -480,8 +485,8 @@
     },
     {
       "path": "supabase/functions/rag-rerank/index.ts",
-      "bytes": 5658,
-      "sha256": "02c763770a821f616c6e148dc3908d8b71fd7488185653de330cb2c6a5816475"
+      "bytes": 5816,
+      "sha256": "832b427c9b1653160715072bc0dd7df8f4aa16b900bacc867fe70005408b60e7"
     },
     {
       "path": "supabase/functions/replay-fork-execute/index.ts",
@@ -1558,7 +1563,7 @@
       "name": "llm-gateway",
       "entrypoint": "supabase/functions/llm-gateway/index.ts",
       "verify_jwt": true,
-      "source_sha256": "ba602fcf7fb358e53308f8c9eaaefb56392cddea82ea73c667bfc429b518a706",
+      "source_sha256": "89d28159b2b0ae08b777e07c9667fda2b734d644c112a49616d820e99e14ef7e",
       "source_files": [
         "supabase/functions/_shared/ai-provider.ts",
         "supabase/functions/_shared/auth.ts",
@@ -1567,6 +1572,7 @@
         "supabase/functions/_shared/circuitBreaker.ts",
         "supabase/functions/_shared/contracts.ts",
         "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/hf-config.ts",
         "supabase/functions/_shared/json.ts",
         "supabase/functions/_shared/mod.ts",
         "supabase/functions/_shared/otel-edge.ts",
@@ -1943,10 +1949,11 @@
       "name": "rag-rerank",
       "entrypoint": "supabase/functions/rag-rerank/index.ts",
       "verify_jwt": true,
-      "source_sha256": "69fa615cceba79d1302bcda3c05a902d4fb530c0d545148e5549a247e4165249",
+      "source_sha256": "377f72f868c53c07551da1ad1a3b61dae3355295cb81205f64b2f07dc25f6dac",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
+        "supabase/functions/_shared/hf-config.ts",
         "supabase/functions/_shared/json.ts",
         "supabase/functions/_shared/mod.ts",
         "supabase/functions/_shared/otel-edge.ts",
@@ -2648,5 +2655,5 @@
       ]
     }
   ],
-  "manifest_sha256": "c8f5ad132f1b2a14ca255b43f64f601db37dcaa1f9363623019d4ed55dfbbe09"
+  "manifest_sha256": "f620b927edeab14bd27e7094f45131cff735e8b7c06a11ac976d800c8fa1bea0"
 }
