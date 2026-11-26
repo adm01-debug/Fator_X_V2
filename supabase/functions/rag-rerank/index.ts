@@ -7,6 +7,7 @@ import {
   parseBody, z,
 } from "../_shared/mod.ts";
 import { withRetry } from "../_shared/retry.ts";
+import { loadHfConfig, envDisabled } from "../_shared/hf-config.ts";
 
 // ═══ Input Schema (Zod) ═══
 const RerankInput = z.object({
@@ -42,6 +43,7 @@ serve(async (req) => {
       .eq('user_id', user.id)
       .limit(1);
     const wsId = members?.[0]?.workspace_id;
+    const hfConfig = await loadHfConfig(supabase, wsId);
 
     // ═══ Reranking Pipeline (3 layers) ═══
     let reranked: Array<{ chunk: Record<string, unknown>; relevance_score: number }> | null = null;
@@ -86,7 +88,7 @@ serve(async (req) => {
 
     // Layer 2: HuggingFace BGE Reranker (free cross-encoder)
     const hfToken = Deno.env.get('HF_API_TOKEN');
-    if (!reranked && hfToken && Deno.env.get('ENABLE_HF_RERANKER') !== 'false') {
+    if (!reranked && hfToken && hfConfig.enable_hf_reranker && !envDisabled('ENABLE_HF_RERANKER')) {
       try {
         const pairs = chunks.slice(0, 30).map((c: Record<string, unknown>) => ({
           text: query,
@@ -94,7 +96,7 @@ serve(async (req) => {
         }));
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000);
-        const resp = await withRetry(() => fetch('https://router.huggingface.co/hf-inference/models/BAAI/bge-reranker-v2-m3', {
+        const resp = await withRetry(() => fetch(`https://router.huggingface.co/hf-inference/models/${hfConfig.preferred_reranker_model}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hfToken}` },
           body: JSON.stringify({ inputs: pairs }),
