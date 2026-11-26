@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "70dccb40f712c5962d8945d7fe773441235dc294",
+  "commit": "ed56e32932f59b57660ad0594100ecd86fc88d4d",
   "branch": "main",
-  "data_commit": "2026-11-26T07:39:42-03:00",
+  "data_commit": "2026-11-26T08:04:46-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "ed56e32",
+    "data": "2026-11-26",
+    "assunto": "feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)"
+   },
    {
     "sha": "70dccb4",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "0200f78",
     "data": "2026-11-21",
     "assunto": "chore: registra analise funcionalidades planejadas x implementadas (#134)"
-   },
-   {
-    "sha": "96fbd6f",
-    "data": "2026-11-21",
-    "assunto": "fix: conclui entidades parciais (webhook/game day/chaos) criadas como boilerplate vazio (#132)"
    }
   ],
-  "arquivos_mudados_7d": 124,
+  "arquivos_mudados_7d": 126,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 64
+    "commits": 65
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2009,
-  "arquivos_codigo": 1453,
-  "linhas_codigo": 318915,
+  "arquivos_total": 2010,
+  "arquivos_codigo": 1454,
+  "linhas_codigo": 319354,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 241,
+  "testes": 242,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 141,
-   "linhas": 49731
+   "linhas": 50020
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -519,8 +519,8 @@
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 192,
-   "linhas": 29067
+   "arquivos": 193,
+   "linhas": 29217
   },
   "src/tests": {
    "arquivos": 2,

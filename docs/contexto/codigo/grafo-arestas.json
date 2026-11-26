@@ -5012,7 +5012,8 @@
    "src/components/ui/label.tsx",
    "src/components/ui/progress.tsx",
    "src/components/ui/select.tsx",
-   "src/components/ui/slider.tsx"
+   "src/components/ui/slider.tsx",
+   "src/services/fineTuningService.ts"
   ],
   "src/pages/ForensicSnapshotsPage.tsx": [
    "src/components/shared/PageHeader.tsx",

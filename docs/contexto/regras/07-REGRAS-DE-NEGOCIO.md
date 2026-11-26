@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `70dccb40f7` · branch `main` · 2026-11-26 10:40 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ed56e32932` · branch `main` · 2026-11-26 11:05 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1312,11 +1312,11 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `ended` | compara, escreve | `src/pages/VoiceAgentsPage.tsx`<br>`supabase/functions/voice-session/index.ts` |
 | `status` | `err` | escreve | `src/components/integrations/Bitrix24ApiTester.tsx` |
 | `status` | `erro` | compara | `src/lib/skills/observability.ts` |
-| `status` | `error` | compara, escreve | `src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agents/detail/ErrorAnalysisPanel.tsx`<br>`src/components/chat/ChatComposer.tsx`<br>`src/components/datahub/ConnectionCard.tsx`<br>`src/components/monitoring/SpanTreeView.tsx`<br>… +19 |
+| `status` | `error` | compara, escreve | `src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agents/detail/ErrorAnalysisPanel.tsx`<br>`src/components/chat/ChatComposer.tsx`<br>`src/components/datahub/ConnectionCard.tsx`<br>`src/components/monitoring/SpanTreeView.tsx`<br>… +20 |
 | `status` | `executando` | compara | `src/components/skills/SkillDescriptionEnrichPanel.tsx` |
 | `status` | `expired` | compara, escreve | `src/components/automation/CredentialVaultPanel.tsx`<br>`src/pages/FreezeWindowsPage.tsx`<br>`src/services/credentialVaultService.ts` |
 | `status` | `fail` | compara, escreve | `src/services/evaluationsService.ts` |
-| `status` | `failed` | compara, escreve | `src/components/admin/AuditTrailPanel.tsx`<br>`src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agent-builder/modules/EvalsModule.tsx`<br>`src/components/agent-builder/modules/OrchestratorModule.tsx`<br>`src/components/agent-builder/modules/TestingModule.tsx`<br>… +39 |
+| `status` | `failed` | compara, escreve | `src/components/admin/AuditTrailPanel.tsx`<br>`src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agent-builder/modules/EvalsModule.tsx`<br>`src/components/agent-builder/modules/OrchestratorModule.tsx`<br>`src/components/agent-builder/modules/TestingModule.tsx`<br>… +40 |
 | `status` | `falhou` | compara | `src/components/skills/SkillReclassifyDialog.tsx`<br>`src/lib/skills/queueFailureSummary.ts` |
 | `status` | `false_positive` | compara | `src/pages/PentestFindingsPage.tsx`<br>`src/services/pentestService.ts` |
 | `status` | `fixed` | compara, escreve | `src/pages/PentestFindingsPage.tsx`<br>`src/pages/PentestPage.tsx`<br>`src/pages/VulnerabilitiesPage.tsx`<br>`src/services/pentestService.ts` |
@@ -3986,7 +3986,7 @@ _nenhum item encontrado_
 | Não foi possível concluir a classificação por IA. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ; import { Badge } from  | `src/components/slack/SlackOnboardingWizard.tsx` |
 | Workspace não identificado | `src/components/slack/SlackTestBroadcastButton.tsx` |
-| … +524 linhas — lista completa em `context.json` | |
+| … +527 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4021,7 +4021,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3023 testes em 214 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3031 testes em 215 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4150,6 +4150,7 @@ _nenhum item encontrado_
 | `src/test/browser-sessions-service.test.ts` | 8 | browserAgentService · runAgent invokes browser-agent-run with full input · runAgent throws on edge function error · cancelSession passes session_id … |
 | `src/test/curated-skills.test.ts` | 8 | curatedSkills · não possui slugs duplicados · usa slugs kebab-case prefixados com nexus- · referencia apenas departamentos da taxonomia canônica … |
 | `src/test/deep-link-sources.test.ts` | 8 | sourceIdsSync · parse vazio/nulo · filtra IDs inválidos · deduplica … |
+| `src/test/fine-tuning-page.test.tsx` | 8 | FineTuningPage · lista os jobs devolvidos pelo servico em vez de dados fixos · mostra estado vazio quando o servico nao devolve jobs · mostra erro de carregamento em vez de esconder a falha … |
 | `src/test/i18n.test.ts` | 8 | i18n translations · has pt-BR and en-US locales · default locale is pt-BR · both locales have same keys … |
 | `src/test/metric-card.test.tsx` | 8 | MetricCard · renders title and value · renders string value · renders subtitle when provided … |
 | `src/test/nexus-design-eslint.test.ts` | 8 | nexus-design/no-hardcoded-colors · mapeia cores diretas em className · cobre template literals usados em cn() · não confunde tokens nexus-* nem palavras contendo cores … |

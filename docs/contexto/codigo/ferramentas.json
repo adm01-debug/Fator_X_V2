@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1395)",
+   "TypeScript (1396)",
    "SQL (341)",
    "Markdown (134)",
    "JavaScript (54)",
@@ -1135,6 +1135,10 @@
     "arquivos": 2
    },
    {
+    "host": "huggingface.co",
+    "arquivos": 2
+   },
+   {
     "host": "osv.dev",
     "arquivos": 2
    },
@@ -1252,10 +1256,6 @@
    },
    {
     "host": "httpbin.org",
-    "arquivos": 1
-   },
-   {
-    "host": "huggingface.co",
     "arquivos": 1
    },
    {
@@ -1412,7 +1412,7 @@
    },
    {
     "papel": "alert",
-    "ocorrencias": 16
+    "ocorrencias": 17
    },
    {
     "papel": "assistant",

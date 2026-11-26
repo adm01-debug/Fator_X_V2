@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 241,
+ "total": 242,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 226
+  "unit": 227
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 198
+   "arquivos": 199
   },
   {
    "padrao": "outro",
@@ -905,6 +905,16 @@
     "src/services/workflowsService.ts"
    ],
    "casos": 17
+  },
+  {
+   "arquivo": "src/test/fine-tuning-page.test.tsx",
+   "tipo": "unit",
+   "linhas": 150,
+   "testa": [
+    "src/pages/FineTuningPage.tsx",
+    "src/services/fineTuningService.ts"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/test/freeze-window-service.test.ts",
@@ -2402,6 +2412,7 @@
   "src/lib/validations/researchConfig.ts": 1,
   "src/lib/wikilink.ts": 1,
   "src/pages/DashboardPage.tsx": 1,
+  "src/pages/FineTuningPage.tsx": 1,
   "src/pages/OpenclawDeployPage.tsx": 1,
   "src/services/agentCardService.ts": 1,
   "src/services/agentEvolutionService.ts": 2,
@@ -2429,6 +2440,7 @@
   "src/services/e2eeService.ts": 1,
   "src/services/evaluationsService.ts": 3,
   "src/services/executionHistoryService.ts": 3,
+  "src/services/fineTuningService.ts": 1,
   "src/services/freezeWindowService.ts": 1,
   "src/services/guardrailsMLService.ts": 1,
   "src/services/healthAlertsService.ts": 1,
@@ -2545,7 +2557,6 @@
    "src/pages/EntityResolutionLogsPage.tsx",
    "src/pages/EvaluationsPage.tsx",
    "src/pages/FederatedLearningPage.tsx",
-   "src/pages/FineTuningPage.tsx",
    "src/pages/ForensicSnapshotsPage.tsx",
    "src/pages/FreezeWindowsPage.tsx",
    "src/pages/GameDayLivePage.tsx",
@@ -2807,7 +2818,6 @@
    "src/services/e2eeSimulationService.ts",
    "src/services/entityResolutionService.ts",
    "src/services/evalEngineService.ts",
-   "src/services/fineTuningService.ts",
    "src/services/gameDayService.ts",
    "src/services/healthService.ts",
    "src/services/incidentService.ts",

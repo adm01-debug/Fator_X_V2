@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "70dccb40f712c5962d8945d7fe773441235dc294",
+  "sha": "ed56e32932f59b57660ad0594100ecd86fc88d4d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 10:40 UTC",
-  "files_total": 2014,
-  "code_files": 1795,
-  "code_lines": 349174
+  "generated_at": "2026-11-26 11:05 UTC",
+  "files_total": 2015,
+  "code_files": 1796,
+  "code_lines": 349613
  },
  "version": "1.3.2",
- "facts_hash": "c1bae288edc8081c",
+ "facts_hash": "d639cf31731686b5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -242,7 +242,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 699,
+   ".tsx": 700,
    ".ts": 696,
    ".sql": 341,
    ".mjs": 47,
@@ -52213,9 +52213,11 @@
     "file": "src/pages/FineTuningPage.tsx",
     "component": "FineTuningPage",
     "tables_transitive": [],
-    "invokes_transitive": [],
+    "invokes_transitive": [
+     "hf-autotrain"
+    ],
     "rpc_transitive": [],
-    "deps_count": 16
+    "deps_count": 21
    },
    {
     "path": "",
@@ -58932,7 +58934,7 @@
   {
    "module": "src/pages",
    "files": 141,
-   "lines": 49731,
+   "lines": 50020,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -59455,8 +59457,8 @@
   },
   {
    "module": "src/test",
-   "files": 192,
-   "lines": 29067,
+   "files": 193,
+   "lines": 29217,
    "tables": [
     "tabela"
    ],
@@ -59563,6 +59565,7 @@
     "src/test/example.test.ts",
     "src/test/execution-history.test.ts",
     "src/test/extended-services.test.ts",
+    "src/test/fine-tuning-page.test.tsx",
     "src/test/freeze-window-service.test.ts",
     "src/test/frontmatter.test.ts",
     "src/test/guardrails-ml-service.test.ts",
@@ -59586,8 +59589,7 @@
     "src/test/model-router-service.test.ts",
     "src/test/monitoring-service.test.ts",
     "src/test/multi-agent-e2e.test.ts",
-    "src/test/network-status.test.ts",
-    "src/test/nexus-design-eslint.test.ts"
+    "src/test/network-status.test.ts"
    ]
   },
   {
@@ -69887,6 +69889,18 @@
    {
     "file": "src/pages/EntityResolutionLogsPage.tsx",
     "msg": "Falha ao carregar logs de resolução"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "msg": " className="
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "msg": "Informe o ID do agente de onde as traces serao extraidas"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "msg": "Informe o nome do modelo que sera publicado no Hugging Face"
    },
    {
     "file": "src/pages/FreezeWindowsPage.tsx",
@@ -92716,37 +92730,37 @@
    {
     "file": "src/pages/FineTuningPage.tsx",
     "field": "status",
-    "value": "pending",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/pages/FineTuningPage.tsx",
-    "field": "status",
-    "value": "training",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/pages/FineTuningPage.tsx",
-    "field": "status",
-    "value": "completed",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/pages/FineTuningPage.tsx",
-    "field": "status",
-    "value": "completed",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/pages/FineTuningPage.tsx",
-    "field": "status",
     "value": "completed",
     "kind": "compara"
    },
    {
     "file": "src/pages/FineTuningPage.tsx",
     "field": "status",
-    "value": "training",
+    "value": "succeeded",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "field": "status",
+    "value": "failed",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "field": "status",
+    "value": "error",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "field": "status",
+    "value": "pending",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "field": "status",
+    "value": "queued",
     "kind": "compara"
    },
    {
@@ -105642,6 +105656,38 @@
    {
     "file": "src/test/extended-services.test.ts",
     "name": "generateTiers produces L0 and L1"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "FineTuningPage"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "lista os jobs devolvidos pelo servico em vez de dados fixos"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "mostra estado vazio quando o servico nao devolve jobs"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "mostra erro de carregamento em vez de esconder a falha"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "envia o treinamento ao servico com a configuracao do formulario"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "recusa iniciar sem nome e nao chama o servico"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "propaga para o usuario o erro devolvido pelo servico"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "prepara o dataset a partir das traces do agente"
    },
    {
     "file": "src/test/freeze-window-service.test.ts",
@@ -128933,6 +128979,7 @@
       "compara:src/pages/ChangeManagementPage.tsx",
       "compara:src/pages/ComplianceReportsPage.tsx",
       "compara:src/pages/DRDrillsPage.tsx",
+      "compara:src/pages/FineTuningPage.tsx",
       "compara:src/pages/GraphExecutionsPage.tsx",
       "compara:src/pages/IncidentPlaybooksPage.tsx",
       "compara:src/pages/LGPDCompliancePage.tsx",
@@ -128974,6 +129021,7 @@
       "compara:src/components/replay/ForkHistoryPanel.tsx",
       "compara:src/pages/ComplianceReportsPage.tsx",
       "compara:src/pages/CreatorPayoutsPage.tsx",
+      "compara:src/pages/FineTuningPage.tsx",
       "compara:src/services/notificationEngineService.ts",
       "compara:src/services/queueManagerService.ts",
       "compara:src/services/retryEngineService.ts",
@@ -128989,7 +129037,6 @@
       "escreve:src/pages/AgentDebuggerPage.tsx",
       "escreve:src/pages/CreatorPayoutsPage.tsx",
       "escreve:src/pages/FederatedLearningPage.tsx",
-      "escreve:src/pages/FineTuningPage.tsx",
       "escreve:src/services/agentHandoffService.ts",
       "escreve:src/services/batchProcessorService.ts",
       "escreve:src/services/codeInterpreterService.ts",
@@ -129070,6 +129117,7 @@
       "compara:src/lib/skills/observability.ts",
       "compara:src/lib/tracing.ts",
       "compara:src/pages/AgentSessionsPage.tsx",
+      "compara:src/pages/FineTuningPage.tsx",
       "compara:src/pages/MCPServersPage.tsx",
       "compara:src/pages/TracesTimelinePage.tsx",
       "compara:src/services/connectorRegistryService.ts",
@@ -129135,7 +129183,6 @@
       "escreve:src/components/knowledge/IngestionLogsPanel.tsx",
       "escreve:src/hooks/useAgentExperiments.ts",
       "escreve:src/pages/FederatedLearningPage.tsx",
-      "escreve:src/pages/FineTuningPage.tsx",
       "escreve:src/pages/VoiceTelephonyPage.tsx",
       "escreve:src/services/agentHandoffService.ts",
       "escreve:src/services/queueManagerService.ts",
@@ -129555,6 +129602,7 @@
      ],
      "queued": [
       "compara:src/components/super-cerebro/notebook/PodcastPanel.tsx",
+      "compara:src/pages/FineTuningPage.tsx",
       "compara:src/services/notebookPodcastsService.ts",
       "escreve:src/components/workflows/sandbox/sandboxTypes.ts",
       "escreve:src/hooks/useAgentEvals.ts",
@@ -129672,6 +129720,7 @@
      ],
      "succeeded": [
       "compara:src/pages/DRDrillsPage.tsx",
+      "compara:src/pages/FineTuningPage.tsx",
       "compara:src/pages/IncidentPlaybooksPage.tsx"
      ],
      "started": [
@@ -129706,9 +129755,7 @@
      ],
      "training": [
       "compara:src/pages/FederatedLearningPage.tsx",
-      "compara:src/pages/FineTuningPage.tsx",
-      "escreve:src/pages/FederatedLearningPage.tsx",
-      "escreve:src/pages/FineTuningPage.tsx"
+      "escreve:src/pages/FederatedLearningPage.tsx"
      ],
      "aborted": [
       "compara:src/pages/GameDaysPage.tsx",
@@ -162727,31 +162774,16 @@
   },
   "src/pages/FineTuningPage.tsx": {
    "path": "src/pages/FineTuningPage.tsx",
-   "lines": 97,
+   "lines": 386,
    "exports": [
     "function FineTuningPage"
    ],
+   "errors": [
+    " className=",
+    "Informe o ID do agente de onde as traces serao extraidas",
+    "Informe o nome do modelo que sera publicado no Hugging Face"
+   ],
    "status_values": [
-    {
-     "field": "status",
-     "value": "pending",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "training",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "completed",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "completed",
-     "kind": "escreve"
-    },
     {
      "field": "status",
      "value": "completed",
@@ -162759,7 +162791,27 @@
     },
     {
      "field": "status",
-     "value": "training",
+     "value": "succeeded",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "failed",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "error",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pending",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "queued",
      "kind": "compara"
     }
    ]
@@ -176622,6 +176674,24 @@
     "contextTiersService",
     "exports tiered context functions",
     "generateTiers produces L0 and L1"
+   ]
+  },
+  "src/test/fine-tuning-page.test.tsx": {
+   "path": "src/test/fine-tuning-page.test.tsx",
+   "lines": 150,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent(/hf-autotrain offline/i);\n  });\n\n  it("
+   ],
+   "tests": [
+    "FineTuningPage",
+    "lista os jobs devolvidos pelo servico em vez de dados fixos",
+    "mostra estado vazio quando o servico nao devolve jobs",
+    "mostra erro de carregamento em vez de esconder a falha",
+    "envia o treinamento ao servico com a configuracao do formulario",
+    "recusa iniciar sem nome e nao chama o servico",
+    "propaga para o usuario o erro devolvido pelo servico",
+    "prepara o dataset a partir das traces do agente"
    ]
   },
   "src/test/freeze-window-service.test.ts": {
@@ -191058,10 +191128,20 @@
   }
  },
  "git": {
-  "sha": "70dccb40f712c5962d8945d7fe773441235dc294",
+  "sha": "ed56e32932f59b57660ad0594100ecd86fc88d4d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "ed56e32",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)",
+    "files": [
+     "src/pages/FineTuningPage.tsx",
+     "src/test/fine-tuning-page.test.tsx"
+    ]
+   },
    {
     "sha": "70dccb4",
     "date": "2026-11-26",
@@ -191393,15 +191473,6 @@
      "supabase/functions/rag-ingest/index.ts",
      "supabase/functions/workflow-engine-v2/index.ts"
     ]
-   },
-   {
-    "sha": "327f5f3",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "feat(storage): cria bucket knowledge-uploads reconciliado (#127)",
-    "files": [
-     "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -191458,6 +191529,14 @@
     2
    ],
    [
+    "src/pages/FineTuningPage.tsx",
+    1
+   ],
+   [
+    "src/test/fine-tuning-page.test.tsx",
+    1
+   ],
+   [
     "src/hooks/use2FA.ts",
     1
    ],
@@ -191475,14 +191554,6 @@
    ],
    [
     ".github/workflows/codeql.yml",
-    1
-   ],
-   [
-    ".github/workflows/guards.yml",
-    1
-   ],
-   [
-    ".github/workflows/dependency-review.yml",
     1
    ]
   ]

@@ -3337,11 +3337,15 @@
    ],
    "tabelas": [],
    "rpcs": [],
-   "edges": [],
+   "edges": [
+    "hf-autotrain"
+   ],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
-   "arquivos_puxados": 16
+   "papeis": [
+    "alert"
+   ],
+   "arquivos_puxados": 22
   },
   {
    "protegida": false,
