@@ -1,16 +1,16 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1213,
- "arestas": 5270,
+ "nos": 1215,
+ "arestas": 5283,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 405
+   "importado_por": 406
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 359
+   "importado_por": 360
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -18,15 +18,15 @@
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 187
+   "importado_por": 188
   },
   {
    "arquivo": "src/lib/logger.ts",
-   "importado_por": 172
+   "importado_por": 173
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 161
+   "importado_por": 162
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -34,7 +34,7 @@
   },
   {
    "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 135
+   "importado_por": 136
   },
   {
    "arquivo": "src/components/ui/select.tsx",
@@ -54,7 +54,7 @@
   },
   {
    "arquivo": "src/components/shared/PageHeader.tsx",
-   "importado_por": 91
+   "importado_por": 92
   },
   {
    "arquivo": "supabase/functions/_shared/mod.ts",
@@ -62,7 +62,7 @@
   },
   {
    "arquivo": "src/components/ui/tabs.tsx",
-   "importado_por": 74
+   "importado_por": 75
   },
   {
    "arquivo": "src/types/dbRow.ts",
@@ -82,7 +82,7 @@
   },
   {
    "arquivo": "src/lib/supabaseExtended.ts",
-   "importado_por": 45
+   "importado_por": 46
   },
   {
    "arquivo": "supabase/functions/_shared/retry.ts",
@@ -90,7 +90,7 @@
   },
   {
    "arquivo": "src/lib/agentService.ts",
-   "importado_por": 39
+   "importado_por": 40
   },
   {
    "arquivo": "src/contexts/AuthContext.tsx",

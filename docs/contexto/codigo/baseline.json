@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "51fc68b04c4278212bdf93163ab0ee6ce96985f4",
+  "commit": "a77f3ba2a3e82a4f41e8acb9a7fa458526f33db2",
   "branch": "main",
-  "data_commit": "2026-11-26T17:54:24-03:00",
+  "data_commit": "2026-11-26T18:25:32-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "a77f3ba",
+    "data": "2026-11-26",
+    "assunto": "feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)"
+   },
    {
     "sha": "51fc68b",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "8554dc7",
     "data": "2026-11-21",
     "assunto": "feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)"
-   },
-   {
-    "sha": "085a2e3",
-    "data": "2026-11-21",
-    "assunto": "chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)"
    }
   ],
-  "arquivos_mudados_7d": 146,
+  "arquivos_mudados_7d": 150,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -286,22 +286,22 @@
     "mudancas": 3
    },
    {
+    "arquivo": "src/components/layout/AppSidebar.tsx",
+    "mudancas": 3
+   },
+   {
     "arquivo": "src/components/shared/OnboardingTour.tsx",
     "mudancas": 3
    },
    {
     "arquivo": "supabase/config.toml",
     "mudancas": 3
-   },
-   {
-    "arquivo": "supabase/functions/browser-agent-run/index.ts",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 74
+    "commits": 75
    },
    {
     "autor": "dependabot[bot]",
@@ -310,21 +310,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2017,
-  "arquivos_codigo": 1460,
-  "linhas_codigo": 320832,
-  "rotas": 151,
+  "arquivos_total": 2020,
+  "arquivos_codigo": 1463,
+  "linhas_codigo": 321904,
+  "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 121,
+  "itens_menu": 122,
   "modulos": 71,
-  "componentes": 662,
+  "componentes": 663,
   "hooks": 75,
   "edge_functions": 88,
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 247,
+  "testes": 248,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -464,11 +464,11 @@
   },
   "src/App.tsx": {
    "arquivos": 1,
-   "linhas": 1539
+   "linhas": 1550
   },
   "src/components": {
    "arquivos": 558,
-   "linhas": 104319
+   "linhas": 104320
   },
   "src/config": {
    "arquivos": 10,
@@ -503,24 +503,24 @@
    "linhas": 46
   },
   "src/pages": {
-   "arquivos": 141,
-   "linhas": 50252
+   "arquivos": 142,
+   "linhas": 50872
   },
   "src/security.test.ts": {
    "arquivos": 1,
    "linhas": 43
   },
   "src/services": {
-   "arquivos": 166,
-   "linhas": 33073
+   "arquivos": 167,
+   "linhas": 33363
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 198,
-   "linhas": 29916
+   "arquivos": 199,
+   "linhas": 30066
   },
   "src/tests": {
    "arquivos": 2,
@@ -586,7 +586,7 @@
   },
   {
    "arquivo": "src/App.tsx",
-   "linhas": 1539
+   "linhas": 1550
   },
   {
    "arquivo": "src/components/agents/wizard/QuickCreateWizard.tsx",
@@ -671,7 +671,7 @@
   "ts_ignore": 0,
   "eslint_disable": 5,
   "todos": 16,
-  "arquivos_acima_500_linhas": 93
+  "arquivos_acima_500_linhas": 94
  },
  "todos": [
   {

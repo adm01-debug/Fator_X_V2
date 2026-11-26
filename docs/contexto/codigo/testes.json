@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 247,
+ "total": 248,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 232
+  "unit": 233
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 204
+   "arquivos": 205
   },
   {
    "padrao": "outro",
@@ -1042,6 +1042,15 @@
     "src/services/knowledgeService.ts"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/test/lgpd-governance.test.ts",
+   "tipo": "unit",
+   "linhas": 150,
+   "testa": [
+    "src/services/lgpdGovernanceService.ts"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/test/llm-gateway-providers.test.ts",
@@ -2496,6 +2505,7 @@
   "src/services/kanbanService.ts": 1,
   "src/services/knowledgeManagementService.ts": 1,
   "src/services/knowledgeService.ts": 2,
+  "src/services/lgpdGovernanceService.ts": 1,
   "src/services/lgpdService.ts": 1,
   "src/services/llmGatewayService.ts": 2,
   "src/services/memoryService.ts": 2,
@@ -2620,6 +2630,7 @@
    "src/pages/KnowledgeManagementPage.tsx",
    "src/pages/KnowledgePage.tsx",
    "src/pages/LGPDCompliancePage.tsx",
+   "src/pages/LGPDGovernancePage.tsx",
    "src/pages/LlmCostByCallerPage.tsx",
    "src/pages/MCPServersPage.tsx",
    "src/pages/MarketplaceMonetizedPage.tsx",

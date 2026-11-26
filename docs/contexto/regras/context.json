@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "51fc68b04c4278212bdf93163ab0ee6ce96985f4",
+  "sha": "a77f3ba2a3e82a4f41e8acb9a7fa458526f33db2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 21:11 UTC",
-  "files_total": 2022,
-  "code_files": 1802,
-  "code_lines": 351091
+  "generated_at": "2026-11-26 21:28 UTC",
+  "files_total": 2025,
+  "code_files": 1805,
+  "code_lines": 352163
  },
  "version": "1.3.2",
- "facts_hash": "1a3b8d7437b361bc",
+ "facts_hash": "2adae95754c79459",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -246,8 +246,8 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 704,
-   ".ts": 698,
+   ".tsx": 705,
+   ".ts": 700,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -52476,6 +52476,23 @@
    },
    {
     "path": "",
+    "file": "src/pages/LGPDGovernancePage.tsx",
+    "component": "LGPDGovernancePage",
+    "tables_transitive": [
+     "agents",
+     "auth_attempts",
+     "user_roles",
+     "workspace_members",
+     "workspaces"
+    ],
+    "invokes_transitive": [],
+    "rpc_transitive": [
+     "is_user_locked_out"
+    ],
+    "deps_count": 26
+   },
+   {
+    "path": "",
     "file": "src/pages/LlmCostByCallerPage.tsx",
     "component": "LlmCostByCallerPage",
     "tables_transitive": [],
@@ -56704,6 +56721,13 @@
     "file": "src/App.tsx"
    },
    {
+    "path": "/lgpd-governanca",
+    "component": "SafePage",
+    "guard": "ProtectedRoute",
+    "roles": [],
+    "file": "src/App.tsx"
+   },
+   {
     "path": "/llm-cost-by-caller",
     "component": "SafePage",
     "guard": "",
@@ -57974,6 +57998,10 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "src/App.tsx"
+   },
+   {
+    "guard": "ProtectedRoute",
     "file": "src/components/rbac/ProtectedRoute.tsx"
    }
   ]
@@ -58257,7 +58285,7 @@
   {
    "module": "src",
    "files": 4,
-   "lines": 1630,
+   "lines": 1641,
    "tables": [],
    "exports": [
     "App.tsx: App"
@@ -58295,7 +58323,7 @@
   {
    "module": "src/components",
    "files": 558,
-   "lines": 104319,
+   "lines": 104320,
    "tables": [
     "agent_templates",
     "agent_traces",
@@ -58955,8 +58983,8 @@
   },
   {
    "module": "src/pages",
-   "files": 141,
-   "lines": 50252,
+   "files": 142,
+   "lines": 50872,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -59142,16 +59170,16 @@
     "src/pages/KnowledgeManagementPage.tsx",
     "src/pages/KnowledgePage.tsx",
     "src/pages/LGPDCompliancePage.tsx",
+    "src/pages/LGPDGovernancePage.tsx",
     "src/pages/LlmCostByCallerPage.tsx",
     "src/pages/MCPServersPage.tsx",
-    "src/pages/MarketplaceMonetizedPage.tsx",
-    "src/pages/MemoryPage.tsx"
+    "src/pages/MarketplaceMonetizedPage.tsx"
    ]
   },
   {
    "module": "src/services",
-   "files": 166,
-   "lines": 33073,
+   "files": 167,
+   "lines": 33363,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59416,12 +59444,12 @@
     "src/services/knowledgeDecayService.ts",
     "src/services/knowledgeManagementService.ts",
     "src/services/knowledgeService.ts",
+    "src/services/lgpdGovernanceService.ts",
     "src/services/lgpdService.ts",
     "src/services/llmGatewayService.ts",
     "src/services/marketplaceService.ts",
     "src/services/memoryService.ts",
-    "src/services/middlewarePipelineService.ts",
-    "src/services/modelRouterService.ts"
+    "src/services/middlewarePipelineService.ts"
    ]
   },
   {
@@ -59483,8 +59511,8 @@
   },
   {
    "module": "src/test",
-   "files": 198,
-   "lines": 29916,
+   "files": 199,
+   "lines": 30066,
    "tables": [
     "tabela"
    ],
@@ -59606,6 +59634,7 @@
     "src/test/i18n.test.ts",
     "src/test/kanbanService.test.ts",
     "src/test/knowledge-service.test.ts",
+    "src/test/lgpd-governance.test.ts",
     "src/test/llm-gateway-providers.test.ts",
     "src/test/llm-gateway-service.test.ts",
     "src/test/local-graph-view.test.tsx",
@@ -59614,8 +59643,7 @@
     "src/test/memory-tiers.test.ts",
     "src/test/metric-card.test.tsx",
     "src/test/metrics-embedding-coverage.test.tsx",
-    "src/test/middleware-pipeline.test.ts",
-    "src/test/model-router-service.test.ts"
+    "src/test/middleware-pipeline.test.ts"
    ]
   },
   {
@@ -64434,6 +64462,10 @@
     "count": 1
    },
    {
+    "file": "src/test/lgpd-governance.test.ts",
+    "count": 1
+   },
+   {
     "file": "supabase/functions/_shared/crmNormalize.ts",
     "count": 4
    },
@@ -67494,6 +67526,16 @@
     "file": "src/services/knowledgeDecayService.ts",
     "name": "DecayLevel",
     "values": "fresh | review | refresh | archive"
+   },
+   {
+    "file": "src/services/lgpdGovernanceService.ts",
+    "name": "SubjectRequestType",
+    "values": "access | rectification | deletion | portability | information | consent_revocation | objection"
+   },
+   {
+    "file": "src/services/lgpdGovernanceService.ts",
+    "name": "SubjectRequestStatus",
+    "values": "received | processing | completed | denied | partial"
    },
    {
     "file": "src/services/memoryService.ts",
@@ -70706,6 +70748,10 @@
     "msg": "Not authenticated"
    },
    {
+    "file": "src/services/lgpdGovernanceService.ts",
+    "msg": "Faça login para abrir uma solicitação"
+   },
+   {
     "file": "src/services/lgpdService.ts",
     "msg": "Failed to ${grant ? "
    },
@@ -72516,6 +72562,18 @@
    {
     "file": "src/services/entityResolutionService.ts",
     "text": "* Loads up to `limit` recent memories and runs entity resolution"
+   },
+   {
+    "file": "src/services/lgpdGovernanceService.ts",
+    "text": "(Art. 48), as solicitações do titular (Art. 18, prazo de 15 dias), as"
+   },
+   {
+    "file": "src/services/lgpdGovernanceService.ts",
+    "text": "* Aqui ficam apenas as leituras/escritas diretas nessas tabelas; a RLS decide"
+   },
+   {
+    "file": "src/services/lgpdGovernanceService.ts",
+    "text": "* Prazo do Art. 18 §1 a partir de uma data (padrão: agora). */"
    },
    {
     "file": "src/services/lgpdService.ts",
@@ -86586,6 +86644,11 @@
     "value": "\"__none__\""
    },
    {
+    "file": "src/services/lgpdGovernanceService.ts",
+    "name": "DSAR_DEADLINE_DAYS",
+    "value": "15"
+   },
+   {
     "file": "src/services/productMockupService.ts",
     "name": "MAX_IMAGE_BYTES",
     "value": "10"
@@ -93141,6 +93204,18 @@
     "kind": "compara"
    },
    {
+    "file": "src/pages/LGPDGovernancePage.tsx",
+    "field": "status",
+    "value": "received",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/LGPDGovernancePage.tsx",
+    "field": "status",
+    "value": "processing",
+    "kind": "compara"
+   },
+   {
     "file": "src/pages/MCPServersPage.tsx",
     "field": "status",
     "value": "connected",
@@ -95059,6 +95134,12 @@
     "field": "embedding_status",
     "value": "failed",
     "kind": "filtra"
+   },
+   {
+    "file": "src/services/lgpdGovernanceService.ts",
+    "field": "status",
+    "value": "denied",
+    "kind": "compara"
    },
    {
     "file": "src/services/llmGatewayService.ts",
@@ -106249,6 +106330,38 @@
     "name": "RerankResponse interface shape exists"
    },
    {
+    "file": "src/test/lgpd-governance.test.ts",
+    "name": "lgpdGovernanceService"
+   },
+   {
+    "file": "src/test/lgpd-governance.test.ts",
+    "name": "calcula o prazo do Art. 18 §1 em 15 dias"
+   },
+   {
+    "file": "src/test/lgpd-governance.test.ts",
+    "name": "abre a solicitação para o usuário autenticado, com prazo e sem dados do cliente forjados"
+   },
+   {
+    "file": "src/test/lgpd-governance.test.ts",
+    "name": "recusa abrir solicitação sem sessão"
+   },
+   {
+    "file": "src/test/lgpd-governance.test.ts",
+    "name": "carimba responded_at apenas em estado terminal"
+   },
+   {
+    "file": "src/test/lgpd-governance.test.ts",
+    "name": "salva política de retenção com upsert idempotente por workspace e tipo"
+   },
+   {
+    "file": "src/test/lgpd-governance.test.ts",
+    "name": "filtra as leituras pelo workspace e ordena pelo prazo"
+   },
+   {
+    "file": "src/test/lgpd-governance.test.ts",
+    "name": "propaga o erro de leitura em vez de devolver lista vazia"
+   },
+   {
     "file": "src/test/llm-gateway-providers.test.ts",
     "name": "normalizeOpenAIResponse"
    },
@@ -114289,6 +114402,10 @@
     "call": "notify"
    },
    {
+    "file": "src/pages/LGPDGovernancePage.tsx",
+    "call": "notify_anpd_on_breach"
+   },
+   {
     "file": "src/pages/PostmortemsPage.tsx",
     "call": "publish("
    },
@@ -114391,6 +114508,10 @@
    {
     "file": "src/services/knowledgeManagementService.ts",
     "call": "invoke("
+   },
+   {
+    "file": "src/services/lgpdGovernanceService.ts",
+    "call": "notify_anpd_on_breach"
    },
    {
     "file": "src/services/lgpdService.ts",
@@ -129263,7 +129384,8 @@
       "escreve:supabase/functions/workflow-engine-v2/index.ts"
      ],
      "denied": [
-      "compara:src/components/admin/AuditTrailPanel.tsx"
+      "compara:src/components/admin/AuditTrailPanel.tsx",
+      "compara:src/services/lgpdGovernanceService.ts"
      ],
      "pending": [
       "compara:src/components/agent-builder/HandoffPanel.tsx",
@@ -129704,6 +129826,7 @@
      ],
      "received": [
       "compara:src/components/automation/WebhookManagerPanel.tsx",
+      "compara:src/pages/LGPDGovernancePage.tsx",
       "escreve:src/services/types/webhookTriggerTypes.ts",
       "escreve:supabase/functions/openclaw-webhook/index.ts"
      ],
@@ -129733,6 +129856,7 @@
      "processing": [
       "compara:src/components/knowledge/IngestionLogsPanel.tsx",
       "compara:src/pages/CreatorPayoutsPage.tsx",
+      "compara:src/pages/LGPDGovernancePage.tsx",
       "compara:src/services/queueManagerService.ts",
       "escreve:src/components/knowledge/IngestionLogsPanel.tsx",
       "escreve:src/services/queueManagerService.ts",
@@ -139018,6 +139142,10 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "src/App.tsx"
+   },
+   {
+    "guard": "ProtectedRoute",
     "file": "src/components/rbac/ProtectedRoute.tsx"
    }
   ],
@@ -139087,6 +139215,13 @@
    },
    {
     "path": "/lgpd",
+    "component": "SafePage",
+    "guard": "ProtectedRoute",
+    "roles": [],
+    "file": "src/App.tsx"
+   },
+   {
+    "path": "/lgpd-governanca",
     "component": "SafePage",
     "guard": "ProtectedRoute",
     "roles": [],
@@ -142126,6 +142261,13 @@
    },
    {
     "kind": "dinâmico",
+    "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
+    "where": [
+     "src/test/lgpd-governance.test.ts"
+    ]
+   },
+   {
+    "kind": "dinâmico",
     "msg": "4 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
     "where": [
      "supabase/functions/_shared/crmNormalize.ts"
@@ -144460,7 +144602,7 @@
   },
   "src/App.tsx": {
    "path": "src/App.tsx",
-   "lines": 1539,
+   "lines": 1550,
    "exports": [
     "default App"
    ],
@@ -144875,6 +145017,12 @@
     },
     {
      "path": "/lgpd",
+     "component": "SafePage",
+     "guard": "ProtectedRoute",
+     "roles": []
+    },
+    {
+     "path": "/lgpd-governanca",
      "component": "SafePage",
      "guard": "ProtectedRoute",
      "roles": []
@@ -145376,6 +145524,7 @@
     "Operação falhou"
    ],
    "guards": [
+    "ProtectedRoute",
     "ProtectedRoute",
     "ProtectedRoute",
     "ProtectedRoute",
@@ -150984,7 +151133,7 @@
   },
   "src/components/layout/AppSidebar.tsx": {
    "path": "src/components/layout/AppSidebar.tsx",
-   "lines": 541,
+   "lines": 542,
    "exports": [
     "function AppSidebar"
    ],
@@ -163664,6 +163813,28 @@
     }
    ]
   },
+  "src/pages/LGPDGovernancePage.tsx": {
+   "path": "src/pages/LGPDGovernancePage.tsx",
+   "lines": 620,
+   "exports": [
+    "function LGPDGovernancePage"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "received",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "processing",
+     "kind": "compara"
+    }
+   ],
+   "side_effects": [
+    "notify_anpd_on_breach"
+   ]
+  },
   "src/pages/LlmCostByCallerPage.tsx": {
    "path": "src/pages/LlmCostByCallerPage.tsx",
    "lines": 140,
@@ -170360,6 +170531,68 @@
    ],
    "pagination": [
     "1"
+   ]
+  },
+  "src/services/lgpdGovernanceService.ts": {
+   "path": "src/services/lgpdGovernanceService.ts",
+   "lines": 290,
+   "exports": [
+    "const DSAR_DEADLINE_DAYS",
+    "type SubjectRequestType",
+    "type SubjectRequestStatus",
+    "interface SubjectRequest",
+    "interface ProcessingOperation",
+    "interface BreachRecord",
+    "interface RetentionPolicy",
+    "interface PersonalDataField",
+    "interface LgpdSettings",
+    "function isTerminalStatus",
+    "function subjectRequestDeadline",
+    "function listSubjectRequests",
+    "function createSubjectRequest",
+    "function respondSubjectRequest",
+    "function listProcessingOperations",
+    "function createProcessingOperation",
+    "function listBreaches",
+    "function listRetentionPolicies",
+    "function saveRetentionPolicy",
+    "function listPersonalDataInventory",
+    "function getLgpdSettings",
+    "function saveLgpdSettings"
+   ],
+   "errors": [
+    "Faça login para abrir uma solicitação"
+   ],
+   "enums": [
+    {
+     "name": "SubjectRequestType",
+     "values": "access | rectification | deletion | portability | information | consent_revocation | objection"
+    },
+    {
+     "name": "SubjectRequestStatus",
+     "values": "received | processing | completed | denied | partial"
+    }
+   ],
+   "params": [
+    {
+     "name": "DSAR_DEADLINE_DAYS",
+     "value": "15"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "denied",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "(Art. 48), as solicitações do titular (Art. 18, prazo de 15 dias), as",
+    "* Aqui ficam apenas as leituras/escritas diretas nessas tabelas; a RLS decide",
+    "* Prazo do Art. 18 §1 a partir de uma data (padrão: agora). */"
+   ],
+   "side_effects": [
+    "notify_anpd_on_breach"
    ]
   },
   "src/services/lgpdService.ts": {
@@ -177298,6 +177531,26 @@
     "exports at least 15 functions",
     "all exported functions are named",
     "RerankResponse interface shape exists"
+   ]
+  },
+  "src/test/lgpd-governance.test.ts": {
+   "path": "src/test/lgpd-governance.test.ts",
+   "lines": 150,
+   "is_test": true,
+   "dyn_from": 1,
+   "rule_comments": [
+    "tela. Estes testes travam o que a tela depende: prazo legal de 15 dias"
+   ],
+   "doc": "lgpdGovernanceService — o Registro de Operações, as solicitações do titular e as políticas de retenção existiam no banco desde 20260724000010 sem nenhuma tela. Estes testes travam o que a tela depende: prazo legal de 15 dias calculado no cliente, vínculo da solicitação com o usuário autenticado, car …",
+   "tests": [
+    "lgpdGovernanceService",
+    "calcula o prazo do Art. 18 §1 em 15 dias",
+    "abre a solicitação para o usuário autenticado, com prazo e sem dados do cliente forjados",
+    "recusa abrir solicitação sem sessão",
+    "carimba responded_at apenas em estado terminal",
+    "salva política de retenção com upsert idempotente por workspace e tipo",
+    "filtra as leituras pelo workspace e ordena pelo prazo",
+    "propaga o erro de leitura em vez de devolver lista vazia"
    ]
   },
   "src/test/llm-gateway-providers.test.ts": {
@@ -191575,10 +191828,23 @@
   }
  },
  "git": {
-  "sha": "51fc68b04c4278212bdf93163ab0ee6ce96985f4",
+  "sha": "a77f3ba2a3e82a4f41e8acb9a7fa458526f33db2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "a77f3ba",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)",
+    "files": [
+     "src/App.tsx",
+     "src/components/layout/AppSidebar.tsx",
+     "src/pages/LGPDGovernancePage.tsx",
+     "src/services/lgpdGovernanceService.ts",
+     "src/test/lgpd-governance.test.ts"
+    ]
+   },
    {
     "sha": "51fc68b",
     "date": "2026-11-26",
@@ -191890,25 +192156,12 @@
      "supabase/functions/rag-embed-backfill/index.ts",
      "supabase/migrations/20261121103000_embed_retry_chunks.sql"
     ]
-   },
-   {
-    "sha": "10a1dd0",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/_shared/chaos.ts",
-     "supabase/functions/_shared/idempotency.ts",
-     "supabase/functions/browser-agent-run/index.ts",
-     "supabase/functions/llm-gateway/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    8
+    7
    ],
    [
     "package-lock.json",
@@ -191951,6 +192204,26 @@
     2
    ],
    [
+    "src/App.tsx",
+    1
+   ],
+   [
+    "src/components/layout/AppSidebar.tsx",
+    1
+   ],
+   [
+    "src/pages/LGPDGovernancePage.tsx",
+    1
+   ],
+   [
+    "src/services/lgpdGovernanceService.ts",
+    1
+   ],
+   [
+    "src/test/lgpd-governance.test.ts",
+    1
+   ],
+   [
     "src/components/metrics/EmbeddingCoverageCard.tsx",
     1
    ],
@@ -191964,26 +192237,6 @@
    ],
    [
     "src/pages/TeamPage.tsx",
-    1
-   ],
-   [
-    "src/services/teamsService.ts",
-    1
-   ],
-   [
-    "src/test/teams-members-full.test.ts",
-    1
-   ],
-   [
-    "src/pages/BillingPage.tsx",
-    1
-   ],
-   [
-    "src/services/billingService.ts",
-    1
-   ],
-   [
-    "src/test/billing-service.test.ts",
     1
    ]
   ]

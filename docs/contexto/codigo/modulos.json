@@ -1731,7 +1731,7 @@
    "modulo": "components/layout",
    "arquivos": 3,
    "testes": 0,
-   "linhas": 850,
+   "linhas": 851,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5282,9 +5282,9 @@
   },
   {
    "modulo": "pages",
-   "arquivos": 141,
+   "arquivos": 142,
    "testes": 0,
-   "linhas": 50252,
+   "linhas": 50872,
    "itens_menu": [
     "A/B Test Prompts",
     "Admin BD",
@@ -5336,6 +5336,7 @@
     "Frameworks Compliance",
     "Game Days",
     "Governança",
+    "Governança LGPD",
     "Implantações",
     "Inventário (CMDB)",
     "IP Whitelist",
@@ -5472,6 +5473,7 @@
     "/knowledge-management",
     "/knowledge-management/article/:id",
     "/lgpd",
+    "/lgpd-governanca",
     "/llm-cost-by-caller",
     "/marketplace-pro",
     "/mcp-servers",
@@ -5555,7 +5557,7 @@
     "/workflows"
    ],
    "rotas_http": [],
-   "componentes": 141,
+   "componentes": 142,
    "hooks_locais": [
     "useAccessGuard",
     "useAgent",
@@ -6158,9 +6160,9 @@
   },
   {
    "modulo": "services",
-   "arquivos": 146,
+   "arquivos": 147,
    "testes": 0,
-   "linhas": 31828,
+   "linhas": 32118,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7035,7 +7037,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 198,
+   "testes": 199,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

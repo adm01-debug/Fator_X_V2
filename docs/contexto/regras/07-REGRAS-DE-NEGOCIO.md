@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `51fc68b04c` · branch `main` · 2026-11-26 21:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a77f3ba2a3` · branch `main` · 2026-11-26 21:28 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1300,7 +1300,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `decommissioned` | compara | `src/pages/AssetInventoryPage.tsx`<br>`src/services/assetInventoryService.ts`<br>`supabase/migrations/20260418151333_f71cf0bb-06c1-4f23-820c-398fdd4b6ffc.sql` |
 | `status` | `degraded` | compara | `src/components/shared/SystemHealthBanner.tsx`<br>`src/services/healthService.ts` |
 | `status` | `delivered` | compara, escreve | `src/components/shared/NotificationBell.tsx`<br>`src/hooks/useNotifications.ts`<br>`src/services/notificationEngineService.ts` |
-| `status` | `denied` | compara | `src/components/admin/AuditTrailPanel.tsx` |
+| `status` | `denied` | compara | `src/components/admin/AuditTrailPanel.tsx`<br>`src/services/lgpdGovernanceService.ts` |
 | `status` | `deployed` | escreve | `src/components/agent-builder/modules/DeployModule.tsx` |
 | `status` | `deprecated` | compara | `src/components/agents/AgentCard.tsx`<br>`src/components/agents/AgentCardGrid.tsx`<br>`src/components/shared/NotificationsDrawer.tsx` |
 | `status` | `desconhecido` | escreve | `src/lib/skills/promptEvidenceLedger.ts` |
@@ -1533,6 +1533,8 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | IRTabletopOutcome | pass \| partial \| fail \| scheduled | `src/services/irPlaybookService.ts` |
 | DEFAULT_COLUMNS | "backlog", "doing", "review", "done" | `src/services/kanbanService.ts` |
 | DecayLevel | fresh \| review \| refresh \| archive | `src/services/knowledgeDecayService.ts` |
+| SubjectRequestType | access \| rectification \| deletion \| portability \| information \| consent_revocation \| objection | `src/services/lgpdGovernanceService.ts` |
+| SubjectRequestStatus | received \| processing \| completed \| denied \| partial | `src/services/lgpdGovernanceService.ts` |
 | MemoryType | episodic \| semantic \| procedural \| short_term \| user_profile \| team \| external | `src/services/memoryService.ts` |
 | MemoryScope | session \| user \| agent \| org | `src/services/memoryService.ts` |
 | MemoryManagerAction | add \| search \| list \| forget \| forget_all \| promote_to_fact | `src/services/memoryService.ts` |
@@ -3199,6 +3201,7 @@ _nenhum item encontrado_
 | `PBKDF2_ITERS` | `250` | `src/services/e2eeService.ts` |
 | `ROW_LIMIT` | `300` | `src/services/installCapLedgerService.ts` |
 | `UNSTATUSED` | `"__none__"` | `src/services/kanbanService.ts` |
+| `DSAR_DEADLINE_DAYS` | `15` | `src/services/lgpdGovernanceService.ts` |
 | `MAX_IMAGE_BYTES` | `10` | `src/services/productMockupService.ts` |
 | `ROW_LIMIT` | `500` | `src/services/promptEvidenceLedgerService.ts` |
 | `EMBEDDING_DIM` | `1536` | `src/services/ragPipelineService.ts` |
@@ -3990,7 +3993,7 @@ _nenhum item encontrado_
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | Créditos de IA esgotados — o lote foi interrompido. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +531 linhas — lista completa em `context.json` | |
+| … +532 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4025,7 +4028,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3067 testes em 220 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3075 testes em 221 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4157,6 +4160,7 @@ _nenhum item encontrado_
 | `src/test/curated-skills.test.ts` | 8 | curatedSkills · não possui slugs duplicados · usa slugs kebab-case prefixados com nexus- · referencia apenas departamentos da taxonomia canônica … |
 | `src/test/deep-link-sources.test.ts` | 8 | sourceIdsSync · parse vazio/nulo · filtra IDs inválidos · deduplica … |
 | `src/test/i18n.test.ts` | 8 | i18n translations · has pt-BR and en-US locales · default locale is pt-BR · both locales have same keys … |
+| `src/test/lgpd-governance.test.ts` | 8 | lgpdGovernanceService · calcula o prazo do Art. 18 §1 em 15 dias · abre a solicitação para o usuário autenticado, com prazo e sem dados do cliente forjados · recusa abrir solicitação sem sessão … |
 | `src/test/metric-card.test.tsx` | 8 | MetricCard · renders title and value · renders string value · renders subtitle when provided … |
 | `src/test/nexus-design-eslint.test.ts` | 8 | nexus-design/no-hardcoded-colors · mapeia cores diretas em className · cobre template literals usados em cn() · não confunde tokens nexus-* nem palavras contendo cores … |
 | `src/test/rbac-service.test.ts` | 8 | RBAC hasPermission · returns true for single permission the user has · returns false for single permission the user does NOT have · returns true when user has ANY of multiple permissions … |
@@ -4329,6 +4333,7 @@ _nenhum item encontrado_
 | `notify_emails` | `src/pages/BudgetSettingsPage.tsx` |
 | `notify_emails` | `src/pages/BudgetsPage.tsx` |
 | `notify` | `src/pages/IncidentPlaybooksPage.tsx` |
+| `notify_anpd_on_breach` | `src/pages/LGPDGovernancePage.tsx` |
 | `publish(` | `src/pages/PostmortemsPage.tsx` |
 | `invoke(` | `src/pages/SmolagentPage.tsx` |
 | `invoke(` | `src/services/accessControlService.ts` |
@@ -4355,6 +4360,7 @@ _nenhum item encontrado_
 | `invoke(` | `src/services/incidentService.ts` |
 | `notify` | `src/services/incidentService.ts` |
 | `invoke(` | `src/services/knowledgeManagementService.ts` |
+| `notify_anpd_on_breach` | `src/services/lgpdGovernanceService.ts` |
 | `invoke(` | `src/services/lgpdService.ts` |
 | `invoke(` | `src/services/llmGatewayService.ts` |
 | `invoke(` | `src/services/memoryService.ts` |
@@ -4692,6 +4698,9 @@ _nenhum item encontrado_
 | Passphrase mudou vs checkpoint antigo? Não é fatal — apenas re-carimba. | `src/services/e2eeAutoSync.ts` |
 | - A passphrase NUNCA é persistida no servidor. Vive apenas na sessão do | `src/services/e2eeService.ts` |
 | * Loads up to `limit` recent memories and runs entity resolution | `src/services/entityResolutionService.ts` |
+| (Art. 48), as solicitações do titular (Art. 18, prazo de 15 dias), as | `src/services/lgpdGovernanceService.ts` |
+| * Aqui ficam apenas as leituras/escritas diretas nessas tabelas; a RLS decide | `src/services/lgpdGovernanceService.ts` |
+| * Prazo do Art. 18 §1 a partir de uma data (padrão: agora). */ | `src/services/lgpdGovernanceService.ts` |
 | All read/write operations MUST go through lgpd-manager Edge Function | `src/services/lgpdService.ts` |
 | ').eq('is_public', true).limit(limit); | `src/services/marketplaceService.ts` |
 | Limit hot-loaded skills | `src/services/progressiveSkillLoader.ts` |
@@ -4719,7 +4728,4 @@ _nenhum item encontrado_
 | apenas informa a intenção e o motivo. | `src/services/skillReclassificationReviewService.ts` |
 | * A regra que importa: 402 (créditos esgotados) NÃO é re-tentável. Insistir | `src/services/skillReclassificationService.ts` |
 | validação são culpa do payload e não melhoram com repetição. | `src/services/skillReclassificationService.ts` |
-| 2 hits = fit máximo | `src/services/skillRecommenderService.ts` |
-| quando o ranking semântico devolve menos que `limit`. Desligado por padrão | `src/services/skillRecommenderService.ts` |
-| para preservar determinismo em fluxos que exigem apenas matches reais. | `src/services/skillRecommenderService.ts` |
-| … +166 linhas — lista completa em `context.json` | |
+| … +169 linhas — lista completa em `context.json` | |

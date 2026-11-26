@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `51fc68b04c` · branch `main` · 2026-11-26 21:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a77f3ba2a3` · branch `main` · 2026-11-26 21:28 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `traces_2027_05` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `traces_2027_06` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `traces_2027_07` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
-| … +302 linhas — lista completa em `context.json` | | | |
+| … +304 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -466,6 +466,7 @@ _nenhum item encontrado_
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/adminCrudService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/test/crm-scoring-service.test.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/test/crm-service.test.ts` |
+| dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/test/lgpd-governance.test.ts` |
 | dinâmico | 4 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/_shared/crmNormalize.ts` |
 | dinâmico | 4 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/datahub-mcp-server/index.ts` |
 | dinâmico | 17 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/datahub-query/index.ts` |

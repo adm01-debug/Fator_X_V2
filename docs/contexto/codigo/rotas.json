@@ -2,11 +2,11 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "resumo": {
-  "urls": 151,
+  "urls": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 121,
-  "lazy": 162
+  "itens_menu": 122,
+  "lazy": 163
  },
  "urls": [
   {
@@ -3982,6 +3982,62 @@
    "flags": [],
    "papeis": [],
    "arquivos_puxados": 14
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "SafePage",
+    "ProtectedRoute"
+   ],
+   "pai": null,
+   "indice": false,
+   "lazy": true,
+   "tipo": "tela",
+   "caminho": "/lgpd-governanca",
+   "componente": "LGPDGovernancePage",
+   "arquivo": "src/pages/LGPDGovernancePage.tsx",
+   "definida_em": "src/App.tsx",
+   "redireciona": null,
+   "hooks": [
+    "useAuth",
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useIsMobile",
+    "useLocation",
+    "useMemo",
+    "useMutation",
+    "useNavigate",
+    "useQuery",
+    "useQueryClient",
+    "useRBAC",
+    "useState",
+    "useUnsavedChanges"
+   ],
+   "hooks_locais": [
+    "useAuth",
+    "useIsMobile",
+    "useRBAC",
+    "useUnsavedChanges"
+   ],
+   "tabelas": [
+    "agents",
+    "auth_attempts",
+    "user_roles",
+    "workspace_members",
+    "workspaces"
+   ],
+   "rpcs": [
+    "is_user_locked_out"
+   ],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "admin",
+    "workspace_admin"
+   ],
+   "arquivos_puxados": 27
   },
   {
    "protegida": false,
@@ -9002,6 +9058,15 @@
    "resolve_para": "src/pages/GovernancePage.tsx"
   },
   {
+   "rotulo": "Governança LGPD",
+   "destino": "/lgpd-governanca",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/AppSidebar.tsx",
+   "resolve_para": "src/pages/LGPDGovernancePage.tsx"
+  },
+  {
    "rotulo": "Grafo Temporal",
    "destino": "graph",
    "grupo": null,
@@ -9700,6 +9765,7 @@
   "KnowledgeManagementPage": "src/pages/KnowledgeManagementPage.tsx",
   "KnowledgePage": "src/pages/KnowledgePage.tsx",
   "LGPDCompliancePage": "src/pages/LGPDCompliancePage.tsx",
+  "LGPDGovernancePage": "src/pages/LGPDGovernancePage.tsx",
   "LlmCostByCallerPage": "src/pages/LlmCostByCallerPage.tsx",
   "MCPServersPage": "src/pages/MCPServersPage.tsx",
   "MarketplaceMonetizedPage": "src/pages/MarketplaceMonetizedPage.tsx",

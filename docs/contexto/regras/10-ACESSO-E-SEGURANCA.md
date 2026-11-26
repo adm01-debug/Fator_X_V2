@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `51fc68b04c` · branch `main` · 2026-11-26 21:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a77f3ba2a3` · branch `main` · 2026-11-26 21:28 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -681,6 +681,7 @@
 | /federated-learning | ProtectedRoute |  | `src/App.tsx` |
 | /governance/freeze-windows | ProtectedRoute |  | `src/App.tsx` |
 | /lgpd | ProtectedRoute |  | `src/App.tsx` |
+| /lgpd-governanca | ProtectedRoute |  | `src/App.tsx` |
 | /multi-tenancy | ProtectedRoute |  | `src/App.tsx` |
 | /observability/chaos | ProtectedRoute |  | `src/App.tsx` |
 | /observability/dr-drills | ProtectedRoute |  | `src/App.tsx` |

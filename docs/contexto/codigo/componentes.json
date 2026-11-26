@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 662,
+ "total": 663,
  "orfaos": 36,
  "nomes_duplicados": {
   "AddressCard": [
@@ -84,7 +84,7 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 1539,
+   "linhas": 1550,
    "dominio": null,
    "hooks_locais": [
     "useAuth"
@@ -3894,7 +3894,7 @@
     "AppSidebar"
    ],
    "export_default": null,
-   "linhas": 541,
+   "linhas": 542,
    "dominio": "components/layout",
    "hooks_locais": [
     "useAuth",
@@ -5275,7 +5275,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 90,
+   "usado_por": 91,
    "orfao": false
   },
   {
@@ -7129,7 +7129,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 358,
+   "usado_por": 359,
    "orfao": false
   },
   {
@@ -7164,7 +7164,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 403,
+   "usado_por": 404,
    "orfao": false
   },
   {
@@ -7423,7 +7423,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 187,
+   "usado_por": 188,
    "orfao": false
   },
   {
@@ -7437,7 +7437,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 135,
+   "usado_por": 136,
    "orfao": false
   },
   {
@@ -7776,7 +7776,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 73,
+   "usado_por": 74,
    "orfao": false
   },
   {
@@ -9352,6 +9352,22 @@
    "tabelas": [],
    "edges": [],
    "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/LGPDGovernancePage.tsx",
+   "exports": [
+    "LGPDGovernancePage"
+   ],
+   "export_default": "LGPDGovernancePage",
+   "linhas": 620,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useRBAC"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {

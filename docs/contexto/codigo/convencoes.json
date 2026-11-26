@@ -3,11 +3,11 @@
  "format_version": 2,
  "onde_ficam": {
   "telas": [
-   "src/pages (140)"
+   "src/pages (141)"
   ],
   "componentes": [
    "src/components (517)",
-   "src/pages (141)",
+   "src/pages (142)",
    "src/App.tsx (1)"
   ],
   "hooks": [
@@ -16,12 +16,12 @@
    "src/services (9)"
   ],
   "servicos_logica": [
-   "src/services (166)",
+   "src/services (167)",
    "src/lib (90)",
    "src/stores (12)"
   ],
   "testes": [
-   "co-localizado (*.test) (204)",
+   "co-localizado (*.test) (205)",
    "outro (23)",
    "e2e/ (9)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 9,
  "extensao_componentes": [
-  ".tsx (662)"
+  ".tsx (663)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)",
    "feat(metricas): cobertura de embeddings dos chunks de documentos (#169)",
    "fix(time): tela de time volta a mostrar o e-mail dos membros (#168)",
    "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)",
-   "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)",
-   "chore(vercel): deep link da SPA deixa de dar 404 (#164)"
+   "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
