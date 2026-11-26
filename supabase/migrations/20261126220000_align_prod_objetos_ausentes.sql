@@ -370,6 +370,11 @@ CREATE POLICY "admin deletes emails"
 ON public.workspace_member_emails FOR DELETE TO authenticated
 USING (public.is_workspace_admin(auth.uid(), workspace_id));
 
+-- workspace_members.email: a migracao 20260331110311 grava (role, email, name) nessa
+-- tabela, mas nenhuma migracao declara a coluna. Em producao ela nao existe e o backfill
+-- abaixo quebrava com SQLSTATE 42703 (reproduzido no Supabase Preview da PR #175).
+ALTER TABLE public.workspace_members ADD COLUMN IF NOT EXISTS email text;
+
 -- 2.9 e-mails órfãos de produção: copia o que já existe em workspace_members -
 --     (a coluna legada não é removida aqui; a view passa a ler a tabela nova)
 INSERT INTO public.workspace_member_emails (member_id, workspace_id, user_id, email)
