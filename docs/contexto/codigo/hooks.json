@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 75,
+ "total": 76,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -339,13 +339,14 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 33,
+   "usado_por": 34,
    "usado_por_arquivos": [
     "src/components/agent-builder/modules/EvalsModule.tsx",
     "src/components/agent-builder/modules/OrchestratorModule.tsx",
     "src/components/agents/traces/AgentContextPanel.tsx",
     "src/components/dashboard/BudgetWidget.tsx",
     "src/components/security/AccessControlPanel.tsx",
+    "src/components/settings/HuggingFaceTab.tsx",
     "src/components/skills/SkillAutoRecommendationsPanel.tsx",
     "src/components/skills/SkillLibraryInstallPanel.tsx",
     "src/pages/AgentEvalsPage.tsx",
@@ -369,8 +370,7 @@
     "src/pages/MobileSDKPage.tsx",
     "src/pages/PentestPage.tsx",
     "src/pages/PostmortemsPage.tsx",
-    "src/pages/PromptExperimentsPage.tsx",
-    "src/pages/RiskRegisterPage.tsx"
+    "src/pages/PromptExperimentsPage.tsx"
    ],
    "coberto_por_testes": 0
   },
@@ -1032,6 +1032,29 @@
    "coberto_por_testes": 0
   },
   {
+   "arquivo": "src/hooks/useHfConfig.ts",
+   "hooks_exportados": [
+    "useHfConfig",
+    "useSaveHfConfig"
+   ],
+   "linhas": 38,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/settings/HuggingFaceTab.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
    "arquivo": "src/hooks/useI18n.ts",
    "hooks_exportados": [
     "useI18n"
@@ -1200,10 +1223,11 @@
     "useMemo"
    ],
    "canais_realtime": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "usado_por_arquivos": [
     "src/components/rbac/AccessControl.tsx",
     "src/components/rbac/ProtectedRoute.tsx",
+    "src/components/settings/HuggingFaceTab.tsx",
     "src/hooks/index.ts",
     "src/pages/LGPDGovernancePage.tsx"
    ],

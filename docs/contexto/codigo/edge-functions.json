@@ -26,6 +26,7 @@
   "supabase/functions/_shared/cors.ts",
   "supabase/functions/_shared/crmNormalize.ts",
   "supabase/functions/_shared/edge-contract_test.ts",
+  "supabase/functions/_shared/hf-config.ts",
   "supabase/functions/_shared/idempotency.ts",
   "supabase/functions/_shared/json.ts",
   "supabase/functions/_shared/magic-bytes.ts",
@@ -1410,7 +1411,7 @@
    "nome": "llm-gateway",
    "entrada": "supabase/functions/llm-gateway/index.ts",
    "arquivos": 9,
-   "linhas": 2034,
+   "linhas": 2036,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1439,7 +1440,6 @@
     "ENABLE_HALLUCINATION_CHECK",
     "ENABLE_KEYPHRASE_EXTRACTION",
     "ENABLE_LANGUAGE_DETECTION",
-    "ENABLE_ML_INJECTION_CHECK",
     "ENABLE_OUTPUT_TOXICITY",
     "ENABLE_PII_ML",
     "ENABLE_TOXICITY_CHECK",
@@ -1468,6 +1468,7 @@
     "chaos.ts",
     "circuitBreaker.ts",
     "contracts.ts",
+    "hf-config.ts",
     "mod.ts",
     "otel.ts",
     "retry.ts"
@@ -2053,7 +2054,7 @@
    "nome": "rag-rerank",
    "entrada": "supabase/functions/rag-rerank/index.ts",
    "arquivos": 1,
-   "linhas": 149,
+   "linhas": 151,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2064,7 +2065,6 @@
    ],
    "rpcs": [],
    "env": [
-    "ENABLE_HF_RERANKER",
     "HF_API_TOKEN"
    ],
    "buckets": [],
@@ -2074,6 +2074,7 @@
     "router.huggingface.co"
    ],
    "usa_shared": [
+    "hf-config.ts",
     "mod.ts",
     "retry.ts"
    ],

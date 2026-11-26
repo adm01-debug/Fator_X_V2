@@ -2508,6 +2508,16 @@
    "src/lib/validations/agentSchema.ts",
    "src/services/settingsService.ts"
   ],
+  "src/components/settings/HuggingFaceTab.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/switch.tsx",
+   "src/hooks/use-data.ts",
+   "src/hooks/useHfConfig.ts",
+   "src/hooks/useRBAC.ts",
+   "src/services/hfConfigService.ts"
+  ],
   "src/components/settings/MCPServersPanel.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -3862,6 +3872,10 @@
   ],
   "src/hooks/useGuardrails.ts": [
    "src/services/guardrailsMLService.ts"
+  ],
+  "src/hooks/useHfConfig.ts": [
+   "src/lib/logger.ts",
+   "src/services/hfConfigService.ts"
   ],
   "src/hooks/useI18n.ts": [
    "src/i18n/I18nProvider.tsx"
@@ -6385,6 +6399,9 @@
    "src/integrations/supabase/client.ts",
    "src/lib/logger.ts"
   ],
+  "src/services/hfConfigService.ts": [
+   "src/lib/supabaseExtended.ts"
+  ],
   "src/services/incidentService.ts": [
    "src/integrations/supabase/client.ts"
   ],
@@ -7071,6 +7088,7 @@
    "supabase/functions/_shared/chaos.ts",
    "supabase/functions/_shared/circuitBreaker.ts",
    "supabase/functions/_shared/contracts.ts",
+   "supabase/functions/_shared/hf-config.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/otel.ts",
    "supabase/functions/llm-gateway/providers.ts"
@@ -7183,6 +7201,7 @@
    "supabase/functions/_shared/retry.ts"
   ],
   "supabase/functions/rag-rerank/index.ts": [
+   "supabase/functions/_shared/hf-config.ts",
    "supabase/functions/_shared/mod.ts",
    "supabase/functions/_shared/retry.ts"
   ],

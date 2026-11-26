@@ -6676,22 +6676,36 @@
    "redireciona": null,
    "hooks": [
     "useAccessGuard",
+    "useAgent",
+    "useAgents",
     "useAuth",
     "useCallback",
     "useContext",
     "useEffect",
+    "useHfConfig",
+    "useInvalidate",
     "useMemo",
     "useMutation",
     "useQuery",
     "useQueryClient",
     "useRBAC",
+    "useSaveHfConfig",
     "useState",
-    "useTheme"
+    "useTheme",
+    "useWorkspace",
+    "useWorkspaceId"
    ],
    "hooks_locais": [
     "useAccessGuard",
+    "useAgent",
+    "useAgents",
     "useAuth",
-    "useRBAC"
+    "useHfConfig",
+    "useInvalidate",
+    "useRBAC",
+    "useSaveHfConfig",
+    "useWorkspace",
+    "useWorkspaceId"
    ],
    "tabelas": [
     "agents",
@@ -6718,7 +6732,7 @@
     "admin",
     "workspace_admin"
    ],
-   "arquivos_puxados": 48
+   "arquivos_puxados": 51
   },
   {
    "protegida": true,

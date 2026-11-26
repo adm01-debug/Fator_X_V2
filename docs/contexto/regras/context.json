@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a77f3ba2a3e82a4f41e8acb9a7fa458526f33db2",
+  "sha": "71009ddc81e330fbb4290281fd68e2ef1bbaea3f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 21:28 UTC",
-  "files_total": 2025,
-  "code_files": 1805,
-  "code_lines": 352163
+  "generated_at": "2026-11-26 21:42 UTC",
+  "files_total": 2029,
+  "code_files": 1809,
+  "code_lines": 352749
  },
  "version": "1.3.2",
- "facts_hash": "2adae95754c79459",
+ "facts_hash": "e39475aea287cc61",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -247,7 +247,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 705,
-   ".ts": 700,
+   ".ts": 704,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -53123,7 +53123,7 @@
      "get_masked_secrets",
      "is_user_locked_out"
     ],
-    "deps_count": 47
+    "deps_count": 50
    },
    {
     "path": "",
@@ -54728,6 +54728,7 @@
      "api_keys",
      "audit_events",
      "budgets",
+     "hf_config",
      "model_pricing",
      "openclaw_events",
      "session_traces",
@@ -54747,7 +54748,6 @@
      "ENABLE_HALLUCINATION_CHECK",
      "ENABLE_KEYPHRASE_EXTRACTION",
      "ENABLE_LANGUAGE_DETECTION",
-     "ENABLE_ML_INJECTION_CHECK",
      "ENABLE_OUTPUT_TOXICITY",
      "ENABLE_PII_ML",
      "ENABLE_TOXICITY_CHECK",
@@ -55260,18 +55260,18 @@
     "tables": [
      "agent_usage",
      "api_keys",
+     "hf_config",
      "openclaw_events",
      "webhook_delivery_logs",
      "workspace_members",
      "workspace_secrets"
     ],
     "env": [
-     "ENABLE_HF_RERANKER",
      "HF_API_TOKEN"
     ],
     "external": [
      "https://api.cohere.ai/v1/…",
-     "https://router.huggingface.co/hf-inference/models/BAAI/…"
+     "https://router.huggingface.co/hf-inference/models/…"
     ],
     "invokes": [],
     "doc": "",
@@ -57606,6 +57606,14 @@
     "file": "src/hooks/useGuardrails.ts"
    },
    {
+    "name": "useHfConfig",
+    "file": "src/hooks/useHfConfig.ts"
+   },
+   {
+    "name": "useSaveHfConfig",
+    "file": "src/hooks/useHfConfig.ts"
+   },
+   {
     "name": "useI18n",
     "file": "src/hooks/useI18n.ts"
    },
@@ -58323,7 +58331,7 @@
   {
    "module": "src/components",
    "files": 558,
-   "lines": 104320,
+   "lines": 104469,
    "tables": [
     "agent_templates",
     "agent_traces",
@@ -58616,8 +58624,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 44,
-   "lines": 4471,
+   "files": 45,
+   "lines": 4509,
    "tables": [
     "agent_eval_datasets",
     "agent_eval_results",
@@ -58671,6 +58679,7 @@
     "useFilterPersistence.ts: SyncStatus, useFilterPersistence",
     "useGlobalSearch.ts: GlobalSearchHit, GlobalSearchResponse, useGlobalSearch",
     "useGuardrails.ts: useGuardrails",
+    "useHfConfig.ts: useHfConfig, useSaveHfConfig",
     "useI18n.ts: useI18n",
     "useNLPAnalysis.ts: useNLPAnalysis",
     "useNotifications.ts: useNotifications",
@@ -58681,8 +58690,7 @@
     "useRBAC.ts: useRBAC",
     "useRetryAction.ts: useRetryAction",
     "useSLOAlerts.ts: useSLOAlerts",
-    "useSlackConfig.ts: SlackSeverity, SlackCategory, SlackWorkspaceConfig, SlackChannelRoute, UpsertRouteInput, useSlackConfig",
-    "useStreamingResponse.ts: ToolCall, StreamingState, useStreamingResponse"
+    "useSlackConfig.ts: SlackSeverity, SlackCategory, SlackWorkspaceConfig, SlackChannelRoute, UpsertRouteInput, useSlackConfig"
    ],
    "docs": [
     "use2FA.ts: use2FA — TOTP-based two-factor authentication hook. Uses otpauth library for HMAC-SHA1 token generation per RFC 6238. O status vem da RPC get_my_2fa_status: a linha de user_2fa não é lida direto pelo cliente.",
@@ -58739,6 +58747,7 @@
     "src/hooks/useFilterPersistence.ts",
     "src/hooks/useGlobalSearch.ts",
     "src/hooks/useGuardrails.ts",
+    "src/hooks/useHfConfig.ts",
     "src/hooks/useI18n.ts",
     "src/hooks/useNLPAnalysis.ts",
     "src/hooks/useNotifications.ts",
@@ -59178,8 +59187,8 @@
   },
   {
    "module": "src/services",
-   "files": 167,
-   "lines": 33363,
+   "files": 168,
+   "lines": 33536,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59436,6 +59445,7 @@
     "src/services/guardrailsMLService.ts",
     "src/services/healthAlertsService.ts",
     "src/services/healthService.ts",
+    "src/services/hfConfigService.ts",
     "src/services/incidentService.ts",
     "src/services/index.ts",
     "src/services/installCapLedgerService.ts",
@@ -59448,8 +59458,7 @@
     "src/services/lgpdService.ts",
     "src/services/llmGatewayService.ts",
     "src/services/marketplaceService.ts",
-    "src/services/memoryService.ts",
-    "src/services/middlewarePipelineService.ts"
+    "src/services/memoryService.ts"
    ]
   },
   {
@@ -59511,8 +59520,8 @@
   },
   {
    "module": "src/test",
-   "files": 199,
-   "lines": 30066,
+   "files": 200,
+   "lines": 30164,
    "tables": [
     "tabela"
    ],
@@ -59629,6 +59638,7 @@
     "src/test/harvest-checkpoint-list.test.ts",
     "src/test/harvest-checkpoint-purge.test.ts",
     "src/test/health-alerts-service.test.ts",
+    "src/test/hf-config.test.ts",
     "src/test/hooks.test.ts",
     "src/test/i18n-interpolation.test.tsx",
     "src/test/i18n.test.ts",
@@ -59642,8 +59652,7 @@
     "src/test/memory-service.test.ts",
     "src/test/memory-tiers.test.ts",
     "src/test/metric-card.test.tsx",
-    "src/test/metrics-embedding-coverage.test.tsx",
-    "src/test/middleware-pipeline.test.ts"
+    "src/test/metrics-embedding-coverage.test.tsx"
    ]
   },
   {
@@ -59694,8 +59703,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 137,
-   "lines": 33097,
+   "files": 138,
+   "lines": 33225,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -59743,6 +59752,7 @@
     "evaluation_runs",
     "geo_allowed_countries",
     "graph_executions",
+    "hf_config",
     "idempotency_keys",
     "incident_playbooks",
     "ip_whitelist",
@@ -59808,6 +59818,7 @@
     "contracts.ts: WebhookReceiverContracts, WhatsAppWebhookContracts, LLMGatewayContracts, ErrorResponseContract, Bitrix24WebhookContracts, OpenclawWebhookContracts",
     "cors.ts: getCorsHeaders, handleCorsPreflight, jsonResponse, errorResponse",
     "crmNormalize.ts: CrmEntityKind, entityKindForEvent, NormalizeResult, upsertFromBitrix, logSyncActivity",
+    "hf-config.ts: HfConfig, HF_CONFIG_DEFAULTS, normalizeHfConfig, loadHfConfig, envDisabled",
     "idempotency.ts: buildWebhookDedupKey, IdempotencyResult, checkIdempotency, claimIdempotencyKey, saveIdempotency, saveWebhookIdempotency",
     "json.ts: safeJsonParse, parseJsonStrict",
     "magic-bytes.ts: DetectedFileType, detectFileType, assertAllowedUpload",
@@ -59836,8 +59847,7 @@
     "embedder.ts: CANONICAL_DIM, HF_MODEL_MAP, hasExactDimension, hashEmbed, isPgVectorCompatible",
     "departments.ts: SKILL_DEPARTMENTS, SkillDepartment, DEPARTMENT_HINT, isDepartment",
     "index.ts: MIN_DESCRIPTION, MAX_DESCRIPTION, isPlaceholderDescription, isEcho",
-    "departments.ts: SKILL_DEPARTMENTS, SkillDepartment, DEPARTMENT_LEXICON, ALLOWED_LICENSES, BLOCKED_LICENSES, isLicenseAllowed",
-    "github.ts: GitHubMode, resolveMode, GhResponse, ghGet, GhRepo, searchRepos"
+    "departments.ts: SKILL_DEPARTMENTS, SkillDepartment, DEPARTMENT_LEXICON, ALLOWED_LICENSES, BLOCKED_LICENSES, isLicenseAllowed"
    ],
    "docs": [
     "ai-provider.ts: Provedor de IA (chat) das edge functions: OpenRouter (API compatível com OpenAI). Substitui o DeepSeek direto (DEEPSEEK_API_KEY) e o Lovable AI Gateway (LOVABLE_API_KEY), que não existem mais no projeto. Hermes API é suportada via HERMES_API_KEY (+ HERMES_BASE_URL). Secret obrigatório: OPENROUTER_AP …",
@@ -59866,6 +59876,7 @@
     "supabase/functions/_shared/cors.ts",
     "supabase/functions/_shared/crmNormalize.ts",
     "supabase/functions/_shared/edge-contract_test.ts",
+    "supabase/functions/_shared/hf-config.ts",
     "supabase/functions/_shared/idempotency.ts",
     "supabase/functions/_shared/json.ts",
     "supabase/functions/_shared/magic-bytes.ts",
@@ -59932,8 +59943,7 @@
     "supabase/functions/llm-gateway/utils.ts",
     "supabase/functions/llm-gateway/providers/anthropic.ts",
     "supabase/functions/llm-gateway/providers/huggingface.ts",
-    "supabase/functions/llm-gateway/providers/lovable.ts",
-    "supabase/functions/llm-gateway/providers/openai.ts"
+    "supabase/functions/llm-gateway/providers/lovable.ts"
    ]
   },
   {
@@ -61108,6 +61118,11 @@
     ],
     "delete": [
      "src/services/knowledgeManagementService.ts"
+    ]
+   },
+   "hf_config": {
+    "select": [
+     "supabase/functions/_shared/hf-config.ts"
     ]
    },
    "idempotency_keys": {
@@ -62719,6 +62734,9 @@
     "slug",
     "workspace_id"
    ],
+   "hf_config": [
+    "workspace_id"
+   ],
    "idempotency_keys": [
     "key",
     "response_body",
@@ -63321,16 +63339,10 @@
    "ENABLE_HALLUCINATION_CHECK": [
     "supabase/functions/llm-gateway/index.ts"
    ],
-   "ENABLE_HF_RERANKER": [
-    "supabase/functions/rag-rerank/index.ts"
-   ],
    "ENABLE_KEYPHRASE_EXTRACTION": [
     "supabase/functions/llm-gateway/index.ts"
    ],
    "ENABLE_LANGUAGE_DETECTION": [
-    "supabase/functions/llm-gateway/index.ts"
-   ],
-   "ENABLE_ML_INJECTION_CHECK": [
     "supabase/functions/llm-gateway/index.ts"
    ],
    "ENABLE_OUTPUT_TOXICITY": [
@@ -64462,6 +64474,10 @@
     "count": 1
    },
    {
+    "file": "src/test/hf-config.test.ts",
+    "count": 1
+   },
+   {
     "file": "src/test/lgpd-governance.test.ts",
     "count": 1
    },
@@ -65022,7 +65038,6 @@
    "finetune_jobs",
    "forum_posts_public",
    "forum_threads_public",
-   "hf_config",
    "index_usage_snapshots",
    "installed_templates",
    "ip_rate_limits",
@@ -69538,6 +69553,10 @@
    {
     "file": "src/hooks/useAutomationRules.ts",
     "msg": "Não autenticado"
+   },
+   {
+    "file": "src/hooks/useHfConfig.ts",
+    "msg": "Não foi possível salvar a configuração"
    },
    {
     "file": "src/hooks/usePasswordBreachCheck.ts",
@@ -86995,11 +87014,6 @@
    },
    {
     "file": "supabase/functions/llm-gateway/index.ts",
-    "name": "HF_INJECTION_MODEL",
-    "value": "'protectai/deberta-v3-base-prompt-injection-v2'"
-   },
-   {
-    "file": "supabase/functions/llm-gateway/index.ts",
     "name": "HF_INJECTION_TIMEOUT_MS",
     "value": "3000"
    },
@@ -89786,19 +89800,25 @@
    {
     "file": "src/components/settings/HuggingFaceTab.tsx",
     "field": "status",
+    "value": "active",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/settings/HuggingFaceTab.tsx",
+    "field": "status",
     "value": "available",
     "kind": "escreve"
    },
    {
     "file": "src/components/settings/HuggingFaceTab.tsx",
     "field": "status",
-    "value": "active",
+    "value": "available",
     "kind": "compara"
    },
    {
     "file": "src/components/settings/HuggingFaceTab.tsx",
     "field": "status",
-    "value": "active",
+    "value": "available",
     "kind": "compara"
    },
    {
@@ -106192,6 +106212,38 @@
    {
     "file": "src/test/health-alerts-service.test.ts",
     "name": "start replaces previous timer"
+   },
+   {
+    "file": "src/test/hf-config.test.ts",
+    "name": "getHfConfig"
+   },
+   {
+    "file": "src/test/hf-config.test.ts",
+    "name": "sem linha no workspace devolve os defaults do backend"
+   },
+   {
+    "file": "src/test/hf-config.test.ts",
+    "name": "preenche o que faltou na linha com os defaults"
+   },
+   {
+    "file": "src/test/hf-config.test.ts",
+    "name": "propaga erro de leitura em vez de fingir configuração"
+   },
+   {
+    "file": "src/test/hf-config.test.ts",
+    "name": "saveHfConfig"
+   },
+   {
+    "file": "src/test/hf-config.test.ts",
+    "name": "grava por upsert com onConflict workspace_id"
+   },
+   {
+    "file": "src/test/hf-config.test.ts",
+    "name": "normalizeHfConfig"
+   },
+   {
+    "file": "src/test/hf-config.test.ts",
+    "name": "ignora modelo vazio para não derrubar a chamada do edge"
    },
    {
     "file": "src/test/hooks.test.ts",
@@ -129431,7 +129483,6 @@
       "compara:src/components/automation/WebhookManagerPanel.tsx",
       "compara:src/components/crm/CadencesPanel.tsx",
       "compara:src/components/knowledge/RagVersionControl.tsx",
-      "compara:src/components/settings/HuggingFaceTab.tsx",
       "compara:src/components/shared/CommandPalette.tsx",
       "compara:src/components/workflows/WorkflowListTab.tsx",
       "compara:src/components/workflows/WorkflowScheduler.tsx",
@@ -129896,6 +129947,7 @@
       "compara:src/components/security/ComplianceFrameworks.tsx"
      ],
      "available": [
+      "compara:src/components/settings/HuggingFaceTab.tsx",
       "compara:src/services/connectorRegistryService.ts",
       "escreve:src/components/settings/HuggingFaceTab.tsx",
       "escreve:src/services/presets/connectorPresets.ts"
@@ -142263,6 +142315,13 @@
     "kind": "dinâmico",
     "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
     "where": [
+     "src/test/hf-config.test.ts"
+    ]
+   },
+   {
+    "kind": "dinâmico",
+    "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
+    "where": [
      "src/test/lgpd-governance.test.ts"
     ]
    },
@@ -152387,11 +152446,16 @@
   },
   "src/components/settings/HuggingFaceTab.tsx": {
    "path": "src/components/settings/HuggingFaceTab.tsx",
-   "lines": 56,
+   "lines": 205,
    "exports": [
     "function HuggingFaceTab"
    ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "active",
+     "kind": "escreve"
+    },
     {
      "field": "status",
      "value": "active",
@@ -152429,12 +152493,12 @@
     },
     {
      "field": "status",
-     "value": "active",
+     "value": "available",
      "kind": "compara"
     },
     {
      "field": "status",
-     "value": "active",
+     "value": "available",
      "kind": "compara"
     }
    ]
@@ -157402,6 +157466,22 @@
    ],
    "hooks": [
     "useGuardrails"
+   ]
+  },
+  "src/hooks/useHfConfig.ts": {
+   "path": "src/hooks/useHfConfig.ts",
+   "lines": 38,
+   "exports": [
+    "function useHfConfig",
+    "function useSaveHfConfig"
+   ],
+   "errors": [
+    "Não foi possível salvar a configuração"
+   ],
+   "doc": "useHfConfig — configuração HuggingFace do workspace (leitura + gravação). A RLS de `hf_config` já limita a escrita a `workspace_admin`; a tela esconde o botão para quem não é admin, mas a autorização real é do banco.",
+   "hooks": [
+    "useHfConfig",
+    "useSaveHfConfig"
    ]
   },
   "src/hooks/useI18n.ts": {
@@ -169686,6 +169766,23 @@
     "invoke("
    ]
   },
+  "src/services/hfConfigService.ts": {
+   "path": "src/services/hfConfigService.ts",
+   "lines": 173,
+   "exports": [
+    "interface HfConfig",
+    "const HF_CONFIG_DEFAULTS",
+    "type HfToggleKey",
+    "type HfModelKey",
+    "interface HfToggleField",
+    "interface HfModelField",
+    "const HF_TOGGLE_FIELDS",
+    "const HF_MODEL_FIELDS",
+    "function normalizeHfConfig",
+    "function getHfConfig",
+    "function saveHfConfig"
+   ]
+  },
   "src/services/incidentService.ts": {
    "path": "src/services/incidentService.ts",
    "lines": 197,
@@ -177459,6 +177556,23 @@
     "start replaces previous timer"
    ]
   },
+  "src/test/hf-config.test.ts": {
+   "path": "src/test/hf-config.test.ts",
+   "lines": 92,
+   "is_test": true,
+   "dyn_from": 1,
+   "doc": "hfConfigService — `hf_config` existia no banco desde 20260404210000 e nunca teve tela: a aba HuggingFace era copy estática e os edges decidiam só por env var. Estes testes travam o contrato que a tela e o backend compartilham: linha ausente cai nos defaults (mesmo comportamento anterior), a linha pa …",
+   "tests": [
+    "getHfConfig",
+    "sem linha no workspace devolve os defaults do backend",
+    "preenche o que faltou na linha com os defaults",
+    "propaga erro de leitura em vez de fingir configuração",
+    "saveHfConfig",
+    "grava por upsert com onConflict workspace_id",
+    "normalizeHfConfig",
+    "ignora modelo vazio para não derrubar a chamada do edge"
+   ]
+  },
   "src/test/hooks.test.ts": {
    "path": "src/test/hooks.test.ts",
    "lines": 83,
@@ -178551,7 +178665,7 @@
   },
   "src/test/schema-contract.test.ts": {
    "path": "src/test/schema-contract.test.ts",
-   "lines": 139,
+   "lines": 145,
    "is_test": true,
    "tables": [
     {
@@ -181254,6 +181368,28 @@
      "body": "const allow = headers.get('access-control-allow-origin'); assert(allow, `${ctx}: Access-Control-Allow-Origin ausente`); assert(allow === ORIGIN || allow === '*', `${ctx}: Allow-Origin inesperado (${allow})`);"
     }
    ]
+  },
+  "supabase/functions/_shared/hf-config.ts": {
+   "path": "supabase/functions/_shared/hf-config.ts",
+   "lines": 124,
+   "exports": [
+    "interface HfConfig",
+    "const HF_CONFIG_DEFAULTS",
+    "function normalizeHfConfig",
+    "function loadHfConfig",
+    "function envDisabled"
+   ],
+   "tables": [
+    {
+     "table": "hf_config",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "hf_config": [
+     "workspace_id"
+    ]
+   }
   },
   "supabase/functions/_shared/idempotency.ts": {
    "path": "supabase/functions/_shared/idempotency.ts",
@@ -185552,7 +185688,7 @@
   },
   "supabase/functions/llm-gateway/index.ts": {
    "path": "supabase/functions/llm-gateway/index.ts",
-   "lines": 1645,
+   "lines": 1647,
    "tables": [
     {
      "table": "model_pricing",
@@ -185695,7 +185831,6 @@
     "ENABLE_HALLUCINATION_CHECK",
     "ENABLE_KEYPHRASE_EXTRACTION",
     "ENABLE_LANGUAGE_DETECTION",
-    "ENABLE_ML_INJECTION_CHECK",
     "ENABLE_OUTPUT_TOXICITY",
     "ENABLE_PII_ML",
     "ENABLE_TOXICITY_CHECK",
@@ -185717,10 +185852,6 @@
     {
      "name": "RATE_LIMIT_WINDOW_MS",
      "value": "60"
-    },
-    {
-     "name": "HF_INJECTION_MODEL",
-     "value": "'protectai/deberta-v3-base-prompt-injection-v2'"
     },
     {
      "name": "HF_INJECTION_TIMEOUT_MS",
@@ -187167,7 +187298,7 @@
   },
   "supabase/functions/rag-rerank/index.ts": {
    "path": "supabase/functions/rag-rerank/index.ts",
-   "lines": 149,
+   "lines": 151,
    "tables": [
     {
      "table": "workspace_members",
@@ -187191,10 +187322,9 @@
    },
    "external_urls": [
     "https://api.cohere.ai/v1/…",
-    "https://router.huggingface.co/hf-inference/models/BAAI/…"
+    "https://router.huggingface.co/hf-inference/models/…"
    ],
    "env": [
-    "ENABLE_HF_RERANKER",
     "HF_API_TOKEN"
    ],
    "zod": [
@@ -191828,10 +191958,27 @@
   }
  },
  "git": {
-  "sha": "a77f3ba2a3e82a4f41e8acb9a7fa458526f33db2",
+  "sha": "71009ddc81e330fbb4290281fd68e2ef1bbaea3f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "71009dd",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(hf): configuração HuggingFace por workspace vira real (#171)",
+    "files": [
+     "src/components/settings/HuggingFaceTab.tsx",
+     "src/hooks/useHfConfig.ts",
+     "src/services/hfConfigService.ts",
+     "src/test/hf-config.test.ts",
+     "src/test/schema-contract.test.ts",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/_shared/hf-config.ts",
+     "supabase/functions/llm-gateway/index.ts",
+     "supabase/functions/rag-rerank/index.ts"
+    ]
+   },
    {
     "sha": "a77f3ba",
     "date": "2026-11-26",
@@ -192145,17 +192292,6 @@
      "supabase/deployment-manifest.json",
      "supabase/functions/rag-embed-v2/index.ts"
     ]
-   },
-   {
-    "sha": "6b7d90e",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix(rag): retry automatico de chunks failed no emb-backfill (#133)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/rag-embed-backfill/index.ts",
-     "supabase/migrations/20261121103000_embed_retry_chunks.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -192204,39 +192340,39 @@
     2
    ],
    [
+    "src/components/settings/HuggingFaceTab.tsx",
+    1
+   ],
+   [
+    "src/hooks/useHfConfig.ts",
+    1
+   ],
+   [
+    "src/services/hfConfigService.ts",
+    1
+   ],
+   [
+    "src/test/hf-config.test.ts",
+    1
+   ],
+   [
+    "src/test/schema-contract.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/_shared/hf-config.ts",
+    1
+   ],
+   [
+    "supabase/functions/llm-gateway/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/rag-rerank/index.ts",
+    1
+   ],
+   [
     "src/App.tsx",
-    1
-   ],
-   [
-    "src/components/layout/AppSidebar.tsx",
-    1
-   ],
-   [
-    "src/pages/LGPDGovernancePage.tsx",
-    1
-   ],
-   [
-    "src/services/lgpdGovernanceService.ts",
-    1
-   ],
-   [
-    "src/test/lgpd-governance.test.ts",
-    1
-   ],
-   [
-    "src/components/metrics/EmbeddingCoverageCard.tsx",
-    1
-   ],
-   [
-    "src/components/metrics/KnowledgeGraphHealthCard.tsx",
-    1
-   ],
-   [
-    "src/test/metrics-embedding-coverage.test.tsx",
-    1
-   ],
-   [
-    "src/pages/TeamPage.tsx",
     1
    ]
   ]

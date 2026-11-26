@@ -4863,9 +4863,14 @@
     "HuggingFaceTab"
    ],
    "export_default": null,
-   "linhas": 56,
+   "linhas": 205,
    "dominio": "components/settings",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useHfConfig",
+    "useRBAC",
+    "useSaveHfConfig",
+    "useWorkspaceId"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -7164,7 +7169,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 404,
+   "usado_por": 405,
    "orfao": false
   },
   {
@@ -7423,7 +7428,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 188,
+   "usado_por": 189,
    "orfao": false
   },
   {
@@ -7437,7 +7442,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 136,
+   "usado_por": 137,
    "orfao": false
   },
   {
@@ -7738,7 +7743,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 50,
+   "usado_por": 51,
    "orfao": false
   },
   {

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a77f3ba2a3` · branch `main` · 2026-11-26 21:28 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `71009ddc81` · branch `main` · 2026-11-26 21:42 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3271,7 +3271,6 @@ _nenhum item encontrado_
 | `MAX_NODES` | `15` | `supabase/functions/graph-execute/index.ts` |
 | `RATE_LIMIT_MAX` | `30` | `supabase/functions/llm-gateway/index.ts` |
 | `RATE_LIMIT_WINDOW_MS` | `60` | `supabase/functions/llm-gateway/index.ts` |
-| `HF_INJECTION_MODEL` | `'protectai/deberta-v3-base-prompt-injection-v2'` | `supabase/functions/llm-gateway/index.ts` |
 | `HF_INJECTION_TIMEOUT_MS` | `3000` | `supabase/functions/llm-gateway/index.ts` |
 | `MAX_BODY` | `1024` | `supabase/functions/openclaw-webhook/index.ts` |
 | `REPLAY_WINDOW_MS` | `5` | `supabase/functions/openclaw-webhook/index.ts` |
@@ -3993,7 +3992,7 @@ _nenhum item encontrado_
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | Créditos de IA esgotados — o lote foi interrompido. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +532 linhas — lista completa em `context.json` | |
+| … +533 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4028,7 +4027,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3075 testes em 221 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3083 testes em 222 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4159,6 +4158,7 @@ _nenhum item encontrado_
 | `src/test/browser-sessions-service.test.ts` | 8 | browserAgentService · runAgent invokes browser-agent-run with full input · runAgent throws on edge function error · cancelSession passes session_id … |
 | `src/test/curated-skills.test.ts` | 8 | curatedSkills · não possui slugs duplicados · usa slugs kebab-case prefixados com nexus- · referencia apenas departamentos da taxonomia canônica … |
 | `src/test/deep-link-sources.test.ts` | 8 | sourceIdsSync · parse vazio/nulo · filtra IDs inválidos · deduplica … |
+| `src/test/hf-config.test.ts` | 8 | getHfConfig · sem linha no workspace devolve os defaults do backend · preenche o que faltou na linha com os defaults · propaga erro de leitura em vez de fingir configuração … |
 | `src/test/i18n.test.ts` | 8 | i18n translations · has pt-BR and en-US locales · default locale is pt-BR · both locales have same keys … |
 | `src/test/lgpd-governance.test.ts` | 8 | lgpdGovernanceService · calcula o prazo do Art. 18 §1 em 15 dias · abre a solicitação para o usuário autenticado, com prazo e sem dados do cliente forjados · recusa abrir solicitação sem sessão … |
 | `src/test/metric-card.test.tsx` | 8 | MetricCard · renders title and value · renders string value · renders subtitle when provided … |

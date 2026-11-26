@@ -1,14 +1,14 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 292,
+ "total": 293,
  "por_camada": {
   "config": 10,
   "data": 5,
   "integrations": 5,
   "lib": 90,
   "python": 3,
-  "services": 167,
+  "services": 168,
   "stores": 12
  },
  "arquivos": [
@@ -1451,7 +1451,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 173,
+   "usado_por": 174,
    "usado_por_modulos": [
     "components/agent-builder",
     "components/agents",
@@ -3079,7 +3079,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 45,
+   "usado_por": 46,
    "usado_por_modulos": [
     "components/agent-builder",
     "components/integrations",
@@ -6178,6 +6178,40 @@
     "services"
    ],
    "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/hfConfigService.ts",
+   "camada": "services",
+   "exports": [
+    "HF_CONFIG_DEFAULTS",
+    "HF_MODEL_FIELDS",
+    "HF_TOGGLE_FIELDS",
+    "HfConfig",
+    "HfModelField",
+    "HfModelKey",
+    "HfToggleField",
+    "HfToggleKey",
+    "getHfConfig",
+    "normalizeHfConfig",
+    "saveHfConfig"
+   ],
+   "export_default": null,
+   "linhas": 173,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/settings",
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {

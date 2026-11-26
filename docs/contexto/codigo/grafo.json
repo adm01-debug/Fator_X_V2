@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1215,
- "arestas": 5283,
+ "nos": 1218,
+ "arestas": 5296,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 406
+   "importado_por": 407
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
@@ -18,11 +18,11 @@
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 188
+   "importado_por": 189
   },
   {
    "arquivo": "src/lib/logger.ts",
-   "importado_por": 173
+   "importado_por": 174
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -34,7 +34,7 @@
   },
   {
    "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 136
+   "importado_por": 137
   },
   {
    "arquivo": "src/components/ui/select.tsx",
@@ -78,11 +78,11 @@
   },
   {
    "arquivo": "src/components/ui/switch.tsx",
-   "importado_por": 50
+   "importado_por": 51
   },
   {
    "arquivo": "src/lib/supabaseExtended.ts",
-   "importado_por": 46
+   "importado_por": 47
   },
   {
    "arquivo": "supabase/functions/_shared/retry.ts",
@@ -97,12 +97,12 @@
    "importado_por": 38
   },
   {
-   "arquivo": "src/lib/a11y.ts",
+   "arquivo": "src/hooks/use-data.ts",
    "importado_por": 34
   },
   {
-   "arquivo": "src/hooks/use-data.ts",
-   "importado_por": 33
+   "arquivo": "src/lib/a11y.ts",
+   "importado_por": 34
   },
   {
    "arquivo": "src/services/agentsService.ts",
@@ -258,7 +258,7 @@
   {
    "modulo": "hooks",
    "depende_de": 10,
-   "importado_por": 18
+   "importado_por": 19
   },
   {
    "modulo": "integrations/supabase",

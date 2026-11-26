@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1405)",
+   "TypeScript (1409)",
    "SQL (341)",
    "Markdown (134)",
    "JavaScript (54)",
@@ -947,10 +947,8 @@
    "ENABLE_AUTO_CLASSIFY",
    "ENABLE_EMOTION_DETECTION",
    "ENABLE_HALLUCINATION_CHECK",
-   "ENABLE_HF_RERANKER",
    "ENABLE_KEYPHRASE_EXTRACTION",
    "ENABLE_LANGUAGE_DETECTION",
-   "ENABLE_ML_INJECTION_CHECK",
    "ENABLE_OUTPUT_TOXICITY",
    "ENABLE_PII_ML",
    "ENABLE_TOXICITY_CHECK",

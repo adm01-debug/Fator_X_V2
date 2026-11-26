@@ -18805,10 +18805,12 @@
    ],
    "criada_em": "20260404210000_huggingface_phase4.sql",
    "usada_no_front": 0,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "_shared"
+   ],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "idempotency_keys": {
    "colunas": {

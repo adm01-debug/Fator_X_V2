@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a77f3ba2a3e82a4f41e8acb9a7fa458526f33db2",
+  "commit": "71009ddc81e330fbb4290281fd68e2ef1bbaea3f",
   "branch": "main",
-  "data_commit": "2026-11-26T18:25:32-03:00",
+  "data_commit": "2026-11-26T18:37:02-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "71009dd",
+    "data": "2026-11-26",
+    "assunto": "feat(hf): configuração HuggingFace por workspace vira real (#171)"
+   },
    {
     "sha": "a77f3ba",
     "data": "2026-11-26",
@@ -126,18 +131,13 @@
     "sha": "d912348",
     "data": "2026-11-21",
     "assunto": "fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)"
-   },
-   {
-    "sha": "8554dc7",
-    "data": "2026-11-21",
-    "assunto": "feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)"
    }
   ],
-  "arquivos_mudados_7d": 150,
+  "arquivos_mudados_7d": 156,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "pasta": "package-lock.json",
@@ -149,11 +149,11 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 7
+    "mudancas": 8
    },
    {
     "pasta": "supabase/functions/llm-gateway",
-    "mudancas": 7
+    "mudancas": 8
    },
    {
     "pasta": ".github/workflows/ci.yml",
@@ -207,11 +207,15 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 8
+   },
+   {
+    "arquivo": "supabase/functions/llm-gateway/index.ts",
+    "mudancas": 7
    },
    {
     "arquivo": ".github/workflows/edge-deploy.yml",
@@ -219,10 +223,6 @@
    },
    {
     "arquivo": "docs/migration/MATRIZ_EDGE_TABELA.md",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "supabase/functions/llm-gateway/index.ts",
     "mudancas": 6
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 75
+    "commits": 76
    },
    {
     "autor": "dependabot[bot]",
@@ -310,21 +310,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2020,
-  "arquivos_codigo": 1463,
-  "linhas_codigo": 321904,
+  "arquivos_total": 2024,
+  "arquivos_codigo": 1467,
+  "linhas_codigo": 322490,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 122,
   "modulos": 71,
   "componentes": 663,
-  "hooks": 75,
+  "hooks": 76,
   "edge_functions": 88,
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 248,
+  "testes": 249,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -468,7 +468,7 @@
   },
   "src/components": {
    "arquivos": 558,
-   "linhas": 104320
+   "linhas": 104469
   },
   "src/config": {
    "arquivos": 10,
@@ -483,8 +483,8 @@
    "linhas": 2882
   },
   "src/hooks": {
-   "arquivos": 44,
-   "linhas": 4471
+   "arquivos": 45,
+   "linhas": 4509
   },
   "src/i18n": {
    "arquivos": 2,
@@ -511,16 +511,16 @@
    "linhas": 43
   },
   "src/services": {
-   "arquivos": 167,
-   "linhas": 33363
+   "arquivos": 168,
+   "linhas": 33536
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 199,
-   "linhas": 30066
+   "arquivos": 200,
+   "linhas": 30164
   },
   "src/tests": {
    "arquivos": 2,
@@ -531,8 +531,8 @@
    "linhas": 530
   },
   "supabase/functions": {
-   "arquivos": 137,
-   "linhas": 33097
+   "arquivos": 138,
+   "linhas": 33225
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -582,7 +582,7 @@
   },
   {
    "arquivo": "supabase/functions/llm-gateway/index.ts",
-   "linhas": 1645
+   "linhas": 1647
   },
   {
    "arquivo": "src/App.tsx",
