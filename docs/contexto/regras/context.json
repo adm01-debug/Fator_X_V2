@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "0bbb2443a3c2dc8e9ef7167f88b775b1c7f72d8f",
+  "sha": "70dccb40f712c5962d8945d7fe773441235dc294",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 00:52 UTC",
-  "files_total": 2013,
-  "code_files": 1794,
-  "code_lines": 348963
+  "generated_at": "2026-11-26 10:40 UTC",
+  "files_total": 2014,
+  "code_files": 1795,
+  "code_lines": 349174
  },
  "version": "1.3.2",
- "facts_hash": "381fdebcbc3b34cc",
+ "facts_hash": "c1bae288edc8081c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -243,7 +243,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 699,
-   ".ts": 695,
+   ".ts": 696,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -53055,6 +53055,7 @@
      "get_db_health_snapshot",
      "get_db_rollback_rate",
      "get_masked_secrets",
+     "get_my_2fa_status",
      "get_rollback_rate_per_min",
      "get_wal_generation_rate",
      "is_user_locked_out"
@@ -58564,7 +58565,7 @@
   {
    "module": "src/hooks",
    "files": 44,
-   "lines": 4424,
+   "lines": 4488,
    "tables": [
     "agent_eval_datasets",
     "agent_eval_results",
@@ -58600,7 +58601,7 @@
     "use-toast.ts: reducer",
     "use-unsaved-changes.tsx: useUnsavedChanges, UnsavedChangesProvider",
     "use-workflow-persistence.ts: useWorkflowPersistence",
-    "use2FA.ts: use2FA",
+    "use2FA.ts: generateBackupCodes, use2FA",
     "useAgentDailyMetrics.ts: useAgentDailyMetrics",
     "useAgentEvals.ts: EvalItem, EvalDataset, EvalRun, EvalResult, useEvalDatasets, useEvalRuns",
     "useAgentExperiments.ts: ExperimentStatus, ExperimentVariant, AgentExperiment, ExperimentRun, VariantStats, useExperiments",
@@ -58632,7 +58633,7 @@
     "useStreamingResponse.ts: AGUIEventType, AGUIEvent, ToolCall, StreamingState, useStreamingResponse"
    ],
    "docs": [
-    "use2FA.ts: use2FA — TOTP-based two-factor authentication hook. Uses otpauth library for HMAC-SHA1 token generation per RFC 6238.",
+    "use2FA.ts: use2FA — TOTP-based two-factor authentication hook. Uses otpauth library for HMAC-SHA1 token generation per RFC 6238. O status vem da RPC get_my_2fa_status: a linha de user_2fa não é lida direto pelo cliente.",
     "useAgentSLOTargets.ts: Persiste metas SLO ajustáveis por agente em localStorage.",
     "useAutoE2EESync.ts: useAutoE2EESync — Assina o motor de auto-sync para um notebook e expõe controles start/stop/runNow.",
     "useAutomation.ts: Nexus Agents Studio — useAutomation Hook Convenience hook for using automation services in React components with loading states, error handling, and auto-refresh. Melhoria 5/10 — automation improvements",
@@ -59454,8 +59455,8 @@
   },
   {
    "module": "src/test",
-   "files": 191,
-   "lines": 28920,
+   "files": 192,
+   "lines": 29067,
    "tables": [
     "tabela"
    ],
@@ -59485,6 +59486,7 @@
     "node:fs",
     "node:path",
     "node:url",
+    "otpauth",
     "react",
     "react-router-dom",
     "sonner",
@@ -61892,9 +61894,6 @@
     ]
    },
    "user_2fa": {
-    "select": [
-     "src/hooks/use2FA.ts"
-    ],
     "upsert": [
      "src/hooks/use2FA.ts"
     ],
@@ -63056,7 +63055,6 @@
     "tokens"
    ],
    "user_2fa": [
-    "enabled",
     "user_id"
    ],
    "user_research_configs": [
@@ -63787,6 +63785,9 @@
     "src/services/llmGatewayService.ts",
     "src/services/settingsService.ts",
     "tests/rls/personas.test.ts"
+   ],
+   "get_my_2fa_status": [
+    "src/hooks/use2FA.ts"
    ],
    "get_partition_health_snapshot": [
     "src/components/system/PartitionHealthCard.tsx"
@@ -86008,7 +86009,17 @@
    {
     "file": "src/hooks/use2FA.ts",
     "name": "ISSUER",
-    "value": "\"Fator X\""
+    "value": "'Fator X'"
+   },
+   {
+    "file": "src/hooks/use2FA.ts",
+    "name": "BACKUP_CODE_COUNT",
+    "value": "8"
+   },
+   {
+    "file": "src/hooks/use2FA.ts",
+    "name": "BACKUP_ALPHABET",
+    "value": "'ABCDEFGHJKMNPQRSTUVWXYZ23456789'"
    },
    {
     "file": "src/hooks/useCurationRealtime.ts",
@@ -99641,6 +99652,12 @@
     "body": "try { return { SUPABASE_URL: getEnvVar('VITE_SUPABASE_URL'), SUPABASE_ANON_KEY: getEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY'), SUPABASE_PROJECT_ID: getEnvVar('VITE_SUPABASE_PROJECT_ID', 'qdlnzopxrlsoljcrcmzv'), }; } catch (error) { if (import.meta.env.DEV) { logger.error('🔴 Environment validation failed:', (error as Error).message); logger.error(' Check your .env file or Lovable environment settings.'); } throw error; }"
    },
    {
+    "file": "src/hooks/use2FA.ts",
+    "name": "generateBackupCodes",
+    "params": "count = BACKUP_CODE_COUNT",
+    "body": "const bytes = new Uint8Array(count * 8); crypto.getRandomValues(bytes); return Array.from({ length: count }, (_, index) => Array.from(bytes.subarray(index * 8, index * 8 + 8)) .map((byte) => BACKUP_ALPHABET[byte % BACKUP_ALPHABET.length]) .join(''), );"
+   },
+   {
     "file": "src/hooks/useAgentExperiments.ts",
     "name": "computeVariantStats",
     "params": "runs: ExperimentRun[], variant: ExperimentVariant",
@@ -112205,6 +112222,46 @@
    {
     "file": "src/test/use-unsaved-changes.test.tsx",
     "name": "confirmNavigation does NOT call callback immediately when there are unsaved changes"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "use2FA lê o status pela RPC get_my_2fa_status"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "usa a RPC como fonte e não consulta a tabela direto"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "sem linha na RPC, o usuário aparece como desativado"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "enable valida o TOTP antes de gravar"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "código inválido é recusado e nada é gravado"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "código válido grava o segredo e devolve 8 códigos de recuperação únicos"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "disable remove o fator do usuário"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "apaga a linha do próprio usuário e volta o estado a inativo"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "generateBackupCodes"
+   },
+   {
+    "file": "src/test/use2fa.test.ts",
+    "name": "usa CSPRNG e alfabeto sem caracteres ambíguos"
    },
    {
     "file": "src/test/validations.test.ts",
@@ -156130,15 +156187,12 @@
   },
   "src/hooks/use2FA.ts": {
    "path": "src/hooks/use2FA.ts",
-   "lines": 68,
+   "lines": 132,
    "exports": [
+    "function generateBackupCodes",
     "function use2FA"
    ],
    "tables": [
-    {
-     "table": "user_2fa",
-     "op": "select"
-    },
     {
      "table": "user_2fa",
      "op": "upsert"
@@ -156150,10 +156204,12 @@
    ],
    "table_cols": {
     "user_2fa": [
-     "enabled",
      "user_id"
     ]
    },
+   "rpc": [
+    "get_my_2fa_status"
+   ],
    "errors": [
     "Código inválido",
     "Not authenticated"
@@ -156161,10 +156217,25 @@
    "params": [
     {
      "name": "ISSUER",
-     "value": "\"Fator X\""
+     "value": "'Fator X'"
+    },
+    {
+     "name": "BACKUP_CODE_COUNT",
+     "value": "8"
+    },
+    {
+     "name": "BACKUP_ALPHABET",
+     "value": "'ABCDEFGHJKMNPQRSTUVWXYZ23456789'"
     }
    ],
-   "doc": "use2FA — TOTP-based two-factor authentication hook. Uses otpauth library for HMAC-SHA1 token generation per RFC 6238."
+   "doc": "use2FA — TOTP-based two-factor authentication hook. Uses otpauth library for HMAC-SHA1 token generation per RFC 6238. O status vem da RPC get_my_2fa_status: a linha de user_2fa não é lida direto pelo cliente.",
+   "calc_fns": [
+    {
+     "name": "generateBackupCodes",
+     "params": "count = BACKUP_CODE_COUNT",
+     "body": "const bytes = new Uint8Array(count * 8); crypto.getRandomValues(bytes); return Array.from({ length: count }, (_, index) => Array.from(bytes.subarray(index * 8, index * 8 + 8)) .map((byte) => BACKUP_ALPHABET[byte % BACKUP_ALPHABET.length]) .join(''), );"
+    }
+   ]
   },
   "src/hooks/useAgentDailyMetrics.ts": {
    "path": "src/hooks/useAgentDailyMetrics.ts",
@@ -179346,6 +179417,23 @@
     "confirmNavigation does NOT call callback immediately when there are unsaved changes"
    ]
   },
+  "src/test/use2fa.test.ts": {
+   "path": "src/test/use2fa.test.ts",
+   "lines": 147,
+   "is_test": true,
+   "tests": [
+    "use2FA lê o status pela RPC get_my_2fa_status",
+    "usa a RPC como fonte e não consulta a tabela direto",
+    "sem linha na RPC, o usuário aparece como desativado",
+    "enable valida o TOTP antes de gravar",
+    "código inválido é recusado e nada é gravado",
+    "código válido grava o segredo e devolve 8 códigos de recuperação únicos",
+    "disable remove o fator do usuário",
+    "apaga a linha do próprio usuário e volta o estado a inativo",
+    "generateBackupCodes",
+    "usa CSPRNG e alfabeto sem caracteres ambíguos"
+   ]
+  },
   "src/test/validations.test.ts": {
    "path": "src/test/validations.test.ts",
    "lines": 111,
@@ -190970,10 +191058,20 @@
   }
  },
  "git": {
-  "sha": "0bbb2443a3c2dc8e9ef7167f88b775b1c7f72d8f",
+  "sha": "70dccb40f712c5962d8945d7fe773441235dc294",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "70dccb4",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)",
+    "files": [
+     "src/hooks/use2FA.ts",
+     "src/test/use2fa.test.ts"
+    ]
+   },
    {
     "sha": "0bbb244",
     "date": "2026-11-25",
@@ -191304,22 +191402,6 @@
     "files": [
      "supabase/migrations/20261120150626_reconcile_knowledge_uploads_bucket.sql"
     ]
-   },
-   {
-    "sha": "2473145",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "feat(chat): anexos no AgentTalk com bucket storage e schema reconciliado (#126)",
-    "files": [
-     "src/components/chat/ChatComposer.tsx",
-     "src/components/chat/MessageBubble.tsx",
-     "src/integrations/supabase/types.ts",
-     "src/pages/ChatWithAgentPage.tsx",
-     "src/services/chatThreadService.ts",
-     "src/test/chat-message-bubble.test.tsx",
-     "src/test/chat-thread-service.test.ts",
-     "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -191360,10 +191442,6 @@
     2
    ],
    [
-    "src/integrations/supabase/types.ts",
-    2
-   ],
-   [
     "supabase/functions/browser-agent-run/index.ts",
     2
    ],
@@ -191380,8 +191458,12 @@
     2
    ],
    [
-    "supabase/migrations/20261120150000_reconcile_chat_schema.sql",
-    2
+    "src/hooks/use2FA.ts",
+    1
+   ],
+   [
+    "src/test/use2fa.test.ts",
+    1
    ],
    [
     ".github/workflows/automation-local.yml",

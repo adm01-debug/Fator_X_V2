@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0bbb2443a3` · branch `main` · 2026-11-26 00:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `70dccb40f7` · branch `main` · 2026-11-26 10:40 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2510,6 +2510,10 @@ _nenhum item encontrado_
   ```
   try { return { SUPABASE_URL: getEnvVar('VITE_SUPABASE_URL'), SUPABASE_ANON_KEY: getEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY'), SUPABASE_PROJECT_ID: getEnvVar('VITE_SUPABASE_PROJECT_ID', 'qdlnzopxrlsoljcrcmzv'), }; } catch (error) { if (import.meta.env.DEV) { logger.error('🔴 Environment validation failed:', (error as Error).message); logger.error(' Check your .env file or Lovable environment settings.'); } throw error; }
   ```
+- **generateBackupCodes(count = BACKUP_CODE_COUNT)** — `src/hooks/use2FA.ts`
+  ```
+  const bytes = new Uint8Array(count * 8); crypto.getRandomValues(bytes); return Array.from({ length: count }, (_, index) => Array.from(bytes.subarray(index * 8, index * 8 + 8)) .map((byte) => BACKUP_ALPHABET[byte % BACKUP_ALPHABET.length]) .join(''), );
+  ```
 - **computeVariantStats(runs: ExperimentRun[], variant: ExperimentVariant)** — `src/hooks/useAgentExperiments.ts`
   ```
   const filtered = runs.filter((r) => r.variant === variant); if (filtered.length === 0) { return { runs: 0, avgLatency: 0, avgCost: 0, avgScore: 0, totalTokens: 0 }; } const latencies = filtered.filter((r) => r.latency_ms != null).map((r) => r.latency_ms ?? 0); const costs = filtered.map((r) => Number(r.cost_usd) || 0); const scores = filtered.filter((r) => r.score != null).map((r) => Number(r.score)); const tokens = filtered.reduce((s, r) => s + (r.tokens_input || 0) + (r.tokens_output || 0), 0) …
@@ -3097,7 +3101,9 @@ _nenhum item encontrado_
 | `OFFLINE_TITLE` | `'Sem conexão com a internet'` | `src/hooks/use-network-status.ts` |
 | `TOAST_LIMIT` | `1` | `src/hooks/use-toast.ts` |
 | `TOAST_REMOVE_DELAY` | `1000000` | `src/hooks/use-toast.ts` |
-| `ISSUER` | `"Fator X"` | `src/hooks/use2FA.ts` |
+| `ISSUER` | `'Fator X'` | `src/hooks/use2FA.ts` |
+| `BACKUP_CODE_COUNT` | `8` | `src/hooks/use2FA.ts` |
+| `BACKUP_ALPHABET` | `'ABCDEFGHJKMNPQRSTUVWXYZ23456789'` | `src/hooks/use2FA.ts` |
 | `CURATION_PENDING_CAP` | `99` | `src/hooks/useCurationRealtime.ts` |
 | `POLL_MS` | `5` | `src/hooks/useSLOAlerts.ts` |
 | `MAX_RETRIES` | `2` | `src/hooks/useStreamingResponse.ts` |
@@ -4015,7 +4021,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3013 testes em 213 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3023 testes em 214 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4127,6 +4133,7 @@ _nenhum item encontrado_
 | `src/test/connector-registry.test.ts` | 10 | connectorRegistryService — BUILTIN_CONNECTORS · has at least 5 built-in connectors · all connectors have required fields · connectors have unique slugs … |
 | `src/test/e2ee-service.test.ts` | 10 | e2eeService — encrypt/decrypt round-trip · cifra e decifra preservando o payload · cada cifragem produz IV/salt distintos · rejeita passphrase curta … |
 | `src/test/skill-departments-parity.test.ts` | 10 | paridade taxonomia frontend x espelho Deno · o espelho declara exatamente os mesmos departamentos · o espelho do classificador LLM lista os mesmos departamentos, na mesma ordem · todo departamento tem uma dica semântica no prompt do classificador … |
+| `src/test/use2fa.test.ts` | 10 | use2FA lê o status pela RPC get_my_2fa_status · usa a RPC como fonte e não consulta a tabela direto · sem linha na RPC, o usuário aparece como desativado · enable valida o TOTP antes de gravar … |
 | `supabase/functions/rag-embed-v2/index.test.ts` | 10 | dimensão canônica espelha as colunas vector(1536) · hashEmbed devolve exatamente a dimensão pedida · hashEmbed é determinístico e normalizado em L2 · hashEmbed nunca produz NaN/Infinity … |
 | `e2e/agent-builder.spec.ts` | 9 | Agent Builder (unauthenticated) · redirects to auth when not logged in · Landing Page · renders the landing page … |
 | `e2e/auth.spec.ts` | 9 | Auth Page · has no critical/serious a11y violations on initial render · renders login form with all required elements · shows validation errors for empty fields … |

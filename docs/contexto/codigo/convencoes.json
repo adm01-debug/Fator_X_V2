@@ -21,7 +21,7 @@
    "src/stores (12)"
   ],
   "testes": [
-   "co-localizado (*.test) (197)",
+   "co-localizado (*.test) (198)",
    "outro (23)",
    "e2e/ (9)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)",
    "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)",
    "chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)",
    "chore(ci)(deps): bump actions/checkout from 6.1.0 to 7.0.1 (#150)",
-   "chore(ci)(deps): bump actions/dependency-review-action (#147)",
-   "infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)"
+   "chore(ci)(deps): bump actions/dependency-review-action (#147)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -5676,6 +5676,7 @@
     "get_db_health_snapshot",
     "get_db_rollback_rate",
     "get_masked_secrets",
+    "get_my_2fa_status",
     "get_rollback_rate_per_min",
     "get_wal_generation_rate",
     "is_user_locked_out"

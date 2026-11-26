@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0bbb2443a3c2dc8e9ef7167f88b775b1c7f72d8f` (2026-11-25T21:48:36-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `70dccb40f712c5962d8945d7fe773441235dc294` (2026-11-26T07:39:42-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1394), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (17), Shell (10), Python (5)
+- linguagens: TypeScript (1395), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (17), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2008 |
-| arquivos_codigo | 1452 |
-| linhas_codigo | 318704 |
+| arquivos_total | 2009 |
+| arquivos_codigo | 1453 |
+| linhas_codigo | 318915 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 327 |
 | migrations | 338 |
 | cron_jobs | 37 |
-| testes | 240 |
+| testes | 241 |
 | workflows | 11 |
 | scripts | 45 |
 | docs_md | 134 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (516), src/pages (141), src/App.tsx (1)
 - hooks: src/hooks (43), src/components (9), src/services (9)
 - servicos_logica: src/services (166), src/lib (90), src/stores (12)
-- testes: co-localizado (*.test) (197), outro (23), e2e/ (9)
+- testes: co-localizado (*.test) (198), outro (23), e2e/ (9)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (11), scripts/inventario (4), scripts/maintenance (4)
@@ -432,8 +432,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14551 nós · 38424 arestas · 916 comunidades · grafo do commit `0bbb2443`
-- comunidades maiores: badge.tsx (351), react (333), ref_https (200), App.tsx (180), logger.ts (146), lucide-react (127), templateSkillLinkService.ts (121), cn (120), KnowledgePage.tsx (119), SuperCerebroPage.tsx (116), mod.ts (113), agent-workflow-runner/index.ts (107)
+- 14557 nós · 38437 arestas · 918 comunidades · grafo do commit `70dccb40`
+- comunidades maiores: Badge (300), react (209), button.tsx (204), badge.tsx (174), getCorsHeaders (158), logger.ts (147), cn (140), AgentBuilder.tsx (139), App.tsx (129), ref_https (121), whatsapp-webhook/index.ts (111), TeamPage.tsx (106)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -579,21 +579,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
-- 2026-11-25 `0bbb2443` fix(infra): prova real da remocao de edge orfa no edge-prune (#156)
-- 2026-11-24 `bb13d205` chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)
-- 2026-11-24 `140960ac` chore(ci)(deps): bump actions/checkout from 6.1.0 to 7.0.1 (#150)
-- 2026-11-24 `266f5fdf` chore(ci)(deps): bump actions/dependency-review-action (#147)
-- 2026-11-24 `7fc063aa` infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)
-- 2026-11-24 `ef5746c7` fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)
-- 2026-11-24 `d8094801` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)
-- 2026-11-24 `cbe4351d` chore(deps)(deps): bump @sentry/react (#151)
-- 2026-11-24 `b1ace074` chore(deps)(deps): bump @supabase/supabase-js (#149)
-- 2026-11-24 `796a52ce` chore(deps)(deps): bump react-router-dom (#148)
-- 2026-11-24 `7190245d` chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)
-- 2026-11-21 `d912348b` fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)
-- 2026-11-21 `8554dc79` feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)
-- 2026-11-21 `085a2e38` chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)
-- 2026-11-21 `e0772412` feat(whatsapp): move envio de mensagens para edge whatsapp-outbound (retomada) (#142)
+- 2026-11-26 `70dccb4` fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)
+- 2026-11-25 `0bbb244` fix(infra): prova real da remocao de edge orfa no edge-prune (#156)
+- 2026-11-24 `bb13d20` chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)
+- 2026-11-24 `140960a` chore(ci)(deps): bump actions/checkout from 6.1.0 to 7.0.1 (#150)
+- 2026-11-24 `266f5fd` chore(ci)(deps): bump actions/dependency-review-action (#147)
+- 2026-11-24 `7fc063a` infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)
+- 2026-11-24 `ef5746c` fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)
+- 2026-11-24 `d809480` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)
+- 2026-11-24 `cbe4351` chore(deps)(deps): bump @sentry/react (#151)
+- 2026-11-24 `b1ace07` chore(deps)(deps): bump @supabase/supabase-js (#149)
+- 2026-11-24 `796a52c` chore(deps)(deps): bump react-router-dom (#148)
+- 2026-11-24 `7190245` chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)
+- 2026-11-21 `d912348` fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)
+- 2026-11-21 `8554dc7` feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)
+- 2026-11-21 `085a2e3` chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

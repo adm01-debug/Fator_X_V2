@@ -2,138 +2,138 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0bbb2443a3c2dc8e9ef7167f88b775b1c7f72d8f",
+  "commit": "70dccb40f712c5962d8945d7fe773441235dc294",
   "branch": "main",
-  "data_commit": "2026-11-25T21:48:36-03:00",
+  "data_commit": "2026-11-26T07:39:42-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
    {
-    "sha": "0bbb2443",
+    "sha": "70dccb4",
+    "data": "2026-11-26",
+    "assunto": "fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)"
+   },
+   {
+    "sha": "0bbb244",
     "data": "2026-11-25",
     "assunto": "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)"
    },
    {
-    "sha": "bb13d205",
+    "sha": "bb13d20",
     "data": "2026-11-24",
     "assunto": "chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)"
    },
    {
-    "sha": "140960ac",
+    "sha": "140960a",
     "data": "2026-11-24",
     "assunto": "chore(ci)(deps): bump actions/checkout from 6.1.0 to 7.0.1 (#150)"
    },
    {
-    "sha": "266f5fdf",
+    "sha": "266f5fd",
     "data": "2026-11-24",
     "assunto": "chore(ci)(deps): bump actions/dependency-review-action (#147)"
    },
    {
-    "sha": "7fc063aa",
+    "sha": "7fc063a",
     "data": "2026-11-24",
     "assunto": "infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)"
    },
    {
-    "sha": "ef5746c7",
+    "sha": "ef5746c",
     "data": "2026-11-24",
     "assunto": "fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)"
    },
    {
-    "sha": "d8094801",
+    "sha": "d809480",
     "data": "2026-11-24",
     "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)"
    },
    {
-    "sha": "cbe4351d",
+    "sha": "cbe4351",
     "data": "2026-11-24",
     "assunto": "chore(deps)(deps): bump @sentry/react (#151)"
    },
    {
-    "sha": "b1ace074",
+    "sha": "b1ace07",
     "data": "2026-11-24",
     "assunto": "chore(deps)(deps): bump @supabase/supabase-js (#149)"
    },
    {
-    "sha": "796a52ce",
+    "sha": "796a52c",
     "data": "2026-11-24",
     "assunto": "chore(deps)(deps): bump react-router-dom (#148)"
    },
    {
-    "sha": "7190245d",
+    "sha": "7190245",
     "data": "2026-11-24",
     "assunto": "chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)"
    },
    {
-    "sha": "d912348b",
+    "sha": "d912348",
     "data": "2026-11-21",
     "assunto": "fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)"
    },
    {
-    "sha": "8554dc79",
+    "sha": "8554dc7",
     "data": "2026-11-21",
     "assunto": "feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)"
    },
    {
-    "sha": "085a2e38",
+    "sha": "085a2e3",
     "data": "2026-11-21",
     "assunto": "chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)"
    },
    {
-    "sha": "e0772412",
+    "sha": "e077241",
     "data": "2026-11-21",
     "assunto": "feat(whatsapp): move envio de mensagens para edge whatsapp-outbound (retomada) (#142)"
    },
    {
-    "sha": "fbe64eef",
+    "sha": "fbe64ee",
     "data": "2026-11-21",
     "assunto": "fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)"
    },
    {
-    "sha": "35f15a71",
+    "sha": "35f15a7",
     "data": "2026-11-21",
     "assunto": "fix(rag): aceita service role e fallback OpenRouter no rag-embed-v2 (#141)"
    },
    {
-    "sha": "6b7d90eb",
+    "sha": "6b7d90e",
     "data": "2026-11-21",
     "assunto": "fix(rag): retry automatico de chunks failed no emb-backfill (#133)"
    },
    {
-    "sha": "10a1dd01",
+    "sha": "10a1dd0",
     "data": "2026-11-21",
     "assunto": "fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)"
    },
    {
-    "sha": "665b5995",
+    "sha": "665b599",
     "data": "2026-11-21",
     "assunto": "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)"
    },
    {
-    "sha": "15ba85e3",
+    "sha": "15ba85e",
     "data": "2026-11-21",
     "assunto": "chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)"
    },
    {
-    "sha": "ff7f06e0",
+    "sha": "ff7f06e",
     "data": "2026-11-21",
     "assunto": "fix: registra webhooks externos verify_jwt=false no config.toml (#135)"
    },
    {
-    "sha": "0200f78d",
+    "sha": "0200f78",
     "data": "2026-11-21",
     "assunto": "chore: registra analise funcionalidades planejadas x implementadas (#134)"
    },
    {
-    "sha": "96fbd6fa",
+    "sha": "96fbd6f",
     "data": "2026-11-21",
     "assunto": "fix: conclui entidades parciais (webhook/game day/chaos) criadas como boilerplate vazio (#132)"
-   },
-   {
-    "sha": "96f5dac0",
-    "data": "2026-11-21",
-    "assunto": "fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)"
    }
   ],
-  "arquivos_mudados_7d": 122,
+  "arquivos_mudados_7d": 124,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 63
+    "commits": 64
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2008,
-  "arquivos_codigo": 1452,
-  "linhas_codigo": 318704,
+  "arquivos_total": 2009,
+  "arquivos_codigo": 1453,
+  "linhas_codigo": 318915,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 240,
+  "testes": 241,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -484,7 +484,7 @@
   },
   "src/hooks": {
    "arquivos": 44,
-   "linhas": 4424
+   "linhas": 4488
   },
   "src/i18n": {
    "arquivos": 2,
@@ -519,8 +519,8 @@
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 191,
-   "linhas": 28920
+   "arquivos": 192,
+   "linhas": 29067
   },
   "src/tests": {
    "arquivos": 2,

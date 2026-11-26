@@ -39269,6 +39269,11 @@
    "usada_em": 2
   },
   {
+   "nome": "get_my_2fa_status",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "get_partition_health_snapshot",
    "definida": true,
    "usada_em": 1

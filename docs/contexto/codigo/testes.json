@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 240,
+ "total": 241,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 225
+  "unit": 226
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 197
+   "arquivos": 198
   },
   {
    "padrao": "outro",
@@ -2054,6 +2054,15 @@
    "casos": 4
   },
   {
+   "arquivo": "src/test/use2fa.test.ts",
+   "tipo": "unit",
+   "linhas": 147,
+   "testa": [
+    "src/hooks/use2FA.ts"
+   ],
+   "casos": 6
+  },
+  {
    "arquivo": "src/test/utils/supabaseMock.ts",
    "tipo": "unit",
    "linhas": 334,
@@ -2343,6 +2352,7 @@
   "src/hooks/use-mobile.tsx": 1,
   "src/hooks/use-network-status.ts": 1,
   "src/hooks/use-unsaved-changes.tsx": 1,
+  "src/hooks/use2FA.ts": 1,
   "src/hooks/useCurationRealtime.ts": 3,
   "src/i18n/I18nProvider.tsx": 1,
   "src/i18n/translations.ts": 1,
