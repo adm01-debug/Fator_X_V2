@@ -167,8 +167,39 @@ describe('billingService — listagens', () => {
   });
 
   it('getUsageRecords aplica o limite solicitado', async () => {
-    db.setTableResult('usage_records', { data: [] });
+    db.setTableResult('usage_records_cost_safe', { data: [] });
     await getUsageRecords(25);
     expect(db.calls.limit).toHaveBeenCalledWith(25);
+  });
+
+  it('getUsageRecords lê a view de custo seguro, nunca a tabela crua', async () => {
+    db.setTableResult('usage_records_cost_safe', {
+      data: [
+        {
+          id: 'r1',
+          workspace_id: 'ws-1',
+          record_type: 'llm',
+          tokens: 10,
+          cost_usd: null,
+          created_at: 'a',
+        },
+      ],
+    });
+
+    const rows = await getUsageRecords(5);
+
+    expect(db.calls.from).toHaveBeenCalledWith('usage_records_cost_safe');
+    // O custo pode vir mascarado; o valor cru nunca deve ser lido da tabela.
+    expect(rows[0].cost_usd).toBeNull();
+  });
+
+  it('getUsageRecords não projeta metadata — o campo segue restrito a admins', async () => {
+    db.setTableResult('usage_records_cost_safe', { data: [] });
+    await getUsageRecords();
+
+    const colunas = String(db.calls.select?.mock.calls?.[0]?.[0] ?? '');
+    expect(colunas).toContain('cost_usd');
+    expect(colunas).not.toContain('metadata');
+    expect(colunas).not.toBe('*');
   });
 });
