@@ -1,16 +1,16 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1212,
- "arestas": 5260,
+ "nos": 1213,
+ "arestas": 5269,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 404
+   "importado_por": 405
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 358
+   "importado_por": 359
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 186
+   "importado_por": 187
   },
   {
    "arquivo": "src/lib/logger.ts",
@@ -34,11 +34,11 @@
   },
   {
    "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 134
+   "importado_por": 135
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 130
+   "importado_por": 131
   },
   {
    "arquivo": "src/integrations/supabase/externalClient.ts",
@@ -226,9 +226,7 @@
   "src/data/curatedSkills.ts",
   "src/hooks/useRetryAction.ts",
   "src/integrations/supabase/types.extended.ts",
-  "src/lib/ag-ui/index.ts",
   "src/lib/invokeWithRetry.ts",
-  "src/lib/otel-genai.ts",
   "src/lib/validations/brazilianDocuments.ts",
   "src/services/riskService.ts",
   "src/services/skillsSimulationService.ts",
@@ -260,7 +258,7 @@
   },
   {
    "modulo": "hooks",
-   "depende_de": 9,
+   "depende_de": 10,
    "importado_por": 18
   },
   {

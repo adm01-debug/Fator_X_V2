@@ -6,7 +6,7 @@
    "src/pages (140)"
   ],
   "componentes": [
-   "src/components (516)",
+   "src/components (517)",
    "src/pages (141)",
    "src/App.tsx (1)"
   ],
@@ -21,7 +21,7 @@
    "src/stores (12)"
   ],
   "testes": [
-   "co-localizado (*.test) (199)",
+   "co-localizado (*.test) (200)",
    "outro (23)",
    "e2e/ (9)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 9,
  "extensao_componentes": [
-  ".tsx (661)"
+  ".tsx (662)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)",
    "feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)",
    "feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)",
    "fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)",
-   "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)",
-   "chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)"
+   "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

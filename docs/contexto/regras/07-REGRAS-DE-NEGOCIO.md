@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b2f4e9135d` · branch `main` · 2026-11-26 12:22 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c3acdb4fb` · branch `main` · 2026-11-26 12:43 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1356,7 +1356,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `passed` | compara | `src/components/agent-builder/modules/TestingModule.tsx`<br>`src/pages/ComplianceReportsPage.tsx` |
 | `status` | `paused` | compara, escreve | `src/components/agent-builder/modules/ExperimentsModule.tsx`<br>`src/pages/AgentExperimentsPage.tsx`<br>`src/services/batchProcessorService.ts`<br>`src/services/cronSchedulerService.ts`<br>`src/services/workflowCheckpointService.ts`<br>… +1 |
 | `status` | `pendente` | compara, escreve | `src/components/skills/SkillDescriptionEnrichPanel.tsx`<br>`src/components/skills/SkillReclassificationReviewPanel.tsx`<br>`src/lib/skills/llmClassificationQueue.ts`<br>`src/lib/skills/observability.ts`<br>`src/services/skillReclassificationReviewService.ts` |
-| … +122 linhas — lista completa em `context.json` | | | |
+| … +123 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1419,7 +1419,6 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | OpenclawTemplateCategory | vendas \| atendimento \| produtividade \| observabilidade \| conteudo \| pessoal | `src/hooks/useOpenclawTemplates.ts` |
 | SlackSeverity | info \| warning \| error \| critical | `src/hooks/useSlackConfig.ts` |
 | SlackCategory | security_alert \| partition_automation_failure \| circuit_breaker \| high_cost \| agent_failure \| system_error \| custom | `src/hooks/useSlackConfig.ts` |
-| AGUIEventType | RUN_STARTED \| RUN_FINISHED \| RUN_ERROR \| TEXT_MESSAGE_START \| TEXT_MESSAGE_CONTENT \| TEXT_MESSAGE_END \| TOOL_CALL_START \| TOOL_CALL_ARGS \| TOOL_CALL_END \| STATE_DELTA \| STATE_SNAPSHOT \| MESSAGES_SNAPSHOT \| RAW | `src/hooks/useStreamingResponse.ts` |
 | EXTENDED_TABLES | 'agent_memories', 'model_pricing', 'workflow_runs', 'workflow_step_runs', 'deploy_connections', 'alert_rules', 'prompt_ab_tests', 'environments', 'vector_indexes', 'tool_policies', | `src/integrations/supabase/types.extended.ts` |
 | ChangelogKind | added \| removed \| modified \| prompt_changed | `src/lib/agentChangelog.ts` |
 | AlertMetric | latency_ms \| cost_per_exec \| cost_window \| tool_failure_rate \| tool_failures_count \| memory_mb \| error_rate | `src/lib/alertMetrics.ts` |
@@ -2290,6 +2289,9 @@ _nenhum item encontrado_
 | `tf-max-latency` | max, type=number, max | `src/components/monitoring/AdvancedTraceFilters.tsx` |
 | `tf-min-cost` | min, type=number, step=0.001, min | `src/components/monitoring/AdvancedTraceFilters.tsx` |
 | `tf-max-cost` | max, type=number, step=0.001, max | `src/components/monitoring/AdvancedTraceFilters.tsx` |
+| `genai-input` | type=number, min=0 | `src/components/monitoring/GenAIProtocolPanel.tsx` |
+| `genai-output` | type=number, min=0 | `src/components/monitoring/GenAIProtocolPanel.tsx` |
+| `genai-temp` | type=number, step=0.1 | `src/components/monitoring/GenAIProtocolPanel.tsx` |
 | `maxTokens` | max, type=number, min=1000, max=500_000, step=1000, max | `src/components/oracle/ResearchSettingsDialog.tsx` |
 | `maxSources` | max, type=number, min=5, max=50, step=1, max | `src/components/oracle/ResearchSettingsDialog.tsx` |
 | `maxLatency` | max, type=number, min=30, max=600, step=10, max | `src/components/oracle/ResearchSettingsDialog.tsx` |
@@ -3916,6 +3918,10 @@ _nenhum item encontrado_
 | Título é obrigatório | `src/components/knowledge/KnowledgeBaseDetail.tsx` |
 | Preencha query e chunks | `src/components/knowledge/RagRerankTestDialog.tsx` |
 | Falha ao atualizar: ${msg} | `src/components/memory/RandomRecallToggleCard.tsx` |
+| Copiar não é suportado neste navegador | `src/components/monitoring/GenAIProtocolPanel.tsx` |
+| Não foi possível copiar | `src/components/monitoring/GenAIProtocolPanel.tsx` |
+| Não foi possível estimar o custo | `src/components/monitoring/GenAIProtocolPanel.tsx` |
+| Não foi possível gerar a prévia do stream | `src/components/monitoring/GenAIProtocolPanel.tsx` |
 | Falha ${res.status} ${res.statusText} | `src/components/monitoring/LangfuseExporterDialog.tsx` |
 | Preencha URL e Public Key antes de testar | `src/components/monitoring/LangfuseExporterDialog.tsx` |
 | Selecione um agent para testar | `src/components/openclaw/OpenclawTestConsole.tsx` |
@@ -3983,11 +3989,7 @@ _nenhum item encontrado_
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | Créditos de IA esgotados — o lote foi interrompido. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| Não foi possível aplicar a reclassificação. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| Não foi possível concluir a classificação por IA. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| ; import { Badge } from  | `src/components/slack/SlackOnboardingWizard.tsx` |
-| Workspace não identificado | `src/components/slack/SlackTestBroadcastButton.tsx` |
-| … +527 linhas — lista completa em `context.json` | |
+| … +531 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4022,7 +4024,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3034 testes em 215 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3040 testes em 216 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4189,6 +4191,7 @@ _nenhum item encontrado_
 | `src/test/cerebro-service.test.ts` | 6 | cerebroService exports · module exports the documented public surface · cerebroService types · exports at least 6 functions … |
 | `src/test/edge-runtime-contract.test.ts` | 6 | Edge Functions — contrato de runtime · encontra os entrypoints das Edge Functions · nunca lê  · nunca passa o Request cru como headers de CORS para createRateLimitResponse … |
 | `src/test/evaluations-service.test.ts` | 6 | evaluationsService exports · module exports the documented public surface · evaluationsService types · exports at least 10 functions … |
+| `src/test/genai-protocol-panel.test.tsx` | 6 | GenAIProtocolPanel · monta os atributos semanticos gen_ai a partir dos campos da tela · estima o custo pelo valor devolvido pela edge cost-calculator · cai na tabela local quando a edge cost-calculator esta indisponivel … |
 | `src/test/kanbanService.test.ts` | 6 | kanbanService · getGroupValue returns UNSTATUSED when property missing · getGroupValue normalizes case and trims · buildColumns preserves order and appends  … |
 | `src/test/knowledge-service.test.ts` | 6 | knowledgeService exports · module exports the documented public surface · knowledgeService types · exports at least 15 functions … |
 | `src/test/local-graph-view.test.tsx` | 6 | LocalGraphView · mostra empty state quando não há links · renderiza nó central e periféricos in/out · clique em nó backlink chama setActiveNote com source_id … |

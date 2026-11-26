@@ -387,7 +387,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 146
+   "arquivos_puxados": 148
   },
   {
    "protegida": false,
@@ -2034,7 +2034,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 146
+   "arquivos_puxados": 148
   },
   {
    "protegida": false,
@@ -2182,7 +2182,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 146
+   "arquivos_puxados": 148
   },
   {
    "protegida": false,
@@ -2288,7 +2288,7 @@
     "system",
     "user"
    ],
-   "arquivos_puxados": 39
+   "arquivos_puxados": 41
   },
   {
    "protegida": false,
@@ -2358,7 +2358,7 @@
     "system",
     "user"
    ],
-   "arquivos_puxados": 39
+   "arquivos_puxados": 41
   },
   {
    "protegida": false,
@@ -4247,6 +4247,7 @@
     "is_user_locked_out"
    ],
    "edges": [
+    "cost-calculator",
     "health-check"
    ],
    "canais_realtime": [],
@@ -4255,7 +4256,7 @@
     "button",
     "status"
    ],
-   "arquivos_puxados": 47
+   "arquivos_puxados": 51
   },
   {
    "protegida": false,
@@ -7162,7 +7163,7 @@
     "assistant",
     "user"
    ],
-   "arquivos_puxados": 22
+   "arquivos_puxados": 24
   },
   {
    "protegida": true,

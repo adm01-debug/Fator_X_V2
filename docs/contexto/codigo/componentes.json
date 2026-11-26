@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 661,
+ "total": 662,
  "orfaos": 36,
  "nomes_duplicados": {
   "AddressCard": [
@@ -4029,6 +4029,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/monitoring/GenAIProtocolPanel.tsx",
+   "exports": [
+    "GenAIProtocolPanel"
+   ],
+   "export_default": null,
+   "linhas": 364,
+   "dominio": "components/monitoring",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/monitoring/LangfuseExporterDialog.tsx",
    "exports": [
     "LangfuseExporterDialog"
@@ -7115,7 +7129,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 357,
+   "usado_por": 358,
    "orfao": false
   },
   {
@@ -7150,7 +7164,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 402,
+   "usado_por": 403,
    "orfao": false
   },
   {
@@ -7409,7 +7423,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 186,
+   "usado_por": 187,
    "orfao": false
   },
   {
@@ -7423,7 +7437,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 134,
+   "usado_por": 135,
    "orfao": false
   },
   {
@@ -7592,7 +7606,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 129,
+   "usado_por": 130,
    "orfao": false
   },
   {
@@ -9420,7 +9434,7 @@
     "MonitoringPage"
    ],
    "export_default": "MonitoringPage",
-   "linhas": 684,
+   "linhas": 694,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],

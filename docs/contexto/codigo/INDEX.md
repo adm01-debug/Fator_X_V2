@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b2f4e9135d483ac82568a2e0543d7129847c4e31` (2026-11-26T09:22:06-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3c3acdb4fb482d2e1b752d028ab559f611a9d379` (2026-11-26T09:42:37-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1396), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (17), Shell (10), Python (5)
+- linguagens: TypeScript (1398), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (17), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2010 |
-| arquivos_codigo | 1454 |
-| linhas_codigo | 319525 |
+| arquivos_total | 2012 |
+| arquivos_codigo | 1456 |
+| linhas_codigo | 319972 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 121 |
 | modulos | 71 |
-| componentes | 661 |
+| componentes | 662 |
 | hooks | 75 |
 | edge_functions | 88 |
 | tabelas | 327 |
 | migrations | 338 |
 | cron_jobs | 37 |
-| testes | 242 |
+| testes | 243 |
 | workflows | 11 |
 | scripts | 45 |
 | docs_md | 134 |
 
 ## Onde ficam as coisas
 - telas: src/pages (140)
-- componentes: src/components (516), src/pages (141), src/App.tsx (1)
+- componentes: src/components (517), src/pages (141), src/App.tsx (1)
 - hooks: src/hooks (43), src/components (9), src/services (9)
 - servicos_logica: src/services (166), src/lib (90), src/stores (12)
-- testes: co-localizado (*.test) (199), outro (23), e2e/ (9)
+- testes: co-localizado (*.test) (200), outro (23), e2e/ (9)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (11), scripts/inventario (4), scripts/maintenance (4)
@@ -81,7 +81,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/dialogs | 0 | 0 | 5 | 0 | 4 | 17 |
 | components/integrations | 0 | 0 | 7 | 0 | 3 | 7 |
 | components/knowledge | 0 | 0 | 11 | 0 | 8 | 8 |
-| components/monitoring | 0 | 0 | 8 | 0 | 0 | 7 |
+| components/monitoring | 0 | 0 | 9 | 0 | 1 | 7 |
 | components/oracle | 0 | 0 | 13 | 2 | 1 | 3 |
 | components/security | 0 | 0 | 16 | 6 | 1 | 14 |
 | components/shared | 0 | 0 | 45 | 13 | 6 | 11 |
@@ -432,8 +432,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14569 nós · 38469 arestas · 923 comunidades · grafo do commit `b2f4e913`
-- comunidades maiores: react (292), lucide-react (232), badge.tsx (192), ref_https (186), button.tsx (184), VendorsPage.tsx (140), logger.ts (134), App.tsx (132), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (128), cn (118), templateSkillLinkService.ts (117), agent-workflow-runner/index.ts (112)
+- 14574 nós · 38513 arestas · 941 comunidades · grafo do commit `3c3acdb4`
+- comunidades maiores: lucide-react (335), button.tsx (334), react (243), ref_https (194), App.tsx (158), VendorsPage.tsx (156), cn (128), logger.ts (125), AgentDetailPage.tsx (108), whatsapp-webhook/index.ts (101), agent-workflow-runner/index.ts (96), mod.ts (94)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -579,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `3c3acdb` feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)
 - 2026-11-26 `b2f4e91` feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)
 - 2026-11-26 `ed56e32` feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)
 - 2026-11-26 `70dccb4` fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)
@@ -593,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `b1ace07` chore(deps)(deps): bump @supabase/supabase-js (#149)
 - 2026-11-24 `796a52c` chore(deps)(deps): bump react-router-dom (#148)
 - 2026-11-24 `7190245` chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)
-- 2026-11-21 `d912348` fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

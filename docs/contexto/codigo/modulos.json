@@ -2251,16 +2251,18 @@
   },
   {
    "modulo": "components/monitoring",
-   "arquivos": 8,
+   "arquivos": 9,
    "testes": 0,
-   "linhas": 1309,
+   "linhas": 1673,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 8,
+   "componentes": 9,
    "hooks_locais": [],
    "hooks_definidos": [],
-   "edges": [],
+   "edges": [
+    "cost-calculator"
+   ],
    "tabelas": [
     "agent_traces",
     "agents",
@@ -2282,6 +2284,7 @@
     "VITE_EXTERNAL_SUPABASE_ANON_KEY",
     "VITE_EXTERNAL_SUPABASE_URL",
     "VITE_SENTRY_DSN",
+    "VITE_SUPABASE_ANON_KEY",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL"
    ],
@@ -2298,6 +2301,7 @@
    "depende_de_modulos": [
     "components/ui",
     "lib",
+    "lib/ag-ui",
     "lib/validations",
     "services"
    ],
@@ -3920,7 +3924,7 @@
    "modulo": "hooks",
    "arquivos": 44,
    "testes": 0,
-   "linhas": 4488,
+   "linhas": 4471,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4210,6 +4214,7 @@
     "i18n",
     "integrations/supabase",
     "lib",
+    "lib/ag-ui",
     "lib/slo",
     "services",
     "types"
@@ -4895,7 +4900,10 @@
     "tabelas": [],
     "rpcs": []
    },
-   "importado_por_outros_modulos": [],
+   "importado_por_outros_modulos": [
+    "components/monitoring",
+    "hooks"
+   ],
    "depende_de_modulos": [
     "types"
    ],
@@ -5245,7 +5253,7 @@
    "modulo": "pages",
    "arquivos": 141,
    "testes": 0,
-   "linhas": 50056,
+   "linhas": 50066,
    "itens_menu": [
     "A/B Test Prompts",
     "Admin BD",
@@ -6979,7 +6987,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 193,
+   "testes": 194,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

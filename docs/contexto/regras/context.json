@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b2f4e9135d483ac82568a2e0543d7129847c4e31",
+  "sha": "3c3acdb4fb482d2e1b752d028ab559f611a9d379",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 12:22 UTC",
-  "files_total": 2015,
-  "code_files": 1796,
-  "code_lines": 349784
+  "generated_at": "2026-11-26 12:43 UTC",
+  "files_total": 2017,
+  "code_files": 1798,
+  "code_lines": 350231
  },
  "version": "1.3.2",
- "facts_hash": "0efaef5c0dcbdf51",
+ "facts_hash": "f9b31a51dca1238d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -242,7 +242,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 700,
+   ".tsx": 702,
    ".ts": 696,
    ".sql": 341,
    ".mjs": 47,
@@ -51292,7 +51292,7 @@
      "get_masked_secrets",
      "log_audit_entry"
     ],
-    "deps_count": 49
+    "deps_count": 50
    },
    {
     "path": "",
@@ -51861,7 +51861,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 38
+    "deps_count": 40
    },
    {
     "path": "",
@@ -52547,7 +52547,7 @@
     "rpc_transitive": [
      "is_user_locked_out"
     ],
-    "deps_count": 46
+    "deps_count": 50
    },
    {
     "path": "",
@@ -53214,7 +53214,7 @@
     "tables_transitive": [],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 21
+    "deps_count": 23
    },
    {
     "path": "",
@@ -57357,7 +57357,7 @@
     "file": ".github/workflows/inventario-estado-semanal.yml"
    }
   ],
-  "components_count": 557,
+  "components_count": 558,
   "hooks": [
    {
     "name": "useContacts",
@@ -58272,8 +58272,8 @@
   },
   {
    "module": "src/components",
-   "files": 557,
-   "lines": 103900,
+   "files": 558,
+   "lines": 104264,
    "tables": [
     "agent_templates",
     "agent_traces",
@@ -58567,7 +58567,7 @@
   {
    "module": "src/hooks",
    "files": 44,
-   "lines": 4488,
+   "lines": 4471,
    "tables": [
     "agent_eval_datasets",
     "agent_eval_results",
@@ -58632,7 +58632,7 @@
     "useRetryAction.ts: useRetryAction",
     "useSLOAlerts.ts: useSLOAlerts",
     "useSlackConfig.ts: SlackSeverity, SlackCategory, SlackWorkspaceConfig, SlackChannelRoute, UpsertRouteInput, useSlackConfig",
-    "useStreamingResponse.ts: AGUIEventType, AGUIEvent, ToolCall, StreamingState, useStreamingResponse"
+    "useStreamingResponse.ts: ToolCall, StreamingState, useStreamingResponse"
    ],
    "docs": [
     "use2FA.ts: use2FA — TOTP-based two-factor authentication hook. Uses otpauth library for HMAC-SHA1 token generation per RFC 6238. O status vem da RPC get_my_2fa_status: a linha de user_2fa não é lida direto pelo cliente.",
@@ -58934,7 +58934,7 @@
   {
    "module": "src/pages",
    "files": 141,
-   "lines": 50056,
+   "lines": 50066,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -59457,8 +59457,8 @@
   },
   {
    "module": "src/test",
-   "files": 193,
-   "lines": 29280,
+   "files": 194,
+   "lines": 29370,
    "tables": [
     "tabela"
    ],
@@ -59568,6 +59568,7 @@
     "src/test/fine-tuning-page.test.tsx",
     "src/test/freeze-window-service.test.ts",
     "src/test/frontmatter.test.ts",
+    "src/test/genai-protocol-panel.test.tsx",
     "src/test/guardrails-ml-service.test.ts",
     "src/test/harvest-checkpoint-bulk-purge.test.ts",
     "src/test/harvest-checkpoint-list.test.ts",
@@ -59588,8 +59589,7 @@
     "src/test/middleware-pipeline.test.ts",
     "src/test/model-router-service.test.ts",
     "src/test/monitoring-service.test.ts",
-    "src/test/multi-agent-e2e.test.ts",
-    "src/test/network-status.test.ts"
+    "src/test/multi-agent-e2e.test.ts"
    ]
   },
   {
@@ -66474,6 +66474,21 @@
     "rules": "max, type=number, step=0.001, max"
    },
    {
+    "file": "src/components/monitoring/GenAIProtocolPanel.tsx",
+    "field": "genai-input",
+    "rules": "type=number, min=0"
+   },
+   {
+    "file": "src/components/monitoring/GenAIProtocolPanel.tsx",
+    "field": "genai-output",
+    "rules": "type=number, min=0"
+   },
+   {
+    "file": "src/components/monitoring/GenAIProtocolPanel.tsx",
+    "field": "genai-temp",
+    "rules": "type=number, step=0.1"
+   },
+   {
     "file": "src/components/oracle/ResearchSettingsDialog.tsx",
     "field": "maxTokens",
     "rules": "max, type=number, min=1000, max=500_000, step=1000, max"
@@ -66849,11 +66864,6 @@
     "file": "src/hooks/useSlackConfig.ts",
     "name": "SlackCategory",
     "values": "security_alert | partition_automation_failure | circuit_breaker | high_cost | agent_failure | system_error | custom"
-   },
-   {
-    "file": "src/hooks/useStreamingResponse.ts",
-    "name": "AGUIEventType",
-    "values": "RUN_STARTED | RUN_FINISHED | RUN_ERROR | TEXT_MESSAGE_START | TEXT_MESSAGE_CONTENT | TEXT_MESSAGE_END | TOOL_CALL_START | TOOL_CALL_ARGS | TOOL_CALL_END | STATE_DELTA | STATE_SNAPSHOT | MESSAGES_SNAPSHOT | RAW"
    },
    {
     "file": "src/integrations/supabase/types.extended.ts",
@@ -68842,6 +68852,22 @@
    {
     "file": "src/components/memory/RandomRecallToggleCard.tsx",
     "msg": "Falha ao atualizar: ${msg}"
+   },
+   {
+    "file": "src/components/monitoring/GenAIProtocolPanel.tsx",
+    "msg": "Copiar não é suportado neste navegador"
+   },
+   {
+    "file": "src/components/monitoring/GenAIProtocolPanel.tsx",
+    "msg": "Não foi possível copiar"
+   },
+   {
+    "file": "src/components/monitoring/GenAIProtocolPanel.tsx",
+    "msg": "Não foi possível estimar o custo"
+   },
+   {
+    "file": "src/components/monitoring/GenAIProtocolPanel.tsx",
+    "msg": "Não foi possível gerar a prévia do stream"
    },
    {
     "file": "src/components/monitoring/LangfuseExporterDialog.tsx",
@@ -89109,6 +89135,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/monitoring/GenAIProtocolPanel.tsx",
+    "field": "etapa",
+    "value": "concluido",
+    "kind": "escreve"
+   },
+   {
     "file": "src/components/monitoring/SpanTreeView.tsx",
     "field": "status",
     "value": "unset",
@@ -105799,6 +105831,30 @@
    {
     "file": "src/test/frontmatter.test.ts",
     "name": "upsert creates frontmatter when absent"
+   },
+   {
+    "file": "src/test/genai-protocol-panel.test.tsx",
+    "name": "GenAIProtocolPanel"
+   },
+   {
+    "file": "src/test/genai-protocol-panel.test.tsx",
+    "name": "monta os atributos semanticos gen_ai a partir dos campos da tela"
+   },
+   {
+    "file": "src/test/genai-protocol-panel.test.tsx",
+    "name": "estima o custo pelo valor devolvido pela edge cost-calculator"
+   },
+   {
+    "file": "src/test/genai-protocol-panel.test.tsx",
+    "name": "cai na tabela local quando a edge cost-calculator esta indisponivel"
+   },
+   {
+    "file": "src/test/genai-protocol-panel.test.tsx",
+    "name": "gera a previa do stream AG-UI com os frames reais do emissor"
+   },
+   {
+    "file": "src/test/genai-protocol-panel.test.tsx",
+    "name": "copia os atributos em JSON para o coletor"
    },
    {
     "file": "src/test/guardrails-ml-service.test.ts",
@@ -130311,6 +130367,11 @@
       "filtra:supabase/functions/cerebro-brain/index.ts"
      ]
     },
+    "etapa": {
+     "concluido": [
+      "escreve:src/components/monitoring/GenAIProtocolPanel.tsx"
+     ]
+    },
     "last_sync_status": {
      "ok": [
       "compara:src/components/slack/SlackRagSourcesPanel.tsx",
@@ -150874,6 +150935,40 @@
    ],
    "doc": "eslint-disable jsx-a11y/label-has-associated-control -- a11y: visual caption for composite/custom control; tracked for dedicated a11y pass"
   },
+  "src/components/monitoring/GenAIProtocolPanel.tsx": {
+   "path": "src/components/monitoring/GenAIProtocolPanel.tsx",
+   "lines": 364,
+   "exports": [
+    "function GenAIProtocolPanel"
+   ],
+   "errors": [
+    "Copiar não é suportado neste navegador",
+    "Não foi possível copiar",
+    "Não foi possível estimar o custo",
+    "Não foi possível gerar a prévia do stream"
+   ],
+   "html_constraints": [
+    {
+     "field": "genai-input",
+     "rules": "type=number, min=0"
+    },
+    {
+     "field": "genai-output",
+     "rules": "type=number, min=0"
+    },
+    {
+     "field": "genai-temp",
+     "rules": "type=number, step=0.1"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "concluido",
+     "kind": "escreve"
+    }
+   ]
+  },
   "src/components/monitoring/LangfuseExporterDialog.tsx": {
    "path": "src/components/monitoring/LangfuseExporterDialog.tsx",
    "lines": 163,
@@ -157274,10 +157369,8 @@
   },
   "src/hooks/useStreamingResponse.ts": {
    "path": "src/hooks/useStreamingResponse.ts",
-   "lines": 331,
+   "lines": 314,
    "exports": [
-    "type AGUIEventType",
-    "interface AGUIEvent",
     "interface ToolCall",
     "interface StreamingState",
     "function useStreamingResponse"
@@ -157285,12 +157378,6 @@
    "env": [
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL"
-   ],
-   "enums": [
-    {
-     "name": "AGUIEventType",
-     "values": "RUN_STARTED | RUN_FINISHED | RUN_ERROR | TEXT_MESSAGE_START | TEXT_MESSAGE_CONTENT | TEXT_MESSAGE_END | TOOL_CALL_START | TOOL_CALL_ARGS | TOOL_CALL_END | STATE_DELTA | STATE_SNAPSHOT | MESSAGES_SNAPSHOT | RAW"
-    }
    ],
    "params": [
     {
@@ -163429,7 +163516,7 @@
   },
   "src/pages/MonitoringPage.tsx": {
    "path": "src/pages/MonitoringPage.tsx",
-   "lines": 684,
+   "lines": 694,
    "exports": [
     "function MonitoringPage"
    ],
@@ -176766,6 +176853,19 @@
     "stringify sorts keys and quotes strings with special chars",
     "upsert preserves body and adds/updates keys",
     "upsert creates frontmatter when absent"
+   ]
+  },
+  "src/test/genai-protocol-panel.test.tsx": {
+   "path": "src/test/genai-protocol-panel.test.tsx",
+   "lines": 90,
+   "is_test": true,
+   "tests": [
+    "GenAIProtocolPanel",
+    "monta os atributos semanticos gen_ai a partir dos campos da tela",
+    "estima o custo pelo valor devolvido pela edge cost-calculator",
+    "cai na tabela local quando a edge cost-calculator esta indisponivel",
+    "gera a previa do stream AG-UI com os frames reais do emissor",
+    "copia os atributos em JSON para o coletor"
    ]
   },
   "src/test/guardrails-ml-service.test.ts": {
@@ -191170,10 +191270,22 @@
   }
  },
  "git": {
-  "sha": "b2f4e9135d483ac82568a2e0543d7129847c4e31",
+  "sha": "3c3acdb4fb482d2e1b752d028ab559f611a9d379",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "3c3acdb",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)",
+    "files": [
+     "src/components/monitoring/GenAIProtocolPanel.tsx",
+     "src/hooks/useStreamingResponse.ts",
+     "src/pages/MonitoringPage.tsx",
+     "src/test/genai-protocol-panel.test.tsx"
+    ]
+   },
    {
     "sha": "b2f4e91",
     "date": "2026-11-26",
@@ -191494,27 +191606,6 @@
      "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
      "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
     ]
-   },
-   {
-    "sha": "10e7a1d",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "docs(pendencias): memoria de baseline, regras de negocio e backlog verificado (#129)",
-    "files": [
-     "docs/pendencias/_achados.md",
-     "docs/pendencias/_linha-de-base.md",
-     "docs/pendencias/_ordem.md",
-     "docs/pendencias/_regras-de-negocio.md",
-     "docs/pendencias/exfil-001-migrations-projeto-alheio.md",
-     "docs/pendencias/int-001-keyvalue-para-encrypted.md",
-     "docs/pendencias/int-002-bitrix24-webhook-config.md",
-     "docs/pendencias/int-003-notification-sender-mente.md",
-     "docs/pendencias/int-004-whatsapp-browser-risco.md",
-     "docs/pendencias/int-005-env-example-segredo-fantasma.md",
-     "docs/pendencias/tbl-001-webhook-events-ausente.md",
-     "docs/pendencias/tbl-002-game-day-events-ausente.md",
-     "docs/pendencias/tbl-003-rpcs-grc-ausentes.md"
-    ]
    }
   ],
   "hot_files": [
@@ -191579,23 +191670,23 @@
     2
    ],
    [
+    "src/components/monitoring/GenAIProtocolPanel.tsx",
+    1
+   ],
+   [
+    "src/hooks/useStreamingResponse.ts",
+    1
+   ],
+   [
+    "src/pages/MonitoringPage.tsx",
+    1
+   ],
+   [
+    "src/test/genai-protocol-panel.test.tsx",
+    1
+   ],
+   [
     "src/services/fineTuningService.ts",
-    1
-   ],
-   [
-    "supabase/functions/hf-autotrain/index.ts",
-    1
-   ],
-   [
-    "src/hooks/use2FA.ts",
-    1
-   ],
-   [
-    "src/test/use2fa.test.ts",
-    1
-   ],
-   [
-    ".github/workflows/automation-local.yml",
     1
    ]
   ]

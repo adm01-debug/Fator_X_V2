@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b2f4e9135d483ac82568a2e0543d7129847c4e31",
+  "commit": "3c3acdb4fb482d2e1b752d028ab559f611a9d379",
   "branch": "main",
-  "data_commit": "2026-11-26T09:22:06-03:00",
+  "data_commit": "2026-11-26T09:42:37-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "3c3acdb",
+    "data": "2026-11-26",
+    "assunto": "feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)"
+   },
    {
     "sha": "b2f4e91",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "15ba85e",
     "data": "2026-11-21",
     "assunto": "chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)"
-   },
-   {
-    "sha": "ff7f06e",
-    "data": "2026-11-21",
-    "assunto": "fix: registra webhooks externos verify_jwt=false no config.toml (#135)"
    }
   ],
-  "arquivos_mudados_7d": 128,
+  "arquivos_mudados_7d": 132,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 66
+    "commits": 67
    },
    {
     "autor": "dependabot[bot]",
@@ -310,21 +310,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2010,
-  "arquivos_codigo": 1454,
-  "linhas_codigo": 319525,
+  "arquivos_total": 2012,
+  "arquivos_codigo": 1456,
+  "linhas_codigo": 319972,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 121,
   "modulos": 71,
-  "componentes": 661,
+  "componentes": 662,
   "hooks": 75,
   "edge_functions": 88,
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 242,
+  "testes": 243,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -467,8 +467,8 @@
    "linhas": 1539
   },
   "src/components": {
-   "arquivos": 557,
-   "linhas": 103900
+   "arquivos": 558,
+   "linhas": 104264
   },
   "src/config": {
    "arquivos": 10,
@@ -484,7 +484,7 @@
   },
   "src/hooks": {
    "arquivos": 44,
-   "linhas": 4488
+   "linhas": 4471
   },
   "src/i18n": {
    "arquivos": 2,
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 141,
-   "linhas": 50056
+   "linhas": 50066
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -519,8 +519,8 @@
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 193,
-   "linhas": 29280
+   "arquivos": 194,
+   "linhas": 29370
   },
   "src/tests": {
    "arquivos": 2,

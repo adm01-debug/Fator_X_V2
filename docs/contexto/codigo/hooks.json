@@ -1294,7 +1294,7 @@
    "hooks_exportados": [
     "useStreamingResponse"
    ],
-   "linhas": 331,
+   "linhas": 314,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
