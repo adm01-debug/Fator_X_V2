@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c3e765ce512d410b01a4593057c10e897c1f9c0a",
+  "sha": "51fc68b04c4278212bdf93163ab0ee6ce96985f4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 21:08 UTC",
-  "files_total": 2021,
-  "code_files": 1801,
-  "code_lines": 350940
+  "generated_at": "2026-11-26 21:11 UTC",
+  "files_total": 2022,
+  "code_files": 1802,
+  "code_lines": 351091
  },
  "version": "1.3.2",
- "facts_hash": "535f45c4887b5b84",
+ "facts_hash": "1a3b8d7437b361bc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -246,7 +246,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 703,
+   ".tsx": 704,
    ".ts": 698,
    ".sql": 341,
    ".mjs": 47,
@@ -58295,7 +58295,7 @@
   {
    "module": "src/components",
    "files": 558,
-   "lines": 104264,
+   "lines": 104319,
    "tables": [
     "agent_templates",
     "agent_traces",
@@ -59483,8 +59483,8 @@
   },
   {
    "module": "src/test",
-   "files": 197,
-   "lines": 29820,
+   "files": 198,
+   "lines": 29916,
    "tables": [
     "tabela"
    ],
@@ -59613,9 +59613,9 @@
     "src/test/memory-service.test.ts",
     "src/test/memory-tiers.test.ts",
     "src/test/metric-card.test.tsx",
+    "src/test/metrics-embedding-coverage.test.tsx",
     "src/test/middleware-pipeline.test.ts",
-    "src/test/model-router-service.test.ts",
-    "src/test/monitoring-service.test.ts"
+    "src/test/model-router-service.test.ts"
    ]
   },
   {
@@ -106749,6 +106749,22 @@
     "name": "applies custom className"
    },
    {
+    "file": "src/test/metrics-embedding-coverage.test.tsx",
+    "name": "EmbeddingCoverageCard"
+   },
+   {
+    "file": "src/test/metrics-embedding-coverage.test.tsx",
+    "name": "mostra a cobertura dos chunks de documentos junto da cobertura de memórias"
+   },
+   {
+    "file": "src/test/metrics-embedding-coverage.test.tsx",
+    "name": "não derruba o card quando a cobertura de chunks falha"
+   },
+   {
+    "file": "src/test/metrics-embedding-coverage.test.tsx",
+    "name": "não mostra a seção de chunks quando o workspace não tem chunks"
+   },
+   {
     "file": "src/test/middleware-pipeline.test.ts",
     "name": "MiddlewarePipeline — basic operations"
    },
@@ -151039,15 +151055,15 @@
   },
   "src/components/metrics/EmbeddingCoverageCard.tsx": {
    "path": "src/components/metrics/EmbeddingCoverageCard.tsx",
-   "lines": 156,
+   "lines": 212,
    "exports": [
     "function EmbeddingCoverageCard"
    ],
-   "doc": "EmbeddingCoverageCard — cobertura de embeddings semânticos + Dead-Letter Queue. Consome: - RPC `get_embedding_coverage(_workspace_id)` → total, embedded, dead_letter, pct - RPC `reset_embedding_dead_letter(_workspace_id)` → reprocessamento manual"
+   "doc": "EmbeddingCoverageCard — cobertura de embeddings semânticos + Dead-Letter Queue. Consome: - RPC `get_embedding_coverage(_workspace_id)` → total, embedded, dead_letter, pct - RPC `reset_embedding_dead_letter(_workspace_id)` → reprocessamento manual - RPC `get_chunk_embedding_coverage(_workspace_id)` → …"
   },
   "src/components/metrics/KnowledgeGraphHealthCard.tsx": {
    "path": "src/components/metrics/KnowledgeGraphHealthCard.tsx",
-   "lines": 145,
+   "lines": 144,
    "exports": [
     "function KnowledgeGraphHealthCard"
    ],
@@ -177495,6 +177511,18 @@
     "applies custom className"
    ]
   },
+  "src/test/metrics-embedding-coverage.test.tsx": {
+   "path": "src/test/metrics-embedding-coverage.test.tsx",
+   "lines": 96,
+   "is_test": true,
+   "doc": "EmbeddingCoverageCard — cobertura de memórias e de chunks de documentos. A RPC `get_chunk_embedding_coverage(_workspace_id)` existia desde o QA V6 sem nenhum consumidor: dava para ingerir documentos e nunca saber se os chunks receberam embedding (pipeline de RAG separado das memórias). Os testes tra …",
+   "tests": [
+    "EmbeddingCoverageCard",
+    "mostra a cobertura dos chunks de documentos junto da cobertura de memórias",
+    "não derruba o card quando a cobertura de chunks falha",
+    "não mostra a seção de chunks quando o workspace não tem chunks"
+   ]
+  },
   "src/test/middleware-pipeline.test.ts": {
    "path": "src/test/middleware-pipeline.test.ts",
    "lines": 493,
@@ -191547,10 +191575,21 @@
   }
  },
  "git": {
-  "sha": "c3e765ce512d410b01a4593057c10e897c1f9c0a",
+  "sha": "51fc68b04c4278212bdf93163ab0ee6ce96985f4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "51fc68b",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(metricas): cobertura de embeddings dos chunks de documentos (#169)",
+    "files": [
+     "src/components/metrics/EmbeddingCoverageCard.tsx",
+     "src/components/metrics/KnowledgeGraphHealthCard.tsx",
+     "src/test/metrics-embedding-coverage.test.tsx"
+    ]
+   },
    {
     "sha": "c3e765c",
     "date": "2026-11-26",
@@ -191864,32 +191903,12 @@
      "supabase/functions/browser-agent-run/index.ts",
      "supabase/functions/llm-gateway/index.ts"
     ]
-   },
-   {
-    "sha": "665b599",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)",
-    "files": [
-     ".env.example",
-     ".github/workflows/edge-deploy.yml",
-     "supabase/deployment-manifest.json",
-     "supabase/functions/_shared/ai-provider.ts",
-     "supabase/functions/agent-conversational-builder/index.ts",
-     "supabase/functions/browser-agent-run/index.ts",
-     "supabase/functions/code-interpreter-execute/index.ts",
-     "supabase/functions/llm-gateway/index.ts",
-     "supabase/functions/llm-gateway/providers/openai.ts",
-     "supabase/functions/notebook-podcast-generate/index.ts",
-     "supabase/functions/visual-search/index.ts",
-     "supabase/functions/voice-transcribe/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    9
+    8
    ],
    [
     "package-lock.json",
@@ -191898,10 +191917,6 @@
    [
     "package.json",
     4
-   ],
-   [
-    ".github/workflows/edge-deploy.yml",
-    3
    ],
    [
     "docs/migration/MATRIZ_EDGE_TABELA.md",
@@ -191924,6 +191939,10 @@
     2
    ],
    [
+    ".github/workflows/edge-deploy.yml",
+    2
+   ],
+   [
     "src/services/whatsappOutboundService.ts",
     2
    ],
@@ -191932,12 +191951,16 @@
     2
    ],
    [
-    "supabase/functions/browser-agent-run/index.ts",
-    2
+    "src/components/metrics/EmbeddingCoverageCard.tsx",
+    1
    ],
    [
-    "supabase/functions/llm-gateway/index.ts",
-    2
+    "src/components/metrics/KnowledgeGraphHealthCard.tsx",
+    1
+   ],
+   [
+    "src/test/metrics-embedding-coverage.test.tsx",
+    1
    ],
    [
     "src/pages/TeamPage.tsx",
@@ -191961,10 +191984,6 @@
    ],
    [
     "src/test/billing-service.test.ts",
-    1
-   ],
-   [
-    "src/pages/RiskRegisterPage.tsx",
     1
    ]
   ]

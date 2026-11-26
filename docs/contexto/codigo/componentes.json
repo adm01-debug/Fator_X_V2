@@ -3959,7 +3959,7 @@
     "EmbeddingCoverageCard"
    ],
    "export_default": null,
-   "linhas": 156,
+   "linhas": 212,
    "dominio": "components/metrics",
    "hooks_locais": [],
    "tabelas": [],
@@ -3973,7 +3973,7 @@
     "KnowledgeGraphHealthCard"
    ],
    "export_default": null,
-   "linhas": 145,
+   "linhas": 144,
    "dominio": "components/metrics",
    "hooks_locais": [],
    "tabelas": [],

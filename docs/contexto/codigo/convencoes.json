@@ -21,7 +21,7 @@
    "src/stores (12)"
   ],
   "testes": [
-   "co-localizado (*.test) (203)",
+   "co-localizado (*.test) (204)",
    "outro (23)",
    "e2e/ (9)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(metricas): cobertura de embeddings dos chunks de documentos (#169)",
    "fix(time): tela de time volta a mostrar o e-mail dos membros (#168)",
    "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)",
    "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)",
-   "chore(vercel): deep link da SPA deixa de dar 404 (#164)",
-   "test(forum): trava as escritas do forum publico (#162)"
+   "chore(vercel): deep link da SPA deixa de dar 404 (#164)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

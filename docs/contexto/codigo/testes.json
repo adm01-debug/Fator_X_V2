@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 246,
+ "total": 247,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 231
+  "unit": 232
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 203
+   "arquivos": 204
   },
   {
    "padrao": "outro",
@@ -1103,6 +1103,15 @@
     "src/components/shared/MetricCard.tsx"
    ],
    "casos": 7
+  },
+  {
+   "arquivo": "src/test/metrics-embedding-coverage.test.tsx",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [
+    "src/components/metrics/EmbeddingCoverageCard.tsx"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/test/middleware-pipeline.test.ts",
@@ -2361,6 +2370,7 @@
   "src/components/knowledge/RichEditor.tsx": 1,
   "src/components/layout/AppLayout.tsx": 1,
   "src/components/layout/AppSidebar.tsx": 2,
+  "src/components/metrics/EmbeddingCoverageCard.tsx": 1,
   "src/components/monitoring/GenAIProtocolPanel.tsx": 1,
   "src/components/monitoring/SpanTreeView.tsx": 1,
   "src/components/openclaw/OpenclawWhatsappSetup.tsx": 1,

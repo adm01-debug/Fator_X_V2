@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c3e765ce512d410b01a4593057c10e897c1f9c0a",
+  "commit": "51fc68b04c4278212bdf93163ab0ee6ce96985f4",
   "branch": "main",
-  "data_commit": "2026-11-26T17:53:19-03:00",
+  "data_commit": "2026-11-26T17:54:24-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "51fc68b",
+    "data": "2026-11-26",
+    "assunto": "feat(metricas): cobertura de embeddings dos chunks de documentos (#169)"
+   },
    {
     "sha": "c3e765c",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "085a2e3",
     "data": "2026-11-21",
     "assunto": "chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)"
-   },
-   {
-    "sha": "e077241",
-    "data": "2026-11-21",
-    "assunto": "feat(whatsapp): move envio de mensagens para edge whatsapp-outbound (retomada) (#142)"
    }
   ],
-  "arquivos_mudados_7d": 143,
+  "arquivos_mudados_7d": 146,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 73
+    "commits": 74
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2016,
-  "arquivos_codigo": 1459,
-  "linhas_codigo": 320681,
+  "arquivos_total": 2017,
+  "arquivos_codigo": 1460,
+  "linhas_codigo": 320832,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 246,
+  "testes": 247,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -468,7 +468,7 @@
   },
   "src/components": {
    "arquivos": 558,
-   "linhas": 104264
+   "linhas": 104319
   },
   "src/config": {
    "arquivos": 10,
@@ -519,8 +519,8 @@
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 197,
-   "linhas": 29820
+   "arquivos": 198,
+   "linhas": 29916
   },
   "src/tests": {
    "arquivos": 2,
@@ -666,7 +666,7 @@
   }
  ],
  "qualidade": {
-  "any": 113,
+  "any": 114,
   "console_log": 110,
   "ts_ignore": 0,
   "eslint_disable": 5,

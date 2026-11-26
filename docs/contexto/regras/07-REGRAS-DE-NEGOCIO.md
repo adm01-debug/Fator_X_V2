@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c3e765ce51` · branch `main` · 2026-11-26 21:08 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `51fc68b04c` · branch `main` · 2026-11-26 21:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4025,7 +4025,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3063 testes em 219 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3067 testes em 220 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4228,6 +4228,7 @@ _nenhum item encontrado_
 | `src/components/slack/__tests__/SlackOnboardingWizard.test.tsx` | 4 | SlackOnboardingWizard · renderiza passo 1 por padrão · avança e volta entre passos · dispara verifyConnection no passo 3 |
 | `src/test/agent-evolution.test.ts` | 4 | Agent Self-Evolution · builds skillbook prompt from skills · returns empty for no skills · reflects on traces |
 | `src/test/error-boundary.test.tsx` | 4 | ErrorBoundary · renders children when there is no error · renders error UI when a child throws · renders custom fallback when provided |
+| `src/test/metrics-embedding-coverage.test.tsx` | 4 | EmbeddingCoverageCard · mostra a cobertura dos chunks de documentos junto da cobertura de memórias · não derruba o card quando a cobertura de chunks falha · não mostra a seção de chunks quando o workspace não tem chunks |
 | `src/test/nlp-pipeline-service.test.ts` | 4 | nlpPipelineService · analyzeText returns NLP result · analyzeText throws on error · analyzeWhatsAppMessage returns structured result |
 | `src/test/openclaw-whatsapp-setup.test.tsx` | 4 | OpenclawWhatsappSetup · renderiza o formulário inicial com badge de estado idle · exibe o QR Code retornado pelo serviço após pareamento · exibe erro quando o pareamento falha |
 | `src/test/partitioning-docs-route.test.tsx` | 4 | Partitioning docs route · registra a rota /docs/partitioning no App.tsx · expõe o playbook de particionamento no sidebar · página de docs existe e tem conteúdo esperado |

@@ -2214,7 +2214,7 @@
    "modulo": "components/metrics",
    "arquivos": 3,
    "testes": 0,
-   "linhas": 450,
+   "linhas": 505,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7035,7 +7035,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 197,
+   "testes": 198,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
