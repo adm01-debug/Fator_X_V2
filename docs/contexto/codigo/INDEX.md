@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `897badbe8b76df2ee234f1fb956ff7d54306d999` (2026-11-26T12:18:08-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f2a4f3ae2c4ef764cccc799c3cf6868dbf91c4c1` (2026-11-26T12:32:19-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1399), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (17), Shell (10), Python (5)
+- linguagens: TypeScript (1399), SQL (341), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -27,14 +27,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - gerenciador_pacotes: bun
 - node: n/d
 - python: n/d
-- deploy: n/d
+- deploy: vercel
 - monorepo: n/d
 - pastas_fonte: src
 
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2013 |
+| arquivos_total | 2014 |
 | arquivos_codigo | 1457 |
 | linhas_codigo | 320162 |
 | rotas | 151 |
@@ -432,8 +432,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14578 nós · 38526 arestas · 915 comunidades · grafo do commit `897badbe`
-- comunidades maiores: react (331), lucide-react (327), agentTypes.ts (238), ref_https (192), App.tsx (154), PageHeader.tsx (151), VendorsPage.tsx (131), cn (128), logger (116), agent-workflow-runner/index.ts (116), logger.ts (115), fetchWithTimeout (106)
+- 14581 nós · 38528 arestas · 923 comunidades · grafo do commit `f2a4f3ae`
+- comunidades maiores: lucide-react (307), App.tsx (284), sonner (259), react (211), ref_https (192), Button (130), cn (119), logger.ts (115), mod.ts (105), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (102), templateSkillLinkService.ts (97), fetchWithTimeout (93)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -447,12 +447,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - supabase/functions/llm-gateway/index.ts (6)
 - .github/workflows/contexto.yml (4)
 - .github/workflows/guards.yml (4)
-- supabase/config.toml (4)
 - supabase/functions/agent-conversational-builder/index.ts (4)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/code-interpreter-execute/index.ts (4)
 - supabase/functions/crm-enrich/index.ts (4)
 - supabase/functions/doc-rechunk/index.ts (4)
+- supabase/functions/voice-synthesize/index.ts (4)
 
 ## Workflows
 - `anti-stale-dependabot.yml` — Anti-stale dependabot (schedule, workflow_dispatch; cron 42 6 * * 5)
@@ -579,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `f2a4f3a` chore(vercel): deep link da SPA deixa de dar 404 (#164)
 - 2026-11-26 `897badb` test(forum): trava as escritas do forum publico (#162)
 - 2026-11-26 `ccf216d` fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)
 - 2026-11-26 `3c3acdb` feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)
@@ -593,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `ef5746c` fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)
 - 2026-11-24 `d809480` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)
 - 2026-11-24 `cbe4351` chore(deps)(deps): bump @sentry/react (#151)
-- 2026-11-24 `b1ace07` chore(deps)(deps): bump @supabase/supabase-js (#149)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

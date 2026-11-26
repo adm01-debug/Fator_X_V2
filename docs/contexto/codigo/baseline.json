@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "897badbe8b76df2ee234f1fb956ff7d54306d999",
+  "commit": "f2a4f3ae2c4ef764cccc799c3cf6868dbf91c4c1",
   "branch": "main",
-  "data_commit": "2026-11-26T12:18:08-03:00",
+  "data_commit": "2026-11-26T12:32:19-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "f2a4f3a",
+    "data": "2026-11-26",
+    "assunto": "chore(vercel): deep link da SPA deixa de dar 404 (#164)"
+   },
    {
     "sha": "897badb",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "6b7d90e",
     "data": "2026-11-21",
     "assunto": "fix(rag): retry automatico de chunks failed no emb-backfill (#133)"
-   },
-   {
-    "sha": "10a1dd0",
-    "data": "2026-11-21",
-    "assunto": "fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)"
    }
   ],
-  "arquivos_mudados_7d": 134,
+  "arquivos_mudados_7d": 135,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -234,10 +234,6 @@
     "mudancas": 4
    },
    {
-    "arquivo": "supabase/config.toml",
-    "mudancas": 4
-   },
-   {
     "arquivo": "supabase/functions/agent-conversational-builder/index.ts",
     "mudancas": 4
    },
@@ -294,6 +290,10 @@
     "mudancas": 3
    },
    {
+    "arquivo": "supabase/config.toml",
+    "mudancas": 3
+   },
+   {
     "arquivo": "supabase/functions/browser-agent-run/index.ts",
     "mudancas": 3
    }
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 69
+    "commits": 70
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2013,
+  "arquivos_total": 2014,
   "arquivos_codigo": 1457,
   "linhas_codigo": 320162,
   "rotas": 151,
