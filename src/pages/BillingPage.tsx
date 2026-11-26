@@ -39,6 +39,10 @@ export default function BillingPage() {
     queryFn: () => getUsageRecords(50),
   });
 
+  // `usage_records_cost_safe` devolve cost_usd NULL para quem não é admin do
+  // workspace — nesse caso o custo por registro não é exibido.
+  const costMasked = usageRecords.length > 0 && usageRecords.every((r) => r.cost_usd == null);
+
   const totals = usage.reduce((acc, u) => ({
     cost: acc.cost + Number(u.total_cost_usd || 0),
     tokensIn: acc.tokensIn + (u.tokens_input || 0),
@@ -236,6 +240,11 @@ export default function BillingPage() {
 
         <TabsContent value="records">
           <h3 className="text-body-sm font-heading font-semibold text-foreground mb-4">Registros de uso recentes</h3>
+          {costMasked && (
+            <p className="text-meta text-muted-foreground mb-3">
+              Custo por registro visível apenas para admins do workspace.
+            </p>
+          )}
           {usageRecords.length === 0 ? (
             <div className="text-center py-12"><p className="text-meta text-muted-foreground">Nenhum registro encontrado</p></div>
           ) : (
@@ -254,7 +263,9 @@ export default function BillingPage() {
                     <tr key={r.id} className="border-b border-border/30 hover:bg-secondary/30 transition-colors">
                       <td className="px-4 py-2"><Badge variant="outline" className="text-meta">{r.record_type}</Badge></td>
                       <td className="px-4 py-2 text-meta text-foreground">{(r.tokens ?? 0).toLocaleString()}</td>
-                      <td className="px-4 py-2 text-meta text-foreground">${Number(r.cost_usd ?? 0).toFixed(4)}</td>
+                      <td className="px-4 py-2 text-meta text-foreground">
+                        {r.cost_usd == null ? '—' : `$${Number(r.cost_usd).toFixed(4)}`}
+                      </td>
                       <td className="px-4 py-2 text-meta text-muted-foreground">{r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '—'}</td>
                     </tr>
                   ))}
