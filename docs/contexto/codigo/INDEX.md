@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `71009ddc81e330fbb4290281fd68e2ef1bbaea3f` (2026-11-26T18:37:02-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9e84381b920d8ea14146af91e12e0fdcd582e757` (2026-11-26T18:42:26-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1409), SQL (341), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
+- linguagens: TypeScript (1410), SQL (341), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2024 |
-| arquivos_codigo | 1467 |
-| linhas_codigo | 322490 |
+| arquivos_total | 2025 |
+| arquivos_codigo | 1468 |
+| linhas_codigo | 322883 |
 | rotas | 152 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 327 |
 | migrations | 338 |
 | cron_jobs | 37 |
-| testes | 249 |
+| testes | 250 |
 | workflows | 11 |
 | scripts | 45 |
 | docs_md | 134 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (517), src/pages (142), src/App.tsx (1)
 - hooks: src/hooks (44), src/components (9), src/services (9)
 - servicos_logica: src/services (168), src/lib (90), src/stores (12)
-- testes: co-localizado (*.test) (206), outro (23), e2e/ (9)
+- testes: co-localizado (*.test) (207), outro (23), e2e/ (9)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (11), scripts/inventario (4), scripts/maintenance (4)
@@ -405,7 +405,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
-- hosts mais citados: router.huggingface.co, openrouter.ai, api.openai.com, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, ai.gateway.lovable.dev, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.hermes.ai, api.resend.com, api.slack.com
+- hosts mais citados: router.huggingface.co, openrouter.ai, api.openai.com, huggingface.co, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, ai.gateway.lovable.dev, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.hermes.ai, api.resend.com
 - webhooks recebidos: bitrix24-webhook, openclaw-webhook, rag-embed-backfill, slack-events-webhook, webhook-receiver, whatsapp-router, whatsapp-webhook, widget-proxy
 - env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, GOOGLE_MAPS_API_KEY, HERMES_API_KEY, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, MAPBOX_ACCESS_TOKEN, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, OPENROUTER_API_KEY, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
 
@@ -433,8 +433,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14666 nós · 38804 arestas · 938 comunidades · grafo do commit `71009ddc`
-- comunidades maiores: Badge (301), sonner (224), ref_https (199), button.tsx (194), lucide-react (133), App.tsx (130), cn (121), logger.ts (118), requireEnv (114), badge.tsx (110), getWorkspaceId (108), mod.ts (98)
+- 14678 nós · 38844 arestas · 924 comunidades · grafo do commit `9e84381b`
+- comunidades maiores: react (311), Badge (301), ref_https (197), badge.tsx (171), App.tsx (166), agentTypes.ts (165), lucide-react (150), logger.ts (124), agent-workflow-runner/index.ts (116), mod.ts (110), fromTable (105), fetchWithTimeout (102)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -580,6 +580,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `9e84381` feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)
 - 2026-11-26 `71009dd` feat(hf): configuração HuggingFace por workspace vira real (#171)
 - 2026-11-26 `a77f3ba` feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)
 - 2026-11-26 `51fc68b` feat(metricas): cobertura de embeddings dos chunks de documentos (#169)
@@ -594,7 +595,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `ed56e32` feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)
 - 2026-11-26 `70dccb4` fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)
 - 2026-11-25 `0bbb244` fix(infra): prova real da remocao de edge orfa no edge-prune (#156)
-- 2026-11-24 `bb13d20` chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

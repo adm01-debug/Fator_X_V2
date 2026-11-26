@@ -913,6 +913,7 @@
    ],
    "flags": [],
    "papeis": [
+    "admin",
     "assistant",
     "system",
     "user"
@@ -5303,7 +5304,7 @@
    "modulo": "pages",
    "arquivos": 142,
    "testes": 0,
-   "linhas": 50872,
+   "linhas": 50978,
    "itens_menu": [
     "A/B Test Prompts",
     "Admin BD",
@@ -6183,7 +6184,7 @@
    "modulo": "services",
    "arquivos": 148,
    "testes": 0,
-   "linhas": 32291,
+   "linhas": 32427,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7058,7 +7059,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 200,
+   "testes": 201,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

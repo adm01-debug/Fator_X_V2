@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `71009ddc81` · branch `main` · 2026-11-26 21:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9e84381b92` · branch `main` · 2026-11-26 21:45 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1356,7 +1356,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `passed` | compara | `src/components/agent-builder/modules/TestingModule.tsx`<br>`src/pages/ComplianceReportsPage.tsx` |
 | `status` | `paused` | compara, escreve | `src/components/agent-builder/modules/ExperimentsModule.tsx`<br>`src/pages/AgentExperimentsPage.tsx`<br>`src/services/batchProcessorService.ts`<br>`src/services/cronSchedulerService.ts`<br>`src/services/workflowCheckpointService.ts`<br>… +1 |
 | `status` | `pendente` | compara, escreve | `src/components/skills/SkillDescriptionEnrichPanel.tsx`<br>`src/components/skills/SkillReclassificationReviewPanel.tsx`<br>`src/lib/skills/llmClassificationQueue.ts`<br>`src/lib/skills/observability.ts`<br>`src/services/skillReclassificationReviewService.ts` |
-| … +123 linhas — lista completa em `context.json` | | | |
+| … +124 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1520,6 +1520,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | DatasetSource | traces \| test_cases \| custom | `src/services/fineTuningService.ts` |
 | TaskType | text-generation \| text-classification \| embedding | `src/services/fineTuningService.ts` |
 | TrainingMethod | lora \| qlora \| full | `src/services/fineTuningService.ts` |
+| FineTuneJobStatus | preparing \| uploading \| training \| completed \| failed \| cancelled | `src/services/fineTuningService.ts` |
 | GameDayScenario | provider_outage \| cost_spike \| db_slowdown \| auth_failure \| custom | `src/services/gameDayService.ts` |
 | GameDayStatus | scheduled \| running \| completed \| aborted | `src/services/gameDayService.ts` |
 | GameDayEventType | fault_injected \| detection \| mitigation \| resolution \| note | `src/services/gameDayService.ts` |
@@ -3992,7 +3993,7 @@ _nenhum item encontrado_
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | Créditos de IA esgotados — o lote foi interrompido. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +533 linhas — lista completa em `context.json` | |
+| … +534 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4027,7 +4028,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3083 testes em 222 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3092 testes em 223 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4147,6 +4148,7 @@ _nenhum item encontrado_
 | `e2e/auth.spec.ts` | 9 | Auth Page · has no critical/serious a11y violations on initial render · renders login form with all required elements · shows validation errors for empty fields … |
 | `src/test/basesService.test.ts` | 9 | basesService · extrai frontmatter, tags e wikilinks · filtra por eq no frontmatter · filtra por contains no title (case-insensitive) … |
 | `src/test/document-title.test.ts` | 9 | useDocumentTitle · sets title for dashboard · sets title for agents page · sets title for oracle page … |
+| `src/test/fine-tuning-jobs.test.ts` | 9 | mapHubStatus · traduz o status do Hub para o enum de finetune_jobs · recordFineTuneJob · grava o job com o usuário autenticado e o workspace do contexto … |
 | `src/test/harvest-checkpoint-list.test.ts` | 9 | listHarvestCheckpoints · calcula a idade em horas e mapeia os campos do banco · mantém como válido o checkpoint exatamente no limite do TTL (24h) · marca como stale o checkpoint que ultrapassou o TTL … |
 | `src/test/harvest-checkpoint-purge.test.ts` | 9 | purgeStaleLocalCheckpoints · mantém checkpoints dentro do TTL de 24h · remove checkpoints vencidos · trata a fronteira exata de 24h como ainda válida … |
 | `src/test/research-config-schema.test.ts` | 9 | researchConfigSchema — happy path · aceita um draft válido · coage strings numéricas via z.coerce · researchConfigSchema — ranges e mensagens PT-BR … |
@@ -4664,6 +4666,8 @@ _nenhum item encontrado_
 | Only ISO strings that parse to a valid Date are honoured; from must be < to. | `src/pages/AgentTracesPage.tsx` |
 | Inicialização da URL: roda APENAS na primeira chegada das versões (ou quando | `src/pages/AgentVersioningPage.tsx` |
 | Somente leitura: o criador vê seus próprios ciclos de payout, valores acumulados e status. | `src/pages/CreatorPayoutsPage.tsx` |
+| a uma falha do Hub. Job sem registro local apenas devolve null. | `src/pages/FineTuningPage.tsx` |
+| O treino já começou no Hub: falhar aqui não pode virar erro para o usuário. | `src/pages/FineTuningPage.tsx` |
 | Very loose IPv6 fallback — Postgres CIDR type will do the final validation. | `src/pages/IPWhitelistPage.tsx` |
 | Regra de ouro FK/CASCADE */} | `src/pages/PartitioningDocsPage.tsx` |
 | unmount must not touch state. | `src/pages/SLODashboard.tsx` |
@@ -4726,6 +4730,4 @@ _nenhum item encontrado_
 | anterior à coluna) e NÃO pode virar 0: exibir "limiar 0,00" sugeriria que o | `src/services/skillReclassificationReviewService.ts` |
 | proposta órfã de departamento renomeado não pode ser aprovada, e mostrá-la | `src/services/skillReclassificationReviewService.ts` |
 | apenas informa a intenção e o motivo. | `src/services/skillReclassificationReviewService.ts` |
-| * A regra que importa: 402 (créditos esgotados) NÃO é re-tentável. Insistir | `src/services/skillReclassificationService.ts` |
-| validação são culpa do payload e não melhoram com repetição. | `src/services/skillReclassificationService.ts` |
-| … +169 linhas — lista completa em `context.json` | |
+| … +171 linhas — lista completa em `context.json` | |

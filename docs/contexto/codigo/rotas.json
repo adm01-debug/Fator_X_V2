@@ -1520,11 +1520,12 @@
    ],
    "flags": [],
    "papeis": [
+    "admin",
     "assistant",
     "system",
     "user"
    ],
-   "arquivos_puxados": 119
+   "arquivos_puxados": 122
   },
   {
    "protegida": false,
@@ -3338,17 +3339,24 @@
     "useIsMobile",
     "useUnsavedChanges"
    ],
-   "tabelas": [],
-   "rpcs": [],
+   "tabelas": [
+    "agents",
+    "workspace_members",
+    "workspaces"
+   ],
+   "rpcs": [
+    "is_user_locked_out"
+   ],
    "edges": [
     "hf-autotrain"
    ],
    "canais_realtime": [],
    "flags": [],
    "papeis": [
+    "admin",
     "alert"
    ],
-   "arquivos_puxados": 21
+   "arquivos_puxados": 26
   },
   {
    "protegida": false,

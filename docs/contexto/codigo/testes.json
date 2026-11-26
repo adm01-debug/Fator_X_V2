@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 249,
+ "total": 250,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 234
+  "unit": 235
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 206
+   "arquivos": 207
   },
   {
    "padrao": "outro",
@@ -907,9 +907,18 @@
    "casos": 17
   },
   {
+   "arquivo": "src/test/fine-tuning-jobs.test.ts",
+   "tipo": "unit",
+   "linhas": 141,
+   "testa": [
+    "src/services/fineTuningService.ts"
+   ],
+   "casos": 5
+  },
+  {
    "arquivo": "src/test/fine-tuning-page.test.tsx",
    "tipo": "unit",
-   "linhas": 213,
+   "linhas": 223,
    "testa": [
     "src/pages/FineTuningPage.tsx",
     "src/services/fineTuningService.ts"
@@ -2506,7 +2515,7 @@
   "src/services/e2eeService.ts": 1,
   "src/services/evaluationsService.ts": 3,
   "src/services/executionHistoryService.ts": 3,
-  "src/services/fineTuningService.ts": 1,
+  "src/services/fineTuningService.ts": 2,
   "src/services/freezeWindowService.ts": 1,
   "src/services/guardrailsMLService.ts": 1,
   "src/services/healthAlertsService.ts": 1,

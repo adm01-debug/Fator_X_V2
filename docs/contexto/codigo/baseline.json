@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "71009ddc81e330fbb4290281fd68e2ef1bbaea3f",
+  "commit": "9e84381b920d8ea14146af91e12e0fdcd582e757",
   "branch": "main",
-  "data_commit": "2026-11-26T18:37:02-03:00",
+  "data_commit": "2026-11-26T18:42:26-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "9e84381",
+    "data": "2026-11-26",
+    "assunto": "feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)"
+   },
    {
     "sha": "71009dd",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "7190245",
     "data": "2026-11-24",
     "assunto": "chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)"
-   },
-   {
-    "sha": "d912348",
-    "data": "2026-11-21",
-    "assunto": "fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)"
    }
   ],
-  "arquivos_mudados_7d": 156,
+  "arquivos_mudados_7d": 157,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -294,14 +294,14 @@
     "mudancas": 3
    },
    {
-    "arquivo": "supabase/config.toml",
+    "arquivo": "src/pages/FineTuningPage.tsx",
     "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 76
+    "commits": 77
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2024,
-  "arquivos_codigo": 1467,
-  "linhas_codigo": 322490,
+  "arquivos_total": 2025,
+  "arquivos_codigo": 1468,
+  "linhas_codigo": 322883,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 249,
+  "testes": 250,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 50872
+   "linhas": 50978
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -512,15 +512,15 @@
   },
   "src/services": {
    "arquivos": 168,
-   "linhas": 33536
+   "linhas": 33672
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 200,
-   "linhas": 30164
+   "arquivos": 201,
+   "linhas": 30315
   },
   "src/tests": {
    "arquivos": 2,
@@ -671,7 +671,7 @@
   "ts_ignore": 0,
   "eslint_disable": 5,
   "todos": 16,
-  "arquivos_acima_500_linhas": 94
+  "arquivos_acima_500_linhas": 95
  },
  "todos": [
   {

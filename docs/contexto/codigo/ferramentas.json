@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1409)",
+   "TypeScript (1410)",
    "SQL (341)",
    "Markdown (134)",
    "JavaScript (54)",
@@ -1086,6 +1086,10 @@
     "arquivos": 5
    },
    {
+    "host": "huggingface.co",
+    "arquivos": 4
+   },
+   {
     "host": "api.anthropic.com",
     "arquivos": 3
    },
@@ -1143,10 +1147,6 @@
    },
    {
     "host": "gitlab.com",
-    "arquivos": 2
-   },
-   {
-    "host": "huggingface.co",
     "arquivos": 2
    },
    {

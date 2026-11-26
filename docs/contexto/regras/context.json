@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "71009ddc81e330fbb4290281fd68e2ef1bbaea3f",
+  "sha": "9e84381b920d8ea14146af91e12e0fdcd582e757",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 21:42 UTC",
-  "files_total": 2029,
-  "code_files": 1809,
-  "code_lines": 352749
+  "generated_at": "2026-11-26 21:45 UTC",
+  "files_total": 2030,
+  "code_files": 1810,
+  "code_lines": 353142
  },
  "version": "1.3.2",
- "facts_hash": "e39475aea287cc61",
+ "facts_hash": "23201b683d3b17ac",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -246,8 +246,8 @@
   ],
   "package_manager": "bun",
   "languages": {
+   ".ts": 705,
    ".tsx": 705,
-   ".ts": 704,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -51667,7 +51667,7 @@
      "invite_workspace_member",
      "is_user_locked_out"
     ],
-    "deps_count": 116
+    "deps_count": 117
    },
    {
     "path": "",
@@ -52221,12 +52221,18 @@
     "path": "",
     "file": "src/pages/FineTuningPage.tsx",
     "component": "FineTuningPage",
-    "tables_transitive": [],
+    "tables_transitive": [
+     "agents",
+     "workspace_members",
+     "workspaces"
+    ],
     "invokes_transitive": [
      "hf-autotrain"
     ],
-    "rpc_transitive": [],
-    "deps_count": 20
+    "rpc_transitive": [
+     "is_user_locked_out"
+    ],
+    "deps_count": 25
    },
    {
     "path": "",
@@ -58993,7 +58999,7 @@
   {
    "module": "src/pages",
    "files": 142,
-   "lines": 50872,
+   "lines": 50978,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -59188,7 +59194,7 @@
   {
    "module": "src/services",
    "files": 168,
-   "lines": 33536,
+   "lines": 33672,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59520,8 +59526,8 @@
   },
   {
    "module": "src/test",
-   "files": 200,
-   "lines": 30164,
+   "files": 201,
+   "lines": 30315,
    "tables": [
     "tabela"
    ],
@@ -59628,6 +59634,7 @@
     "src/test/example.test.ts",
     "src/test/execution-history.test.ts",
     "src/test/extended-services.test.ts",
+    "src/test/fine-tuning-jobs.test.ts",
     "src/test/fine-tuning-page.test.tsx",
     "src/test/forum-safe-views.test.ts",
     "src/test/freeze-window-service.test.ts",
@@ -59651,8 +59658,7 @@
     "src/test/mcp-client.test.ts",
     "src/test/memory-service.test.ts",
     "src/test/memory-tiers.test.ts",
-    "src/test/metric-card.test.tsx",
-    "src/test/metrics-embedding-coverage.test.tsx"
+    "src/test/metric-card.test.tsx"
    ]
   },
   {
@@ -64474,6 +64480,10 @@
     "count": 1
    },
    {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "count": 1
+   },
+   {
     "file": "src/test/hf-config.test.ts",
     "count": 1
    },
@@ -67476,6 +67486,11 @@
     "file": "src/services/fineTuningService.ts",
     "name": "TrainingMethod",
     "values": "lora | qlora | full"
+   },
+   {
+    "file": "src/services/fineTuningService.ts",
+    "name": "FineTuneJobStatus",
+    "values": "preparing | uploading | training | completed | failed | cancelled"
    },
    {
     "file": "src/services/gameDayService.ts",
@@ -70739,6 +70754,10 @@
     "msg": "Fine-tuning error: ${error.message}"
    },
    {
+    "file": "src/services/fineTuningService.ts",
+    "msg": "Sessão expirada — entre novamente para registrar o job"
+   },
+   {
     "file": "src/services/freezeWindowService.ts",
     "msg": "Sessão inválida"
    },
@@ -72445,6 +72464,14 @@
    {
     "file": "src/pages/CreatorPayoutsPage.tsx",
     "text": "Somente leitura: o criador vê seus próprios ciclos de payout, valores acumulados e status."
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "text": "a uma falha do Hub. Job sem registro local apenas devolve null."
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "text": "O treino já começou no Hub: falhar aqui não pode virar erro para o usuário."
    },
    {
     "file": "src/pages/IPWhitelistPage.tsx",
@@ -94958,6 +94985,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/services/fineTuningService.ts",
+    "field": "status",
+    "value": "preparing",
+    "kind": "escreve"
+   },
+   {
     "file": "src/services/healthAlertsService.ts",
     "field": "type",
     "value": "error",
@@ -105872,6 +105905,42 @@
    {
     "file": "src/test/extended-services.test.ts",
     "name": "generateTiers produces L0 and L1"
+   },
+   {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "name": "mapHubStatus"
+   },
+   {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "name": "traduz o status do Hub para o enum de finetune_jobs"
+   },
+   {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "name": "recordFineTuneJob"
+   },
+   {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "name": "grava o job com o usuário autenticado e o workspace do contexto"
+   },
+   {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "name": "recusa registrar sem sessão em vez de gravar user_id vazio"
+   },
+   {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "name": "listFineTuneJobs"
+   },
+   {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "name": "escopa no workspace e traz o mais recente primeiro"
+   },
+   {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "name": "syncFineTuneJob"
+   },
+   {
+    "file": "src/test/fine-tuning-jobs.test.ts",
+    "name": "fecha o registro com status terminal e o modelo resultante"
    },
    {
     "file": "src/test/fine-tuning-page.test.tsx",
@@ -130316,6 +130385,9 @@
       "compara:src/services/evaluationsService.ts",
       "escreve:src/services/evaluationsService.ts"
      ],
+     "preparing": [
+      "escreve:src/services/fineTuningService.ts"
+     ],
      "misconfigured": [
       "escreve:src/services/openclawDeployService.ts"
      ],
@@ -142309,6 +142381,13 @@
     "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
     "where": [
      "src/test/crm-service.test.ts"
+    ]
+   },
+   {
+    "kind": "dinâmico",
+    "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
+    "where": [
+     "src/test/fine-tuning-jobs.test.ts"
     ]
    },
    {
@@ -163328,7 +163407,7 @@
   },
   "src/pages/FineTuningPage.tsx": {
    "path": "src/pages/FineTuningPage.tsx",
-   "lines": 422,
+   "lines": 528,
    "exports": [
     "function FineTuningPage"
    ],
@@ -163373,6 +163452,10 @@
      "value": "unknown",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "a uma falha do Hub. Job sem registro local apenas devolve null.",
+    "O treino já começou no Hub: falhar aqui não pode virar erro para o usuário."
    ]
   },
   "src/pages/ForensicSnapshotsPage.tsx": {
@@ -169466,7 +169549,7 @@
   },
   "src/services/fineTuningService.ts": {
    "path": "src/services/fineTuningService.ts",
-   "lines": 95,
+   "lines": 231,
    "exports": [
     "type DatasetSource",
     "type TaskType",
@@ -169476,13 +169559,21 @@
     "function prepareDataset",
     "function startTraining",
     "function getJobStatus",
-    "function listTrainingJobs"
+    "function listTrainingJobs",
+    "type FineTuneJobStatus",
+    "interface FineTuneJobRecord",
+    "function mapHubStatus",
+    "interface RecordFineTuneJobInput",
+    "function recordFineTuneJob",
+    "function listFineTuneJobs",
+    "function syncFineTuneJob"
    ],
    "invokes": [
     "hf-autotrain"
    ],
    "errors": [
-    "Fine-tuning error: ${error.message}"
+    "Fine-tuning error: ${error.message}",
+    "Sessão expirada — entre novamente para registrar o job"
    ],
    "enums": [
     {
@@ -169496,6 +169587,17 @@
     {
      "name": "TrainingMethod",
      "values": "lora | qlora | full"
+    },
+    {
+     "name": "FineTuneJobStatus",
+     "values": "preparing | uploading | training | completed | failed | cancelled"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "preparing",
+     "kind": "escreve"
     }
    ],
    "doc": "Nexus Agents Studio — Fine-Tuning Service Wraps the hf-autotrain Edge Function for dataset preparation, training kickoff, and job status polling.",
@@ -177372,9 +177474,27 @@
     "generateTiers produces L0 and L1"
    ]
   },
+  "src/test/fine-tuning-jobs.test.ts": {
+   "path": "src/test/fine-tuning-jobs.test.ts",
+   "lines": 141,
+   "is_test": true,
+   "dyn_from": 1,
+   "doc": "fineTuningService — camada de histórico (`finetune_jobs`). A tabela existia desde 20260404210000, com RLS por workspace, e nunca era escrita: o histórico dos treinos só existia na resposta do HuggingFace Hub. Estes testes travam o que a tela passou a depender: registro com o usuário autenticado, lei …",
+   "tests": [
+    "mapHubStatus",
+    "traduz o status do Hub para o enum de finetune_jobs",
+    "recordFineTuneJob",
+    "grava o job com o usuário autenticado e o workspace do contexto",
+    "recusa registrar sem sessão em vez de gravar user_id vazio",
+    "listFineTuneJobs",
+    "escopa no workspace e traz o mais recente primeiro",
+    "syncFineTuneJob",
+    "fecha o registro com status terminal e o modelo resultante"
+   ]
+  },
   "src/test/fine-tuning-page.test.tsx": {
    "path": "src/test/fine-tuning-page.test.tsx",
-   "lines": 213,
+   "lines": 223,
    "is_test": true,
    "errors": [
     ")).toHaveTextContent(/hf-autotrain offline/i);\n  });\n\n  it("
@@ -191958,10 +192078,22 @@
   }
  },
  "git": {
-  "sha": "71009ddc81e330fbb4290281fd68e2ef1bbaea3f",
+  "sha": "9e84381b920d8ea14146af91e12e0fdcd582e757",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "9e84381",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)",
+    "files": [
+     "src/pages/FineTuningPage.tsx",
+     "src/services/fineTuningService.ts",
+     "src/test/fine-tuning-jobs.test.ts",
+     "src/test/fine-tuning-page.test.tsx"
+    ]
+   },
    {
     "sha": "71009dd",
     "date": "2026-11-26",
@@ -192282,22 +192414,12 @@
      "src/test/whatsapp-outbound.test.ts",
      "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql"
     ]
-   },
-   {
-    "sha": "35f15a7",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix(rag): aceita service role e fallback OpenRouter no rag-embed-v2 (#141)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/rag-embed-v2/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    7
+    6
    ],
    [
     "package-lock.json",
@@ -192308,19 +192430,23 @@
     4
    ],
    [
+    "src/pages/FineTuningPage.tsx",
+    3
+   ],
+   [
+    "src/test/fine-tuning-page.test.tsx",
+    3
+   ],
+   [
     "docs/migration/MATRIZ_EDGE_TABELA.md",
     3
    ],
    [
+    "src/services/fineTuningService.ts",
+    2
+   ],
+   [
     "src/test/forum-safe-views.test.ts",
-    2
-   ],
-   [
-    "src/pages/FineTuningPage.tsx",
-    2
-   ],
-   [
-    "src/test/fine-tuning-page.test.tsx",
     2
    ],
    [
@@ -192338,6 +192464,10 @@
    [
     "src/test/whatsapp-outbound.test.ts",
     2
+   ],
+   [
+    "src/test/fine-tuning-jobs.test.ts",
+    1
    ],
    [
     "src/components/settings/HuggingFaceTab.tsx",
@@ -192365,14 +192495,6 @@
    ],
    [
     "supabase/functions/llm-gateway/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/rag-rerank/index.ts",
-    1
-   ],
-   [
-    "src/App.tsx",
     1
    ]
   ]
