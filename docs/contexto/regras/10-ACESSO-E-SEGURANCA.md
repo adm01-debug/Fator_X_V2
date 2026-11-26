@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c3acdb4fb` · branch `main` · 2026-11-26 12:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ccf216da33` · branch `main` · 2026-11-26 13:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -771,6 +771,8 @@ Middleware matcher (Next.js): nenhum
 | `compliance_controls` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | `compliance_frameworks` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | `forensic_snapshots` | acessada do front (2 arquivo(s)) sem RLS (não encontrado) | `src/pages/ForensicSnapshotsPage.tsx`<br>`src/pages/ReplayForkPage.tsx` |
+| `forum_posts_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
+| `forum_threads_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | `oncall_schedule_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/incidentService.ts` |
 | `prompt_versions` | acessada do front (3 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeService.ts`<br>`src/services/promptVersionService.ts`<br>`src/stores/agentBuilderStore.ts` |
 | `workspace_members_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/teamsService.ts` |

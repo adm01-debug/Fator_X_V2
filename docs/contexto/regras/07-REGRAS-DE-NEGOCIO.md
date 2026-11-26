@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c3acdb4fb` · branch `main` · 2026-11-26 12:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ccf216da33` · branch `main` · 2026-11-26 13:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4024,7 +4024,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3040 testes em 216 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3045 testes em 217 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4209,6 +4209,7 @@ _nenhum item encontrado_
 | `src/test/architecture-dual-client.test.ts` | 5 | arquitetura dual-client · fromTable() resolve para o banco EXTERNO, não para o de auth · rpcCall() resolve para o banco EXTERNO · isUserLockedOut permanece no client LOCAL (é auth, não dado) … |
 | `src/test/auth-context-signin.test.tsx` | 5 | signIn preserva o resultado de autenticação ao registrar auditoria · aguarda builder thenable sem exigir método catch · falha do registro não bloqueia login válido · falha de autenticação é preservada mesmo se o registro rejeitar … |
 | `src/test/chat-message-bubble.test.tsx` | 5 | MessageBubble — sanitization · não executa <script> em payload malicioso · bloqueia <iframe> · renderiza anexos como links clicáveis com nome e tamanho … |
+| `src/test/forum-safe-views.test.ts` | 5 | knowledgeManagementService — fórum público pelas views seguras · listThreads lê a view mascarada e filtra pelo help center · listPosts lê a view mascarada de posts · getThread lê a view e incrementa view_count na tabela base … |
 | `src/test/guardrails-ml-service.test.ts` | 5 | guardrailsMLService · checkInput returns guardrail response · checkOutput returns guardrail response · isTextSafe returns boolean … |
 | `src/test/health-alerts-service.test.ts` | 5 | healthAlertsService · checkOnce runs without error · getCurrentState returns state shape · start and stop manage polling … |
 | `src/test/memory-tiers.test.ts` | 5 | computeTier (Autograph) · pinned sempre retorna core · mapeia relevância aos 5 tiers · valores inválidos caem em archive … |

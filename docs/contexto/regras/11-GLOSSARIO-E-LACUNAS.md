@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c3acdb4fb` · branch `main` · 2026-11-26 12:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ccf216da33` · branch `main` · 2026-11-26 13:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -431,6 +431,8 @@ _nenhum item encontrado_
 | rls | `compliance_controls`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | rls | `compliance_frameworks`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | rls | `forensic_snapshots`: acessada do front (2 arquivo(s)) sem RLS (não encontrado) | `src/pages/ForensicSnapshotsPage.tsx`<br>`src/pages/ReplayForkPage.tsx` |
+| rls | `forum_posts_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
+| rls | `forum_threads_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | rls | `oncall_schedule_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/incidentService.ts` |
 | rls | `prompt_versions`: acessada do front (3 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeService.ts`<br>`src/services/promptVersionService.ts`<br>`src/stores/agentBuilderStore.ts` |
 | rls | `workspace_members_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/teamsService.ts` |

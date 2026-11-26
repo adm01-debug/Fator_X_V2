@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3c3acdb4fb482d2e1b752d028ab559f611a9d379",
+  "sha": "ccf216da33578438390a021cca5ee65c56f96cf0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 12:43 UTC",
-  "files_total": 2017,
-  "code_files": 1798,
-  "code_lines": 350231
+  "generated_at": "2026-11-26 13:14 UTC",
+  "files_total": 2018,
+  "code_files": 1799,
+  "code_lines": 350335
  },
  "version": "1.3.2",
- "facts_hash": "f9b31a51dca1238d",
+ "facts_hash": "5c0b3cfb7ecffd0e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -243,7 +243,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 702,
-   ".ts": 696,
+   ".ts": 697,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -51530,7 +51530,9 @@
     "component": "ArticleEditorPage",
     "tables_transitive": [
      "forum_posts",
+     "forum_posts_safe",
      "forum_threads",
+     "forum_threads_safe",
      "help_centers",
      "kb_article_versions",
      "kb_articles",
@@ -52401,7 +52403,9 @@
      "collections",
      "documents",
      "forum_posts",
+     "forum_posts_safe",
      "forum_threads",
+     "forum_threads_safe",
      "help_centers",
      "kb_article_versions",
      "kb_articles",
@@ -52843,7 +52847,9 @@
     "tables_transitive": [
      "auth_attempts",
      "forum_posts",
+     "forum_posts_safe",
      "forum_threads",
+     "forum_threads_safe",
      "help_centers",
      "kb_article_versions",
      "kb_articles",
@@ -52864,7 +52870,9 @@
     "component": "PublicHelpCenterPage",
     "tables_transitive": [
      "forum_posts",
+     "forum_posts_safe",
      "forum_threads",
+     "forum_threads_safe",
      "help_centers",
      "kb_article_versions",
      "kb_articles",
@@ -59129,7 +59137,7 @@
   {
    "module": "src/services",
    "files": 166,
-   "lines": 33000,
+   "lines": 33031,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59176,7 +59184,9 @@
     "evaluation_datasets",
     "evaluation_runs",
     "forum_posts",
+    "forum_posts_safe",
     "forum_threads",
+    "forum_threads_safe",
     "freeze_windows",
     "game_day_events",
     "game_day_scorecards",
@@ -59457,8 +59467,8 @@
   },
   {
    "module": "src/test",
-   "files": 194,
-   "lines": 29370,
+   "files": 195,
+   "lines": 29443,
    "tables": [
     "tabela"
    ],
@@ -59566,6 +59576,7 @@
     "src/test/execution-history.test.ts",
     "src/test/extended-services.test.ts",
     "src/test/fine-tuning-page.test.tsx",
+    "src/test/forum-safe-views.test.ts",
     "src/test/freeze-window-service.test.ts",
     "src/test/frontmatter.test.ts",
     "src/test/genai-protocol-panel.test.tsx",
@@ -59588,8 +59599,7 @@
     "src/test/metric-card.test.tsx",
     "src/test/middleware-pipeline.test.ts",
     "src/test/model-router-service.test.ts",
-    "src/test/monitoring-service.test.ts",
-    "src/test/multi-agent-e2e.test.ts"
+    "src/test/monitoring-service.test.ts"
    ]
   },
   {
@@ -60922,24 +60932,34 @@
     ]
    },
    "forum_posts": {
-    "select": [
+    "insert": [
      "src/services/knowledgeManagementService.ts"
     ],
-    "insert": [
+    "select": [
      "src/services/knowledgeManagementService.ts"
     ],
     "update": [
      "src/services/knowledgeManagementService.ts"
     ]
    },
-   "forum_threads": {
+   "forum_posts_safe": {
     "select": [
      "src/services/knowledgeManagementService.ts"
-    ],
+    ]
+   },
+   "forum_threads": {
     "update": [
      "src/services/knowledgeManagementService.ts"
     ],
     "insert": [
+     "src/services/knowledgeManagementService.ts"
+    ],
+    "select": [
+     "src/services/knowledgeManagementService.ts"
+    ]
+   },
+   "forum_threads_safe": {
+    "select": [
      "src/services/knowledgeManagementService.ts"
     ]
    },
@@ -62594,14 +62614,17 @@
     "step_index"
    ],
    "forum_posts": [
-    "id",
-    "is_published",
+    "id"
+   ],
+   "forum_posts_safe": [
     "thread_id"
    ],
    "forum_threads": [
+    "id"
+   ],
+   "forum_threads_safe": [
     "help_center_id",
-    "id",
-    "is_published"
+    "id"
    ],
    "freeze_windows": [
     "id",
@@ -64930,9 +64953,7 @@
    "execution_history",
    "finetune_jobs",
    "forum_posts_public",
-   "forum_posts_safe",
    "forum_threads_public",
-   "forum_threads_safe",
    "hf_config",
    "index_usage_snapshots",
    "installed_templates",
@@ -105745,6 +105766,26 @@
     "name": "prepara o dataset a partir das traces do agente"
    },
    {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "knowledgeManagementService — fórum público pelas views seguras"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "listThreads lê a view mascarada e filtra pelo help center"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "listPosts lê a view mascarada de posts"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "getThread lê a view e incrementa view_count na tabela base"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "devolve lista vazia (e não explode) quando a view não retorna linhas"
+   },
+   {
     "file": "src/test/freeze-window-service.test.ts",
     "name": "freezeWindowService"
    },
@@ -134763,6 +134804,20 @@
     ]
    },
    {
+    "table": "forum_posts_safe",
+    "issue": "acessada do front (1 arquivo(s)) sem RLS (não encontrado)",
+    "files": [
+     "src/services/knowledgeManagementService.ts"
+    ]
+   },
+   {
+    "table": "forum_threads_safe",
+    "issue": "acessada do front (1 arquivo(s)) sem RLS (não encontrado)",
+    "files": [
+     "src/services/knowledgeManagementService.ts"
+    ]
+   },
+   {
     "table": "oncall_schedule_safe",
     "issue": "acessada do front (1 arquivo(s)) sem RLS (não encontrado)",
     "files": [
@@ -141681,6 +141736,20 @@
     "where": [
      "src/pages/ForensicSnapshotsPage.tsx",
      "src/pages/ReplayForkPage.tsx"
+    ]
+   },
+   {
+    "kind": "rls",
+    "msg": "`forum_posts_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado)",
+    "where": [
+     "src/services/knowledgeManagementService.ts"
+    ]
+   },
+   {
+    "kind": "rls",
+    "msg": "`forum_threads_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado)",
+    "where": [
+     "src/services/knowledgeManagementService.ts"
     ]
    },
    {
@@ -169679,7 +169748,7 @@
   },
   "src/services/knowledgeManagementService.ts": {
    "path": "src/services/knowledgeManagementService.ts",
-   "lines": 329,
+   "lines": 360,
    "exports": [
     "function listHelpCenters",
     "function getHelpCenterBySlug",
@@ -169702,6 +169771,8 @@
     "function listQueryGaps",
     "function analyzeQueryGaps",
     "function updateGapStatus",
+    "interface ForumThreadRow",
+    "interface ForumPostRow",
     "function listThreads",
     "function getThread",
     "function listPosts",
@@ -169791,11 +169862,11 @@
      "op": "update"
     },
     {
-     "table": "forum_threads",
+     "table": "forum_threads_safe",
      "op": "select"
     },
     {
-     "table": "forum_threads",
+     "table": "forum_threads_safe",
      "op": "select"
     },
     {
@@ -169803,7 +169874,7 @@
      "op": "update"
     },
     {
-     "table": "forum_posts",
+     "table": "forum_posts_safe",
      "op": "select"
     },
     {
@@ -169856,15 +169927,18 @@
      "id",
      "knowledge_base_id"
     ],
-    "forum_threads": [
+    "forum_threads_safe": [
      "help_center_id",
-     "id",
-     "is_published"
+     "id"
+    ],
+    "forum_threads": [
+     "id"
+    ],
+    "forum_posts_safe": [
+     "thread_id"
     ],
     "forum_posts": [
-     "id",
-     "is_published",
-     "thread_id"
+     "id"
     ]
    },
    "invokes": [
@@ -176816,6 +176890,19 @@
     "recusa iniciar sem nome e nao chama o servico",
     "propaga para o usuario o erro devolvido pelo servico",
     "prepara o dataset a partir das traces do agente"
+   ]
+  },
+  "src/test/forum-safe-views.test.ts": {
+   "path": "src/test/forum-safe-views.test.ts",
+   "lines": 73,
+   "is_test": true,
+   "doc": "forum: leitura pública pelas views com máscara de PII. `listThreads`, `getThread` e `listPosts` liam as tabelas cruas com `select('*')` numa página pública — o `author_name` podia conter e-mail e as views `forum_threads_safe`/`forum_posts_safe` (que trocam por 'Membro') existiam sem uso. Este teste …",
+   "tests": [
+    "knowledgeManagementService — fórum público pelas views seguras",
+    "listThreads lê a view mascarada e filtra pelo help center",
+    "listPosts lê a view mascarada de posts",
+    "getThread lê a view e incrementa view_count na tabela base",
+    "devolve lista vazia (e não explode) quando a view não retorna linhas"
    ]
   },
   "src/test/freeze-window-service.test.ts": {
@@ -191270,10 +191357,20 @@
   }
  },
  "git": {
-  "sha": "3c3acdb4fb482d2e1b752d028ab559f611a9d379",
+  "sha": "ccf216da33578438390a021cca5ee65c56f96cf0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "ccf216d",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)",
+    "files": [
+     "src/services/knowledgeManagementService.ts",
+     "src/test/forum-safe-views.test.ts"
+    ]
+   },
    {
     "sha": "3c3acdb",
     "date": "2026-11-26",
@@ -191593,19 +191690,6 @@
      "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
      "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql"
     ]
-   },
-   {
-    "sha": "b571324",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)",
-    "files": [
-     "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
-     "supabase/migrations/20260905120000_rls_complete_reconciliation.sql",
-     "supabase/migrations/20260905140000_security_hotfix_validation.sql",
-     "supabase/migrations/20261114093000_rls_policies_17_tabelas.sql",
-     "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -191666,8 +191750,12 @@
     2
    ],
    [
-    "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
-    2
+    "src/services/knowledgeManagementService.ts",
+    1
+   ],
+   [
+    "src/test/forum-safe-views.test.ts",
+    1
    ],
    [
     "src/components/monitoring/GenAIProtocolPanel.tsx",
@@ -191683,10 +191771,6 @@
    ],
    [
     "src/test/genai-protocol-panel.test.tsx",
-    1
-   ],
-   [
-    "src/services/fineTuningService.ts",
     1
    ]
   ]

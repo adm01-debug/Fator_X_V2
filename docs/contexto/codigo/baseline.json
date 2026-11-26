@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3c3acdb4fb482d2e1b752d028ab559f611a9d379",
+  "commit": "ccf216da33578438390a021cca5ee65c56f96cf0",
   "branch": "main",
-  "data_commit": "2026-11-26T09:42:37-03:00",
+  "data_commit": "2026-11-26T10:08:40-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "ccf216d",
+    "data": "2026-11-26",
+    "assunto": "fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)"
+   },
    {
     "sha": "3c3acdb",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "665b599",
     "data": "2026-11-21",
     "assunto": "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)"
-   },
-   {
-    "sha": "15ba85e",
-    "data": "2026-11-21",
-    "assunto": "chore: remove BITRIX24_WEBHOOK_TOKEN fantasma do env.example (#136)"
    }
   ],
-  "arquivos_mudados_7d": 132,
+  "arquivos_mudados_7d": 134,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 67
+    "commits": 68
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2012,
-  "arquivos_codigo": 1456,
-  "linhas_codigo": 319972,
+  "arquivos_total": 2013,
+  "arquivos_codigo": 1457,
+  "linhas_codigo": 320076,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 243,
+  "testes": 244,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -512,15 +512,15 @@
   },
   "src/services": {
    "arquivos": 166,
-   "linhas": 33000
+   "linhas": 33031
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 194,
-   "linhas": 29370
+   "arquivos": 195,
+   "linhas": 29443
   },
   "src/tests": {
    "arquivos": 2,

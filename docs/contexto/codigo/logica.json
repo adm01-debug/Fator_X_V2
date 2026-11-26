@@ -6448,6 +6448,8 @@
    "arquivo": "src/services/knowledgeManagementService.ts",
    "camada": "services",
    "exports": [
+    "ForumPostRow",
+    "ForumThreadRow",
     "analyzeQueryGaps",
     "createArticle",
     "createHelpCenter",
@@ -6477,10 +6479,12 @@
     "updateHelpCenter"
    ],
    "export_default": null,
-   "linhas": 329,
+   "linhas": 360,
    "tabelas": [
     "forum_posts",
+    "forum_posts_safe",
     "forum_threads",
+    "forum_threads_safe",
     "help_centers",
     "kb_article_versions",
     "kb_articles",
@@ -6501,7 +6505,7 @@
    "usado_por_modulos": [
     "pages"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {

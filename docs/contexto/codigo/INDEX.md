@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3c3acdb4fb482d2e1b752d028ab559f611a9d379` (2026-11-26T09:42:37-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ccf216da33578438390a021cca5ee65c56f96cf0` (2026-11-26T10:08:40-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1398), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (17), Shell (10), Python (5)
+- linguagens: TypeScript (1399), SQL (341), Markdown (134), JavaScript (54), JSON (24), YAML (17), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2012 |
-| arquivos_codigo | 1456 |
-| linhas_codigo | 319972 |
+| arquivos_total | 2013 |
+| arquivos_codigo | 1457 |
+| linhas_codigo | 320076 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 327 |
 | migrations | 338 |
 | cron_jobs | 37 |
-| testes | 243 |
+| testes | 244 |
 | workflows | 11 |
 | scripts | 45 |
 | docs_md | 134 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (517), src/pages (141), src/App.tsx (1)
 - hooks: src/hooks (43), src/components (9), src/services (9)
 - servicos_logica: src/services (166), src/lib (90), src/stores (12)
-- testes: co-localizado (*.test) (200), outro (23), e2e/ (9)
+- testes: co-localizado (*.test) (201), outro (23), e2e/ (9)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (11), scripts/inventario (4), scripts/maintenance (4)
@@ -94,11 +94,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | config | 0 | 0 | 10 | 0 | 0 | 0 |
 | data | 0 | 0 | 5 | 0 | 0 | 0 |
 | hooks | 0 | 0 | 44 | 67 | 14 | 33 |
-| lib | 0 | 0 | 45 | 85 | 63 | 119 |
+| lib | 0 | 0 | 45 | 85 | 63 | 121 |
 | lib/skills | 0 | 0 | 19 | 0 | 0 | 2 |
 | lib/validations | 0 | 0 | 12 | 0 | 0 | 0 |
-| pages | 114 | 151 | 141 | 95 | 75 | 151 |
-| services | 0 | 0 | 146 | 28 | 59 | 118 |
+| pages | 114 | 151 | 141 | 95 | 75 | 153 |
+| services | 0 | 0 | 146 | 28 | 59 | 120 |
 | services/presets | 0 | 0 | 5 | 0 | 0 | 0 |
 | services/types | 0 | 0 | 15 | 0 | 0 | 0 |
 | stores | 0 | 0 | 10 | 0 | 1 | 6 |
@@ -432,8 +432,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14574 nós · 38513 arestas · 941 comunidades · grafo do commit `3c3acdb4`
-- comunidades maiores: lucide-react (335), button.tsx (334), react (243), ref_https (194), App.tsx (158), VendorsPage.tsx (156), cn (128), logger.ts (125), AgentDetailPage.tsx (108), whatsapp-webhook/index.ts (101), agent-workflow-runner/index.ts (96), mod.ts (94)
+- 14578 nós · 38523 arestas · 907 comunidades · grafo do commit `ccf216da`
+- comunidades maiores: lucide-react (352), react (257), agentTypes.ts (252), sonner (239), ref_https (207), logger.ts (164), App.tsx (152), Button (143), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (136), SuperCerebroPage.tsx (136), cn (131), fetchWithTimeout (109)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -579,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `ccf216d` fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)
 - 2026-11-26 `3c3acdb` feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)
 - 2026-11-26 `b2f4e91` feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)
 - 2026-11-26 `ed56e32` feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)
@@ -593,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `cbe4351` chore(deps)(deps): bump @sentry/react (#151)
 - 2026-11-24 `b1ace07` chore(deps)(deps): bump @supabase/supabase-js (#149)
 - 2026-11-24 `796a52c` chore(deps)(deps): bump react-router-dom (#148)
-- 2026-11-24 `7190245` chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

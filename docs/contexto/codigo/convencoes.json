@@ -21,7 +21,7 @@
    "src/stores (12)"
   ],
   "testes": [
-   "co-localizado (*.test) (200)",
+   "co-localizado (*.test) (201)",
    "outro (23)",
    "e2e/ (9)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)",
    "feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)",
    "feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)",
    "feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)",
-   "fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)",
-   "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)"
+   "fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
