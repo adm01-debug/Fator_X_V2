@@ -58,6 +58,7 @@
     "auth_attempts",
     "guardrail_policies",
     "security_alerts",
+    "security_events",
     "user_roles",
     "workspace_members",
     "workspace_secrets"
@@ -1459,6 +1460,7 @@
     "oracle_history",
     "prompt_versions",
     "security_alerts",
+    "security_events",
     "session_traces",
     "sessions",
     "skill_registry",
@@ -2774,6 +2776,7 @@
     "auth_attempts",
     "guardrail_policies",
     "security_alerts",
+    "security_events",
     "user_roles",
     "workspace_members",
     "workspace_secrets"
@@ -3010,6 +3013,7 @@
     "deploy_connections",
     "guardrail_policies",
     "security_alerts",
+    "security_events",
     "session_traces",
     "sessions",
     "trace_events",
@@ -5243,6 +5247,7 @@
     "knowledge_bases",
     "prompt_versions",
     "security_alerts",
+    "security_events",
     "vector_indexes",
     "workspace_members",
     "workspace_secrets"
@@ -5750,6 +5755,7 @@
     "ip_whitelist",
     "openclaw_events",
     "security_alerts",
+    "security_events",
     "user_2fa",
     "user_roles",
     "workspace_members",
@@ -5776,7 +5782,7 @@
     "admin",
     "workspace_admin"
    ],
-   "arquivos_puxados": 59
+   "arquivos_puxados": 60
   },
   {
    "protegida": true,
@@ -6722,6 +6728,7 @@
     "environments",
     "guardrail_policies",
     "security_alerts",
+    "security_events",
     "user_roles",
     "workspace_members",
     "workspace_secrets",
@@ -7868,6 +7875,7 @@
     "auth_attempts",
     "guardrail_policies",
     "security_alerts",
+    "security_events",
     "skill_registry",
     "tool_integrations",
     "user_roles",

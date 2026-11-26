@@ -2463,6 +2463,13 @@
    "src/components/ui/card.tsx",
    "src/integrations/supabase/externalClient.ts"
   ],
+  "src/components/security/SecurityEventsPanel.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/hooks/useRBAC.ts",
+   "src/lib/utils.ts",
+   "src/services/securityService.ts"
+  ],
   "src/components/security/SecurityMonitoringPanel.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -5713,6 +5720,7 @@
    "src/components/security/RateLimitingPanel.tsx",
    "src/components/security/RedTeamingPanel.tsx",
    "src/components/security/RollbackRateCard.tsx",
+   "src/components/security/SecurityEventsPanel.tsx",
    "src/components/security/SecurityMonitoringPanel.tsx",
    "src/components/security/SecurityPosture.tsx",
    "src/components/security/SessionManagement.tsx",

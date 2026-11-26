@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9e84381b920d8ea14146af91e12e0fdcd582e757",
+  "sha": "aae4b7bd027294716a6da9308715f7e4ff2a9f9a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 21:45 UTC",
-  "files_total": 2030,
-  "code_files": 1810,
-  "code_lines": 353142
+  "generated_at": "2026-11-26 21:55 UTC",
+  "files_total": 2032,
+  "code_files": 1812,
+  "code_lines": 353421
  },
  "version": "1.3.2",
- "facts_hash": "23201b683d3b17ac",
+ "facts_hash": "bf8ad354f681fcae",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -246,8 +246,8 @@
   ],
   "package_manager": "bun",
   "languages": {
+   ".tsx": 707,
    ".ts": 705,
-   ".tsx": 705,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -51615,6 +51615,7 @@
      "oracle_history",
      "prompt_versions",
      "security_alerts",
+     "security_events",
      "session_traces",
      "sessions",
      "skill_registry",
@@ -52052,6 +52053,7 @@
      "auth_attempts",
      "guardrail_policies",
      "security_alerts",
+     "security_events",
      "user_roles",
      "workspace_members",
      "workspace_secrets"
@@ -52111,6 +52113,7 @@
      "deploy_connections",
      "guardrail_policies",
      "security_alerts",
+     "security_events",
      "session_traces",
      "sessions",
      "trace_events",
@@ -52859,6 +52862,7 @@
      "knowledge_bases",
      "prompt_versions",
      "security_alerts",
+     "security_events",
      "vector_indexes",
      "workspace_members",
      "workspace_secrets"
@@ -53088,6 +53092,7 @@
      "ip_whitelist",
      "openclaw_events",
      "security_alerts",
+     "security_events",
      "user_2fa",
      "user_roles",
      "workspace_members",
@@ -53106,7 +53111,7 @@
      "get_wal_generation_rate",
      "is_user_locked_out"
     ],
-    "deps_count": 58
+    "deps_count": 59
    },
    {
     "path": "",
@@ -53119,6 +53124,7 @@
      "environments",
      "guardrail_policies",
      "security_alerts",
+     "security_events",
      "user_roles",
      "workspace_members",
      "workspace_secrets",
@@ -53389,6 +53395,7 @@
      "auth_attempts",
      "guardrail_policies",
      "security_alerts",
+     "security_events",
      "skill_registry",
      "tool_integrations",
      "user_roles",
@@ -57409,7 +57416,7 @@
     "file": ".github/workflows/inventario-estado-semanal.yml"
    }
   ],
-  "components_count": 558,
+  "components_count": 559,
   "hooks": [
    {
     "name": "useContacts",
@@ -58336,8 +58343,8 @@
   },
   {
    "module": "src/components",
-   "files": 558,
-   "lines": 104469,
+   "files": 559,
+   "lines": 104605,
    "tables": [
     "agent_templates",
     "agent_traces",
@@ -58999,7 +59006,7 @@
   {
    "module": "src/pages",
    "files": 142,
-   "lines": 50978,
+   "lines": 50980,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -59194,7 +59201,7 @@
   {
    "module": "src/services",
    "files": 168,
-   "lines": 33672,
+   "lines": 33700,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59289,6 +59296,7 @@
     "sbom_snapshots",
     "secret_rotation_events",
     "security_alerts",
+    "security_events",
     "session_traces",
     "sessions",
     "skill_harvest_candidates",
@@ -59526,8 +59534,8 @@
   },
   {
    "module": "src/test",
-   "files": 201,
-   "lines": 30315,
+   "files": 202,
+   "lines": 30428,
    "tables": [
     "tabela"
    ],
@@ -61663,6 +61671,9 @@
     ]
    },
    "security_events": {
+    "select": [
+     "src/services/securityService.ts"
+    ],
     "insert": [
      "supabase/functions/lgpd-manager/index.ts"
     ]
@@ -71842,6 +71853,14 @@
     "text": "Check permission"
    },
    {
+    "file": "src/components/security/SecurityEventsPanel.tsx",
+    "text": "* Fonte: tabela escrita apenas pelo service_role (hoje só `lgpd-manager`, que"
+   },
+   {
+    "file": "src/components/security/SecurityEventsPanel.tsx",
+    "text": "eventos\" ou \"sem permissão\" — o painel diz qual dos dois."
+   },
+   {
     "file": "src/components/shared/ManualCopyDialog.tsx",
     "text": "(insecure contexts, permission policy, focus issues, restrictive iframes)."
    },
@@ -72652,6 +72671,14 @@
    {
     "file": "src/services/replayForkService.ts",
     "text": "Each snapshot's previous_hash must match the prior snapshot's chain_hash."
+   },
+   {
+    "file": "src/services/securityService.ts",
+    "text": "A RLS libera a leitura apenas para admin do workspace, então lista vazia"
+   },
+   {
+    "file": "src/services/securityService.ts",
+    "text": "pode significar \"sem eventos\" ou \"sem permissão\": quem chama deve dizer qual."
    },
    {
     "file": "src/services/shareService.ts",
@@ -108907,6 +108934,30 @@
     "name": "is:daily detecta título com data ISO"
    },
    {
+    "file": "src/test/security-events-panel.test.tsx",
+    "name": "SecurityEventsPanel"
+   },
+   {
+    "file": "src/test/security-events-panel.test.tsx",
+    "name": "mostra o evento com a severidade real, o IP e o autor"
+   },
+   {
+    "file": "src/test/security-events-panel.test.tsx",
+    "name": "lê o evento sem filtro na abertura"
+   },
+   {
+    "file": "src/test/security-events-panel.test.tsx",
+    "name": "filtra por severidade ao clicar em Críticos"
+   },
+   {
+    "file": "src/test/security-events-panel.test.tsx",
+    "name": "explica a lista vazia de admin sem eventos"
+   },
+   {
+    "file": "src/test/security-events-panel.test.tsx",
+    "name": "não confunde RLS com ausência de eventos para quem não é admin"
+   },
+   {
     "file": "src/test/security-guards.test.ts",
     "name": "detectAndRedactPII"
    },
@@ -109060,7 +109111,11 @@
    },
    {
     "file": "src/test/security-service.test.ts",
-    "name": "lê da view segura audit_log_safe e normaliza action → event_type"
+    "name": "lê a tabela security_events com a severidade real, sem inventar "
+   },
+   {
+    "file": "src/test/security-service.test.ts",
+    "name": "filtra por severidade só quando informada"
    },
    {
     "file": "src/test/security-service.test.ts",
@@ -135241,11 +135296,13 @@
    "scripts/supabase_snapshot/snapshot.py",
    "src/components/crm/CadenceRunsPanel.tsx",
    "src/components/security/RedTeamingPanel.tsx",
+   "src/components/security/SecurityEventsPanel.tsx",
    "src/pages/DeploymentsPage.tsx",
    "src/pages/PartitioningDocsPage.tsx",
    "src/services/crmCadenceService.ts",
    "src/services/presets/connectorPresets.ts",
    "src/services/presets/credentialPresets.ts",
+   "src/services/securityService.ts",
    "supabase/functions/_shared/auth.ts",
    "supabase/functions/_shared/breakerEvents.ts",
    "supabase/functions/_shared/otel.ts",
@@ -152408,6 +152465,19 @@
     "* Threshold saudável < 1% acumulado e < 10/min. Refresh a cada 60s."
    ]
   },
+  "src/components/security/SecurityEventsPanel.tsx": {
+   "path": "src/components/security/SecurityEventsPanel.tsx",
+   "lines": 136,
+   "exports": [
+    "function SecurityEventsPanel"
+   ],
+   "rule_comments": [
+    "* Fonte: tabela escrita apenas pelo service_role (hoje só `lgpd-manager`, que",
+    "eventos\" ou \"sem permissão\" — o painel diz qual dos dois."
+   ],
+   "doc": "SecurityEventsPanel — trilha real de `public.security_events`. Fonte: tabela escrita apenas pelo service_role (hoje só `lgpd-manager`, que registra toda ação LGPD — exportação, exclusão, consentimento). A RLS libera SELECT só para admin do workspace, então lista vazia pode significar \"sem eventos\" o …",
+   "uses_service_role": true
+  },
   "src/components/security/SecurityMonitoringPanel.test.tsx": {
    "path": "src/components/security/SecurityMonitoringPanel.test.tsx",
    "lines": 38,
@@ -164923,7 +164993,7 @@
   },
   "src/pages/SecurityPage.tsx": {
    "path": "src/pages/SecurityPage.tsx",
-   "lines": 275,
+   "lines": 277,
    "exports": [
     "function SecurityPage"
    ],
@@ -172883,11 +172953,12 @@
   },
   "src/services/securityService.ts": {
    "path": "src/services/securityService.ts",
-   "lines": 423,
+   "lines": 451,
    "exports": [
     "function listApiKeys",
     "function createApiKey",
     "function revokeApiKey",
+    "interface SecurityEventRow",
     "function getSecurityEvents",
     "function getSecurityAlerts",
     "function resolveSecurityAlert",
@@ -172922,6 +172993,10 @@
     {
      "table": "api_keys",
      "op": "update"
+    },
+    {
+     "table": "security_events",
+     "op": "select"
     },
     {
      "table": "security_alerts",
@@ -173018,11 +173093,16 @@
      "kind": "compara"
     }
    ],
+   "rule_comments": [
+    "A RLS libera a leitura apenas para admin do workspace, então lista vazia",
+    "pode significar \"sem eventos\" ou \"sem permissão\": quem chama deve dizer qual."
+   ],
    "doc": "Nexus Agents Studio — Security Service API keys, security events, audit trail, guardrails, sessions, posture.",
    "pagination": [
     "1",
     "100"
-   ]
+   ],
+   "uses_service_role": true
   },
   "src/services/settingsService.ts": {
    "path": "src/services/settingsService.ts",
@@ -178825,6 +178905,20 @@
     "is:daily detecta título com data ISO"
    ]
   },
+  "src/test/security-events-panel.test.tsx": {
+   "path": "src/test/security-events-panel.test.tsx",
+   "lines": 94,
+   "is_test": true,
+   "doc": "SecurityEventsPanel — a trilha real de `security_events`. Antes deste painel, `getSecurityEvents` lia `audit_log_safe` e carimbava `severity: 'info'` em tudo: a severidade real (o `critical` de uma exclusão LGPD, por exemplo) nunca chegava a tela porque não havia tela. Estes testes travam as duas po …",
+   "tests": [
+    "SecurityEventsPanel",
+    "mostra o evento com a severidade real, o IP e o autor",
+    "lê o evento sem filtro na abertura",
+    "filtra por severidade ao clicar em Críticos",
+    "explica a lista vazia de admin sem eventos",
+    "não confunde RLS com ausência de eventos para quem não é admin"
+   ]
+  },
   "src/test/security-guards.test.ts": {
    "path": "src/test/security-guards.test.ts",
    "lines": 142,
@@ -178858,7 +178952,7 @@
   },
   "src/test/security-service.test.ts": {
    "path": "src/test/security-service.test.ts",
-   "lines": 245,
+   "lines": 264,
    "is_test": true,
    "rule_comments": [
     "`supabase` apenas para auth. Ambos são mockados com chaves distintas para",
@@ -178879,7 +178973,8 @@
     "aplica o filtro de não-resolvidos apenas quando solicitado",
     "degrada para lista vazia em erro — painel não pode quebrar",
     "getSecurityEvents",
-    "lê da view segura audit_log_safe e normaliza action → event_type",
+    "lê a tabela security_events com a severidade real, sem inventar ",
+    "filtra por severidade só quando informada",
     "degrada para lista vazia em erro",
     "getAuditLog",
     "filtra por usuário quando informado e usa limite padrão de 100",
@@ -192078,10 +192173,23 @@
   }
  },
  "git": {
-  "sha": "9e84381b920d8ea14146af91e12e0fdcd582e757",
+  "sha": "aae4b7bd027294716a6da9308715f7e4ff2a9f9a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "aae4b7b",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: expõe a trilha real de security_events no Audit Trail (#173)",
+    "files": [
+     "src/components/security/SecurityEventsPanel.tsx",
+     "src/pages/SecurityPage.tsx",
+     "src/services/securityService.ts",
+     "src/test/security-events-panel.test.tsx",
+     "src/test/security-service.test.ts"
+    ]
+   },
    {
     "sha": "9e84381",
     "date": "2026-11-26",
@@ -192401,19 +192509,6 @@
      "supabase/deployment-manifest.json",
      "supabase/functions/whatsapp-outbound/index.ts"
     ]
-   },
-   {
-    "sha": "fbe64ee",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)",
-    "files": [
-     "src/integrations/supabase/types.ts",
-     "src/services/settingsService.ts",
-     "src/services/whatsappOutboundService.ts",
-     "src/test/whatsapp-outbound.test.ts",
-     "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -192458,12 +192553,24 @@
     2
    ],
    [
-    "src/services/whatsappOutboundService.ts",
-    2
+    "src/components/security/SecurityEventsPanel.tsx",
+    1
    ],
    [
-    "src/test/whatsapp-outbound.test.ts",
-    2
+    "src/pages/SecurityPage.tsx",
+    1
+   ],
+   [
+    "src/services/securityService.ts",
+    1
+   ],
+   [
+    "src/test/security-events-panel.test.tsx",
+    1
+   ],
+   [
+    "src/test/security-service.test.ts",
+    1
    ],
    [
     "src/test/fine-tuning-jobs.test.ts",
@@ -192483,18 +192590,6 @@
    ],
    [
     "src/test/hf-config.test.ts",
-    1
-   ],
-   [
-    "src/test/schema-contract.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/_shared/hf-config.ts",
-    1
-   ],
-   [
-    "supabase/functions/llm-gateway/index.ts",
     1
    ]
   ]

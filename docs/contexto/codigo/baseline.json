@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9e84381b920d8ea14146af91e12e0fdcd582e757",
+  "commit": "aae4b7bd027294716a6da9308715f7e4ff2a9f9a",
   "branch": "main",
-  "data_commit": "2026-11-26T18:42:26-03:00",
+  "data_commit": "2026-11-26T18:54:18-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "aae4b7b",
+    "data": "2026-11-26",
+    "assunto": "feat: expõe a trilha real de security_events no Audit Trail (#173)"
+   },
    {
     "sha": "9e84381",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "796a52c",
     "data": "2026-11-24",
     "assunto": "chore(deps)(deps): bump react-router-dom (#148)"
-   },
-   {
-    "sha": "7190245",
-    "data": "2026-11-24",
-    "assunto": "chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)"
    }
   ],
-  "arquivos_mudados_7d": 157,
+  "arquivos_mudados_7d": 162,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 77
+    "commits": 78
    },
    {
     "autor": "dependabot[bot]",
@@ -310,21 +310,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2025,
-  "arquivos_codigo": 1468,
-  "linhas_codigo": 322883,
+  "arquivos_total": 2027,
+  "arquivos_codigo": 1470,
+  "linhas_codigo": 323162,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 122,
   "modulos": 71,
-  "componentes": 663,
+  "componentes": 664,
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 250,
+  "testes": 251,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -467,8 +467,8 @@
    "linhas": 1550
   },
   "src/components": {
-   "arquivos": 558,
-   "linhas": 104469
+   "arquivos": 559,
+   "linhas": 104605
   },
   "src/config": {
    "arquivos": 10,
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 50978
+   "linhas": 50980
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -512,15 +512,15 @@
   },
   "src/services": {
    "arquivos": 168,
-   "linhas": 33672
+   "linhas": 33700
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 201,
-   "linhas": 30315
+   "arquivos": 202,
+   "linhas": 30428
   },
   "src/tests": {
    "arquivos": 2,

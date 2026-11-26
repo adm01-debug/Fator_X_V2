@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9e84381b92` · branch `main` · 2026-11-26 21:45 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `aae4b7bd02` · branch `main` · 2026-11-26 21:55 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4028,7 +4028,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3092 testes em 223 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3099 testes em 224 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4051,7 +4051,7 @@ _nenhum item encontrado_
 | `src/test/skill-demand-department-filter.test.ts` | 30 | normalizeDepartmentFilter · aceita a taxonomia canônica e os dois sentinelas · normaliza caixa e espaços sem perder o alvo · degrada entradas hostis para all em vez de lançar … |
 | `src/test/whatsapp-webhook.test.ts` | 30 | whatsappWebhookService — catálogo · exposes documented event types · exposes 4 supported providers · every provider has tokenEnv … |
 | `src/test/extended-services.test.ts` | 29 | Extended Service Layer Tests · llmGatewayService · exports invokeLLMGateway · exports invokeGuardrailsEngine … |
-| `src/test/security-service.test.ts` | 28 | securityService · listApiKeys · nunca seleciona a coluna key_hash (vazamento de credencial) · propaga erro em vez de mascarar como lista vazia … |
+| `src/test/security-service.test.ts` | 29 | securityService · listApiKeys · nunca seleciona a coluna key_hash (vazamento de credencial) · propaga erro em vez de mascarar como lista vazia … |
 | `src/test/skill-classification-efficacy.test.ts` | 28 | deriveVerdict · aprovar sobre departamento existente = erro do classificador · aprovar sobre vazio = preenchimento, não erro · rejeitar com departamento vigente = confirmação do rótulo automático … |
 | `src/test/normalize.test.ts` | 27 | normalizeCnpj · strips formatting from formatted CNPJ · returns digits-only CNPJ as-is · returns null for invalid length … |
 | `src/test/curation-highlight.test.ts` | 26 | highlightKey · casa exatamente com a chave usada pelo acumulador de pendentes · distingue duplas diferentes · beginHighlight … |
@@ -4208,6 +4208,7 @@ _nenhum item encontrado_
 | `src/test/openclaw-runtime.test.tsx` | 6 | OpenclawDeployPage (Runtime OpenClaw) · renderiza o título Runtime OpenClaw · mostra saúde do runtime após carregar · lista agents retornados pelo service … |
 | `src/test/oracle-service.test.ts` | 6 | oracleService exports · module exports the documented public surface · oracleService types · exports exactly 3 functions … |
 | `src/test/real-time-cost-stream.test.tsx` | 6 | RealTimeCostStream · renders header, totals and waiting state on mount · starts with CONECTANDO badge before subscribe callback fires · pause button toggles label between Pausar and Retomar … |
+| `src/test/security-events-panel.test.tsx` | 6 | SecurityEventsPanel · mostra o evento com a severidade real, o IP e o autor · lê o evento sem filtro na abertura · filtra por severidade ao clicar em Críticos … |
 | `src/test/skill-classifier-parity.test.ts` | 6 | paridade classificador app ↔ harvester (Deno) · os léxicos das duas implementações são idênticos, departamento a departamento · as stopwords de plataforma são idênticas · a procedência gravada no staging reflete o tier que produziu o rótulo … |
 | `src/test/template-link-coverage.test.ts` | 6 | cobertura de vínculos template ↔ skill · gera ao menos um vínculo para todo template · nunca ultrapassa o teto de vínculos nem repete skills · é determinístico entre execuções … |
 | `src/test/template-skill-links.test.ts` | 6 | template ↔ skill links · vincula todos os templates a pelo menos uma skill · produz apenas vínculos fortes com o catálogo curado · nunca marca coletâneas como vínculo forte … |
@@ -4510,6 +4511,8 @@ _nenhum item encontrado_
 | * Required permission(s) — checked via RBAC */ | `src/components/rbac/ProtectedRoute.tsx` |
 | * Required minimum role level */ | `src/components/rbac/ProtectedRoute.tsx` |
 | Check permission | `src/components/rbac/ProtectedRoute.tsx` |
+| * Fonte: tabela escrita apenas pelo service_role (hoje só `lgpd-manager`, que | `src/components/security/SecurityEventsPanel.tsx` |
+| eventos" ou "sem permissão" — o painel diz qual dos dois. | `src/components/security/SecurityEventsPanel.tsx` |
 | (insecure contexts, permission policy, focus issues, restrictive iframes). | `src/components/shared/ManualCopyDialog.tsx` |
 | Falha de auditoria não pode desfazer nem mascarar a instalação | `src/components/skills/SkillAutoRecommendationsPanel.tsx` |
 | * O slider governa APENAS a régua de domínio; instabilidade e overrides | `src/components/skills/SkillClassificationEfficacyCard.tsx` |
@@ -4713,6 +4716,8 @@ _nenhum item encontrado_
 | - Todo id listado aqui DEVE existir em `AGENT_TEMPLATES` (há teste guardando); | `src/services/quickTypeTemplateMap.ts` |
 | ═══ Permission Check (client-side) ═══ | `src/services/rbacService.ts` |
 | Each snapshot's previous_hash must match the prior snapshot's chain_hash. | `src/services/replayForkService.ts` |
+| A RLS libera a leitura apenas para admin do workspace, então lista vazia | `src/services/securityService.ts` |
+| pode significar "sem eventos" ou "sem permissão": quem chama deve dizer qual. | `src/services/securityService.ts` |
 | limite defensivo (URLs muito longas quebram em alguns browsers) | `src/services/shareService.ts` |
 | apenas contar cliques do curador. | `src/services/skillClassificationTimelineService.ts` |
 | permissão recebe conjunto vazio (não erro) do PostgREST, então a UI trata | `src/services/skillClassificationTimelineService.ts` |
@@ -4726,8 +4731,4 @@ _nenhum item encontrado_
 | Falha de rede não pode derrubar a varredura: o local já guardou o avanço. | `src/services/skillHarvestService.ts` |
 | corre risco de estourar o limite de tempo da plataforma. | `src/services/skillHarvestService.ts` |
 | * Todas as tabelas têm RLS restrita; um usuário sem permissão recebe conjunto | `src/services/skillObservabilityService.ts` |
-| * Limite de caracteres do motivo — espelha o `LEFT(..., 1000)` da RPC. */ | `src/services/skillReclassificationReviewService.ts` |
-| anterior à coluna) e NÃO pode virar 0: exibir "limiar 0,00" sugeriria que o | `src/services/skillReclassificationReviewService.ts` |
-| proposta órfã de departamento renomeado não pode ser aprovada, e mostrá-la | `src/services/skillReclassificationReviewService.ts` |
-| apenas informa a intenção e o motivo. | `src/services/skillReclassificationReviewService.ts` |
-| … +171 linhas — lista completa em `context.json` | |
+| … +175 linhas — lista completa em `context.json` | |

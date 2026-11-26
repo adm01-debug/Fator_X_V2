@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 663,
+ "total": 664,
  "orfaos": 36,
  "nomes_duplicados": {
   "AddressCard": [
@@ -4758,6 +4758,22 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/security/SecurityEventsPanel.tsx",
+   "exports": [
+    "SecurityEventsPanel"
+   ],
+   "export_default": null,
+   "linhas": 136,
+   "dominio": "components/security",
+   "hooks_locais": [
+    "useRBAC"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/security/SecurityMonitoringPanel.tsx",
    "exports": [
     "SecurityMonitoringPanel"
@@ -7134,7 +7150,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 359,
+   "usado_por": 360,
    "orfao": false
   },
   {
@@ -7169,7 +7185,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 405,
+   "usado_por": 406,
    "orfao": false
   },
   {
@@ -9943,7 +9959,7 @@
     "SecurityPage"
    ],
    "export_default": "SecurityPage",
-   "linhas": 275,
+   "linhas": 277,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],

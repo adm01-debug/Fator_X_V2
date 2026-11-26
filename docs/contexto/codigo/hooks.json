@@ -1223,10 +1223,11 @@
     "useMemo"
    ],
    "canais_realtime": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "usado_por_arquivos": [
     "src/components/rbac/AccessControl.tsx",
     "src/components/rbac/ProtectedRoute.tsx",
+    "src/components/security/SecurityEventsPanel.tsx",
     "src/components/settings/HuggingFaceTab.tsx",
     "src/hooks/index.ts",
     "src/pages/LGPDGovernancePage.tsx"
