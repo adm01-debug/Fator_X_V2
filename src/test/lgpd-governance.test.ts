@@ -14,6 +14,18 @@ vi.mock('@/integrations/supabase/externalClient', async () => {
   return { supabaseExternal: m.getSharedSupabaseMock('lgpd-gov-external').client };
 });
 
+vi.mock('@/lib/supabaseExtended', async () => {
+  const m = await import('./utils/supabaseMock');
+  return {
+    fromTable: (table: string) =>
+      (
+        m.getSharedSupabaseMock('lgpd-gov-external').client as {
+          from: (t: string) => unknown;
+        }
+      ).from(table),
+  };
+});
+
 vi.mock('@/integrations/supabase/client', async () => {
   const m = await import('./utils/supabaseMock');
   return { supabase: m.getSharedSupabaseMock('lgpd-gov-local').client };

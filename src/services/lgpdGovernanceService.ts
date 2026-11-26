@@ -12,7 +12,10 @@
  * quem pode ver e escrever (admin do workspace escreve, membro lê o que é
  * público do workspace, titular vê as próprias solicitações).
  */
-import { supabaseExternal } from '@/integrations/supabase/externalClient';
+// As seis tabelas LGPD nasceram na migration 20260724000010 e ainda não estão
+// em src/integrations/supabase/types.ts — `fromTable` é o escape sancionado no
+// repo para tabela fora do schema gerado (mesmo banco, tipagem relaxada).
+import { fromTable } from '@/lib/supabaseExtended';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 
@@ -127,8 +130,7 @@ export function subjectRequestDeadline(from: Date = new Date()): Date {
 }
 
 export async function listSubjectRequests(workspaceId: string | null): Promise<SubjectRequest[]> {
-  let query = supabaseExternal
-    .from('data_subject_requests')
+  let query = fromTable('data_subject_requests')
     .select(
       'id, user_id, workspace_id, request_type, status, description, deadline_at, responded_at, denied_reason, created_at',
     );
@@ -148,8 +150,7 @@ export async function createSubjectRequest(input: {
   } = await supabase.auth.getUser();
   if (!user) throw new Error('Faça login para abrir uma solicitação');
 
-  const { data, error } = await supabaseExternal
-    .from('data_subject_requests')
+  const { data, error } = await fromTable('data_subject_requests')
     .insert({
       user_id: user.id,
       workspace_id: input.workspaceId,
@@ -171,13 +172,12 @@ export async function respondSubjectRequest(
   const patch: Record<string, unknown> = { status };
   if (isTerminalStatus(status)) patch.responded_at = new Date().toISOString();
   if (status === 'denied') patch.denied_reason = deniedReason?.trim() || null;
-  const { error } = await supabaseExternal.from('data_subject_requests').update(patch).eq('id', id);
+  const { error } = await fromTable('data_subject_requests').update(patch).eq('id', id);
   if (error) throw error;
 }
 
 export async function listProcessingOperations(workspaceId: string | null): Promise<ProcessingOperation[]> {
-  let query = supabaseExternal
-    .from('data_processing_register')
+  let query = fromTable('data_processing_register')
     .select(
       'id, workspace_id, data_category, data_type, processing_purpose, legal_basis, retention_period, risk_level, description, next_review_due, created_at',
     );
@@ -200,7 +200,7 @@ export async function createProcessingOperation(input: {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { error } = await supabaseExternal.from('data_processing_register').insert({
+  const { error } = await fromTable('data_processing_register').insert({
     workspace_id: input.workspaceId,
     data_category: input.dataCategory,
     data_type: input.dataType.trim(),
@@ -215,8 +215,7 @@ export async function createProcessingOperation(input: {
 }
 
 export async function listBreaches(workspaceId: string | null): Promise<BreachRecord[]> {
-  let query = supabaseExternal
-    .from('data_breach_log')
+  let query = fromTable('data_breach_log')
     .select(
       'id, workspace_id, breach_type, severity, status, description, affected_users_count, detection_at, notification_to_authority_at, resolved_at',
     );
@@ -227,8 +226,7 @@ export async function listBreaches(workspaceId: string | null): Promise<BreachRe
 }
 
 export async function listRetentionPolicies(workspaceId: string | null): Promise<RetentionPolicy[]> {
-  let query = supabaseExternal
-    .from('data_retention_policies')
+  let query = fromTable('data_retention_policies')
     .select('id, workspace_id, data_type, retention_days, auto_anonymize, is_active');
   if (workspaceId) query = query.eq('workspace_id', workspaceId);
   const { data, error } = await query.order('data_type', { ascending: true });
@@ -245,7 +243,7 @@ export async function saveRetentionPolicy(input: {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { error } = await supabaseExternal.from('data_retention_policies').upsert(
+  const { error } = await fromTable('data_retention_policies').upsert(
     {
       workspace_id: input.workspaceId,
       data_type: input.dataType.trim(),
@@ -260,8 +258,7 @@ export async function saveRetentionPolicy(input: {
 }
 
 export async function listPersonalDataInventory(workspaceId: string | null): Promise<PersonalDataField[]> {
-  let query = supabaseExternal
-    .from('personal_data_inventory')
+  let query = fromTable('personal_data_inventory')
     .select(
       'id, table_name, column_name, data_category, is_pii, is_sensitive, sensitivity_level, retention_days, purpose, notes',
     );
@@ -272,8 +269,7 @@ export async function listPersonalDataInventory(workspaceId: string | null): Pro
 }
 
 export async function getLgpdSettings(workspaceId: string): Promise<LgpdSettings | null> {
-  const { data, error } = await supabaseExternal
-    .from('lgpd_settings')
+  const { data, error } = await fromTable('lgpd_settings')
     .select('*')
     .eq('workspace_id', workspaceId)
     .maybeSingle();
@@ -288,8 +284,7 @@ export async function saveLgpdSettings(
   workspaceId: string,
   patch: Partial<Omit<LgpdSettings, 'id' | 'workspace_id'>>,
 ): Promise<void> {
-  const { error } = await supabaseExternal
-    .from('lgpd_settings')
+  const { error } = await fromTable('lgpd_settings')
     .upsert({ workspace_id: workspaceId, ...patch }, { onConflict: 'workspace_id' });
   if (error) throw error;
 }
