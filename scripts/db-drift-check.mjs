@@ -18,6 +18,7 @@
  * Sem DB_MCP_URL: exit 0 com warning (opt-in, igual aos demais jobs).
  * ═══════════════════════════════════════════════════════════════════
  */
+import { execFileSync } from 'node:child_process';
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -80,15 +81,41 @@ await rpc('notifications/initialized', {}, true);
 const failures = [];
 const report = [];
 
+// Migrations que ESTA pull request adiciona: o merge é quem as aplica, então
+// cobrá-las do banco antes do merge bloquearia todo PR com migration nova.
+// Sem GITHUB_BASE_REF (push em main, workflow_dispatch) o conjunto é vazio e
+// a invariante volta a cobrar o repositório inteiro — é o que pega drift real.
+function migrationsDaPullRequest() {
+  const base = process.env.GITHUB_BASE_REF;
+  if (!base) return new Set();
+  try {
+    const out = execFileSync('git', ['diff', '--name-only', `origin/${base}...HEAD`, '--', 'supabase/migrations'], {
+      encoding: 'utf8',
+    });
+    return new Set(
+      out
+        .split('\n')
+        .filter((f) => f.endsWith('.sql'))
+        .map((f) => f.split('/').pop().slice(0, 14)),
+    );
+  } catch {
+    // clone raso/sem ref da base: cai no comportamento estrito original
+    return new Set();
+  }
+}
+
 // 1. Migrations: repo × schema_migrations
 const files = readdirSync(MIGRATIONS_DIR)
   .filter((f) => f.endsWith('.sql'))
   .map((f) => f.slice(0, 14));
+const novasNaPR = migrationsDaPullRequest();
 const dbVersions = new Set((await sql('SELECT version FROM supabase_migrations.schema_migrations')).map((r) => r.version));
 const repoSet = new Set(files);
-const missingInDb = [...repoSet].filter((v) => !dbVersions.has(v)).sort();
+const missingInDb = [...repoSet].filter((v) => !dbVersions.has(v) && !novasNaPR.has(v)).sort();
+const pendentesNaPR = [...repoSet].filter((v) => !dbVersions.has(v) && novasNaPR.has(v)).sort();
 const missingInRepo = [...dbVersions].filter((v) => !repoSet.has(v)).sort();
 report.push(`Migrations: repo=${repoSet.size} banco=${dbVersions.size} | faltam no banco=${missingInDb.length} faltam no repo=${missingInRepo.length}`);
+report.push(`Migrations novas nesta PR (aplicar no merge): ${pendentesNaPR.length ? pendentesNaPR.join(', ') : 'nenhuma'}`);
 if (missingInDb.length) {
   failures.push(`Migrations presentes no repo mas NÃO registradas no banco (aplicar ou remover): ${missingInDb.slice(0, 20).join(', ')}${missingInDb.length > 20 ? ' …' : ''}`);
 }
