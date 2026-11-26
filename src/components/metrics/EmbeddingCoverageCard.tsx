@@ -4,6 +4,8 @@
  * Consome:
  *  - RPC `get_embedding_coverage(_workspace_id)` → total, embedded, dead_letter, pct
  *  - RPC `reset_embedding_dead_letter(_workspace_id)` → reprocessamento manual
+ *  - RPC `get_chunk_embedding_coverage(_workspace_id)` → cobertura dos chunks de
+ *    documentos (RAG), pipeline separado das memórias
  */
 import { useEffect, useState } from 'react';
 import { Sparkles, RefreshCcw, AlertTriangle, RotateCcw } from 'lucide-react';
@@ -23,6 +25,14 @@ interface Coverage {
   pct: number;
 }
 
+interface ChunkCoverage {
+  total: number;
+  embedded: number;
+  pending: number;
+  pct: number;
+  models: number;
+}
+
 interface Props {
   workspaceId: string | null | undefined;
 }
@@ -38,6 +48,7 @@ export function EmbeddingCoverageCard({ workspaceId }: Props) {
   const [loading, setLoading] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [chunks, setChunks] = useState<ChunkCoverage | null>(null);
 
   async function load() {
     if (!workspaceId) return;
@@ -62,6 +73,36 @@ export function EmbeddingCoverageCard({ workspaceId }: Props) {
       setError(msg);
     } finally {
       setLoading(false);
+    }
+    await loadChunkCoverage();
+  }
+
+  /**
+   * Cobertura dos chunks de documentos (pipeline de RAG, separado das memórias).
+   * Falha aqui não derruba o card: a cobertura de memórias continua visível.
+   */
+  async function loadChunkCoverage() {
+    if (!workspaceId) return;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: rows, error: rpcErr } = await (supabase.rpc as any)(
+        'get_chunk_embedding_coverage',
+        { _workspace_id: workspaceId },
+      );
+      if (rpcErr) throw rpcErr;
+      const row = Array.isArray(rows) ? rows[0] : rows;
+      setChunks({
+        total: Number(row?.total_chunks ?? 0),
+        embedded: Number(row?.embedded_chunks ?? 0),
+        pending: Number(row?.pending_chunks ?? 0),
+        pct: Number(row?.coverage_pct ?? 0),
+        models: Number(row?.distinct_models ?? 0),
+      });
+    } catch (err) {
+      logger.warn('[EmbeddingCoverageCard] chunk coverage failed', {
+        error: err instanceof Error ? err.message : 'unknown',
+      });
+      setChunks(null);
     }
   }
 
@@ -148,6 +189,21 @@ export function EmbeddingCoverageCard({ workspaceId }: Props) {
               Backfill roda a cada 5 min · até 200 memórias por ciclo · máx. 3 tentativas.
             </p>
           </>
+        )}
+
+        {chunks && chunks.total > 0 && (
+          <div className="rounded-lg border border-border/60 p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-body-sm font-medium text-foreground">Chunks de documentos</p>
+              <span className="text-meta text-muted-foreground">{chunks.pct.toFixed(1)}%</span>
+            </div>
+            <Progress value={chunks.pct} className="h-1.5" />
+            <p className="text-meta text-muted-foreground">
+              {chunks.embedded.toLocaleString('pt-BR')} de {chunks.total.toLocaleString('pt-BR')} chunks com embedding
+              {chunks.pending > 0 ? ` · ${chunks.pending.toLocaleString('pt-BR')} pendentes` : ''}
+              {chunks.models > 0 ? ` · ${chunks.models} modelo(s)` : ''}
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>
