@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ccf216da33578438390a021cca5ee65c56f96cf0",
+  "sha": "897badbe8b76df2ee234f1fb956ff7d54306d999",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 13:14 UTC",
+  "generated_at": "2026-11-26 15:19 UTC",
   "files_total": 2018,
   "code_files": 1799,
-  "code_lines": 350335
+  "code_lines": 350421
  },
  "version": "1.3.2",
- "facts_hash": "5c0b3cfb7ecffd0e",
+ "facts_hash": "eff5525201131dcc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -59468,7 +59468,7 @@
   {
    "module": "src/test",
    "files": 195,
-   "lines": 29443,
+   "lines": 29529,
    "tables": [
     "tabela"
    ],
@@ -105784,6 +105784,30 @@
    {
     "file": "src/test/forum-safe-views.test.ts",
     "name": "devolve lista vazia (e não explode) quando a view não retorna linhas"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "knowledgeManagementService — escritas do fórum nas tabelas base"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "createThread grava em forum_threads com o autor da sessão"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "createThread respeita o author_name informado e barra sessão ausente"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "createPost grava em forum_posts com thread e resposta-pai"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "propaga o erro do banco em vez de engolir a escrita"
+   },
+   {
+    "file": "src/test/forum-safe-views.test.ts",
+    "name": "markAsAnswer marca o post e resolve a thread"
    },
    {
     "file": "src/test/freeze-window-service.test.ts",
@@ -176894,7 +176918,7 @@
   },
   "src/test/forum-safe-views.test.ts": {
    "path": "src/test/forum-safe-views.test.ts",
-   "lines": 73,
+   "lines": 159,
    "is_test": true,
    "doc": "forum: leitura pública pelas views com máscara de PII. `listThreads`, `getThread` e `listPosts` liam as tabelas cruas com `select('*')` numa página pública — o `author_name` podia conter e-mail e as views `forum_threads_safe`/`forum_posts_safe` (que trocam por 'Membro') existiam sem uso. Este teste …",
    "tests": [
@@ -176902,7 +176926,13 @@
     "listThreads lê a view mascarada e filtra pelo help center",
     "listPosts lê a view mascarada de posts",
     "getThread lê a view e incrementa view_count na tabela base",
-    "devolve lista vazia (e não explode) quando a view não retorna linhas"
+    "devolve lista vazia (e não explode) quando a view não retorna linhas",
+    "knowledgeManagementService — escritas do fórum nas tabelas base",
+    "createThread grava em forum_threads com o autor da sessão",
+    "createThread respeita o author_name informado e barra sessão ausente",
+    "createPost grava em forum_posts com thread e resposta-pai",
+    "propaga o erro do banco em vez de engolir a escrita",
+    "markAsAnswer marca o post e resolve a thread"
    ]
   },
   "src/test/freeze-window-service.test.ts": {
@@ -191357,10 +191387,19 @@
   }
  },
  "git": {
-  "sha": "ccf216da33578438390a021cca5ee65c56f96cf0",
+  "sha": "897badbe8b76df2ee234f1fb956ff7d54306d999",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "897badb",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "test(forum): trava as escritas do forum publico (#162)",
+    "files": [
+     "src/test/forum-safe-views.test.ts"
+    ]
+   },
    {
     "sha": "ccf216d",
     "date": "2026-11-26",
@@ -191680,16 +191719,6 @@
     "files": [
      "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
     ]
-   },
-   {
-    "sha": "96f5dac",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)",
-    "files": [
-     "supabase/migrations/20260712221008_be814f70-dd38-4bbf-a1e1-4bc92aac7a62.sql",
-     "supabase/migrations/20261120162913_fix_exfil_trigger_urls.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -191712,6 +191741,10 @@
    [
     "docs/migration/MATRIZ_EDGE_TABELA.md",
     3
+   ],
+   [
+    "src/test/forum-safe-views.test.ts",
+    2
    ],
    [
     "src/pages/FineTuningPage.tsx",
@@ -191751,10 +191784,6 @@
    ],
    [
     "src/services/knowledgeManagementService.ts",
-    1
-   ],
-   [
-    "src/test/forum-safe-views.test.ts",
     1
    ],
    [

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ccf216da33578438390a021cca5ee65c56f96cf0",
+  "commit": "897badbe8b76df2ee234f1fb956ff7d54306d999",
   "branch": "main",
-  "data_commit": "2026-11-26T10:08:40-03:00",
+  "data_commit": "2026-11-26T12:18:08-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "897badb",
+    "data": "2026-11-26",
+    "assunto": "test(forum): trava as escritas do forum publico (#162)"
+   },
    {
     "sha": "ccf216d",
     "data": "2026-11-26",
@@ -126,11 +131,6 @@
     "sha": "10a1dd0",
     "data": "2026-11-21",
     "assunto": "fix(ts): corrige 7 erros de tipo herdados da main nas edge functions (#140)"
-   },
-   {
-    "sha": "665b599",
-    "data": "2026-11-21",
-    "assunto": "chore(ai): migra edges para OpenRouter e adiciona provider Hermes (#139)"
    }
   ],
   "arquivos_mudados_7d": 134,
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 68
+    "commits": 69
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 2013,
   "arquivos_codigo": 1457,
-  "linhas_codigo": 320076,
+  "linhas_codigo": 320162,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -520,7 +520,7 @@
   },
   "src/test": {
    "arquivos": 195,
-   "linhas": 29443
+   "linhas": 29529
   },
   "src/tests": {
    "arquivos": 2,

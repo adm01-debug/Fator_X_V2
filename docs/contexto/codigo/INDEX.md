@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ccf216da33578438390a021cca5ee65c56f96cf0` (2026-11-26T10:08:40-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `897badbe8b76df2ee234f1fb956ff7d54306d999` (2026-11-26T12:18:08-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2013 |
 | arquivos_codigo | 1457 |
-| linhas_codigo | 320076 |
+| linhas_codigo | 320162 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -432,8 +432,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14578 nós · 38523 arestas · 907 comunidades · grafo do commit `ccf216da`
-- comunidades maiores: lucide-react (352), react (257), agentTypes.ts (252), sonner (239), ref_https (207), logger.ts (164), App.tsx (152), Button (143), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (136), SuperCerebroPage.tsx (136), cn (131), fetchWithTimeout (109)
+- 14578 nós · 38526 arestas · 915 comunidades · grafo do commit `897badbe`
+- comunidades maiores: react (331), lucide-react (327), agentTypes.ts (238), ref_https (192), App.tsx (154), PageHeader.tsx (151), VendorsPage.tsx (131), cn (128), logger (116), agent-workflow-runner/index.ts (116), logger.ts (115), fetchWithTimeout (106)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -579,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `897badb` test(forum): trava as escritas do forum publico (#162)
 - 2026-11-26 `ccf216d` fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)
 - 2026-11-26 `3c3acdb` feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)
 - 2026-11-26 `b2f4e91` feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)
@@ -593,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `d809480` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)
 - 2026-11-24 `cbe4351` chore(deps)(deps): bump @sentry/react (#151)
 - 2026-11-24 `b1ace07` chore(deps)(deps): bump @supabase/supabase-js (#149)
-- 2026-11-24 `796a52c` chore(deps)(deps): bump react-router-dom (#148)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

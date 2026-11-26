@@ -919,11 +919,11 @@
   {
    "arquivo": "src/test/forum-safe-views.test.ts",
    "tipo": "unit",
-   "linhas": 73,
+   "linhas": 159,
    "testa": [
     "src/services/knowledgeManagementService.ts"
    ],
-   "casos": 4
+   "casos": 9
   },
   {
    "arquivo": "src/test/freeze-window-service.test.ts",
