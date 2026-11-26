@@ -16,27 +16,10 @@ import { useState, useCallback, useRef } from 'react';
 import { logger } from '@/lib/logger';
 import { supabase } from '@/integrations/supabase/client';
 
-// AG-UI compatible event types
-export type AGUIEventType =
-  | 'RUN_STARTED'
-  | 'RUN_FINISHED'
-  | 'RUN_ERROR'
-  | 'TEXT_MESSAGE_START'
-  | 'TEXT_MESSAGE_CONTENT'
-  | 'TEXT_MESSAGE_END'
-  | 'TOOL_CALL_START'
-  | 'TOOL_CALL_ARGS'
-  | 'TOOL_CALL_END'
-  | 'STATE_DELTA'
-  | 'STATE_SNAPSHOT'
-  | 'MESSAGES_SNAPSHOT'
-  | 'RAW';
+import type { AGUIEvent, AGUIEventType } from '@/lib/ag-ui';
 
-export interface AGUIEvent {
-  type: AGUIEventType;
-  timestamp: number;
-  data: Record<string, unknown>;
-}
+// Tipos canônicos do protocolo AG-UI (src/lib/ag-ui/protocol.ts), reexportados para preservar a API do hook.
+export type { AGUIEvent, AGUIEventType };
 
 export interface ToolCall {
   id: string;

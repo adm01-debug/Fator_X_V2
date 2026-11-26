@@ -50,6 +50,7 @@ import { AlertRulesPanel } from '@/components/monitoring/AlertRulesPanel';
 import { WebVitalsPanel } from '@/components/monitoring/WebVitalsPanel';
 import { MiddlewarePipelinePanel } from '@/components/monitoring/MiddlewarePipelinePanel';
 import { RetryEnginePanel } from '@/components/monitoring/RetryEnginePanel';
+import { GenAIProtocolPanel } from '@/components/monitoring/GenAIProtocolPanel';
 
 const PIE_COLORS = [
   'hsl(var(--primary))',
@@ -255,6 +256,12 @@ export default function MonitoringPage() {
             className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"
           >
             <Shield className="h-4 w-4" /> Resiliência
+          </TabsTrigger>
+          <TabsTrigger
+            value="protocolo"
+            className="rounded-xl px-6 py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-nexus-sm gap-2 font-bold"
+          >
+            <Radio className="h-4 w-4" /> Protocolo GenAI
           </TabsTrigger>
         </TabsList>
 
@@ -676,6 +683,9 @@ export default function MonitoringPage() {
         </TabsContent>
         <TabsContent value="resilience">
           <RetryEnginePanel />
+        </TabsContent>
+        <TabsContent value="protocolo">
+          <GenAIProtocolPanel />
         </TabsContent>
       </Tabs>
     </div>
