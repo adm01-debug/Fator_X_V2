@@ -104,9 +104,8 @@ export function KnowledgeGraphHealthCard({ workspaceId }: KnowledgeGraphHealthCa
           </div>
         ) : !data ? (
           <p className="text-meta text-muted-foreground">
-            Sem dados ainda — a materialized view roda diariamente. Rode
-            <code className="px-1"> select refresh_knowledge_graph_health(); </code>
-            para forçar.
+            Sem dados ainda — a materialized view é atualizada 1×/dia pelo
+            agendador; o próximo ciclo preenche este card.
           </p>
         ) : (
           <div className="space-y-4">
