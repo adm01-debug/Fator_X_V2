@@ -75,7 +75,7 @@ export function CostBaselinePanel() {
           </div>
           <div className="flex items-center gap-2">
             <Select value={scope} onValueChange={setScope}>
-              <SelectTrigger className="w-40 h-9"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-40 h-9" aria-label="Filtrar por escopo"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os escopos</SelectItem>
                 <SelectItem value="workspace">Workspace</SelectItem>
