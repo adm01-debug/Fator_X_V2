@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "aae4b7bd027294716a6da9308715f7e4ff2a9f9a",
+  "commit": "fe144d3b0e0a61d163a2cf805481946791e12dbe",
   "branch": "main",
-  "data_commit": "2026-11-26T18:54:18-03:00",
+  "data_commit": "2026-11-26T19:24:10-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "fe144d3",
+    "data": "2026-11-26",
+    "assunto": "feat(custos): baseline do detector de anomalias ganha tela e recálculo (#174)"
+   },
    {
     "sha": "aae4b7b",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "b1ace07",
     "data": "2026-11-24",
     "assunto": "chore(deps)(deps): bump @supabase/supabase-js (#149)"
-   },
-   {
-    "sha": "796a52c",
-    "data": "2026-11-24",
-    "assunto": "chore(deps)(deps): bump react-router-dom (#148)"
    }
   ],
-  "arquivos_mudados_7d": 162,
+  "arquivos_mudados_7d": 163,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 78
+    "commits": 79
    },
    {
     "autor": "dependabot[bot]",
@@ -310,21 +310,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2027,
-  "arquivos_codigo": 1470,
-  "linhas_codigo": 323162,
+  "arquivos_total": 2030,
+  "arquivos_codigo": 1473,
+  "linhas_codigo": 323500,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 122,
-  "modulos": 71,
-  "componentes": 664,
+  "modulos": 72,
+  "componentes": 665,
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 251,
+  "testes": 253,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -467,8 +467,8 @@
    "linhas": 1550
   },
   "src/components": {
-   "arquivos": 559,
-   "linhas": 104605
+   "arquivos": 560,
+   "linhas": 104756
   },
   "src/config": {
    "arquivos": 10,
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 50980
+   "linhas": 50983
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -512,15 +512,15 @@
   },
   "src/services": {
    "arquivos": 168,
-   "linhas": 33700
+   "linhas": 33734
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 202,
-   "linhas": 30428
+   "arquivos": 204,
+   "linhas": 30578
   },
   "src/tests": {
    "arquivos": 2,

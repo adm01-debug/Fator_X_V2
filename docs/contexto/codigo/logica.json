@@ -5209,16 +5209,19 @@
    "camada": "services",
    "exports": [
     "CostAlert",
+    "CostBaselineRow",
     "acknowledgeAlert",
     "countActiveAlerts",
     "listAlerts",
+    "listBaselines",
     "recomputeBaselines",
     "runDetectionNow"
    ],
    "export_default": null,
-   "linhas": 63,
+   "linhas": 97,
    "tabelas": [
-    "cost_alerts"
+    "cost_alerts",
+    "cost_baselines"
    ],
    "rpcs": [
     "acknowledge_cost_alert",
@@ -5231,12 +5234,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
+    "components/cost",
     "components/dashboard",
     "pages"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {

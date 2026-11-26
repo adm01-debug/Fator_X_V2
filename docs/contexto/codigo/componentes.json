@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 664,
+ "total": 665,
  "orfaos": 36,
  "nomes_duplicados": {
   "AddressCard": [
@@ -2789,6 +2789,22 @@
    "linhas": 19,
    "dominio": "components/chat",
    "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/cost/CostBaselinePanel.tsx",
+   "exports": [
+    "CostBaselinePanel"
+   ],
+   "export_default": null,
+   "linhas": 151,
+   "dominio": "components/cost",
+   "hooks_locais": [
+    "useRBAC"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -7150,7 +7166,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 360,
+   "usado_por": 361,
    "orfao": false
   },
   {
@@ -7185,7 +7201,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 406,
+   "usado_por": 407,
    "orfao": false
   },
   {
@@ -7219,7 +7235,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 209,
+   "usado_por": 210,
    "orfao": false
   },
   {
@@ -7627,7 +7643,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 130,
+   "usado_por": 131,
    "orfao": false
   },
   {
@@ -7717,7 +7733,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 56,
+   "usado_por": 57,
    "orfao": false
   },
   {
@@ -8848,7 +8864,7 @@
     "CostAnomaliesPage"
    ],
    "export_default": "CostAnomaliesPage",
-   "linhas": 172,
+   "linhas": 175,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],

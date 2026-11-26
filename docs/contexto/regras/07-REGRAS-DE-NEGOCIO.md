@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `aae4b7bd02` · branch `main` · 2026-11-26 21:55 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fe144d3b0e` · branch `main` · 2026-11-26 22:28 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3875,6 +3875,7 @@ _nenhum item encontrado_
 | Máximo de ${MAX_ATTACHMENTS} anexos por mensagem. | `src/components/chat/ChatComposer.tsx` |
 | Não foi possível abrir o anexo. | `src/components/chat/MessageBubble.tsx` |
 | Não foi possível copiar. | `src/components/chat/MessageBubble.tsx` |
+| Falha ao recalcular baselines: ${err.message} | `src/components/cost/CostBaselinePanel.tsx` |
 | Falha ao adicionar passo | `src/components/crm/CadenceStepsEditor.tsx` |
 | Falha ao salvar ICP | `src/components/crm/IcpProfilePanel.tsx` |
 | O limiar  | `src/components/crm/IcpProfilePanel.tsx` |
@@ -3992,8 +3993,7 @@ _nenhum item encontrado_
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| Créditos de IA esgotados — o lote foi interrompido. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +534 linhas — lista completa em `context.json` | |
+| … +535 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4028,7 +4028,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3099 testes em 224 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3109 testes em 226 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4197,6 +4197,7 @@ _nenhum item encontrado_
 | `src/test/animated-counter.test.tsx` | 6 | AnimatedCounter · renders initial value · renders with prefix and suffix · renders with decimals … |
 | `src/test/app-sidebar.test.tsx` | 6 | AppSidebar · renders all section labels · renders navigation items · renders the brand name … |
 | `src/test/cerebro-service.test.ts` | 6 | cerebroService exports · module exports the documented public surface · cerebroService types · exports at least 6 functions … |
+| `src/test/cost-baseline-panel.test.tsx` | 6 | CostBaselinePanel · mostra escopo, janela e custo médio da baseline · recalcula as baselines pelo admin · esconde o recálculo de quem não é admin … |
 | `src/test/edge-runtime-contract.test.ts` | 6 | Edge Functions — contrato de runtime · encontra os entrypoints das Edge Functions · nunca lê  · nunca passa o Request cru como headers de CORS para createRateLimitResponse … |
 | `src/test/evaluations-service.test.ts` | 6 | evaluationsService exports · module exports the documented public surface · evaluationsService types · exports at least 10 functions … |
 | `src/test/genai-protocol-panel.test.tsx` | 6 | GenAIProtocolPanel · monta os atributos semanticos gen_ai a partir dos campos da tela · estima o custo pelo valor devolvido pela edge cost-calculator · cai na tabela local quando a edge cost-calculator esta indisponivel … |
@@ -4234,6 +4235,7 @@ _nenhum item encontrado_
 | `tests/e2e/security-audits.spec.ts` | 5 | Security & Stability Audit · should load the dashboard for an authenticated user · should protect administrative pages from unauthorized access · should verify security monitoring panel presence on security page … |
 | `src/components/slack/__tests__/SlackOnboardingWizard.test.tsx` | 4 | SlackOnboardingWizard · renderiza passo 1 por padrão · avança e volta entre passos · dispara verifyConnection no passo 3 |
 | `src/test/agent-evolution.test.ts` | 4 | Agent Self-Evolution · builds skillbook prompt from skills · returns empty for no skills · reflects on traces |
+| `src/test/cost-anomaly-service.test.ts` | 4 | costAnomalyService.listBaselines · ordena pelas mais recentes e aplica o teto informado · filtra por escopo apenas quando informado · lança em erro — o painel precisa distinguir falha de baseline ausente |
 | `src/test/error-boundary.test.tsx` | 4 | ErrorBoundary · renders children when there is no error · renders error UI when a child throws · renders custom fallback when provided |
 | `src/test/metrics-embedding-coverage.test.tsx` | 4 | EmbeddingCoverageCard · mostra a cobertura dos chunks de documentos junto da cobertura de memórias · não derruba o card quando a cobertura de chunks falha · não mostra a seção de chunks quando o workspace não tem chunks |
 | `src/test/nlp-pipeline-service.test.ts` | 4 | nlpPipelineService · analyzeText returns NLP result · analyzeText throws on error · analyzeWhatsAppMessage returns structured result |

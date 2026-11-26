@@ -4556,25 +4556,41 @@
    "definida_em": "src/App.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useMemo",
     "useMutation",
     "useQuery",
     "useQueryClient",
+    "useRBAC",
     "useState"
    ],
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useAuth",
+    "useRBAC"
+   ],
    "tabelas": [
-    "cost_alerts"
+    "auth_attempts",
+    "cost_alerts",
+    "cost_baselines",
+    "user_roles",
+    "workspace_members"
    ],
    "rpcs": [
     "acknowledge_cost_alert",
     "compute_cost_baselines",
-    "detect_cost_anomalies"
+    "detect_cost_anomalies",
+    "is_user_locked_out"
    ],
    "edges": [],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
-   "arquivos_puxados": 9
+   "papeis": [
+    "workspace_admin"
+   ],
+   "arquivos_puxados": 18
   },
   {
    "protegida": true,

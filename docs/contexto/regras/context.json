@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "aae4b7bd027294716a6da9308715f7e4ff2a9f9a",
+  "sha": "fe144d3b0e0a61d163a2cf805481946791e12dbe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 21:55 UTC",
-  "files_total": 2032,
-  "code_files": 1812,
-  "code_lines": 353421
+  "generated_at": "2026-11-26 22:28 UTC",
+  "files_total": 2035,
+  "code_files": 1815,
+  "code_lines": 353759
  },
  "version": "1.3.2",
- "facts_hash": "bf8ad354f681fcae",
+ "facts_hash": "6358a61a88dcca75",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -246,8 +246,8 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 707,
-   ".ts": 705,
+   ".tsx": 709,
+   ".ts": 706,
    ".sql": 341,
    ".mjs": 47,
    ".js": 5,
@@ -51935,15 +51935,20 @@
     "file": "src/pages/CostAnomaliesPage.tsx",
     "component": "CostAnomaliesPage",
     "tables_transitive": [
-     "cost_alerts"
+     "auth_attempts",
+     "cost_alerts",
+     "cost_baselines",
+     "user_roles",
+     "workspace_members"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
      "acknowledge_cost_alert",
      "compute_cost_baselines",
-     "detect_cost_anomalies"
+     "detect_cost_anomalies",
+     "is_user_locked_out"
     ],
-    "deps_count": 9
+    "deps_count": 16
    },
    {
     "path": "",
@@ -57416,7 +57421,7 @@
     "file": ".github/workflows/inventario-estado-semanal.yml"
    }
   ],
-  "components_count": 559,
+  "components_count": 560,
   "hooks": [
    {
     "name": "useContacts",
@@ -58343,8 +58348,8 @@
   },
   {
    "module": "src/components",
-   "files": 559,
-   "lines": 104605,
+   "files": 560,
+   "lines": 104756,
    "tables": [
     "agent_templates",
     "agent_traces",
@@ -59006,7 +59011,7 @@
   {
    "module": "src/pages",
    "files": 142,
-   "lines": 50980,
+   "lines": 50983,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -59201,7 +59206,7 @@
   {
    "module": "src/services",
    "files": 168,
-   "lines": 33700,
+   "lines": 33734,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59237,6 +59242,7 @@
     "compliance_frameworks",
     "compliance_reports",
     "cost_alerts",
+    "cost_baselines",
     "deploy_connections",
     "document_ingestion_events",
     "document_ingestions",
@@ -59534,8 +59540,8 @@
   },
   {
    "module": "src/test",
-   "files": 202,
-   "lines": 30428,
+   "files": 204,
+   "lines": 30578,
    "tables": [
     "tabela"
    ],
@@ -59611,6 +59617,8 @@
     "src/test/chat-thread-service.test.ts",
     "src/test/connector-registry.test.ts",
     "src/test/context-tiers.test.ts",
+    "src/test/cost-anomaly-service.test.ts",
+    "src/test/cost-baseline-panel.test.tsx",
     "src/test/cost-calculator.test.ts",
     "src/test/credential-vault.test.ts",
     "src/test/crm-scoring-service.test.ts",
@@ -59664,9 +59672,7 @@
     "src/test/llm-gateway-service.test.ts",
     "src/test/local-graph-view.test.tsx",
     "src/test/mcp-client.test.ts",
-    "src/test/memory-service.test.ts",
-    "src/test/memory-tiers.test.ts",
-    "src/test/metric-card.test.tsx"
+    "src/test/memory-service.test.ts"
    ]
   },
   {
@@ -60749,6 +60755,11 @@
     ]
    },
    "cost_alerts": {
+    "select": [
+     "src/services/costAnomalyService.ts"
+    ]
+   },
+   "cost_baselines": {
     "select": [
      "src/services/costAnomalyService.ts"
     ]
@@ -65041,7 +65052,6 @@
    "batch_jobs",
    "connector_instances",
    "connector_registry",
-   "cost_baselines",
    "credential_audit_logs",
    "credential_vault",
    "crm_icp_profiles",
@@ -68807,6 +68817,10 @@
    {
     "file": "src/components/chat/MessageBubble.tsx",
     "msg": "Não foi possível copiar."
+   },
+   {
+    "file": "src/components/cost/CostBaselinePanel.tsx",
+    "msg": "Falha ao recalcular baselines: ${err.message}"
    },
    {
     "file": "src/components/crm/CadenceStepsEditor.tsx",
@@ -103680,6 +103694,46 @@
    {
     "file": "src/test/context-tiers.test.ts",
     "name": "generates L0/L1 from content"
+   },
+   {
+    "file": "src/test/cost-anomaly-service.test.ts",
+    "name": "costAnomalyService.listBaselines"
+   },
+   {
+    "file": "src/test/cost-anomaly-service.test.ts",
+    "name": "ordena pelas mais recentes e aplica o teto informado"
+   },
+   {
+    "file": "src/test/cost-anomaly-service.test.ts",
+    "name": "filtra por escopo apenas quando informado"
+   },
+   {
+    "file": "src/test/cost-anomaly-service.test.ts",
+    "name": "lança em erro — o painel precisa distinguir falha de baseline ausente"
+   },
+   {
+    "file": "src/test/cost-baseline-panel.test.tsx",
+    "name": "CostBaselinePanel"
+   },
+   {
+    "file": "src/test/cost-baseline-panel.test.tsx",
+    "name": "mostra escopo, janela e custo médio da baseline"
+   },
+   {
+    "file": "src/test/cost-baseline-panel.test.tsx",
+    "name": "recalcula as baselines pelo admin"
+   },
+   {
+    "file": "src/test/cost-baseline-panel.test.tsx",
+    "name": "esconde o recálculo de quem não é admin"
+   },
+   {
+    "file": "src/test/cost-baseline-panel.test.tsx",
+    "name": "explica o vazio como baseline ausente, não como erro"
+   },
+   {
+    "file": "src/test/cost-baseline-panel.test.tsx",
+    "name": "lê todas as baselines na abertura, com teto de 200 janelas"
    },
    {
     "file": "src/test/cost-calculator.test.ts",
@@ -149789,6 +149843,17 @@
    ],
    "doc": "TypingIndicator — 3 dots animados no estilo \"digitando...\" do WhatsApp."
   },
+  "src/components/cost/CostBaselinePanel.tsx": {
+   "path": "src/components/cost/CostBaselinePanel.tsx",
+   "lines": 151,
+   "exports": [
+    "function CostBaselinePanel"
+   ],
+   "errors": [
+    "Falha ao recalcular baselines: ${err.message}"
+   ],
+   "doc": "CostBaselinePanel — o \"normal\" do detector de anomalias. `public.cost_baselines` é escrita exclusivamente por `compute_cost_baselines()` (SECURITY DEFINER, recalculando os últimos 14 dias de `agent_traces`) e não tinha nenhuma tela: dava para ver as anomalias disparadas, nunca contra o que elas fora …"
+  },
   "src/components/crm/CadenceRunsPanel.tsx": {
    "path": "src/components/crm/CadenceRunsPanel.tsx",
    "lines": 133,
@@ -162861,7 +162926,7 @@
   },
   "src/pages/CostAnomaliesPage.tsx": {
    "path": "src/pages/CostAnomaliesPage.tsx",
-   "lines": 172,
+   "lines": 175,
    "exports": [
     "function CostAnomaliesPage"
    ],
@@ -168263,10 +168328,12 @@
   },
   "src/services/costAnomalyService.ts": {
    "path": "src/services/costAnomalyService.ts",
-   "lines": 63,
+   "lines": 97,
    "exports": [
     "interface CostAlert",
     "function listAlerts",
+    "interface CostBaselineRow",
+    "function listBaselines",
     "function countActiveAlerts",
     "function acknowledgeAlert",
     "function runDetectionNow",
@@ -168275,6 +168342,10 @@
    "tables": [
     {
      "table": "cost_alerts",
+     "op": "select"
+    },
+    {
+     "table": "cost_baselines",
      "op": "select"
     },
     {
@@ -176693,6 +176764,38 @@
    "tests": [
     "Context Tiers Service",
     "generates L0/L1 from content"
+   ]
+  },
+  "src/test/cost-anomaly-service.test.ts": {
+   "path": "src/test/cost-anomaly-service.test.ts",
+   "lines": 51,
+   "is_test": true,
+   "rule_comments": [
+    "tela não prova: a ordenação/limite da consulta e a política de erro"
+   ],
+   "doc": "costAnomalyService — leitura das baselines do detector. `listBaselines` foi adicionada para dar tela a `cost_baselines`, que era escrita só por `compute_cost_baselines()` e nunca lida. Aqui se prova o que a tela não prova: a ordenação/limite da consulta e a política de erro (lançar, para o painel mo …",
+   "tests": [
+    "costAnomalyService.listBaselines",
+    "ordena pelas mais recentes e aplica o teto informado",
+    "filtra por escopo apenas quando informado",
+    "lança em erro — o painel precisa distinguir falha de baseline ausente"
+   ]
+  },
+  "src/test/cost-baseline-panel.test.tsx": {
+   "path": "src/test/cost-baseline-panel.test.tsx",
+   "lines": 99,
+   "is_test": true,
+   "rule_comments": [
+    "pontas e a fronteira de permissão (o recálculo é só para admin)."
+   ],
+   "doc": "CostBaselinePanel — a tabela `cost_baselines` ganhou tela. Antes: dava para ver as anomalias disparadas (`cost_alerts`) e rodar a detecção, mas não existia nenhuma leitura de `cost_baselines` no front nem gatilho para `compute_cost_baselines()` — o detector comparava com uma baseline invisível, que …",
+   "tests": [
+    "CostBaselinePanel",
+    "mostra escopo, janela e custo médio da baseline",
+    "recalcula as baselines pelo admin",
+    "esconde o recálculo de quem não é admin",
+    "explica o vazio como baseline ausente, não como erro",
+    "lê todas as baselines na abertura, com teto de 200 janelas"
    ]
   },
   "src/test/cost-calculator.test.ts": {
@@ -192173,10 +192276,23 @@
   }
  },
  "git": {
-  "sha": "aae4b7bd027294716a6da9308715f7e4ff2a9f9a",
+  "sha": "fe144d3b0e0a61d163a2cf805481946791e12dbe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "fe144d3",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(custos): baseline do detector de anomalias ganha tela e recálculo (#174)",
+    "files": [
+     "src/components/cost/CostBaselinePanel.tsx",
+     "src/pages/CostAnomaliesPage.tsx",
+     "src/services/costAnomalyService.ts",
+     "src/test/cost-anomaly-service.test.ts",
+     "src/test/cost-baseline-panel.test.tsx"
+    ]
+   },
    {
     "sha": "aae4b7b",
     "date": "2026-11-26",
@@ -192496,25 +192612,12 @@
     "files": [
      ".github/workflows/edge-deploy.yml"
     ]
-   },
-   {
-    "sha": "e077241",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat(whatsapp): move envio de mensagens para edge whatsapp-outbound (retomada) (#142)",
-    "files": [
-     "docs/migration/MATRIZ_EDGE_TABELA.md",
-     "src/services/whatsappOutboundService.ts",
-     "src/test/whatsapp-outbound.test.ts",
-     "supabase/deployment-manifest.json",
-     "supabase/functions/whatsapp-outbound/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    6
+    5
    ],
    [
     "package-lock.json",
@@ -192530,10 +192633,6 @@
    ],
    [
     "src/test/fine-tuning-page.test.tsx",
-    3
-   ],
-   [
-    "docs/migration/MATRIZ_EDGE_TABELA.md",
     3
    ],
    [
@@ -192553,6 +192652,30 @@
     2
    ],
    [
+    "docs/migration/MATRIZ_EDGE_TABELA.md",
+    2
+   ],
+   [
+    "src/components/cost/CostBaselinePanel.tsx",
+    1
+   ],
+   [
+    "src/pages/CostAnomaliesPage.tsx",
+    1
+   ],
+   [
+    "src/services/costAnomalyService.ts",
+    1
+   ],
+   [
+    "src/test/cost-anomaly-service.test.ts",
+    1
+   ],
+   [
+    "src/test/cost-baseline-panel.test.tsx",
+    1
+   ],
+   [
     "src/components/security/SecurityEventsPanel.tsx",
     1
    ],
@@ -192570,26 +192693,6 @@
    ],
    [
     "src/test/security-service.test.ts",
-    1
-   ],
-   [
-    "src/test/fine-tuning-jobs.test.ts",
-    1
-   ],
-   [
-    "src/components/settings/HuggingFaceTab.tsx",
-    1
-   ],
-   [
-    "src/hooks/useHfConfig.ts",
-    1
-   ],
-   [
-    "src/services/hfConfigService.ts",
-    1
-   ],
-   [
-    "src/test/hf-config.test.ts",
     1
    ]
   ]

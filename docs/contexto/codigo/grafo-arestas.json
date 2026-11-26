@@ -1536,6 +1536,15 @@
    "src/components/ui/button.tsx",
    "src/lib/utils.ts"
   ],
+  "src/components/cost/CostBaselinePanel.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/useRBAC.ts",
+   "src/services/costAnomalyService.ts"
+  ],
   "src/components/crm/CadenceRunsPanel.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -4818,6 +4827,7 @@
    "src/lib/utils.ts"
   ],
   "src/pages/CostAnomaliesPage.tsx": [
+   "src/components/cost/CostBaselinePanel.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",

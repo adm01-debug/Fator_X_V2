@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 251,
+ "total": 253,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 236
+  "unit": 238
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 208
+   "arquivos": 210
   },
   {
    "padrao": "outro",
@@ -607,6 +607,24 @@
     "src/services/contextTiersService.ts"
    ],
    "casos": 1
+  },
+  {
+   "arquivo": "src/test/cost-anomaly-service.test.ts",
+   "tipo": "unit",
+   "linhas": 51,
+   "testa": [
+    "src/services/costAnomalyService.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/cost-baseline-panel.test.tsx",
+   "tipo": "unit",
+   "linhas": 99,
+   "testa": [
+    "src/components/cost/CostBaselinePanel.tsx"
+   ],
+   "casos": 5
   },
   {
    "arquivo": "src/test/cost-calculator.test.ts",
@@ -2403,6 +2421,7 @@
   "src/components/agents/wizard/quickSteps/PromptContradictionAutoFixPanel.tsx": 1,
   "src/components/billing/RealTimeCostStream.tsx": 1,
   "src/components/chat/MessageBubble.tsx": 1,
+  "src/components/cost/CostBaselinePanel.tsx": 1,
   "src/components/knowledge/RichEditor.tsx": 1,
   "src/components/layout/AppLayout.tsx": 1,
   "src/components/layout/AppSidebar.tsx": 2,
@@ -2515,6 +2534,7 @@
   "src/services/chatThreadService.ts": 1,
   "src/services/connectorRegistryService.ts": 3,
   "src/services/contextTiersService.ts": 2,
+  "src/services/costAnomalyService.ts": 1,
   "src/services/costCalculatorService.ts": 2,
   "src/services/credentialVaultService.ts": 3,
   "src/services/crmScoringService.ts": 1,
@@ -2897,7 +2917,6 @@
    "src/services/citationTelemetryService.ts",
    "src/services/codeInterpreterService.ts",
    "src/services/complianceService.ts",
-   "src/services/costAnomalyService.ts",
    "src/services/crmCadenceService.ts",
    "src/services/dashboardService.ts",
    "src/services/dataStorageService.ts",

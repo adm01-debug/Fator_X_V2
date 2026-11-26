@@ -1223,8 +1223,9 @@
     "useMemo"
    ],
    "canais_realtime": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "usado_por_arquivos": [
+    "src/components/cost/CostBaselinePanel.tsx",
     "src/components/rbac/AccessControl.tsx",
     "src/components/rbac/ProtectedRoute.tsx",
     "src/components/security/SecurityEventsPanel.tsx",

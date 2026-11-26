@@ -204,6 +204,7 @@
     "citation_telemetry",
     "collections",
     "cost_alerts",
+    "cost_baselines",
     "deploy_connections",
     "document_ingestion_events",
     "document_ingestions",
@@ -1100,6 +1101,69 @@
    ]
   },
   {
+   "modulo": "components/cost",
+   "arquivos": 1,
+   "testes": 0,
+   "linhas": 151,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 1,
+   "hooks_locais": [
+    "useAuth",
+    "useRBAC"
+   ],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [
+    "auth_attempts",
+    "cost_alerts",
+    "cost_baselines",
+    "user_roles",
+    "workspace_members"
+   ],
+   "rpcs": [
+    "acknowledge_cost_alert",
+    "compute_cost_baselines",
+    "detect_cost_anomalies",
+    "is_user_locked_out"
+   ],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "DEV",
+    "MODE",
+    "PROD",
+    "VITE_EXTERNAL_SUPABASE_ANON_KEY",
+    "VITE_EXTERNAL_SUPABASE_URL",
+    "VITE_SENTRY_DSN",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [
+    "workspace_admin"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "pages"
+   ],
+   "depende_de_modulos": [
+    "components/ui",
+    "hooks",
+    "services"
+   ],
+   "pacotes_externos": [
+    "@tanstack/react-query",
+    "lucide-react",
+    "sonner"
+   ]
+  },
+  {
    "modulo": "components/crm",
    "arquivos": 10,
    "testes": 0,
@@ -1190,6 +1254,7 @@
     "api_keys",
     "budget_events",
     "cost_alerts",
+    "cost_baselines",
     "guardrail_policies",
     "security_alerts",
     "security_events",
@@ -1946,6 +2011,7 @@
     "citation_telemetry",
     "collections",
     "cost_alerts",
+    "cost_baselines",
     "deploy_connections",
     "document_ingestion_events",
     "document_ingestions",
@@ -3621,6 +3687,7 @@
     "components/automation",
     "components/billing",
     "components/chat",
+    "components/cost",
     "components/crm",
     "components/dashboard",
     "components/datahub",
@@ -4240,6 +4307,7 @@
     "components/agents",
     "components/automation",
     "components/chat",
+    "components/cost",
     "components/crm",
     "components/dashboard",
     "components/datahub",
@@ -4626,6 +4694,7 @@
     "citation_telemetry",
     "collections",
     "cost_alerts",
+    "cost_baselines",
     "deploy_connections",
     "document_ingestion_events",
     "document_ingestions",
@@ -5314,7 +5383,7 @@
    "modulo": "pages",
    "arquivos": 142,
    "testes": 0,
-   "linhas": 50980,
+   "linhas": 50983,
    "itens_menu": [
     "A/B Test Prompts",
     "Admin BD",
@@ -5810,6 +5879,7 @@
     "compliance_frameworks",
     "compliance_reports",
     "cost_alerts",
+    "cost_baselines",
     "creator_payouts",
     "deploy_connections",
     "document_ingestion_events",
@@ -6128,6 +6198,7 @@
     "components/billing",
     "components/charts",
     "components/chat",
+    "components/cost",
     "components/crm",
     "components/dashboard",
     "components/datahub",
@@ -6195,7 +6266,7 @@
    "modulo": "services",
    "arquivos": 148,
    "testes": 0,
-   "linhas": 32455,
+   "linhas": 32489,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6356,6 +6427,7 @@
     "compliance_frameworks",
     "compliance_reports",
     "cost_alerts",
+    "cost_baselines",
     "deploy_connections",
     "document_ingestion_events",
     "document_ingestions",
@@ -6633,6 +6705,7 @@
      "compliance_frameworks",
      "compliance_reports",
      "cost_alerts",
+     "cost_baselines",
      "deploy_connections",
      "document_ingestion_events",
      "document_ingestions",
@@ -6792,6 +6865,7 @@
     "components/agents",
     "components/automation",
     "components/billing",
+    "components/cost",
     "components/crm",
     "components/dashboard",
     "components/datahub",
@@ -7072,7 +7146,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 202,
+   "testes": 204,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
