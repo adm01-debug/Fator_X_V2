@@ -74,6 +74,7 @@ const BillingPage = lazy(() => import('./pages/BillingPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const SlackSettingsPage = lazy(() => import('./pages/SlackSettingsPage'));
 const LGPDCompliancePage = lazy(() => import('./pages/LGPDCompliancePage'));
+const LGPDGovernancePage = lazy(() => import('./pages/LGPDGovernancePage'));
 const ApprovalQueuePage = lazy(() => import('./pages/ApprovalQueuePage'));
 const AIStudioPage = lazy(() => import('./pages/AIStudioPage'));
 const FineTuningPage = lazy(() => import('./pages/FineTuningPage'));
@@ -804,6 +805,16 @@ const App = () => {
                         <SafePage>
                           <ProtectedRoute permission="settings.api_keys">
                             <LGPDCompliancePage />
+                          </ProtectedRoute>
+                        </SafePage>
+                      }
+                    />
+                    <Route
+                      path="/lgpd-governanca"
+                      element={
+                        <SafePage>
+                          <ProtectedRoute permission="settings.api_keys">
+                            <LGPDGovernancePage />
                           </ProtectedRoute>
                         </SafePage>
                       }

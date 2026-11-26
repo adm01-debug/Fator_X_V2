@@ -233,6 +233,7 @@ const navSections = [
       { title: 'SSO Enterprise', url: '/sso', icon: KeyRound },
       { title: 'Data Residency', url: '/residency', icon: Globe2 },
       { title: 'LGPD', url: '/lgpd', icon: ShieldCheck },
+      { title: 'Governança LGPD', url: '/lgpd-governanca', icon: ShieldCheck },
       { title: 'Aprovações', url: '/approvals', icon: CircleCheckBig },
       { title: 'Equipe', url: '/team', icon: Users },
       { title: 'Faturamento', url: '/billing', icon: CreditCard },
