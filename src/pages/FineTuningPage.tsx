@@ -15,7 +15,6 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
@@ -31,6 +30,7 @@ import {
   prepareDataset,
   startTraining,
   type TaskType,
+  type TrainingMethod,
 } from '@/services/fineTuningService';
 
 const BASE_MODELS: Record<string, string> = {
@@ -68,6 +68,13 @@ function statusBadge(status: string) {
       </Badge>
     );
   }
+  if (status === 'unknown') {
+    return (
+      <Badge variant="secondary" className="text-meta">
+        Sem dados
+      </Badge>
+    );
+  }
   return (
     <Badge variant="secondary" className="text-meta">
       {status}
@@ -79,6 +86,7 @@ export default function FineTuningPage() {
   const [name, setName] = useState('');
   const [baseModel, setBaseModel] = useState('llama');
   const [method, setMethod] = useState('lora');
+  const [rank, setRank] = useState([16]);
   const [epochs, setEpochs] = useState([3]);
   const [lr, setLr] = useState([2]);
   const [agentId, setAgentId] = useState('');
@@ -126,7 +134,10 @@ export default function FineTuningPage() {
         );
         const fresh = updates.filter((u): u is NonNullable<typeof u> => u !== null);
         if (fresh.length === 0) return;
-        setJobs((prev) => prev.map((j) => fresh.find((f) => f.job_id === j.job_id) ?? j));
+        // check_status só devolve status/arquivos: preserva os metadados vindos de list_jobs.
+        setJobs((prev) =>
+          prev.map((j) => ({ ...j, ...(fresh.find((f) => f.job_id === j.job_id) ?? {}) })),
+        );
       })();
     }, 15000);
     return () => clearInterval(timer);
@@ -146,6 +157,8 @@ export default function FineTuningPage() {
         epochs: epochs[0],
         learning_rate: lr[0] * 1e-4,
         repo_name: repoName,
+        method: method as TrainingMethod,
+        ...(method !== 'full' ? { lora_rank: rank[0] } : {}),
       });
       toast.success(
         result.job_id ? `Treinamento iniciado: ${result.job_id}` : 'Treinamento iniciado',
@@ -277,6 +290,15 @@ export default function FineTuningPage() {
                 ))}
               </div>
             </div>
+            {method !== 'full' && (
+              <div>
+                <div className="flex justify-between text-meta mb-1.5">
+                  <Label>LoRA rank</Label>
+                  <span className="font-mono">{rank[0]}</span>
+                </div>
+                <Slider value={rank} onValueChange={setRank} min={4} max={64} step={4} />
+              </div>
+            )}
             <div>
               <div className="flex justify-between text-meta mb-1.5">
                 <Label>Epochs</Label>
@@ -297,9 +319,10 @@ export default function FineTuningPage() {
                 <span className="font-mono truncate">{BASE_MODELS[baseModel]}</span>
               </div>
               <div className="flex justify-between gap-3">
-                <span>Metodo - epochs - lr</span>
+                <span>Metodo e hiperparametros</span>
                 <span className="font-mono">
-                  {method} - {epochs[0]} - {lr[0]}e-4
+                  {method}
+                  {method !== 'full' ? ` r=${rank[0]}` : ''} - {epochs[0]} ep - {lr[0]}e-4
                 </span>
               </div>
             </div>
@@ -342,41 +365,54 @@ export default function FineTuningPage() {
             {!loading && !loadError && jobs.length === 0 && (
               <div className="text-meta text-muted-foreground">Nenhum treinamento ainda.</div>
             )}
-            {jobs.map((j) => {
-              const metrics = j.metrics ?? {};
-              return (
-                <div key={j.job_id} className="p-3 bg-muted/20 rounded-md space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="text-body-sm font-semibold truncate">
-                        {j.hub_repo ?? j.job_id}
-                      </div>
-                      <div className="text-meta text-muted-foreground truncate font-mono">
-                        {j.job_id}
-                      </div>
+            {jobs.map((j) => (
+              <div key={j.job_id} className="p-3 bg-muted/20 rounded-md space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="text-body-sm font-semibold truncate">
+                      {j.hub_repo ?? j.job_id}
                     </div>
-                    {statusBadge(j.status)}
+                    <div className="text-meta text-muted-foreground truncate font-mono">
+                      {j.job_id}
+                    </div>
                   </div>
-                  <Progress value={j.progress ?? 0} className="h-1.5" />
-                  <div className="flex justify-between text-meta text-muted-foreground font-mono">
-                    <span>{metrics.epoch !== undefined ? `Epoch ${metrics.epoch}` : '-'}</span>
-                    <span>{metrics.loss !== undefined ? `Loss: ${metrics.loss}` : '-'}</span>
-                    <span>{j.progress ?? 0}%</span>
-                  </div>
-                  {j.hub_repo && (
-                    <a
-                      href={`https://huggingface.co/${j.hub_repo}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-meta text-primary inline-flex items-center gap-1"
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                      Ver no Hugging Face
-                    </a>
+                  {statusBadge(j.status)}
+                </div>
+                <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-meta text-muted-foreground font-mono">
+                  {j.base_model && <span>{j.base_model.split('/').pop()}</span>}
+                  {j.method && (
+                    <span>
+                      {j.method}
+                      {j.lora_rank ? ` r=${j.lora_rank}` : ''}
+                    </span>
+                  )}
+                  {j.created_at && (
+                    <span>{new Date(j.created_at).toLocaleDateString('pt-BR')}</span>
                   )}
                 </div>
-              );
-            })}
+                <div className="text-meta text-muted-foreground">
+                  {j.has_model_files
+                    ? 'Pesos do modelo publicados no repositorio'
+                    : 'Aguardando o upload dos pesos treinados'}
+                </div>
+                {j.gateway_model_id && (
+                  <div className="text-meta text-muted-foreground">
+                    Usar como <span className="font-mono">{j.gateway_model_id}</span> no LLM Gateway
+                  </div>
+                )}
+                {j.hub_repo && (
+                  <a
+                    href={`https://huggingface.co/${j.hub_repo}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-meta text-primary inline-flex items-center gap-1"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    Ver no Hugging Face
+                  </a>
+                )}
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>

@@ -38,10 +38,15 @@ describe('FineTuningPage', () => {
     mockList.mockResolvedValue({
       jobs: [
         {
-          job_id: 'ft-real-001',
+          job_id: 'adm01/support-bot-v3',
           status: 'completed',
-          progress: 100,
           hub_repo: 'adm01/support-bot-v3',
+          base_model: 'meta-llama/Llama-3.1-8B-Instruct',
+          method: 'qlora',
+          lora_rank: 32,
+          created_at: '2026-11-26T12:00:00.000Z',
+          has_model_files: true,
+          gateway_model_id: 'adm01/support-bot-v3',
         },
       ],
     });
@@ -51,9 +56,29 @@ describe('FineTuningPage', () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByText(/support-bot-v3/)).toBeInTheDocument();
+    expect((await screen.findAllByText(/support-bot-v3/)).length).toBeGreaterThan(0);
     expect(screen.queryByText('legal-classifier')).not.toBeInTheDocument();
     expect(screen.queryByText('ptbr-summarizer')).not.toBeInTheDocument();
+    expect(screen.getByText(/qlora r=32/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Llama-3\.1-8B-Instruct/).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Pesos do modelo publicados/i)).toBeInTheDocument();
+    expect(screen.getByText(/no LLM Gateway/)).toBeInTheDocument();
+  });
+
+  it('nao inventa progresso nem loss que a edge nao produz', async () => {
+    mockList.mockResolvedValue({
+      jobs: [{ job_id: 'adm01/bot', status: 'pending', hub_repo: 'adm01/bot' }],
+    });
+    render(
+      <MemoryRouter>
+        <FineTuningPage />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText(/Aguardando o upload dos pesos/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Epoch /)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Loss:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^\d+%$/)).not.toBeInTheDocument();
   });
 
   it('mostra estado vazio quando o servico nao devolve jobs', async () => {
@@ -93,10 +118,48 @@ describe('FineTuningPage', () => {
       epochs: 3,
       learning_rate: expect.closeTo(0.0002, 10),
       repo_name: 'meu-bot-v1',
+      method: 'lora',
+      lora_rank: 16,
     });
     await waitFor(() =>
       expect(toast.success).toHaveBeenCalledWith('Treinamento iniciado: ft-novo'),
     );
+  });
+
+  it('envia o metodo escolhido e omite o rank quando o metodo e full', async () => {
+    mockStart.mockResolvedValue({ job_id: 'ft-full', status: 'pending' });
+    render(
+      <MemoryRouter>
+        <FineTuningPage />
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'bot-full' } });
+    fireEvent.click(screen.getByRole('button', { name: /Full FT/i }));
+    expect(screen.queryByText('LoRA rank')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /Iniciar fine-tuning/i }));
+    await waitFor(() => expect(mockStart).toHaveBeenCalledTimes(1));
+    const payload = mockStart.mock.calls[0][0] as Record<string, unknown>;
+    expect(payload.method).toBe('full');
+    expect(payload).not.toHaveProperty('lora_rank');
+  });
+
+  it('volta a mostrar o slider de rank em qlora e o envia no payload', async () => {
+    mockStart.mockResolvedValue({ job_id: 'ft-qlora', status: 'pending' });
+    render(
+      <MemoryRouter>
+        <FineTuningPage />
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'bot-qlora' } });
+    fireEvent.click(screen.getByRole('button', { name: /QLoRA/i }));
+    expect(screen.getByText('LoRA rank')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /Iniciar fine-tuning/i }));
+    await waitFor(() => expect(mockStart).toHaveBeenCalledTimes(1));
+    expect(mockStart.mock.calls[0][0]).toMatchObject({ method: 'qlora', lora_rank: 16 });
   });
 
   it('recusa iniciar sem nome e nao chama o servico', async () => {
