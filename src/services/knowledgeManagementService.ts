@@ -235,25 +235,57 @@ export async function updateGapStatus(id: string, status: string, resolvedArticl
 }
 
 // ============ Forum ============
-// Defense-in-depth: also filter is_published in queries (RLS enforces it too).
-export async function listThreads(helpCenterId: string) {
+// A leitura pública passa pelas views com máscara de PII (migration 20260418162623):
+// author_name que pareça e-mail é devolvido como 'Membro'. As views são security_invoker,
+// então a RLS de forum_threads/forum_posts (migration 20260724000006) continua valendo e
+// só libera thread/post publicado (ou o próprio autor). As escritas seguem nas tabelas.
+export interface ForumThreadRow {
+  id: string;
+  help_center_id: string;
+  author_id: string;
+  author_name: string;
+  title: string;
+  body: string;
+  category: string | null;
+  is_pinned: boolean;
+  is_locked: boolean;
+  is_resolved: boolean;
+  view_count: number;
+  reply_count: number;
+  upvotes: number;
+  last_activity_at: string;
+  created_at: string;
+}
+
+export interface ForumPostRow {
+  id: string;
+  thread_id: string;
+  author_id: string;
+  author_name: string;
+  body: string;
+  is_answer: boolean;
+  upvotes: number;
+  parent_post_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function listThreads(helpCenterId: string): Promise<ForumThreadRow[]> {
   const { data, error } = await supabase
-    .from('forum_threads')
+    .from('forum_threads_safe')
     .select('*')
     .eq('help_center_id', helpCenterId)
-    .eq('is_published', true)
     .order('is_pinned', { ascending: false })
     .order('last_activity_at', { ascending: false });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as unknown as ForumThreadRow[];
 }
 
-export async function getThread(id: string) {
+export async function getThread(id: string): Promise<ForumThreadRow | null> {
   const { data, error } = await supabase
-    .from('forum_threads')
+    .from('forum_threads_safe')
     .select('*')
     .eq('id', id)
-    .eq('is_published', true)
     .maybeSingle();
   if (error) throw error;
   if (data)
@@ -261,18 +293,17 @@ export async function getThread(id: string) {
       .from('forum_threads')
       .update({ view_count: (data.view_count ?? 0) + 1 })
       .eq('id', id);
-  return data;
+  return (data as unknown as ForumThreadRow) ?? null;
 }
 
-export async function listPosts(threadId: string) {
+export async function listPosts(threadId: string): Promise<ForumPostRow[]> {
   const { data, error } = await supabase
-    .from('forum_posts')
+    .from('forum_posts_safe')
     .select('*')
     .eq('thread_id', threadId)
-    .eq('is_published', true)
     .order('created_at', { ascending: true });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as unknown as ForumPostRow[];
 }
 
 export async function createThread(payload: {
