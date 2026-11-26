@@ -9,6 +9,7 @@ import { GuardrailPolicies } from "@/components/security/GuardrailPolicies";
 import { SessionManagement } from "@/components/security/SessionManagement";
 import { RateLimitingPanel } from "@/components/security/RateLimitingPanel";
 import { AuditLogSection } from "@/components/security/AuditLogSection";
+import { SecurityEventsPanel } from "@/components/security/SecurityEventsPanel";
 import { GuardrailsConfig } from "@/components/agent-builder/GuardrailsConfig";
 import { listApiKeys, createApiKey, revokeApiKey } from '@/services/securityService';
 import { Button } from '@/components/ui/button';
@@ -261,8 +262,9 @@ export default function SecurityPage() {
           <RedTeamingPanel />
         </TabsContent>
 
-        <TabsContent value="audit" className="animate-in fade-in duration-500">
+        <TabsContent value="audit" className="animate-in fade-in duration-500 space-y-8">
           <AuditLogSection />
+          <SecurityEventsPanel />
         </TabsContent>
 
         <TabsContent value="openclaw" className="animate-in fade-in duration-500">
