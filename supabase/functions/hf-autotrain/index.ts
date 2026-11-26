@@ -11,7 +11,7 @@ function hfJsonResponse(req: Request, data: unknown, status = 200) {
 
 // ═══ Zod Schemas ═══
 const ActionSchema = z.object({
-  action: z.enum(['prepare_dataset', 'start_training', 'check_status', 'list_models', 'export_traces', 'prepare_dpo_dataset', 'generate_trl_config']),
+  action: z.enum(['prepare_dataset', 'start_training', 'check_status', 'list_models', 'export_traces', 'prepare_dpo_dataset', 'generate_trl_config', 'list_jobs']),
   agent_id: z.string().uuid().optional(),
   dataset_config: z.object({
     source: z.enum(['traces', 'test_cases', 'custom']).optional(),
@@ -25,9 +25,30 @@ const ActionSchema = z.object({
     epochs: z.number().int().min(1).max(20).optional(),
     learning_rate: z.number().min(0.000001).max(0.01).optional(),
     repo_name: z.string().max(100).optional(),
+    method: z.enum(['lora', 'qlora', 'full']).optional(),
+    lora_rank: z.number().int().min(4).max(128).optional(),
   }).optional(),
   job_id: z.string().max(100).optional(),
+  limit: z.number().int().min(1).max(50).optional(),
 });
+
+// Args de PEFT derivados do metodo escolhido na tela (LoRA / QLoRA / Full FT).
+function peftArgs(method: string, loraRank: number): string {
+  if (method === 'full') return '--use_peft false';
+  const quantization = method === 'qlora' ? ' --quantization int4' : '';
+  return `--use_peft --peft_method lora --lora_r ${loraRank} --lora_alpha ${loraRank * 2}${quantization}`;
+}
+
+// O "job" de treino nao tem API de status: e um repo HF. Pesos publicados => concluido.
+async function repoHasModelFiles(repoId: string, hfToken: string): Promise<boolean> {
+  const filesResp = await fetchWithTimeout(`https://huggingface.co/api/models/${repoId}/tree/main`, { headers: { 'Authorization': `Bearer ${hfToken}` } });
+  if (!filesResp.ok) return false;
+  const files = await filesResp.json() as Array<Record<string, unknown>>;
+  return files.some((f) => {
+    const fname = String(f.path || '');
+    return fname.endsWith('.safetensors') || fname.endsWith('.bin') || fname === 'config.json';
+  });
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
@@ -47,7 +68,7 @@ serve(async (req) => {
     const parsed = ActionSchema.safeParse(rawBody);
     if (!parsed.success) return hfJsonResponse(req, { error: 'Validation failed', details: parsed.error.flatten().fieldErrors }, 400);
 
-    const { action, agent_id, dataset_config, training_config, job_id } = parsed.data;
+    const { action, agent_id, dataset_config, training_config, job_id, limit } = parsed.data;
     const hfToken = requireEnv("HF_API_TOKEN");
     if (!hfToken) return hfJsonResponse(req, { error: 'HF_API_TOKEN not configured' }, 400);
 
@@ -111,6 +132,8 @@ serve(async (req) => {
       const epochs = training_config?.epochs || 3;
       const lr = training_config?.learning_rate || 0.00002;
       const repoName = training_config?.repo_name || `fatorx-finetune-${Date.now()}`;
+      const method = training_config?.method || 'lora';
+      const loraRank = training_config?.lora_rank || 16;
       const whoResp = await fetchWithTimeout('https://huggingface.co/api/whoami-v2', { headers: { 'Authorization': `Bearer ${hfToken}` } });
       const whoami = await whoResp.json();
       const hfUsername = (whoami as Record<string, string>).name;
@@ -124,15 +147,16 @@ serve(async (req) => {
         await (supabase as any).from('agent_traces').insert({
           agent_id: agent_id || '00000000-0000-0000-0000-000000000000', user_id: user.id,
           event: 'finetune_started', level: 'info',
-          input: { base_model: baseModel, task, epochs, learning_rate: lr },
+          input: { base_model: baseModel, task, epochs, learning_rate: lr, method, lora_rank: loraRank },
           output: { repo: `${hfUsername}/${repoName}`, status: 'repo_created' },
           metadata: { hf_repo: `${hfUsername}/${repoName}`, training_config },
         });
       }
       return hfJsonResponse(req, {
-        status: 'repo_created', repo_id: `${hfUsername}/${repoName}`,
+        status: 'repo_created', repo_id: `${hfUsername}/${repoName}`, job_id: `${hfUsername}/${repoName}`,
         repo_url: `https://huggingface.co/${hfUsername}/${repoName}`,
-        base_model: baseModel, task, config: { epochs, learning_rate: lr },
+        base_model: baseModel, task, config: { epochs, learning_rate: lr, method, lora_rank: loraRank },
+        peft_args: peftArgs(method, loraRank),
         next_steps: ['Upload the prepared dataset to the repo', 'Configure AutoTrain via HF web interface or API', 'Monitor training progress at the repo URL', 'Once complete, use the model as huggingface/' + hfUsername + '/' + repoName + ' in the LLM Gateway'],
       });
     }
@@ -167,11 +191,42 @@ serve(async (req) => {
         return fname.endsWith('.safetensors') || fname.endsWith('.bin') || fname === 'config.json';
       });
       return hfJsonResponse(req, {
-        job_id, status: hasModelFiles ? 'completed' : 'pending',
+        job_id, hub_repo: job_id, status: hasModelFiles ? 'completed' : 'pending',
         model_url: `https://huggingface.co/${job_id}`, has_model_files: hasModelFiles,
         file_count: files.length, last_modified: repoData.lastModified, downloads: repoData.downloads,
         gateway_model_id: hasModelFiles ? `huggingface/${job_id}` : null,
       });
+    }
+
+    if (action === 'list_jobs') {
+      // Fonte real de "jobs": os traces gravados por start_training (o treino em si roda fora daqui).
+      let query = supabase.from('agent_traces')
+        .select('agent_id, created_at, input, metadata, output')
+        .eq('event', 'finetune_started')
+        .order('created_at', { ascending: false })
+        .limit(limit || 10);
+      if (agent_id) query = query.eq('agent_id', agent_id);
+      const { data: traces, error: tracesError } = await query;
+      if (tracesError) return hfJsonResponse(req, { error: tracesError.message }, 400);
+
+      const rows = (traces || []) as Array<Record<string, unknown>>;
+      const jobs = await Promise.all(rows.map(async (t) => {
+        const meta = (t.metadata || {}) as Record<string, unknown>;
+        const input = (t.input || {}) as Record<string, unknown>;
+        const output = (t.output || {}) as Record<string, unknown>;
+        const repoId = String(meta.hf_repo || output.repo || '');
+        const hasModelFiles = repoId ? await repoHasModelFiles(repoId, hfToken) : false;
+        return {
+          job_id: repoId, hub_repo: repoId, agent_id: t.agent_id, created_at: t.created_at,
+          base_model: input.base_model ?? null, method: input.method ?? null, lora_rank: input.lora_rank ?? null,
+          epochs: input.epochs ?? null, learning_rate: input.learning_rate ?? null,
+          status: repoId ? (hasModelFiles ? 'completed' : 'pending') : 'unknown',
+          has_model_files: hasModelFiles,
+          model_url: repoId ? `https://huggingface.co/${repoId}` : null,
+          gateway_model_id: hasModelFiles ? `huggingface/${repoId}` : null,
+        };
+      }));
+      return hfJsonResponse(req, { jobs, count: jobs.length, source: 'agent_traces' });
     }
 
     if (action === 'prepare_dpo_dataset') {
@@ -205,14 +260,17 @@ serve(async (req) => {
       const baseModel = training_config?.base_model || 'mistralai/Mistral-7B-Instruct-v0.3';
       const epochs = training_config?.epochs || 3;
       const lr = training_config?.learning_rate || 0.00002;
+      const method = training_config?.method || 'lora';
+      const loraRank = training_config?.lora_rank || 16;
       const trlConfig = {
-        sft: { command: `trl sft --model_name ${baseModel} --dataset_name ./dataset --output_dir ./sft --num_train_epochs ${epochs} --learning_rate ${lr} --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --logging_steps 10`, description: 'Supervised Fine-Tuning with agent traces' },
+        sft: { command: `trl sft --model_name ${baseModel} --dataset_name ./dataset --output_dir ./sft --num_train_epochs ${epochs} --learning_rate ${lr} --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --logging_steps 10 ${peftArgs(method, loraRank)}`, description: 'Supervised Fine-Tuning with agent traces' },
         dpo: { command: `trl dpo --model_name ./sft --dataset_name ./dpo_dataset --output_dir ./dpo --beta 0.1 --learning_rate ${lr / 10} --num_train_epochs 1`, description: 'Direct Preference Optimization with user feedback' },
         grpo: { command: `trl grpo --model_name ./sft --dataset_name ./grpo_dataset --output_dir ./grpo --num_train_epochs 1`, description: 'Group Relative Policy Optimization (DeepSeek R1 method)' },
         reward: { command: `trl reward --model_name ${baseModel} --dataset_name ./reward_dataset --output_dir ./reward_model`, description: 'Train reward model for quality scoring' },
       };
       return hfJsonResponse(req, {
         trl_version: '1.0', base_model: baseModel, task: training_config?.task || 'text-generation',
+        method, lora_rank: loraRank, peft_args: peftArgs(method, loraRank),
         configs: trlConfig,
         pipeline: ['1. export_traces', '2. prepare_dataset', '3. SFT', '4. prepare_dpo_dataset', '5. DPO', '6. Deploy'],
         requirements: 'pip install trl>=1.0.0 transformers>=5.0.0 peft accelerate',

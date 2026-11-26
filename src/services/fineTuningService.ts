@@ -9,6 +9,7 @@ import type { DbRow } from '@/types/dbRow';
 
 export type DatasetSource = 'traces' | 'test_cases' | 'custom';
 export type TaskType = 'text-generation' | 'text-classification' | 'embedding';
+export type TrainingMethod = 'lora' | 'qlora' | 'full';
 
 export interface DatasetConfig {
   source: DatasetSource;
@@ -23,6 +24,10 @@ export interface TrainingConfig {
   epochs: number;
   learning_rate: number;
   repo_name?: string;
+  /** LoRA / QLoRA / Full FT — decide os args de PEFT enviados à edge. */
+  method?: TrainingMethod;
+  /** Só se aplica quando method é lora ou qlora. */
+  lora_rank?: number;
 }
 
 interface PrepareDatasetResult {
@@ -34,14 +39,20 @@ interface PrepareDatasetResult {
 interface StartTrainingResult {
   job_id?: string;
   status?: string;
+  repo_url?: string;
 }
 
 interface JobStatusResult {
   job_id: string;
   status: string;
-  progress?: number;
-  metrics?: Record<string, number>;
   hub_repo?: string;
+  base_model?: string | null;
+  method?: string | null;
+  lora_rank?: number | null;
+  created_at?: string;
+  has_model_files?: boolean;
+  model_url?: string | null;
+  gateway_model_id?: string | null;
 }
 
 async function invoke<T>(body: Record<string, unknown>): Promise<T> {
@@ -53,7 +64,10 @@ async function invoke<T>(body: Record<string, unknown>): Promise<T> {
   return data as T;
 }
 
-export async function prepareDataset(agentId: string, config: DatasetConfig): Promise<PrepareDatasetResult> {
+export async function prepareDataset(
+  agentId: string,
+  config: DatasetConfig,
+): Promise<PrepareDatasetResult> {
   return invoke<PrepareDatasetResult>({
     action: 'prepare_dataset',
     agent_id: agentId,
@@ -70,7 +84,7 @@ export async function startTraining(config: TrainingConfig): Promise<StartTraini
 
 export async function getJobStatus(jobId: string): Promise<JobStatusResult> {
   return invoke<JobStatusResult>({
-    action: 'get_status',
+    action: 'check_status',
     job_id: jobId,
   });
 }
