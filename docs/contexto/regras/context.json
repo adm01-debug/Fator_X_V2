@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "bb13d20535e94cf8dd07a61d1960e962e4d7a5fd",
+  "sha": "0bbb2443a3c2dc8e9ef7167f88b775b1c7f72d8f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-24 17:41 UTC",
+  "generated_at": "2026-11-26 00:52 UTC",
   "files_total": 2013,
   "code_files": 1794,
   "code_lines": 348963
@@ -190970,10 +190970,19 @@
   }
  },
  "git": {
-  "sha": "bb13d20535e94cf8dd07a61d1960e962e4d7a5fd",
+  "sha": "0bbb2443a3c2dc8e9ef7167f88b775b1c7f72d8f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "0bbb244",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)",
+    "files": [
+     ".github/workflows/edge-prune.yml"
+    ]
+   },
    {
     "sha": "bb13d20",
     "date": "2026-11-24",
@@ -191311,16 +191320,6 @@
      "src/test/chat-thread-service.test.ts",
      "supabase/migrations/20261120150000_reconcile_chat_schema.sql"
     ]
-   },
-   {
-    "sha": "efdc4b1",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix(deps): declara @tiptap/core usado no teste do rich editor (#125)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -191330,11 +191329,11 @@
    ],
    [
     "package-lock.json",
-    6
+    5
    ],
    [
     "package.json",
-    5
+    4
    ],
    [
     ".github/workflows/edge-deploy.yml",
@@ -191343,6 +191342,10 @@
    [
     "docs/migration/MATRIZ_EDGE_TABELA.md",
     3
+   ],
+   [
+    ".github/workflows/edge-prune.yml",
+    2
    ],
    [
     "supabase/config.toml",
@@ -191398,10 +191401,6 @@
    ],
    [
     ".github/workflows/dependency-review.yml",
-    1
-   ],
-   [
-    ".github/workflows/edge-prune.yml",
     1
    ]
   ]

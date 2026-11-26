@@ -383,7 +383,8 @@
    "scripts_usados": [],
    "npm_scripts": [],
    "secrets": [
-    "SUPABASE_ACCESS_TOKEN"
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_ANON_KEY"
    ],
    "actions": [
     "actions/checkout",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bb13d20535e94cf8dd07a61d1960e962e4d7a5fd",
+  "commit": "0bbb2443a3c2dc8e9ef7167f88b775b1c7f72d8f",
   "branch": "main",
-  "data_commit": "2026-11-24T14:35:15-03:00",
+  "data_commit": "2026-11-25T21:48:36-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "0bbb2443",
+    "data": "2026-11-25",
+    "assunto": "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)"
+   },
    {
     "sha": "bb13d205",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "96f5dac0",
     "data": "2026-11-21",
     "assunto": "fix(exfil): redireciona triggers e cron do slack/whatsapp para o projeto de producao (#130)"
-   },
-   {
-    "sha": "b571324b",
-    "data": "2026-11-21",
-    "assunto": "fix(ci): guarda partição ausente no preview (agent_traces_v2_2026_05) (#131)"
    }
   ],
   "arquivos_mudados_7d": 122,
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 62
+    "commits": 63
    },
    {
     "autor": "dependabot[bot]",

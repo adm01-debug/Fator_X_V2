@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bb13d20535e94cf8dd07a61d1960e962e4d7a5fd` (2026-11-24T14:35:15-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0bbb2443a3c2dc8e9ef7167f88b775b1c7f72d8f` (2026-11-25T21:48:36-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -432,7 +432,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14551 nós · 38424 arestas · 916 comunidades · grafo do commit `bb13d205`
+- 14551 nós · 38424 arestas · 916 comunidades · grafo do commit `0bbb2443`
 - comunidades maiores: badge.tsx (351), react (333), ref_https (200), App.tsx (180), logger.ts (146), lucide-react (127), templateSkillLinkService.ts (121), cn (120), KnowledgePage.tsx (119), SuperCerebroPage.tsx (116), mod.ts (113), agent-workflow-runner/index.ts (107)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -579,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-25 `0bbb2443` fix(infra): prova real da remocao de edge orfa no edge-prune (#156)
 - 2026-11-24 `bb13d205` chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)
 - 2026-11-24 `140960ac` chore(ci)(deps): bump actions/checkout from 6.1.0 to 7.0.1 (#150)
 - 2026-11-24 `266f5fdf` chore(ci)(deps): bump actions/dependency-review-action (#147)
@@ -593,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `8554dc79` feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)
 - 2026-11-21 `085a2e38` chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)
 - 2026-11-21 `e0772412` feat(whatsapp): move envio de mensagens para edge whatsapp-outbound (retomada) (#142)
-- 2026-11-21 `fbe64eef` fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
