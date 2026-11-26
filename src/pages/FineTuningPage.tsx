@@ -26,12 +26,17 @@ import { PageHeader } from '@/components/shared/PageHeader';
 import { toast } from 'sonner';
 import {
   getJobStatus,
+  listFineTuneJobs,
   listTrainingJobs,
   prepareDataset,
+  recordFineTuneJob,
   startTraining,
+  syncFineTuneJob,
+  type FineTuneJobRecord,
   type TaskType,
   type TrainingMethod,
 } from '@/services/fineTuningService';
+import { logger } from '@/lib/logger';
 
 const BASE_MODELS: Record<string, string> = {
   llama: 'meta-llama/Llama-3.1-8B-Instruct',
@@ -96,17 +101,34 @@ export default function FineTuningPage() {
   const [submitting, setSubmitting] = useState(false);
   const [preparing, setPreparing] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [history, setHistory] = useState<FineTuneJobRecord[]>([]);
+  const [historyError, setHistoryError] = useState<string | null>(null);
 
   const loadJobs = useCallback(async () => {
-    try {
-      const data = await listTrainingJobs();
-      setJobs(data.jobs ?? []);
-      setLoadError(null);
-    } catch (err) {
-      setLoadError(err instanceof Error ? err.message : 'Falha ao listar os jobs');
-    } finally {
-      setLoading(false);
-    }
+    // As duas fontes falham de forma independente: o Hub pode estar fora sem derrubar o
+    // histórico local, e vice-versa.
+    await Promise.all([
+      (async () => {
+        try {
+          const data = await listTrainingJobs();
+          setJobs(data.jobs ?? []);
+          setLoadError(null);
+        } catch (err) {
+          setLoadError(err instanceof Error ? err.message : 'Falha ao listar os jobs');
+        }
+      })(),
+      (async () => {
+        try {
+          setHistory(await listFineTuneJobs());
+          setHistoryError(null);
+        } catch (err) {
+          setHistoryError(
+            err instanceof Error ? err.message : 'Falha ao ler o histórico do workspace',
+          );
+        }
+      })(),
+    ]);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -138,6 +160,22 @@ export default function FineTuningPage() {
         setJobs((prev) =>
           prev.map((j) => ({ ...j, ...(fresh.find((f) => f.job_id === j.job_id) ?? {}) })),
         );
+        // Leva o status novo para o registro local (`finetune_jobs`), que é o que sobrevive
+        // a uma falha do Hub. Job sem registro local apenas devolve null.
+        await Promise.all(
+          fresh.map((f) =>
+            syncFineTuneJob({
+              hfRepoId: f.hub_repo ?? f.job_id,
+              statusRaw: f.status,
+              resultModelId: f.gateway_model_id ?? null,
+            }).catch((err: unknown) =>
+              logger.warn(
+                `syncFineTuneJob falhou: ${err instanceof Error ? err.message : String(err)}`,
+              ),
+            ),
+          ),
+        );
+        setHistory(await listFineTuneJobs().catch(() => []));
       })();
     }, 15000);
     return () => clearInterval(timer);
@@ -163,6 +201,29 @@ export default function FineTuningPage() {
       toast.success(
         result.job_id ? `Treinamento iniciado: ${result.job_id}` : 'Treinamento iniciado',
       );
+      try {
+        const baseModelId = BASE_MODELS[baseModel] ?? baseModel;
+        await recordFineTuneJob({
+          hfRepoId: result.repo_url?.replace('https://huggingface.co/', '') ?? repoName,
+          hfModelUrl: result.repo_url ?? null,
+          baseModel: baseModelId,
+          task: 'text-generation' as TaskType,
+          agentId: agentId.trim() || null,
+          config: {
+            epochs: epochs[0],
+            learning_rate: lr[0] * 1e-4,
+            method,
+            ...(method !== 'full' ? { lora_rank: rank[0] } : {}),
+          },
+        });
+      } catch (err) {
+        // O treino já começou no Hub: falhar aqui não pode virar erro para o usuário.
+        logger.warn(
+          `Falha ao registrar o job em finetune_jobs: ${
+            err instanceof Error ? err.message : String(err)
+          }`,
+        );
+      }
       await loadJobs();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Falha ao iniciar o treinamento');
@@ -411,6 +472,51 @@ export default function FineTuningPage() {
                     Ver no Hugging Face
                   </a>
                 )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-body-sm flex items-center gap-2">
+              <Database className="h-4 w-4" />
+              Histórico do workspace
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-meta text-muted-foreground">
+              Registro local de cada treinamento iniciado aqui — continua visível mesmo se o
+              Hugging Face não responder.
+            </p>
+            {historyError && (
+              <div role="alert" className="text-meta text-destructive flex items-start gap-1.5">
+                <AlertCircle className="h-3.5 w-3.5 mt-0.5" />
+                {historyError}
+              </div>
+            )}
+            {!historyError && history.length === 0 && (
+              <div className="text-meta text-muted-foreground">Nenhum job registrado ainda.</div>
+            )}
+            {history.map((r) => (
+              <div key={r.id} className="p-3 bg-muted/20 rounded-md space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <a
+                    href={r.hf_model_url ?? `https://huggingface.co/${r.hf_repo_id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-body-sm font-semibold truncate text-primary inline-flex items-center gap-1"
+                  >
+                    {r.hf_repo_id}
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                  {statusBadge(r.status)}
+                </div>
+                <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-meta text-muted-foreground font-mono">
+                  <span>{r.base_model.split('/').pop()}</span>
+                  <span>{new Date(r.created_at).toLocaleString('pt-BR')}</span>
+                  {r.result_model_id && <span>{r.result_model_id}</span>}
+                </div>
+                {r.error && <div className="text-meta text-destructive">{r.error}</div>}
               </div>
             ))}
           </CardContent>
