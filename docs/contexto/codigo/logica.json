@@ -8707,12 +8707,14 @@
     "insertWorkspaceMember",
     "inviteMember",
     "listMembers",
+    "listMembersForTeam",
     "removeMember",
     "updateMemberRole"
    ],
    "export_default": null,
-   "linhas": 117,
+   "linhas": 156,
    "tabelas": [
+    "workspace_member_emails",
     "workspace_members",
     "workspace_members_safe"
    ],
@@ -8733,7 +8735,7 @@
     "pages",
     "services"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {

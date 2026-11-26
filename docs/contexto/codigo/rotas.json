@@ -1471,6 +1471,7 @@
     "workflow_runs",
     "workflow_steps",
     "workflows",
+    "workspace_member_emails",
     "workspace_members",
     "workspace_members_safe",
     "workspace_secrets",
@@ -7724,6 +7725,7 @@
     "agents",
     "auth_attempts",
     "user_roles",
+    "workspace_member_emails",
     "workspace_members",
     "workspace_members_safe",
     "workspaces"

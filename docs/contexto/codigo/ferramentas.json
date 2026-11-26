@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1400)",
+   "TypeScript (1401)",
    "SQL (341)",
    "Markdown (134)",
    "JavaScript (54)",
@@ -1484,6 +1484,10 @@
     "ocorrencias": 2
    },
    {
+    "papel": "editor",
+    "ocorrencias": 2
+   },
+   {
     "papel": "img",
     "ocorrencias": 2
    },
@@ -1524,10 +1528,6 @@
     "ocorrencias": 1
    },
    {
-    "papel": "editor",
-    "ocorrencias": 1
-   },
-   {
     "papel": "finance",
     "ocorrencias": 1
    },
@@ -1549,6 +1549,10 @@
    },
    {
     "papel": "menuitem",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "owner",
     "ocorrencias": 1
    },
    {

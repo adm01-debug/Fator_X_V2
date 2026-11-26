@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 245,
+ "total": 246,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 230
+  "unit": 231
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 202
+   "arquivos": 203
   },
   {
    "padrao": "outro",
@@ -1910,6 +1910,15 @@
    "casos": 8
   },
   {
+   "arquivo": "src/test/teams-members-full.test.ts",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/services/teamsService.ts"
+   ],
+   "casos": 4
+  },
+  {
    "arquivo": "src/test/template-canvas-preview.test.tsx",
    "tipo": "unit",
    "linhas": 107,
@@ -2503,7 +2512,7 @@
   "src/services/skillRecommenderService.ts": 2,
   "src/services/skillsRegistryService.ts": 9,
   "src/services/skillsSimulationService.ts": 1,
-  "src/services/teamsService.ts": 1,
+  "src/services/teamsService.ts": 2,
   "src/services/templateSkillLinkService.ts": 10,
   "src/services/templateSkillRegistry.ts": 4,
   "src/services/vaultSyncService.ts": 1,

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9e06f43886` · branch `main` · 2026-11-26 20:26 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c3e765ce51` · branch `main` · 2026-11-26 21:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4025,7 +4025,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3058 testes em 218 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3063 testes em 219 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4218,6 +4218,7 @@ _nenhum item encontrado_
 | `src/test/relatedNotes.test.ts` | 5 | findRelatedNotes · excludes the active note itself · skips archived notes · boosts shared tags and wikilinks … |
 | `src/test/ri[REDACTED].test.tsx` | 5 | RiskRegisterPage — RPCs do registro de riscos · alimenta os indicadores com get_risk_summary · registra risco por register_risk em vez de insert direto na tabela · mostra o histórico e grava a revisão por review_risk … |
 | `src/test/schema-contract.test.ts` | 5 | contrato de schema entre código e banco · encontra arquivos para analisar · todo .rpc() referencia uma função existente no schema · todo .from() referencia uma tabela ou view existente no schema … |
+| `src/test/teams-members-full.test.ts` | 5 | listMembersForTeam · mescla o e-mail da tabela isolada no membro correspondente · lê os e-mails escopados no workspace · não derruba a lista de membros quando a leitura de e-mail falha … |
 | `src/test/template-skill-link.test.ts` | 5 | linkSkillsToTemplate · gera sinais normalizados do template · marca match forte quando há tag em comum · ignora skills virtuais de template … |
 | `src/test/templates.test.ts` | 5 | Agent Templates · has at least 37 templates · all templates have required fields · all template IDs are unique … |
 | `src/test/use-unsaved-changes.test.tsx` | 5 | useUnsavedChanges · defaults to no unsaved changes · can set unsaved changes · confirmNavigation calls callback immediately when no unsaved changes … |
@@ -4720,4 +4721,4 @@ _nenhum item encontrado_
 | 2 hits = fit máximo | `src/services/skillRecommenderService.ts` |
 | quando o ranking semântico devolve menos que `limit`. Desligado por padrão | `src/services/skillRecommenderService.ts` |
 | para preservar determinismo em fluxos que exigem apenas matches reais. | `src/services/skillRecommenderService.ts` |
-| … +165 linhas — lista completa em `context.json` | |
+| … +166 linhas — lista completa em `context.json` | |
