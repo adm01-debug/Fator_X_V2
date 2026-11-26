@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { listAlerts, acknowledgeAlert, runDetectionNow, type CostAlert } from "@/services/costAnomalyService";
+import { CostBaselinePanel } from "@/components/cost/CostBaselinePanel";
 
 const severityVariant: Record<string, "destructive" | "default" | "secondary"> = {
   critical: "destructive",
@@ -98,6 +99,8 @@ export default function CostAnomaliesPage() {
           {alerts.map((alert) => <AlertCard key={alert.id} alert={alert} onAck={(id) => ackMut.mutate(id)} />)}
         </div>
       )}
+
+      <CostBaselinePanel />
     </div>
   );
 }
