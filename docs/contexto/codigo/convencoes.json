@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)",
    "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)",
    "chore(vercel): deep link da SPA deixa de dar 404 (#164)",
    "test(forum): trava as escritas do forum publico (#162)",
-   "fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)",
-   "feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)"
+   "fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

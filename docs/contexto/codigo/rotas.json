@@ -1466,6 +1466,7 @@
     "tool_integrations",
     "trace_events",
     "usage_records",
+    "usage_records_cost_safe",
     "vector_indexes",
     "workflow_runs",
     "workflow_steps",
@@ -1621,6 +1622,7 @@
     "budgets",
     "model_pricing",
     "usage_records",
+    "usage_records_cost_safe",
     "workspace_members",
     "workspaces"
    ],

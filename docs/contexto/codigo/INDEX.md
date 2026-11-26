@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `74f4d20ed45c7fcbfa20a9369cd6fb30fda4acb6` (2026-11-26T16:29:46-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9e06f438864eb617f396eece9decf3356dd600c5` (2026-11-26T17:10:33-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2015 |
 | arquivos_codigo | 1458 |
-| linhas_codigo | 320514 |
+| linhas_codigo | 320559 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -71,7 +71,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|---|---|---|---|---|
 | components/agent-builder | 0 | 0 | 51 | 29 | 11 | 23 |
 | components/agents | 0 | 0 | 104 | 17 | 2 | 14 |
-| components/automation | 0 | 0 | 14 | 2 | 28 | 41 |
+| components/automation | 0 | 0 | 14 | 2 | 28 | 42 |
 | components/charts | 0 | 0 | 12 | 1 | 0 | 0 |
 | components/chat | 0 | 0 | 11 | 1 | 0 | 0 |
 | components/crm | 0 | 0 | 10 | 1 | 3 | 3 |
@@ -94,11 +94,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | config | 0 | 0 | 10 | 0 | 0 | 0 |
 | data | 0 | 0 | 5 | 0 | 0 | 0 |
 | hooks | 0 | 0 | 44 | 67 | 14 | 33 |
-| lib | 0 | 0 | 45 | 85 | 63 | 122 |
+| lib | 0 | 0 | 45 | 85 | 63 | 123 |
 | lib/skills | 0 | 0 | 19 | 0 | 0 | 2 |
 | lib/validations | 0 | 0 | 12 | 0 | 0 | 0 |
-| pages | 114 | 151 | 141 | 95 | 75 | 154 |
-| services | 0 | 0 | 146 | 28 | 59 | 120 |
+| pages | 114 | 151 | 141 | 95 | 75 | 155 |
+| services | 0 | 0 | 146 | 28 | 59 | 121 |
 | services/presets | 0 | 0 | 5 | 0 | 0 | 0 |
 | services/types | 0 | 0 | 15 | 0 | 0 | 0 |
 | stores | 0 | 0 | 10 | 0 | 1 | 6 |
@@ -432,7 +432,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14590 nós · 38553 arestas · 899 comunidades · grafo do commit `74f4d20e`
+- 14590 nós · 38553 arestas · 899 comunidades · grafo do commit `9e06f438`
 - comunidades maiores: badge.tsx (277), button.tsx (244), App.tsx (212), mod.ts (179), logger.ts (160), react (157), VendorsPage.tsx (156), lucide-react (155), cn (132), templateSkillLinkService.ts (128), fromTable (125), notesService.ts (114)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -579,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `9e06f43` fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)
 - 2026-11-26 `74f4d20` feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)
 - 2026-11-26 `f2a4f3a` chore(vercel): deep link da SPA deixa de dar 404 (#164)
 - 2026-11-26 `897badb` test(forum): trava as escritas do forum publico (#162)
@@ -593,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `266f5fd` chore(ci)(deps): bump actions/dependency-review-action (#147)
 - 2026-11-24 `7fc063a` infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)
 - 2026-11-24 `ef5746c` fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)
-- 2026-11-24 `d809480` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

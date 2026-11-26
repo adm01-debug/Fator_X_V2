@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `74f4d20ed4` · branch `main` · 2026-11-26 19:36 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9e06f43886` · branch `main` · 2026-11-26 20:26 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -435,6 +435,7 @@ _nenhum item encontrado_
 | rls | `forum_threads_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | rls | `oncall_schedule_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/incidentService.ts` |
 | rls | `prompt_versions`: acessada do front (3 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeService.ts`<br>`src/services/promptVersionService.ts`<br>`src/stores/agentBuilderStore.ts` |
+| rls | `usage_records_cost_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/billingService.ts` |
 | rls | `workspace_members_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/teamsService.ts` |
 | edge | edge function `dashboard-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
 | edge | edge function `fixture-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |

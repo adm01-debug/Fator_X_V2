@@ -508,11 +508,11 @@
   {
    "arquivo": "src/test/billing-service.test.ts",
    "tipo": "unit",
-   "linhas": 175,
+   "linhas": 206,
    "testa": [
     "src/services/billingService.ts"
    ],
-   "casos": 14
+   "casos": 16
   },
   {
    "arquivo": "src/test/bitrix24-webhook.test.ts",

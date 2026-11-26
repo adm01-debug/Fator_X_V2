@@ -4682,12 +4682,13 @@
     "setBudget"
    ],
    "export_default": null,
-   "linhas": 187,
+   "linhas": 190,
    "tabelas": [
     "agent_usage",
     "budgets",
     "model_pricing",
-    "usage_records"
+    "usage_records",
+    "usage_records_cost_safe"
    ],
    "rpcs": [],
    "edges": [],

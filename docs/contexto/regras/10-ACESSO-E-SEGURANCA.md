@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `74f4d20ed4` · branch `main` · 2026-11-26 19:36 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9e06f43886` · branch `main` · 2026-11-26 20:26 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -775,6 +775,7 @@ Middleware matcher (Next.js): nenhum
 | `forum_threads_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | `oncall_schedule_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/incidentService.ts` |
 | `prompt_versions` | acessada do front (3 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeService.ts`<br>`src/services/promptVersionService.ts`<br>`src/stores/agentBuilderStore.ts` |
+| `usage_records_cost_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/billingService.ts` |
 | `workspace_members_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/teamsService.ts` |
 
 ## Multi-tenancy

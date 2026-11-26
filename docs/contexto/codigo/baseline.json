@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "74f4d20ed45c7fcbfa20a9369cd6fb30fda4acb6",
+  "commit": "9e06f438864eb617f396eece9decf3356dd600c5",
   "branch": "main",
-  "data_commit": "2026-11-26T16:29:46-03:00",
+  "data_commit": "2026-11-26T17:10:33-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "9e06f43",
+    "data": "2026-11-26",
+    "assunto": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)"
+   },
    {
     "sha": "74f4d20",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "fbe64ee",
     "data": "2026-11-21",
     "assunto": "fix(secrets): restaura key_value em workspace_secrets e corrige consumidores (#137)"
-   },
-   {
-    "sha": "35f15a7",
-    "data": "2026-11-21",
-    "assunto": "fix(rag): aceita service role e fallback OpenRouter no rag-embed-v2 (#141)"
    }
   ],
-  "arquivos_mudados_7d": 137,
+  "arquivos_mudados_7d": 140,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 71
+    "commits": 72
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 2015,
   "arquivos_codigo": 1458,
-  "linhas_codigo": 320514,
+  "linhas_codigo": 320559,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 141,
-   "linhas": 50241
+   "linhas": 50252
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -512,7 +512,7 @@
   },
   "src/services": {
    "arquivos": 166,
-   "linhas": 33031
+   "linhas": 33034
   },
   "src/stores": {
    "arquivos": 12,
@@ -520,7 +520,7 @@
   },
   "src/test": {
    "arquivos": 196,
-   "linhas": 29706
+   "linhas": 29737
   },
   "src/tests": {
    "arquivos": 2,

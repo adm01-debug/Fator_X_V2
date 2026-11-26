@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `74f4d20ed4` · branch `main` · 2026-11-26 19:36 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9e06f43886` · branch `main` · 2026-11-26 20:26 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4025,7 +4025,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3056 testes em 218 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3058 testes em 218 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4070,6 +4070,7 @@ _nenhum item encontrado_
 | `src/test/evaluations-scoring.test.ts` | 20 | scoreDeterministic · returns 0 for empty inputs · returns high score for exact match (normalized) · rewards JSON key overlap … |
 | `src/test/skill-attribution.test.ts` | 20 | normalizeLicense — invariantes sobre todas as entradas · é idempotente e saneada para ${JSON.stringify(input)} · reconhece todos os SPDX do catálogo em qualquer caixa · trata sentinelas de ausência como nulo … |
 | `src/test/skill-efficacy-scales.test.ts` | 20 | escalas de confiança — mapeamento de procedência · apenas platform_heuristic cai na régua de plataforma · a régua concorda com o limiar de revisão aplicado na fila · o parser deriva a régua da procedência registrada na auditoria … |
+| `src/test/billing-service.test.ts` | 19 | billingService — agregação de consumo · soma custo e tokens ignorando nulos, e agrupa por tipo · trata numeric do Postgres devolvido como string sem concatenar · classifica registros sem record_type como llm … |
 | `src/test/curation-realtime-pending.test.ts` | 19 | applyCurationPendingEvent — identidade preservada · devolve o MESMO Set quando o evento é irrelevante (origin auto) · devolve o MESMO Set quando a linha não tem identidade · devolve o MESMO Set quando a dupla já está pendente (dedup) … |
 | `src/test/deployments-service.test.ts` | 19 | deploymentsService · listDeployments · filtra pelo agente e ordena do mais recente para o mais antigo · propaga erro em vez de devolver lista vazia … |
 | `src/test/skill-install-cap-ledger.test.ts` | 19 | parseInstallCapRows — robustez · descarta linhas sem id · não quebra com metadata nulo, array ou string · normaliza números negativos e NaN para zero … |
@@ -4086,7 +4087,6 @@ _nenhum item encontrado_
 | `src/test/skill-prompt-diff.test.ts` | 18 | diffPromptSimulations — simulação combinatória · cobre ${SIZES.length * SIZES.length} pares de tamanhos sem inconsistência de totais · é reflexivo: comparar uma simulação consigo mesma não gera mudanças · detecta a skill que continua instalada mas caiu no overflow … |
 | `src/test/template-skill-links-merge.test.ts` | 18 | mergeDisplayLinks — cenários determinísticos · usa o fallback apenas quando não há persistência · coloca curadoria manual no topo · nunca descarta vínculos manuais mesmo acima do limite … |
 | `src/test/agent-templates-merge.test.ts` | 17 | agent templates: norm() · normaliza case e espaços múltiplos · trata strings já normalizadas · agent templates: parseTools() … |
-| `src/test/billing-service.test.ts` | 17 | billingService — agregação de consumo · soma custo e tokens ignorando nulos, e agrupa por tipo · trata numeric do Postgres devolvido como string sem concatenar · classifica registros sem record_type como llm … |
 | `src/test/calibration-governance.test.ts` | 17 | summarizeCalibrationGovernance — estados base · marca sem-dados quando não há calibração alguma · sem-dados quando só existem linhas sem data · saudavel com histórico datado e sem override nem instabilidade … |
 | `src/test/skill-composer.test.ts` | 17 | SkillComposer visual - schema · aceita rascunho mínimo válido · rejeita nome curto · rejeita slug com maiúsculas … |
 | `src/test/threshold-calibration-scale.test.ts` | 17 | coerceCalibrationScale · reconhece apenas o literal de plataforma · trata legado e lixo como domínio · é idempotente sobre a própria saída … |

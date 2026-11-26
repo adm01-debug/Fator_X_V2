@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "74f4d20ed45c7fcbfa20a9369cd6fb30fda4acb6",
+  "sha": "9e06f438864eb617f396eece9decf3356dd600c5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 19:36 UTC",
+  "generated_at": "2026-11-26 20:26 UTC",
   "files_total": 2020,
   "code_files": 1800,
-  "code_lines": 350773
+  "code_lines": 350818
  },
  "version": "1.3.2",
- "facts_hash": "2bf414230813e04d",
+ "facts_hash": "42c8d91a6f193d54",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -51622,6 +51622,7 @@
      "tool_integrations",
      "trace_events",
      "usage_records",
+     "usage_records_cost_safe",
      "vector_indexes",
      "workflow_runs",
      "workflow_steps",
@@ -51734,6 +51735,7 @@
      "budgets",
      "model_pricing",
      "usage_records",
+     "usage_records_cost_safe",
      "workspace_members",
      "workspaces"
     ],
@@ -58952,7 +58954,7 @@
   {
    "module": "src/pages",
    "files": 141,
-   "lines": 50241,
+   "lines": 50252,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -59147,7 +59149,7 @@
   {
    "module": "src/services",
    "files": 166,
-   "lines": 33031,
+   "lines": 33034,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59255,6 +59257,7 @@
     "tool_integrations",
     "trace_events",
     "usage_records",
+    "usage_records_cost_safe",
     "vector_indexes",
     "vendor_assessments",
     "vendor_documents",
@@ -59478,7 +59481,7 @@
   {
    "module": "src/test",
    "files": 196,
-   "lines": 29706,
+   "lines": 29737,
    "tables": [
     "tabela"
    ],
@@ -61922,6 +61925,11 @@
      "supabase/functions/llm-gateway/index.ts"
     ]
    },
+   "usage_records_cost_safe": {
+    "select": [
+     "src/services/billingService.ts"
+    ]
+   },
    "user_2fa": {
     "upsert": [
      "src/hooks/use2FA.ts"
@@ -63085,6 +63093,14 @@
     "created_at",
     "record_type",
     "tokens"
+   ],
+   "usage_records_cost_safe": [
+    "cost_usd",
+    "created_at",
+    "id",
+    "record_type",
+    "tokens",
+    "workspace_id"
    ],
    "user_2fa": [
     "user_id"
@@ -65044,7 +65060,6 @@
    "traces_2027_05",
    "traces_2027_06",
    "traces_2027_07",
-   "usage_records_cost_safe",
    "user_filter_preferences",
    "wal_snapshots",
    "workflow_checkpoints",
@@ -103010,6 +103025,14 @@
     "name": "getUsageRecords aplica o limite solicitado"
    },
    {
+    "file": "src/test/billing-service.test.ts",
+    "name": "getUsageRecords lê a view de custo seguro, nunca a tabela crua"
+   },
+   {
+    "file": "src/test/billing-service.test.ts",
+    "name": "getUsageRecords não projeta metadata — o campo segue restrito a admins"
+   },
+   {
     "file": "src/test/bitrix24-webhook.test.ts",
     "name": "bitrix24WebhookService — catálogo"
    },
@@ -134890,6 +134913,13 @@
     ]
    },
    {
+    "table": "usage_records_cost_safe",
+    "issue": "acessada do front (1 arquivo(s)) sem RLS (não encontrado)",
+    "files": [
+     "src/services/billingService.ts"
+    ]
+   },
+   {
     "table": "workspace_members_safe",
     "issue": "acessada do front (1 arquivo(s)) sem RLS (não encontrado)",
     "files": [
@@ -141822,6 +141852,13 @@
      "src/services/knowledgeService.ts",
      "src/services/promptVersionService.ts",
      "src/stores/agentBuilderStore.ts"
+    ]
+   },
+   {
+    "kind": "rls",
+    "msg": "`usage_records_cost_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado)",
+    "where": [
+     "src/services/billingService.ts"
     ]
    },
    {
@@ -161851,7 +161888,7 @@
   },
   "src/pages/BillingPage.tsx": {
    "path": "src/pages/BillingPage.tsx",
-   "lines": 306,
+   "lines": 317,
    "exports": [
     "function BillingPage"
    ],
@@ -166882,7 +166919,7 @@
   },
   "src/services/billingService.ts": {
    "path": "src/services/billingService.ts",
-   "lines": 187,
+   "lines": 190,
    "exports": [
     "interface UsageSummary",
     "interface AgentUsageRow",
@@ -166910,7 +166947,7 @@
      "op": "select"
     },
     {
-     "table": "usage_records",
+     "table": "usage_records_cost_safe",
      "op": "select"
     },
     {
@@ -166947,6 +166984,14 @@
     ],
     "agent_usage": [
      "date"
+    ],
+    "usage_records_cost_safe": [
+     "cost_usd",
+     "created_at",
+     "id",
+     "record_type",
+     "tokens",
+     "workspace_id"
     ],
     "budgets": [
      "id",
@@ -175808,10 +175853,11 @@
   },
   "src/test/billing-service.test.ts": {
    "path": "src/test/billing-service.test.ts",
-   "lines": 175,
+   "lines": 206,
    "is_test": true,
    "rule_comments": [
-    "Regressão: a leitura não pode voltar para o client local."
+    "Regressão: a leitura não pode voltar para o client local.",
+    "O custo pode vir mascarado; o valor cru nunca deve ser lido da tabela."
    ],
    "tests": [
     "billingService — agregação de consumo",
@@ -175830,7 +175876,9 @@
     "billingService — listagens",
     "getAgentUsage filtra por data em formato YYYY-MM-DD",
     "listagens devolvem array vazio quando data vem nulo",
-    "getUsageRecords aplica o limite solicitado"
+    "getUsageRecords aplica o limite solicitado",
+    "getUsageRecords lê a view de custo seguro, nunca a tabela crua",
+    "getUsageRecords não projeta metadata — o campo segue restrito a admins"
    ]
   },
   "src/test/bitrix24-webhook.test.ts": {
@@ -191437,10 +191485,21 @@
   }
  },
  "git": {
-  "sha": "74f4d20ed45c7fcbfa20a9369cd6fb30fda4acb6",
+  "sha": "9e06f438864eb617f396eece9decf3356dd600c5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "9e06f43",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)",
+    "files": [
+     "src/pages/BillingPage.tsx",
+     "src/services/billingService.ts",
+     "src/test/billing-service.test.ts"
+    ]
+   },
    {
     "sha": "74f4d20",
     "date": "2026-11-26",
@@ -191761,15 +191820,6 @@
     "files": [
      ".env.example"
     ]
-   },
-   {
-    "sha": "ff7f06e",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: registra webhooks externos verify_jwt=false no config.toml (#135)",
-    "files": [
-     "supabase/config.toml"
-    ]
    }
   ],
   "hot_files": [
@@ -191810,10 +191860,6 @@
     2
    ],
    [
-    "supabase/config.toml",
-    2
-   ],
-   [
     "src/services/whatsappOutboundService.ts",
     2
    ],
@@ -191834,6 +191880,18 @@
     2
    ],
    [
+    "src/pages/BillingPage.tsx",
+    1
+   ],
+   [
+    "src/services/billingService.ts",
+    1
+   ],
+   [
+    "src/test/billing-service.test.ts",
+    1
+   ],
+   [
     "src/pages/RiskRegisterPage.tsx",
     1
    ],
@@ -191843,14 +191901,6 @@
    ],
    [
     "vercel.json",
-    1
-   ],
-   [
-    "src/services/knowledgeManagementService.ts",
-    1
-   ],
-   [
-    "src/components/monitoring/GenAIProtocolPanel.tsx",
     1
    ]
   ]
