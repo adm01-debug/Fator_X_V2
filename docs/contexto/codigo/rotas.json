@@ -6343,17 +6343,23 @@
    "tabelas": [
     "agents",
     "risk_register",
+    "risk_review_events",
     "workspace_members",
     "workspaces"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "close_risk",
+    "get_risk_summary",
+    "register_risk",
+    "review_risk"
+   ],
    "edges": [],
    "canais_realtime": [],
    "flags": [],
    "papeis": [
     "admin"
    ],
-   "arquivos_puxados": 27
+   "arquivos_puxados": 28
   },
   {
    "protegida": true,

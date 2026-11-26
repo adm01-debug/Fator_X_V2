@@ -5585,6 +5585,7 @@
    "src/hooks/use-data.ts",
    "src/integrations/supabase/client.ts",
    "src/lib/utils.ts",
+   "src/services/riskService.ts",
    "src/types/dbRow.ts"
   ],
   "src/pages/RolePermissionsPage.tsx": [

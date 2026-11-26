@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f2a4f3ae2c4ef764cccc799c3cf6868dbf91c4c1` (2026-11-26T12:32:19-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `74f4d20ed45c7fcbfa20a9369cd6fb30fda4acb6` (2026-11-26T16:29:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1399), SQL (341), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
+- linguagens: TypeScript (1400), SQL (341), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2014 |
-| arquivos_codigo | 1457 |
-| linhas_codigo | 320162 |
+| arquivos_total | 2015 |
+| arquivos_codigo | 1458 |
+| linhas_codigo | 320514 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 327 |
 | migrations | 338 |
 | cron_jobs | 37 |
-| testes | 244 |
+| testes | 245 |
 | workflows | 11 |
 | scripts | 45 |
 | docs_md | 134 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (517), src/pages (141), src/App.tsx (1)
 - hooks: src/hooks (43), src/components (9), src/services (9)
 - servicos_logica: src/services (166), src/lib (90), src/stores (12)
-- testes: co-localizado (*.test) (201), outro (23), e2e/ (9)
+- testes: co-localizado (*.test) (202), outro (23), e2e/ (9)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (11), scripts/inventario (4), scripts/maintenance (4)
@@ -94,10 +94,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | config | 0 | 0 | 10 | 0 | 0 | 0 |
 | data | 0 | 0 | 5 | 0 | 0 | 0 |
 | hooks | 0 | 0 | 44 | 67 | 14 | 33 |
-| lib | 0 | 0 | 45 | 85 | 63 | 121 |
+| lib | 0 | 0 | 45 | 85 | 63 | 122 |
 | lib/skills | 0 | 0 | 19 | 0 | 0 | 2 |
 | lib/validations | 0 | 0 | 12 | 0 | 0 | 0 |
-| pages | 114 | 151 | 141 | 95 | 75 | 153 |
+| pages | 114 | 151 | 141 | 95 | 75 | 154 |
 | services | 0 | 0 | 146 | 28 | 59 | 120 |
 | services/presets | 0 | 0 | 5 | 0 | 0 | 0 |
 | services/types | 0 | 0 | 15 | 0 | 0 | 0 |
@@ -432,8 +432,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14581 nós · 38528 arestas · 923 comunidades · grafo do commit `f2a4f3ae`
-- comunidades maiores: lucide-react (307), App.tsx (284), sonner (259), react (211), ref_https (192), Button (130), cn (119), logger.ts (115), mod.ts (105), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (102), templateSkillLinkService.ts (97), fetchWithTimeout (93)
+- 14590 nós · 38553 arestas · 899 comunidades · grafo do commit `74f4d20e`
+- comunidades maiores: badge.tsx (277), button.tsx (244), App.tsx (212), mod.ts (179), logger.ts (160), react (157), VendorsPage.tsx (156), lucide-react (155), cn (132), templateSkillLinkService.ts (128), fromTable (125), notesService.ts (114)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -579,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `74f4d20` feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)
 - 2026-11-26 `f2a4f3a` chore(vercel): deep link da SPA deixa de dar 404 (#164)
 - 2026-11-26 `897badb` test(forum): trava as escritas do forum publico (#162)
 - 2026-11-26 `ccf216d` fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)
@@ -593,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `7fc063a` infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)
 - 2026-11-24 `ef5746c` fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)
 - 2026-11-24 `d809480` chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)
-- 2026-11-24 `cbe4351` chore(deps)(deps): bump @sentry/react (#151)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

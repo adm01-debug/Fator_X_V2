@@ -21,7 +21,7 @@
    "src/stores (12)"
   ],
   "testes": [
-   "co-localizado (*.test) (201)",
+   "co-localizado (*.test) (202)",
    "outro (23)",
    "e2e/ (9)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)",
    "chore(vercel): deep link da SPA deixa de dar 404 (#164)",
    "test(forum): trava as escritas do forum publico (#162)",
    "fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)",
-   "feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)",
-   "feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)"
+   "feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

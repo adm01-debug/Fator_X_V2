@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f2a4f3ae2c4ef764cccc799c3cf6868dbf91c4c1",
+  "commit": "74f4d20ed45c7fcbfa20a9369cd6fb30fda4acb6",
   "branch": "main",
-  "data_commit": "2026-11-26T12:32:19-03:00",
+  "data_commit": "2026-11-26T16:29:46-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "74f4d20",
+    "data": "2026-11-26",
+    "assunto": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)"
+   },
    {
     "sha": "f2a4f3a",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "35f15a7",
     "data": "2026-11-21",
     "assunto": "fix(rag): aceita service role e fallback OpenRouter no rag-embed-v2 (#141)"
-   },
-   {
-    "sha": "6b7d90e",
-    "data": "2026-11-21",
-    "assunto": "fix(rag): retry automatico de chunks failed no emb-backfill (#133)"
    }
   ],
-  "arquivos_mudados_7d": 135,
+  "arquivos_mudados_7d": 137,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 70
+    "commits": 71
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2014,
-  "arquivos_codigo": 1457,
-  "linhas_codigo": 320162,
+  "arquivos_total": 2015,
+  "arquivos_codigo": 1458,
+  "linhas_codigo": 320514,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 327,
   "migrations": 338,
   "cron_jobs": 37,
-  "testes": 244,
+  "testes": 245,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 141,
-   "linhas": 50066
+   "linhas": 50241
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -519,8 +519,8 @@
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 195,
-   "linhas": 29529
+   "arquivos": 196,
+   "linhas": 29706
   },
   "src/tests": {
    "arquivos": 2,

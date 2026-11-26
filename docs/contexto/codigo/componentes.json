@@ -9814,7 +9814,7 @@
     "RiskRegisterPage"
    ],
    "export_default": "RiskRegisterPage",
-   "linhas": 509,
+   "linhas": 684,
    "dominio": "pages",
    "hooks_locais": [
     "useWorkspaceId"

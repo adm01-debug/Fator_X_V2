@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 1213,
- "arestas": 5269,
+ "arestas": 5270,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -228,7 +228,6 @@
   "src/integrations/supabase/types.extended.ts",
   "src/lib/invokeWithRetry.ts",
   "src/lib/validations/brazilianDocuments.ts",
-  "src/services/riskService.ts",
   "src/services/skillsSimulationService.ts",
   "src/stores/index.ts",
   "supabase/functions/test-runner/contract_test.ts",

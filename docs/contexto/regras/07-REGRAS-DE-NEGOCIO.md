@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f2a4f3ae2c` · branch `main` · 2026-11-26 16:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `74f4d20ed4` · branch `main` · 2026-11-26 19:36 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2326,6 +2326,7 @@ _nenhum item encontrado_
 | `ends` | type=datetime-local, min=startsAt \|\| nowLocal | `src/pages/FreezeWindowsPage.tsx` |
 | `fstart` | type=datetime-local | `src/pages/GovernancePage.tsx` |
 | `fend` | type=datetime-local | `src/pages/GovernancePage.tsx` |
+| `ri` | type=number, min=1, max=25 | `src/pages/RiskRegisterPage.tsx` |
 | `minStars` | min, type=number, min=0, max=100000, min | `src/pages/SkillHarvestPage.tsx` |
 | `maxRepos` | max, type=number, min=1, max=200, max | `src/pages/SkillHarvestPage.tsx` |
 | `filesPerRepo` | type=number, min=1, max=1000 | `src/pages/SkillHarvestPage.tsx` |
@@ -4024,7 +4025,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3051 testes em 217 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3056 testes em 218 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4215,6 +4216,7 @@ _nenhum item encontrado_
 | `src/test/memory-tiers.test.ts` | 5 | computeTier (Autograph) · pinned sempre retorna core · mapeia relevância aos 5 tiers · valores inválidos caem em archive … |
 | `src/test/notifications-drawer.test.tsx` | 5 | NotificationsDrawer · renders bell button · opens drawer and shows empty state · does not show mark-all-read when empty … |
 | `src/test/relatedNotes.test.ts` | 5 | findRelatedNotes · excludes the active note itself · skips archived notes · boosts shared tags and wikilinks … |
+| `src/test/ri[REDACTED].test.tsx` | 5 | RiskRegisterPage — RPCs do registro de riscos · alimenta os indicadores com get_risk_summary · registra risco por register_risk em vez de insert direto na tabela · mostra o histórico e grava a revisão por review_risk … |
 | `src/test/schema-contract.test.ts` | 5 | contrato de schema entre código e banco · encontra arquivos para analisar · todo .rpc() referencia uma função existente no schema · todo .from() referencia uma tabela ou view existente no schema … |
 | `src/test/template-skill-link.test.ts` | 5 | linkSkillsToTemplate · gera sinais normalizados do template · marca match forte quando há tag em comum · ignora skills virtuais de template … |
 | `src/test/templates.test.ts` | 5 | Agent Templates · has at least 37 templates · all templates have required fields · all template IDs are unique … |

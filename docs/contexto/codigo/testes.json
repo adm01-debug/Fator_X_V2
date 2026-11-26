@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 244,
+ "total": 245,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 229
+  "unit": 230
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 201
+   "arquivos": 202
   },
   {
    "padrao": "outro",
@@ -1430,6 +1430,15 @@
    "casos": 2
   },
   {
+   "arquivo": "src/test/risk-register-rpc-ui.test.tsx",
+   "tipo": "unit",
+   "linhas": 177,
+   "testa": [
+    "src/pages/RiskRegisterPage.tsx"
+   ],
+   "casos": 4
+  },
+  {
    "arquivo": "src/test/schema-contract.test.ts",
    "tipo": "contrato",
    "linhas": 139,
@@ -2433,6 +2442,7 @@
   "src/pages/DashboardPage.tsx": 1,
   "src/pages/FineTuningPage.tsx": 1,
   "src/pages/OpenclawDeployPage.tsx": 1,
+  "src/pages/RiskRegisterPage.tsx": 1,
   "src/services/agentCardService.ts": 1,
   "src/services/agentEvolutionService.ts": 2,
   "src/services/agentHandoffService.ts": 2,
@@ -2620,7 +2630,6 @@
    "src/pages/PublicNoteView.tsx",
    "src/pages/ReplayForkPage.tsx",
    "src/pages/ResetPasswordPage.tsx",
-   "src/pages/RiskRegisterPage.tsx",
    "src/pages/RolePermissionsPage.tsx",
    "src/pages/RolesPage.tsx",
    "src/pages/RoutingConfigPage.tsx",
@@ -2862,6 +2871,7 @@
    "src/services/promptVersionService.ts",
    "src/services/replayForkService.ts",
    "src/services/restorePresetsService.ts",
+   "src/services/riskService.ts",
    "src/services/savedTestRunsStore.ts",
    "src/services/sbomService.ts",
    "src/services/searchService.ts",

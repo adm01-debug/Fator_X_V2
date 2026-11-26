@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f2a4f3ae2c4ef764cccc799c3cf6868dbf91c4c1",
+  "sha": "74f4d20ed45c7fcbfa20a9369cd6fb30fda4acb6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 16:15 UTC",
-  "files_total": 2019,
-  "code_files": 1799,
-  "code_lines": 350421
+  "generated_at": "2026-11-26 19:36 UTC",
+  "files_total": 2020,
+  "code_files": 1800,
+  "code_lines": 350773
  },
  "version": "1.3.2",
- "facts_hash": "9deb167b2916e046",
+ "facts_hash": "2bf414230813e04d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -246,7 +246,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".tsx": 702,
+   ".tsx": 703,
    ".ts": 697,
    ".sql": 341,
    ".mjs": 47,
@@ -52930,12 +52930,18 @@
     "component": "RiskRegisterPage",
     "tables_transitive": [
      "agents",
+     "risk_review_events",
      "workspace_members",
      "workspaces"
     ],
     "invokes_transitive": [],
-    "rpc_transitive": [],
-    "deps_count": 26
+    "rpc_transitive": [
+     "close_risk",
+     "get_risk_summary",
+     "register_risk",
+     "review_risk"
+    ],
+    "deps_count": 27
    },
    {
     "path": "",
@@ -58946,7 +58952,7 @@
   {
    "module": "src/pages",
    "files": 141,
-   "lines": 50066,
+   "lines": 50241,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -59471,8 +59477,8 @@
   },
   {
    "module": "src/test",
-   "files": 195,
-   "lines": 29529,
+   "files": 196,
+   "lines": 29706,
    "tables": [
     "tabela"
    ],
@@ -61556,9 +61562,6 @@
     "select": [
      "src/pages/RiskRegisterPage.tsx",
      "src/services/riskService.ts"
-    ],
-    "insert": [
-     "src/pages/RiskRegisterPage.tsx"
     ],
     "update": [
      "src/pages/RiskRegisterPage.tsx"
@@ -66684,6 +66687,11 @@
     "rules": "type=datetime-local"
    },
    {
+    "file": "src/pages/RiskRegisterPage.tsx",
+    "field": "ri",
+    "rules": "type=number, min=1, max=25"
+   },
+   {
     "file": "src/pages/SkillHarvestPage.tsx",
     "field": "minStars",
     "rules": "min, type=number, min=0, max=100000, min"
@@ -70196,11 +70204,11 @@
    },
    {
     "file": "src/pages/RiskRegisterPage.tsx",
-    "msg": "Título obrigatório"
+    "msg": "Score residual deve estar entre 1 e 25"
    },
    {
     "file": "src/pages/RiskRegisterPage.tsx",
-    "msg": "não autenticado"
+    "msg": "Título obrigatório"
    },
    {
     "file": "src/pages/RolePermissionsPage.tsx",
@@ -108536,6 +108544,26 @@
    {
     "file": "src/test/rich-editor.test.tsx",
     "name": "preserva comandos de formatação, listas e histórico no mesmo núcleo"
+   },
+   {
+    "file": "src/test/risk-register-rpc-ui.test.tsx",
+    "name": "RiskRegisterPage — RPCs do registro de riscos"
+   },
+   {
+    "file": "src/test/risk-register-rpc-ui.test.tsx",
+    "name": "alimenta os indicadores com get_risk_summary"
+   },
+   {
+    "file": "src/test/risk-register-rpc-ui.test.tsx",
+    "name": "registra risco por register_risk em vez de insert direto na tabela"
+   },
+   {
+    "file": "src/test/risk-register-rpc-ui.test.tsx",
+    "name": "mostra o histórico e grava a revisão por review_risk"
+   },
+   {
+    "file": "src/test/risk-register-rpc-ui.test.tsx",
+    "name": "encerra o risco por close_risk (auditoria) em vez de update direto"
    },
    {
     "file": "src/test/schema-contract.test.ts",
@@ -164238,7 +164266,7 @@
   },
   "src/pages/RiskRegisterPage.tsx": {
    "path": "src/pages/RiskRegisterPage.tsx",
-   "lines": 509,
+   "lines": 684,
    "exports": [
     "function RiskRegisterPage"
    ],
@@ -164246,10 +164274,6 @@
     {
      "table": "risk_register",
      "op": "select"
-    },
-    {
-     "table": "risk_register",
-     "op": "insert"
     },
     {
      "table": "risk_register",
@@ -164275,8 +164299,14 @@
     ]
    },
    "errors": [
-    "Título obrigatório",
-    "não autenticado"
+    "Score residual deve estar entre 1 e 25",
+    "Título obrigatório"
+   ],
+   "html_constraints": [
+    {
+     "field": "ri",
+     "rules": "type=number, min=1, max=25"
+    }
    ],
    "status_values": [
     {
@@ -178125,6 +178155,22 @@
     "preserva comandos de formatação, listas e histórico no mesmo núcleo"
    ]
   },
+  "src/test/risk-register-rpc-ui.test.tsx": {
+   "path": "src/test/risk-register-rpc-ui.test.tsx",
+   "lines": 177,
+   "is_test": true,
+   "rule_comments": [
+    "* Registro de Riscos — a página consome a camada de negócio do banco."
+   ],
+   "doc": "Registro de Riscos — a página consome a camada de negócio do banco. A página gravava direto em `risk_register` (insert/update), o que pulava: `register_risk`/`close_risk` (eventos `risk.registered`/`risk.closed` no `audit_log`), `review_risk` (escrita em `risk_review_events`, cujo trigger recalcula …",
+   "tests": [
+    "RiskRegisterPage — RPCs do registro de riscos",
+    "alimenta os indicadores com get_risk_summary",
+    "registra risco por register_risk em vez de insert direto na tabela",
+    "mostra o histórico e grava a revisão por review_risk",
+    "encerra o risco por close_risk (auditoria) em vez de update direto"
+   ]
+  },
   "src/test/schema-contract.test.ts": {
    "path": "src/test/schema-contract.test.ts",
    "lines": 139,
@@ -191391,10 +191437,20 @@
   }
  },
  "git": {
-  "sha": "f2a4f3ae2c4ef764cccc799c3cf6868dbf91c4c1",
+  "sha": "74f4d20ed45c7fcbfa20a9369cd6fb30fda4acb6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "74f4d20",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)",
+    "files": [
+     "src/pages/RiskRegisterPage.tsx",
+     "src/test/risk-register-rpc-ui.test.tsx"
+    ]
+   },
    {
     "sha": "f2a4f3a",
     "date": "2026-11-26",
@@ -191714,15 +191770,6 @@
     "files": [
      "supabase/config.toml"
     ]
-   },
-   {
-    "sha": "0200f78",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: registra analise funcionalidades planejadas x implementadas (#134)",
-    "files": [
-     "docs/pendencias/_analise-funcionalidades-261121.md"
-    ]
    }
   ],
   "hot_files": [
@@ -191787,6 +191834,14 @@
     2
    ],
    [
+    "src/pages/RiskRegisterPage.tsx",
+    1
+   ],
+   [
+    "src/test/risk-register-rpc-ui.test.tsx",
+    1
+   ],
+   [
     "vercel.json",
     1
    ],
@@ -191796,14 +191851,6 @@
    ],
    [
     "src/components/monitoring/GenAIProtocolPanel.tsx",
-    1
-   ],
-   [
-    "src/hooks/useStreamingResponse.ts",
-    1
-   ],
-   [
-    "src/pages/MonitoringPage.tsx",
     1
    ]
   ]
