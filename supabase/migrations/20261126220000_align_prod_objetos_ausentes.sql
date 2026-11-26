@@ -1009,26 +1009,7 @@ ALTER TABLE public.forum_posts ADD COLUMN IF NOT EXISTS parent_post_id uuid REFE
 ALTER TABLE public.forum_posts ADD COLUMN IF NOT EXISTS thread_id uuid REFERENCES public.forum_threads(id) ON DELETE CASCADE;
 ALTER TABLE public.forum_posts ADD COLUMN IF NOT EXISTS upvotes integer NOT NULL DEFAULT 0;
 
--- forum_posts_public (8)
-ALTER TABLE public.forum_posts_public ADD COLUMN IF NOT EXISTS author_name text;
-ALTER TABLE public.forum_posts_public ADD COLUMN IF NOT EXISTS body text;
-ALTER TABLE public.forum_posts_public ADD COLUMN IF NOT EXISTS created_at timestamptz;
-ALTER TABLE public.forum_posts_public ADD COLUMN IF NOT EXISTS is_answer boolean;
-ALTER TABLE public.forum_posts_public ADD COLUMN IF NOT EXISTS parent_post_id uuid;
-ALTER TABLE public.forum_posts_public ADD COLUMN IF NOT EXISTS thread_id uuid;
-ALTER TABLE public.forum_posts_public ADD COLUMN IF NOT EXISTS updated_at timestamptz;
-ALTER TABLE public.forum_posts_public ADD COLUMN IF NOT EXISTS upvotes numeric;
 
--- forum_posts_safe (9)
-ALTER TABLE public.forum_posts_safe ADD COLUMN IF NOT EXISTS author_id uuid;
-ALTER TABLE public.forum_posts_safe ADD COLUMN IF NOT EXISTS author_name text;
-ALTER TABLE public.forum_posts_safe ADD COLUMN IF NOT EXISTS body text;
-ALTER TABLE public.forum_posts_safe ADD COLUMN IF NOT EXISTS created_at timestamptz;
-ALTER TABLE public.forum_posts_safe ADD COLUMN IF NOT EXISTS is_answer boolean;
-ALTER TABLE public.forum_posts_safe ADD COLUMN IF NOT EXISTS parent_post_id uuid;
-ALTER TABLE public.forum_posts_safe ADD COLUMN IF NOT EXISTS thread_id uuid;
-ALTER TABLE public.forum_posts_safe ADD COLUMN IF NOT EXISTS updated_at timestamptz;
-ALTER TABLE public.forum_posts_safe ADD COLUMN IF NOT EXISTS upvotes numeric;
 
 -- forum_threads (14)
 ALTER TABLE public.forum_threads ADD COLUMN IF NOT EXISTS author_id uuid;
@@ -1046,36 +1027,7 @@ ALTER TABLE public.forum_threads ADD COLUMN IF NOT EXISTS title text;
 ALTER TABLE public.forum_threads ADD COLUMN IF NOT EXISTS upvotes integer NOT NULL DEFAULT 0;
 ALTER TABLE public.forum_threads ADD COLUMN IF NOT EXISTS view_count integer NOT NULL DEFAULT 0;
 
--- forum_threads_public (13)
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS author_name text;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS body text;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS category text;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS created_at timestamptz;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS help_center_id uuid;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS is_locked boolean;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS is_pinned boolean;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS is_resolved boolean;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS last_activity_at timestamptz;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS reply_count numeric;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS title text;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS upvotes numeric;
-ALTER TABLE public.forum_threads_public ADD COLUMN IF NOT EXISTS view_count numeric;
 
--- forum_threads_safe (14)
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS author_id uuid;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS author_name text;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS body text;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS category text;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS created_at timestamptz;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS help_center_id uuid;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS is_locked boolean;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS is_pinned boolean;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS is_resolved boolean;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS last_activity_at timestamptz;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS reply_count numeric;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS title text;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS upvotes numeric;
-ALTER TABLE public.forum_threads_safe ADD COLUMN IF NOT EXISTS view_count numeric;
 
 -- freeze_windows (2)
 ALTER TABLE public.freeze_windows ADD COLUMN IF NOT EXISTS allow_emergency BOOLEAN NOT NULL DEFAULT true;
@@ -1234,14 +1186,6 @@ ALTER TABLE public.knowledge_entities ADD COLUMN IF NOT EXISTS metadata JSONB DE
 ALTER TABLE public.knowledge_entities ADD COLUMN IF NOT EXISTS name TEXT;
 ALTER TABLE public.knowledge_entities ADD COLUMN IF NOT EXISTS properties JSONB DEFAULT '{}'::jsonb;
 
--- knowledge_graph_health (7)
-ALTER TABLE public.knowledge_graph_health ADD COLUMN IF NOT EXISTS broken_links_score numeric;
-ALTER TABLE public.knowledge_graph_health ADD COLUMN IF NOT EXISTS computed_at timestamptz;
-ALTER TABLE public.knowledge_graph_health ADD COLUMN IF NOT EXISTS coverage_score numeric;
-ALTER TABLE public.knowledge_graph_health ADD COLUMN IF NOT EXISTS dedup_score numeric;
-ALTER TABLE public.knowledge_graph_health ADD COLUMN IF NOT EXISTS freshness_score numeric;
-ALTER TABLE public.knowledge_graph_health ADD COLUMN IF NOT EXISTS orphans_score numeric;
-ALTER TABLE public.knowledge_graph_health ADD COLUMN IF NOT EXISTS total_score numeric;
 
 -- knowledge_links (8)
 ALTER TABLE public.knowledge_links ADD COLUMN IF NOT EXISTS context TEXT;
@@ -1346,17 +1290,6 @@ ALTER TABLE public.oncall_schedule ADD COLUMN IF NOT EXISTS user_name TEXT;
 ALTER TABLE public.oncall_schedule_emails ADD COLUMN IF NOT EXISTS schedule_id uuid REFERENCES public.oncall_schedule(id) ON DELETE CASCADE;
 ALTER TABLE public.oncall_schedule_emails ADD COLUMN IF NOT EXISTS user_email text;
 
--- oncall_schedule_safe (10)
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS created_at timestamptz;
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS created_by uuid;
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS ends_at timestamptz;
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS escalation_order numeric;
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS notes text;
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS starts_at timestamptz;
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS user_email text;
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS user_id uuid;
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS user_name text;
-ALTER TABLE public.oncall_schedule_safe ADD COLUMN IF NOT EXISTS workspace_id uuid;
 
 -- openclaw_agent_templates (13)
 ALTER TABLE public.openclaw_agent_templates ADD COLUMN IF NOT EXISTS agents_md text;
@@ -1644,23 +1577,6 @@ ALTER TABLE public.skill_purchases ADD COLUMN IF NOT EXISTS platform_fee_cents I
 ALTER TABLE public.skill_purchases ADD COLUMN IF NOT EXISTS skill_id UUID;
 ALTER TABLE public.skill_purchases ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'completed' CHECK (status IN ('pending','completed','refunded','failed'));
 
--- skill_registry_safe (16)
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS author text;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS category text;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS created_at timestamptz;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS created_by uuid;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS description text;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS install_count numeric;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS is_public boolean;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS is_verified boolean;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS mcp_server_url text;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS name text;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS rating numeric;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS skill_config jsonb;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS slug text;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS tags text[];
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS updated_at timestamptz;
-ALTER TABLE public.skill_registry_safe ADD COLUMN IF NOT EXISTS version text;
 
 -- skill_reviews (4)
 ALTER TABLE public.skill_reviews ADD COLUMN IF NOT EXISTS comment TEXT;
@@ -1824,14 +1740,6 @@ ALTER TABLE public.usage_records ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT
 ALTER TABLE public.usage_records ADD COLUMN IF NOT EXISTS record_type TEXT NOT NULL DEFAULT 'llm_call';
 ALTER TABLE public.usage_records ADD COLUMN IF NOT EXISTS tokens INTEGER DEFAULT 0;
 
--- usage_records_cost_safe (7)
-ALTER TABLE public.usage_records_cost_safe ADD COLUMN IF NOT EXISTS agent_id uuid;
-ALTER TABLE public.usage_records_cost_safe ADD COLUMN IF NOT EXISTS cost_usd numeric;
-ALTER TABLE public.usage_records_cost_safe ADD COLUMN IF NOT EXISTS created_at timestamptz;
-ALTER TABLE public.usage_records_cost_safe ADD COLUMN IF NOT EXISTS metadata jsonb;
-ALTER TABLE public.usage_records_cost_safe ADD COLUMN IF NOT EXISTS record_type text;
-ALTER TABLE public.usage_records_cost_safe ADD COLUMN IF NOT EXISTS tokens numeric;
-ALTER TABLE public.usage_records_cost_safe ADD COLUMN IF NOT EXISTS workspace_id uuid;
 
 -- user_2fa (1)
 ALTER TABLE public.user_2fa ADD COLUMN IF NOT EXISTS last_verified_at TIMESTAMPTZ;
@@ -1946,11 +1854,6 @@ ALTER TABLE public.workspace_budgets ADD COLUMN IF NOT EXISTS monthly_limit_usd 
 ALTER TABLE public.workspace_budgets ADD COLUMN IF NOT EXISTS notify_emails TEXT[] NOT NULL DEFAULT '{}';
 ALTER TABLE public.workspace_budgets ADD COLUMN IF NOT EXISTS soft_threshold_pct INTEGER NOT NULL DEFAULT 80 CHECK (soft_threshold_pct BETWEEN 1 AND 100);
 
--- workspace_members_public (4)
-ALTER TABLE public.workspace_members_public ADD COLUMN IF NOT EXISTS name text;
-ALTER TABLE public.workspace_members_public ADD COLUMN IF NOT EXISTS role text;
-ALTER TABLE public.workspace_members_public ADD COLUMN IF NOT EXISTS user_id uuid;
-ALTER TABLE public.workspace_members_public ADD COLUMN IF NOT EXISTS workspace_id uuid;
 
 -- workspace_secrets (1)
 ALTER TABLE public.workspace_secrets ADD COLUMN IF NOT EXISTS encrypted_value bytea;
@@ -2091,3 +1994,104 @@ LEFT JOIN public.workspace_member_emails wme
 WHERE wm.workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()));
 
 GRANT SELECT ON public.workspace_members_directory TO authenticated;
+
+
+-- ============================================================================
+-- 4) Views que existem em producao como CASCA de uma coluna (`SELECT id ...`)
+--    As 9 relacoes abaixo sao views, nao tabelas: o gerador da secao 2 tentou
+--    ALTER TABLE nelas e o Supabase Preview abortou com 42809
+--    ("ADD COLUMN cannot be performed on relation ... this operation is not
+--    supported for views"). Aqui a definicao canonica do repo volta a valer.
+--    CREATE OR REPLACE preserva grants e dependentes (mesma tecnica da #163).
+--    As views safe do forum trazem o filtro `WHERE is_published` da #163, para
+--    que rascunho nao volte a aparecer na lista publica nem por esquecimento
+--    de um .eq() no cliente.
+-- ============================================================================
+
+CREATE OR REPLACE VIEW public.forum_threads_public
+  WITH (security_invoker = true) AS
+  SELECT id, help_center_id, title, body, category, author_name,
+         is_pinned, is_locked, is_resolved, view_count, reply_count,
+         upvotes, last_activity_at, created_at
+  FROM public.forum_threads;
+
+CREATE OR REPLACE VIEW public.forum_posts_public
+  WITH (security_invoker = true) AS
+  SELECT id, thread_id, parent_post_id, body, author_name,
+         is_answer, upvotes, created_at, updated_at
+  FROM public.forum_posts;
+
+CREATE OR REPLACE VIEW public.forum_threads_safe
+  WITH (security_invoker = true) AS
+  SELECT id, help_center_id, author_id,
+         CASE WHEN author_name ~* '@' THEN 'Membro' ELSE author_name END AS author_name,
+         title, body, category, is_pinned, is_locked, is_resolved,
+         view_count, reply_count, upvotes, last_activity_at, created_at
+  FROM public.forum_threads
+  WHERE is_published;
+
+CREATE OR REPLACE VIEW public.forum_posts_safe
+  WITH (security_invoker = true) AS
+  SELECT id, thread_id, author_id,
+         CASE WHEN author_name ~* '@' THEN 'Membro' ELSE author_name END AS author_name,
+         body, is_answer, upvotes, parent_post_id, created_at, updated_at
+  FROM public.forum_posts
+  WHERE is_published;
+
+CREATE OR REPLACE VIEW public.workspace_members_public
+  WITH (security_invoker = true) AS
+  SELECT id, workspace_id, user_id, role, name
+  FROM public.workspace_members;
+
+CREATE OR REPLACE VIEW public.usage_records_cost_safe
+  WITH (security_invoker = true) AS
+  SELECT
+    ur.id,
+    ur.workspace_id,
+    ur.agent_id,
+    ur.record_type,
+    ur.tokens,
+    ur.created_at,
+    CASE
+      WHEN public.is_workspace_admin(auth.uid(), ur.workspace_id) THEN ur.cost_usd
+      ELSE NULL
+    END AS cost_usd,
+    CASE
+      WHEN public.is_workspace_admin(auth.uid(), ur.workspace_id) THEN ur.metadata
+      ELSE '{}'::jsonb
+    END AS metadata
+  FROM public.usage_records ur;
+
+CREATE OR REPLACE VIEW public.skill_registry_safe
+  WITH (security_invoker = true) AS
+  SELECT
+    sr.id, sr.name, sr.slug, sr.description, sr.category, sr.author,
+    sr.version, sr.tags, sr.install_count, sr.rating, sr.skill_config,
+    sr.is_verified, sr.is_public, sr.created_by, sr.created_at, sr.updated_at,
+    CASE
+      WHEN sr.created_by = auth.uid() THEN sr.mcp_server_url
+      ELSE NULL
+    END AS mcp_server_url
+  FROM public.skill_registry sr;
+
+CREATE OR REPLACE VIEW public.oncall_schedule_safe
+  WITH (security_invoker = true) AS
+  SELECT
+    os.id, os.workspace_id, os.user_id, os.user_name,
+    os.starts_at, os.ends_at, os.escalation_order, os.notes,
+    os.created_by, os.created_at,
+    oce.user_email
+  FROM public.oncall_schedule os
+  LEFT JOIN public.oncall_schedule_emails oce
+    ON oce.schedule_id = os.id
+   AND (oce.user_id = auth.uid() OR public.is_workspace_admin(auth.uid(), os.workspace_id))
+  WHERE os.workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()));
+
+GRANT SELECT ON public.forum_threads_public TO authenticated, anon;
+GRANT SELECT ON public.forum_posts_public   TO authenticated, anon;
+GRANT SELECT ON public.forum_threads_safe   TO authenticated, anon;
+GRANT SELECT ON public.forum_posts_safe     TO authenticated, anon;
+GRANT SELECT ON public.workspace_members_public TO authenticated;
+GRANT SELECT ON public.usage_records_cost_safe  TO authenticated;
+GRANT SELECT ON public.skill_registry_safe      TO authenticated;
+GRANT SELECT ON public.oncall_schedule_safe     TO authenticated;
