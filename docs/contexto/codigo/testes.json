@@ -909,12 +909,12 @@
   {
    "arquivo": "src/test/fine-tuning-page.test.tsx",
    "tipo": "unit",
-   "linhas": 150,
+   "linhas": 213,
    "testa": [
     "src/pages/FineTuningPage.tsx",
     "src/services/fineTuningService.ts"
    ],
-   "casos": 7
+   "casos": 10
   },
   {
    "arquivo": "src/test/freeze-window-service.test.ts",

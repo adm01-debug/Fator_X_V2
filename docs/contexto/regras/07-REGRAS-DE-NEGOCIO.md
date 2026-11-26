@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ed56e32932` · branch `main` · 2026-11-26 11:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b2f4e9135d` · branch `main` · 2026-11-26 12:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1520,6 +1520,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | ExpectedOutcome | insert \| update \| keep \| conflict | `src/services/e2eeSimulationService.ts` |
 | DatasetSource | traces \| test_cases \| custom | `src/services/fineTuningService.ts` |
 | TaskType | text-generation \| text-classification \| embedding | `src/services/fineTuningService.ts` |
+| TrainingMethod | lora \| qlora \| full | `src/services/fineTuningService.ts` |
 | GameDayScenario | provider_outage \| cost_spike \| db_slowdown \| auth_failure \| custom | `src/services/gameDayService.ts` |
 | GameDayStatus | scheduled \| running \| completed \| aborted | `src/services/gameDayService.ts` |
 | GameDayEventType | fault_injected \| detection \| mitigation \| resolution \| note | `src/services/gameDayService.ts` |
@@ -2032,7 +2033,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
   ```
 - **ActionSchema** (`supabase/functions/hf-autotrain/index.ts`, z.object):
   ```ts
-  { action: z.enum(['prepare_dataset', 'start_training', 'check_status', 'list_models', 'export_traces', 'prepare_dpo_dataset', 'generate_trl_config']), agent_id: z.string().uuid().optional(), dataset_config: z.object({ source: z.enum(['traces', 'test_cases', 'custom']).optional(), min_quality_score: z.number().min(0).max(5).optional(), max_samples: z.number().int().min(10).max(10000).optional(), task_type: z.enum(['text-classification', 'text-generation', 'embedding', 'reranking']).optional(), }).optional(), training_config: z.object({ base_model: z.string().max(200).optional(), task: z.enum(['text-classification', 'text-generation', 'embedding']).optional(), epochs: z.number().int().min(1).max(20).optional(), learning_rate: z.number().min(0.000001).max(0.01).optional(), repo_name: z.string …
+  { action: z.enum(['prepare_dataset', 'start_training', 'check_status', 'list_models', 'export_traces', 'prepare_dpo_dataset', 'generate_trl_config', 'list_jobs']), agent_id: z.string().uuid().optional(), dataset_config: z.object({ source: z.enum(['traces', 'test_cases', 'custom']).optional(), min_quality_score: z.number().min(0).max(5).optional(), max_samples: z.number().int().min(10).max(10000).optional(), task_type: z.enum(['text-classification', 'text-generation', 'embedding', 'reranking']).optional(), }).optional(), training_config: z.object({ base_model: z.string().max(200).optional(), task: z.enum(['text-classification', 'text-generation', 'embedding']).optional(), epochs: z.number().int().min(1).max(20).optional(), learning_rate: z.number().min(0.000001).max(0.01).optional(), repo_n …
   ```
 - **ImageInput** (`supabase/functions/image-analysis/index.ts`, z.object, encadeia refine):
   ```ts
@@ -4021,7 +4022,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 
-## K. Testes como especificação (3031 testes em 215 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3034 testes em 215 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4126,6 +4127,7 @@ _nenhum item encontrado_
 | `supabase/functions/_shared/retry.test.ts` | 12 | sucesso imediato — 1 call · erro network transitório — recupera antes de esgotar · exaustão — sempre erro transitório · não-retriable — 4xx não repete … |
 | `src/test/accessibility.test.tsx` | 11 | Accessibility · EmptyState · has role=status and aria-label · hides icon from assistive tech … |
 | `src/test/curation-realtime.test.ts` | 11 | shouldRefreshCurationFeed — casos determinísticos · INSERT manual ativo dispara em  · soft delete dispara nos dois filtros (sai de um, entra no outro) · escrita automática é ignorada em todos os filtros … |
+| `src/test/fine-tuning-page.test.tsx` | 11 | FineTuningPage · lista os jobs devolvidos pelo servico em vez de dados fixos · nao inventa progresso nem loss que a edge nao produz · mostra estado vazio quando o servico nao devolve jobs … |
 | `src/test/skill-demand-needs-review-filter.test.ts` | 11 | filterByNeedsReview · desligado devolve o conjunto intacto (e uma cópia, não a referência) · ligado mantém só os rótulos automáticos de baixa confiança · compõe por interseção com o filtro de departamento … |
 | `src/test/skill-license-filter.test.ts` | 11 | isLicenseFilter · aceita apenas os modos declarados · cada modo tem rótulo e dica em PT-BR · matchesLicenseFilter — partição do catálogo … |
 | `src/lib/validations/__tests__/contradictionAutoFix.test.ts` | 10 | contradiction detector + auto-fix integration · detects a polarity contradiction in the sample prompt · builds an auto-fix whose fixedPrompt removes the contradiction · preserves unrelated lines when splicing the unified rule … |
@@ -4150,7 +4152,6 @@ _nenhum item encontrado_
 | `src/test/browser-sessions-service.test.ts` | 8 | browserAgentService · runAgent invokes browser-agent-run with full input · runAgent throws on edge function error · cancelSession passes session_id … |
 | `src/test/curated-skills.test.ts` | 8 | curatedSkills · não possui slugs duplicados · usa slugs kebab-case prefixados com nexus- · referencia apenas departamentos da taxonomia canônica … |
 | `src/test/deep-link-sources.test.ts` | 8 | sourceIdsSync · parse vazio/nulo · filtra IDs inválidos · deduplica … |
-| `src/test/fine-tuning-page.test.tsx` | 8 | FineTuningPage · lista os jobs devolvidos pelo servico em vez de dados fixos · mostra estado vazio quando o servico nao devolve jobs · mostra erro de carregamento em vez de esconder a falha … |
 | `src/test/i18n.test.ts` | 8 | i18n translations · has pt-BR and en-US locales · default locale is pt-BR · both locales have same keys … |
 | `src/test/metric-card.test.tsx` | 8 | MetricCard · renders title and value · renders string value · renders subtitle when provided … |
 | `src/test/nexus-design-eslint.test.ts` | 8 | nexus-design/no-hardcoded-colors · mapeia cores diretas em className · cobre template literals usados em cn() · não confunde tokens nexus-* nem palavras contendo cores … |

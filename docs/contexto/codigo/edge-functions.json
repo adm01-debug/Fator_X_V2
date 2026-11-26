@@ -1215,7 +1215,7 @@
    "nome": "hf-autotrain",
    "entrada": "supabase/functions/hf-autotrain/index.ts",
    "arquivos": 1,
-   "linhas": 229,
+   "linhas": 287,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 1212,
- "arestas": 5261,
+ "arestas": 5260,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -101,16 +101,16 @@
    "importado_por": 34
   },
   {
-   "arquivo": "src/components/ui/progress.tsx",
-   "importado_por": 33
-  },
-  {
    "arquivo": "src/hooks/use-data.ts",
    "importado_por": 33
   },
   {
    "arquivo": "src/services/agentsService.ts",
    "importado_por": 33
+  },
+  {
+   "arquivo": "src/components/ui/progress.tsx",
+   "importado_por": 32
   },
   {
    "arquivo": "src/services/notesService.ts",

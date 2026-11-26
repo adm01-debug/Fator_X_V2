@@ -5985,13 +5985,14 @@
     "DatasetSource",
     "TaskType",
     "TrainingConfig",
+    "TrainingMethod",
     "getJobStatus",
     "listTrainingJobs",
     "prepareDataset",
     "startTraining"
    ],
    "export_default": null,
-   "linhas": 81,
+   "linhas": 95,
    "tabelas": [],
    "rpcs": [],
    "edges": [

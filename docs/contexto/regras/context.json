@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ed56e32932f59b57660ad0594100ecd86fc88d4d",
+  "sha": "b2f4e9135d483ac82568a2e0543d7129847c4e31",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 11:05 UTC",
+  "generated_at": "2026-11-26 12:22 UTC",
   "files_total": 2015,
   "code_files": 1796,
-  "code_lines": 349613
+  "code_lines": 349784
  },
  "version": "1.3.2",
- "facts_hash": "d639cf31731686b5",
+ "facts_hash": "0efaef5c0dcbdf51",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -52217,7 +52217,7 @@
      "hf-autotrain"
     ],
     "rpc_transitive": [],
-    "deps_count": 21
+    "deps_count": 20
    },
    {
     "path": "",
@@ -58934,7 +58934,7 @@
   {
    "module": "src/pages",
    "files": 141,
-   "lines": 50020,
+   "lines": 50056,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -59129,7 +59129,7 @@
   {
    "module": "src/services",
    "files": 166,
-   "lines": 32986,
+   "lines": 33000,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -59458,7 +59458,7 @@
   {
    "module": "src/test",
    "files": 193,
-   "lines": 29217,
+   "lines": 29280,
    "tables": [
     "tabela"
    ],
@@ -59641,7 +59641,7 @@
   {
    "module": "supabase/functions",
    "files": 137,
-   "lines": 33039,
+   "lines": 33097,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -65886,7 +65886,7 @@
     "file": "supabase/functions/hf-autotrain/index.ts",
     "name": "ActionSchema",
     "kind": "object",
-    "body": "{ action: z.enum(['prepare_dataset', 'start_training', 'check_status', 'list_models', 'export_traces', 'prepare_dpo_dataset', 'generate_trl_config']), agent_id: z.string().uuid().optional(), dataset_config: z.object({ source: z.enum(['traces', 'test_cases', 'custom']).optional(), min_quality_score: z.number().min(0).max(5).optional(), max_samples: z.number().int().min(10).max(10000).optional(), task_type: z.enum(['text-classification', 'text-generation', 'embedding', 'reranking']).optional(), }).optional(), training_config: z.object({ base_model: z.string().max(200).optional(), task: z.enum(['text-classification', 'text-generation', 'embedding']).optional(), epochs: z.number().int().min(1).max(20).optional(), learning_rate: z.number().min(0.000001).max(0.01).optional(), repo_name: z.string …",
+    "body": "{ action: z.enum(['prepare_dataset', 'start_training', 'check_status', 'list_models', 'export_traces', 'prepare_dpo_dataset', 'generate_trl_config', 'list_jobs']), agent_id: z.string().uuid().optional(), dataset_config: z.object({ source: z.enum(['traces', 'test_cases', 'custom']).optional(), min_quality_score: z.number().min(0).max(5).optional(), max_samples: z.number().int().min(10).max(10000).optional(), task_type: z.enum(['text-classification', 'text-generation', 'embedding', 'reranking']).optional(), }).optional(), training_config: z.object({ base_model: z.string().max(200).optional(), task: z.enum(['text-classification', 'text-generation', 'embedding']).optional(), epochs: z.number().int().min(1).max(20).optional(), learning_rate: z.number().min(0.000001).max(0.01).optional(), repo_n …",
     "refines": [],
     "chain": []
    },
@@ -67354,6 +67354,11 @@
     "file": "src/services/fineTuningService.ts",
     "name": "TaskType",
     "values": "text-generation | text-classification | embedding"
+   },
+   {
+    "file": "src/services/fineTuningService.ts",
+    "name": "TrainingMethod",
+    "values": "lora | qlora | full"
    },
    {
     "file": "src/services/gameDayService.ts",
@@ -92764,6 +92769,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/pages/FineTuningPage.tsx",
+    "field": "status",
+    "value": "unknown",
+    "kind": "compara"
+   },
+   {
     "file": "src/pages/FreezeWindowsPage.tsx",
     "field": "status",
     "value": "active",
@@ -105667,6 +105678,10 @@
    },
    {
     "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "nao inventa progresso nem loss que a edge nao produz"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
     "name": "mostra estado vazio quando o servico nao devolve jobs"
    },
    {
@@ -105676,6 +105691,14 @@
    {
     "file": "src/test/fine-tuning-page.test.tsx",
     "name": "envia o treinamento ao servico com a configuracao do formulario"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "envia o metodo escolhido e omite o rank quando o metodo e full"
+   },
+   {
+    "file": "src/test/fine-tuning-page.test.tsx",
+    "name": "volta a mostrar o slider de rank em qlora e o envia no payload"
    },
    {
     "file": "src/test/fine-tuning-page.test.tsx",
@@ -129757,6 +129780,11 @@
       "compara:src/pages/FederatedLearningPage.tsx",
       "escreve:src/pages/FederatedLearningPage.tsx"
      ],
+     "unknown": [
+      "compara:src/pages/FineTuningPage.tsx",
+      "escreve:src/services/connectorRegistryService.ts",
+      "escreve:src/services/openclawDeployService.ts"
+     ],
      "aborted": [
       "compara:src/pages/GameDaysPage.tsx",
       "escreve:src/pages/GameDaysPage.tsx"
@@ -129856,10 +129884,6 @@
      ],
      "no_budget": [
       "escreve:src/services/billingService.ts"
-     ],
-     "unknown": [
-      "escreve:src/services/connectorRegistryService.ts",
-      "escreve:src/services/openclawDeployService.ts"
      ],
      "revoked": [
       "compara:src/services/credentialVaultService.ts",
@@ -162774,7 +162798,7 @@
   },
   "src/pages/FineTuningPage.tsx": {
    "path": "src/pages/FineTuningPage.tsx",
-   "lines": 386,
+   "lines": 422,
    "exports": [
     "function FineTuningPage"
    ],
@@ -162812,6 +162836,11 @@
     {
      "field": "status",
      "value": "queued",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "unknown",
      "kind": "compara"
     }
    ]
@@ -168875,10 +168904,11 @@
   },
   "src/services/fineTuningService.ts": {
    "path": "src/services/fineTuningService.ts",
-   "lines": 81,
+   "lines": 95,
    "exports": [
     "type DatasetSource",
     "type TaskType",
+    "type TrainingMethod",
     "interface DatasetConfig",
     "interface TrainingConfig",
     "function prepareDataset",
@@ -168900,6 +168930,10 @@
     {
      "name": "TaskType",
      "values": "text-generation | text-classification | embedding"
+    },
+    {
+     "name": "TrainingMethod",
+     "values": "lora | qlora | full"
     }
    ],
    "doc": "Nexus Agents Studio — Fine-Tuning Service Wraps the hf-autotrain Edge Function for dataset preparation, training kickoff, and job status polling.",
@@ -176678,7 +176712,7 @@
   },
   "src/test/fine-tuning-page.test.tsx": {
    "path": "src/test/fine-tuning-page.test.tsx",
-   "lines": 150,
+   "lines": 213,
    "is_test": true,
    "errors": [
     ")).toHaveTextContent(/hf-autotrain offline/i);\n  });\n\n  it("
@@ -176686,9 +176720,12 @@
    "tests": [
     "FineTuningPage",
     "lista os jobs devolvidos pelo servico em vez de dados fixos",
+    "nao inventa progresso nem loss que a edge nao produz",
     "mostra estado vazio quando o servico nao devolve jobs",
     "mostra erro de carregamento em vez de esconder a falha",
     "envia o treinamento ao servico com a configuracao do formulario",
+    "envia o metodo escolhido e omite o rank quando o metodo e full",
+    "volta a mostrar o slider de rank em qlora e o envia no payload",
     "recusa iniciar sem nome e nao chama o servico",
     "propaga para o usuario o erro devolvido pelo servico",
     "prepara o dataset a partir das traces do agente"
@@ -184410,7 +184447,7 @@
   },
   "supabase/functions/hf-autotrain/index.ts": {
    "path": "supabase/functions/hf-autotrain/index.ts",
-   "lines": 229,
+   "lines": 287,
    "tables": [
     {
      "table": "workspace_members",
@@ -184435,6 +184472,10 @@
     {
      "table": "agent_traces",
      "op": "select"
+    },
+    {
+     "table": "agent_traces",
+     "op": "select"
     }
    ],
    "table_cols": {
@@ -184445,6 +184486,7 @@
     "agent_traces": [
      "agent_id",
      "cost_usd",
+     "created_at",
      "event",
      "input",
      "level",
@@ -184456,7 +184498,7 @@
     {
      "name": "ActionSchema",
      "kind": "object",
-     "body": "{ action: z.enum(['prepare_dataset', 'start_training', 'check_status', 'list_models', 'export_traces', 'prepare_dpo_dataset', 'generate_trl_config']), agent_id: z.string().uuid().optional(), dataset_config: z.object({ source: z.enum(['traces', 'test_cases', 'custom']).optional(), min_quality_score: z.number().min(0).max(5).optional(), max_samples: z.number().int().min(10).max(10000).optional(), task_type: z.enum(['text-classification', 'text-generation', 'embedding', 'reranking']).optional(), }).optional(), training_config: z.object({ base_model: z.string().max(200).optional(), task: z.enum(['text-classification', 'text-generation', 'embedding']).optional(), epochs: z.number().int().min(1).max(20).optional(), learning_rate: z.number().min(0.000001).max(0.01).optional(), repo_name: z.string …",
+     "body": "{ action: z.enum(['prepare_dataset', 'start_training', 'check_status', 'list_models', 'export_traces', 'prepare_dpo_dataset', 'generate_trl_config', 'list_jobs']), agent_id: z.string().uuid().optional(), dataset_config: z.object({ source: z.enum(['traces', 'test_cases', 'custom']).optional(), min_quality_score: z.number().min(0).max(5).optional(), max_samples: z.number().int().min(10).max(10000).optional(), task_type: z.enum(['text-classification', 'text-generation', 'embedding', 'reranking']).optional(), }).optional(), training_config: z.object({ base_model: z.string().max(200).optional(), task: z.enum(['text-classification', 'text-generation', 'embedding']).optional(), epochs: z.number().int().min(1).max(20).optional(), learning_rate: z.number().min(0.000001).max(0.01).optional(), repo_n …",
      "refines": [],
      "chain": []
     }
@@ -191128,10 +191170,23 @@
   }
  },
  "git": {
-  "sha": "ed56e32932f59b57660ad0594100ecd86fc88d4d",
+  "sha": "b2f4e9135d483ac82568a2e0543d7129847c4e31",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "b2f4e91",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)",
+    "files": [
+     "src/pages/FineTuningPage.tsx",
+     "src/services/fineTuningService.ts",
+     "src/test/fine-tuning-page.test.tsx",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/hf-autotrain/index.ts"
+    ]
+   },
    {
     "sha": "ed56e32",
     "date": "2026-11-26",
@@ -191460,19 +191515,6 @@
      "docs/pendencias/tbl-002-game-day-events-ausente.md",
      "docs/pendencias/tbl-003-rpcs-grc-ausentes.md"
     ]
-   },
-   {
-    "sha": "3a23906",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: corrige jsonResponse e getCorsHeaders sem req em 4 edges (#128)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/doc-parse/index.ts",
-     "supabase/functions/doc-rechunk/index.ts",
-     "supabase/functions/rag-ingest/index.ts",
-     "supabase/functions/workflow-engine-v2/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -191495,6 +191537,14 @@
    [
     "docs/migration/MATRIZ_EDGE_TABELA.md",
     3
+   ],
+   [
+    "src/pages/FineTuningPage.tsx",
+    2
+   ],
+   [
+    "src/test/fine-tuning-page.test.tsx",
+    2
    ],
    [
     ".github/workflows/edge-prune.yml",
@@ -191529,11 +191579,11 @@
     2
    ],
    [
-    "src/pages/FineTuningPage.tsx",
+    "src/services/fineTuningService.ts",
     1
    ],
    [
-    "src/test/fine-tuning-page.test.tsx",
+    "supabase/functions/hf-autotrain/index.ts",
     1
    ],
    [
@@ -191546,14 +191596,6 @@
    ],
    [
     ".github/workflows/automation-local.yml",
-    1
-   ],
-   [
-    ".github/workflows/ci.yml",
-    1
-   ],
-   [
-    ".github/workflows/codeql.yml",
     1
    ]
   ]

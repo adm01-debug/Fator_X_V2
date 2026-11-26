@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ed56e32932f59b57660ad0594100ecd86fc88d4d` (2026-11-26T08:04:46-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b2f4e9135d483ac82568a2e0543d7129847c4e31` (2026-11-26T09:22:06-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2010 |
 | arquivos_codigo | 1454 |
-| linhas_codigo | 319354 |
+| linhas_codigo | 319525 |
 | rotas | 151 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -432,15 +432,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14566 nós · 38466 arestas · 915 comunidades · grafo do commit `ed56e329`
-- comunidades maiores: badge.tsx (352), button.tsx (337), ref_https (207), lucide-react (192), App.tsx (174), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (146), notesService.ts (129), templateSkillLinkService.ts (113), agent-workflow-runner/index.ts (110), cn (110), BCPPage.tsx (105), logger.ts (101)
+- 14569 nós · 38469 arestas · 923 comunidades · grafo do commit `b2f4e913`
+- comunidades maiores: react (292), lucide-react (232), badge.tsx (192), ref_https (186), button.tsx (184), VendorsPage.tsx (140), logger.ts (134), App.tsx (132), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (128), cn (118), templateSkillLinkService.ts (117), agent-workflow-runner/index.ts (112)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (26)
 - package.json (24)
-- supabase/deployment-manifest.json (22)
+- supabase/deployment-manifest.json (23)
 - .github/workflows/ci.yml (8)
 - .github/workflows/edge-deploy.yml (6)
 - docs/migration/MATRIZ_EDGE_TABELA.md (6)
@@ -579,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `b2f4e91` feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)
 - 2026-11-26 `ed56e32` feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)
 - 2026-11-26 `70dccb4` fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)
 - 2026-11-25 `0bbb244` fix(infra): prova real da remocao de edge orfa no edge-prune (#156)
@@ -593,7 +594,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `796a52c` chore(deps)(deps): bump react-router-dom (#148)
 - 2026-11-24 `7190245` chore(qa): auditoria de QA completa + plano de correção em 300 etapas (docs/qa/) (#146)
 - 2026-11-21 `d912348` fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)
-- 2026-11-21 `8554dc7` feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ed56e32932f59b57660ad0594100ecd86fc88d4d",
+  "commit": "b2f4e9135d483ac82568a2e0543d7129847c4e31",
   "branch": "main",
-  "data_commit": "2026-11-26T08:04:46-03:00",
+  "data_commit": "2026-11-26T09:22:06-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "b2f4e91",
+    "data": "2026-11-26",
+    "assunto": "feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)"
+   },
    {
     "sha": "ed56e32",
     "data": "2026-11-26",
@@ -126,18 +131,13 @@
     "sha": "ff7f06e",
     "data": "2026-11-21",
     "assunto": "fix: registra webhooks externos verify_jwt=false no config.toml (#135)"
-   },
-   {
-    "sha": "0200f78",
-    "data": "2026-11-21",
-    "assunto": "chore: registra analise funcionalidades planejadas x implementadas (#134)"
    }
   ],
-  "arquivos_mudados_7d": 126,
+  "arquivos_mudados_7d": 128,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "pasta": "package-lock.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 65
+    "commits": 66
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 2010,
   "arquivos_codigo": 1454,
-  "linhas_codigo": 319354,
+  "linhas_codigo": 319525,
   "rotas": 151,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 141,
-   "linhas": 50020
+   "linhas": 50056
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -512,7 +512,7 @@
   },
   "src/services": {
    "arquivos": 166,
-   "linhas": 32986
+   "linhas": 33000
   },
   "src/stores": {
    "arquivos": 12,
@@ -520,7 +520,7 @@
   },
   "src/test": {
    "arquivos": 193,
-   "linhas": 29217
+   "linhas": 29280
   },
   "src/tests": {
    "arquivos": 2,
@@ -532,7 +532,7 @@
   },
   "supabase/functions": {
    "arquivos": 137,
-   "linhas": 33039
+   "linhas": 33097
   },
   "tailwind.config.ts": {
    "arquivos": 1,
