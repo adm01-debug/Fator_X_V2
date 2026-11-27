@@ -258,13 +258,47 @@ export async function installGuardrailPreset(
   }
 }
 
+export type GuardrailMode = 'check_input' | 'check_output' | 'check_full';
+
+export interface GuardrailRailResult {
+  rail: string;
+  layer: 'input' | 'dialog' | 'output' | 'runtime';
+  action: 'allow' | 'block' | 'warn' | 'modify';
+  confidence: number;
+  reason: string;
+}
+
+export interface GuardrailsCheckResult {
+  action: 'allow' | 'warn' | 'block';
+  results: GuardrailRailResult[];
+  blocked: number;
+  warnings: number;
+  passed: number;
+}
+
+export interface GuardrailsEngineConfig {
+  rails: string[];
+  layers: string[];
+  levels: string[];
+}
+
 export async function testGuardrails(
   text: string,
-  checks: string[] = ['pii', 'injection', 'toxicity', 'content'],
-) {
-  return invokeTracedFunction(
+  mode: GuardrailMode = 'check_full',
+): Promise<GuardrailsCheckResult> {
+  return invokeTracedFunction<GuardrailsCheckResult>(
     'guardrails-engine',
-    { text, checks },
+    { action: mode, text },
+    {
+      spanKind: 'guardrail',
+    },
+  );
+}
+
+export async function getGuardrailsEngineConfig(): Promise<GuardrailsEngineConfig> {
+  return invokeTracedFunction<GuardrailsEngineConfig>(
+    'guardrails-engine',
+    { action: 'get_config' },
     {
       spanKind: 'guardrail',
     },
