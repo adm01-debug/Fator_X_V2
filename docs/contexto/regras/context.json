@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "91e02fc0088090ca2807bd309815e67a0c1e42b8",
+  "sha": "1e1eaf2ee462716e6a34d5aa0d24a42e340599e6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 02:43 UTC",
+  "generated_at": "2026-11-27 02:56 UTC",
   "files_total": 2043,
   "code_files": 1823,
-  "code_lines": 366237
+  "code_lines": 366573
  },
  "version": "1.3.2",
- "facts_hash": "0764b4d7dbff9737",
+ "facts_hash": "388814bebb9f5c3d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -61264,7 +61264,7 @@
   {
    "module": "src/pages",
    "files": 142,
-   "lines": 51059,
+   "lines": 51325,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -61459,7 +61459,7 @@
   {
    "module": "src/services",
    "files": 168,
-   "lines": 33770,
+   "lines": 33840,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -72373,7 +72373,19 @@
    },
    {
     "file": "src/pages/FineTuningPage.tsx",
+    "msg": "Informe o ID do agente para exportar as traces"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "msg": "Informe o ID do agente para montar o dataset DPO"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
     "msg": "Informe o nome do modelo que sera publicado no Hugging Face"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "msg": "Não foi possível copiar o comando"
    },
    {
     "file": "src/pages/FreezeWindowsPage.tsx",
@@ -95683,6 +95695,18 @@
     "kind": "compara"
    },
    {
+    "file": "src/pages/FineTuningPage.tsx",
+    "field": "status",
+    "value": "ready",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/FineTuningPage.tsx",
+    "field": "status",
+    "value": "ready",
+    "kind": "compara"
+   },
+   {
     "file": "src/pages/FreezeWindowsPage.tsx",
     "field": "status",
     "value": "active",
@@ -97685,6 +97709,12 @@
     "field": "status",
     "value": "running",
     "kind": "compara"
+   },
+   {
+    "file": "src/services/fineTuningService.ts",
+    "field": "status",
+    "value": "ready",
+    "kind": "escreve"
    },
    {
     "file": "src/services/fineTuningService.ts",
@@ -103009,6 +103039,12 @@
     "name": "scoreStatistical",
     "params": "expected: string, actual: string",
     "body": "if (!expected || !actual) return 0; const expTokens = expected .toLowerCase() .split(/\\s+/) .filter((w) => w.length > 1); const actTokens = actual .toLowerCase() .split(/\\s+/) .filter((w) => w.length > 1); if (expTokens.length === 0 || actTokens.length === 0) return 0; // Compute LCS length (ROUGE-L) const lcsLen = lcsLength(expTokens, actTokens); const precision = lcsLen / actTokens.length; const recall = lcsLen / expTokens.length; // F1 of ROUGE-L const rougeL = precision + recall > 0 ? (2 * p …"
+   },
+   {
+    "file": "src/services/fineTuningService.ts",
+    "name": "generateTrlConfig",
+    "params": "config: TrainingConfig",
+    "body": "return invoke<TrlConfig>({ action: 'generate_trl_config', training_config: config, });"
    },
    {
     "file": "src/services/knowledgeDecayService.ts",
@@ -133143,8 +133179,10 @@
      "ready": [
       "compara:src/components/super-cerebro/DocumentUploadTab.tsx",
       "compara:src/components/super-cerebro/notebook/PodcastPanel.tsx",
+      "compara:src/pages/FineTuningPage.tsx",
       "compara:src/services/documentIngestionService.ts",
       "escreve:src/pages/SwarmOrchestrationPage.tsx",
+      "escreve:src/services/fineTuningService.ts",
       "escreve:supabase/functions/doc-parse/index.ts",
       "escreve:supabase/functions/notebook-podcast-generate/index.ts",
       "filtra:supabase/functions/notebook-podcast-generate/index.ts"
@@ -167442,14 +167480,17 @@
   },
   "src/pages/FineTuningPage.tsx": {
    "path": "src/pages/FineTuningPage.tsx",
-   "lines": 528,
+   "lines": 794,
    "exports": [
     "function FineTuningPage"
    ],
    "errors": [
     " className=",
     "Informe o ID do agente de onde as traces serao extraidas",
-    "Informe o nome do modelo que sera publicado no Hugging Face"
+    "Informe o ID do agente para exportar as traces",
+    "Informe o ID do agente para montar o dataset DPO",
+    "Informe o nome do modelo que sera publicado no Hugging Face",
+    "Não foi possível copiar o comando"
    ],
    "status_values": [
     {
@@ -167485,6 +167526,16 @@
     {
      "field": "status",
      "value": "unknown",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "ready",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "ready",
      "kind": "compara"
     }
    ],
@@ -173590,7 +173641,7 @@
   },
   "src/services/fineTuningService.ts": {
    "path": "src/services/fineTuningService.ts",
-   "lines": 231,
+   "lines": 301,
    "exports": [
     "type DatasetSource",
     "type TaskType",
@@ -173601,6 +173652,14 @@
     "function startTraining",
     "function getJobStatus",
     "function listTrainingJobs",
+    "interface HubModel",
+    "interface TracesDataset",
+    "interface DpoDataset",
+    "interface TrlConfig",
+    "function listHubModels",
+    "function exportTraces",
+    "function prepareDpoDataset",
+    "function generateTrlConfig",
     "type FineTuneJobStatus",
     "interface FineTuneJobRecord",
     "function mapHubStatus",
@@ -173637,11 +173696,23 @@
    "status_values": [
     {
      "field": "status",
+     "value": "ready",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
      "value": "preparing",
      "kind": "escreve"
     }
    ],
    "doc": "Nexus Agents Studio — Fine-Tuning Service Wraps the hf-autotrain Edge Function for dataset preparation, training kickoff, and job status polling.",
+   "calc_fns": [
+    {
+     "name": "generateTrlConfig",
+     "params": "config: TrainingConfig",
+     "body": "return invoke<TrlConfig>({ action: 'generate_trl_config', training_config: config, });"
+    }
+   ],
    "side_effects": [
     "invoke("
    ]
@@ -196396,10 +196467,20 @@
   }
  },
  "git": {
-  "sha": "91e02fc0088090ca2807bd309815e67a0c1e42b8",
+  "sha": "1e1eaf2ee462716e6a34d5aa0d24a42e340599e6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "1e1eaf2",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)",
+    "files": [
+     "src/pages/FineTuningPage.tsx",
+     "src/services/fineTuningService.ts"
+    ]
+   },
    {
     "sha": "91e02fc",
     "date": "2026-11-26",
@@ -196713,25 +196794,19 @@
      "supabase/deployment-manifest.json",
      "supabase/functions/migrate-helper/index.ts"
     ]
-   },
-   {
-    "sha": "d809480",
-    "date": "2026-11-24",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "src/pages/FineTuningPage.tsx",
+    4
+   ],
    [
     "supabase/deployment-manifest.json",
     4
    ],
    [
-    "src/pages/FineTuningPage.tsx",
+    "src/services/fineTuningService.ts",
     3
    ],
    [
@@ -196747,23 +196822,11 @@
     2
    ],
    [
-    "src/services/fineTuningService.ts",
-    2
-   ],
-   [
     "src/test/forum-safe-views.test.ts",
     2
    ],
    [
     ".github/workflows/edge-prune.yml",
-    2
-   ],
-   [
-    "package-lock.json",
-    2
-   ],
-   [
-    "package.json",
     2
    ],
    [
@@ -196804,6 +196867,14 @@
    ],
    [
     "supabase/migrations/20261127000000_recuperar_objetos_internos.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261127140000_rls_particoes_orfas.sql",
     1
    ]
   ]

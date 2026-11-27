@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "91e02fc0088090ca2807bd309815e67a0c1e42b8",
+  "commit": "1e1eaf2ee462716e6a34d5aa0d24a42e340599e6",
   "branch": "main",
-  "data_commit": "2026-11-26T23:43:01-03:00",
+  "data_commit": "2026-11-26T23:55:59-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "1e1eaf2",
+    "data": "2026-11-26",
+    "assunto": "feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)"
+   },
    {
     "sha": "91e02fc",
     "data": "2026-11-26",
@@ -126,11 +131,6 @@
     "sha": "0bbb244",
     "data": "2026-11-25",
     "assunto": "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)"
-   },
-   {
-    "sha": "bb13d20",
-    "data": "2026-11-24",
-    "assunto": "chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)"
    }
   ],
   "arquivos_mudados_7d": 145,
@@ -184,15 +184,15 @@
     "mudancas": 4
    },
    {
+    "pasta": "src/pages/FineTuningPage.tsx",
+    "mudancas": 4
+   },
+   {
     "pasta": "supabase/functions/agent-conversational-builder",
     "mudancas": 4
    },
    {
     "pasta": ".github/workflows/automation-local.yml",
-    "mudancas": 3
-   },
-   {
-    "pasta": ".github/workflows/inventario-estado-semanal.yml",
     "mudancas": 3
    }
   ],
@@ -231,6 +231,10 @@
    },
    {
     "arquivo": ".github/workflows/guards.yml",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/pages/FineTuningPage.tsx",
     "mudancas": 4
    },
    {
@@ -292,16 +296,12 @@
    {
     "arquivo": "src/components/shared/OnboardingTour.tsx",
     "mudancas": 3
-   },
-   {
-    "arquivo": "src/pages/FineTuningPage.tsx",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 86
+    "commits": 87
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 2038,
   "arquivos_codigo": 1473,
-  "linhas_codigo": 323792,
+  "linhas_codigo": 324128,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 51059
+   "linhas": 51325
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -512,7 +512,7 @@
   },
   "src/services": {
    "arquivos": 168,
-   "linhas": 33770
+   "linhas": 33840
   },
   "src/stores": {
    "arquivos": 12,

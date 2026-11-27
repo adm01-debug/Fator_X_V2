@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `91e02fc008` · branch `main` · 2026-11-27 02:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1e1eaf2ee4` · branch `main` · 2026-11-27 02:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2737,6 +2737,10 @@ _nenhum item encontrado_
   ```
   if (!expected || !actual) return 0; const expTokens = expected .toLowerCase() .split(/\s+/) .filter((w) => w.length > 1); const actTokens = actual .toLowerCase() .split(/\s+/) .filter((w) => w.length > 1); if (expTokens.length === 0 || actTokens.length === 0) return 0; // Compute LCS length (ROUGE-L) const lcsLen = lcsLength(expTokens, actTokens); const precision = lcsLen / actTokens.length; const recall = lcsLen / expTokens.length; // F1 of ROUGE-L const rougeL = precision + recall > 0 ? (2 * p …
   ```
+- **generateTrlConfig(config: TrainingConfig)** — `src/services/fineTuningService.ts`
+  ```
+  return invoke<TrlConfig>({ action: 'generate_trl_config', training_config: config, });
+  ```
 - **computeDecayScore(ageDays: number, importance: number | null)** — `src/services/knowledgeDecayService.ts`
   ```
   score: number; level: DecayLevel;
@@ -4032,7 +4036,7 @@ _nenhum item encontrado_
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +536 linhas — lista completa em `context.json` | |
+| … +539 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
