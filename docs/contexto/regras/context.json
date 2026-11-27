@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4631eb4e3080c841ba3359c9585b18a4ca144fb7",
+  "sha": "18aacbde4ce056f8bcaa3c945e4d4d193bd38f9e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 06:33 UTC",
+  "generated_at": "2026-11-27 06:48 UTC",
   "files_total": 2049,
   "code_files": 1827,
-  "code_lines": 367238
+  "code_lines": 367254
  },
  "version": "1.3.2",
- "facts_hash": "8be7ab3ce6bf9a61",
+ "facts_hash": "6965ca53757921c4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -42090,6 +42090,39 @@
     "body": "",
     "raises": [],
     "tables": []
+   },
+   "enable_my_2fa": {
+    "args": "",
+    "returns": "?",
+    "lang": "",
+    "src": "src/integrations/supabase/types.ts",
+    "security_definer": false,
+    "search_path": false,
+    "body": "",
+    "raises": [],
+    "tables": []
+   },
+   "disable_my_2fa": {
+    "args": "",
+    "returns": "?",
+    "lang": "",
+    "src": "src/integrations/supabase/types.ts",
+    "security_definer": false,
+    "search_path": false,
+    "body": "",
+    "raises": [],
+    "tables": []
+   },
+   "verify_my_2fa": {
+    "args": "",
+    "returns": "?",
+    "lang": "",
+    "src": "src/integrations/supabase/types.ts",
+    "security_definer": false,
+    "search_path": false,
+    "body": "",
+    "raises": [],
+    "tables": []
    }
   },
   "enums": {
@@ -53491,6 +53524,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 33
@@ -53635,7 +53669,8 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
-     "get_knowledge_graph_health"
+     "get_knowledge_graph_health",
+     "get_my_2fa_status"
     ],
     "deps_count": 44
    },
@@ -53700,6 +53735,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "increment_skill_installs"
     ],
     "deps_count": 27
@@ -53763,6 +53799,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 38
@@ -53820,6 +53857,7 @@
      "audit_asset",
      "decommission_asset",
      "get_asset_summary",
+     "get_my_2fa_status",
      "register_asset"
     ],
     "deps_count": 32
@@ -53833,7 +53871,9 @@
      "user_roles"
     ],
     "invokes_transitive": [],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "get_my_2fa_status"
+    ],
     "deps_count": 16
    },
    {
@@ -53955,6 +53995,7 @@
     "invokes_transitive": [],
     "rpc_transitive": [
      "get_bcp_summary",
+     "get_my_2fa_status",
      "record_bcp_test",
      "register_business_system"
     ],
@@ -54074,6 +54115,7 @@
      "decide_change",
      "execute_change",
      "get_change_summary",
+     "get_my_2fa_status",
      "rollback_change",
      "submit_change_request"
     ],
@@ -54198,6 +54240,7 @@
      "acknowledge_cost_alert",
      "compute_cost_baselines",
      "detect_cost_anomalies",
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 16
@@ -54242,6 +54285,7 @@
      "quick-agent-test"
     ],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "increment_skill_installs",
      "is_user_locked_out",
      "log_audit_entry"
@@ -54257,7 +54301,9 @@
      "user_roles"
     ],
     "invokes_transitive": [],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "get_my_2fa_status"
+    ],
     "deps_count": 20
    },
    {
@@ -54321,6 +54367,7 @@
     ],
     "rpc_transitive": [
      "get_masked_secrets",
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 65
@@ -54611,7 +54658,8 @@
     "invokes_transitive": [],
     "rpc_transitive": [
      "activate_ir_playbook",
-     "get_ir_summary"
+     "get_ir_summary",
+     "get_my_2fa_status"
     ],
     "deps_count": 22
    },
@@ -54635,7 +54683,8 @@
      "incident-orchestrator"
     ],
     "rpc_transitive": [
-     "get_current_oncall"
+     "get_current_oncall",
+     "get_my_2fa_status"
     ],
     "deps_count": 21
    },
@@ -54726,6 +54775,7 @@
     ],
     "rpc_transitive": [
      "get_masked_secrets",
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 55
@@ -54754,6 +54804,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 26
@@ -54806,6 +54857,7 @@
      "memory-tools"
     ],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 33
@@ -54914,7 +54966,8 @@
      "incident-orchestrator"
     ],
     "rpc_transitive": [
-     "get_current_oncall"
+     "get_current_oncall",
+     "get_my_2fa_status"
     ],
     "deps_count": 17
    },
@@ -54962,6 +55015,7 @@
     "invokes_transitive": [],
     "rpc_transitive": [
      "get_masked_secrets",
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 53
@@ -54989,6 +55043,7 @@
     "invokes_transitive": [],
     "rpc_transitive": [
      "create_pentest_engagement",
+     "get_my_2fa_status",
      "get_pentest_summary",
      "record_pentest_finding",
      "update_pentest_finding_status"
@@ -55007,7 +55062,9 @@
      "workspaces"
     ],
     "invokes_transitive": [],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "get_my_2fa_status"
+    ],
     "deps_count": 29
    },
    {
@@ -55087,6 +55144,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 34
@@ -55153,7 +55211,9 @@
      "kb-analyze-gaps",
      "kb-translate-article"
     ],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "get_my_2fa_status"
+    ],
     "deps_count": 13
    },
    {
@@ -55209,7 +55269,9 @@
      "user_roles"
     ],
     "invokes_transitive": [],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "get_my_2fa_status"
+    ],
     "deps_count": 12
    },
    {
@@ -55328,6 +55390,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "get_secrets_status_summary",
      "mark_secret_retired",
      "record_secret_rotation",
@@ -55351,7 +55414,6 @@
      "openclaw_events",
      "security_alerts",
      "security_events",
-     "user_2fa",
      "user_roles",
      "workspace_members",
      "workspace_secrets",
@@ -55361,6 +55423,8 @@
      "validate-access"
     ],
     "rpc_transitive": [
+     "disable_my_2fa",
+     "enable_my_2fa",
      "get_db_health_snapshot",
      "get_db_rollback_rate",
      "get_masked_secrets",
@@ -55391,6 +55455,7 @@
     "invokes_transitive": [],
     "rpc_transitive": [
      "get_masked_secrets",
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 50
@@ -55407,6 +55472,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "increment_skill_installs"
     ],
     "deps_count": 32
@@ -55512,7 +55578,9 @@
      "slack-rag-sync",
      "slack-verify-connection"
     ],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "get_my_2fa_status"
+    ],
     "deps_count": 34
    },
    {
@@ -55563,6 +55631,7 @@
     ],
     "rpc_transitive": [
      "get_masked_secrets",
+     "get_my_2fa_status",
      "is_user_locked_out",
      "log_audit_entry"
     ],
@@ -55638,6 +55707,7 @@
     "invokes_transitive": [],
     "rpc_transitive": [
      "accept_workspace_invitation",
+     "get_my_2fa_status",
      "get_pending_invites_for_email",
      "invite_workspace_member",
      "is_user_locked_out"
@@ -55669,6 +55739,7 @@
     ],
     "rpc_transitive": [
      "get_masked_secrets",
+     "get_my_2fa_status",
      "increment_skill_installs",
      "is_user_locked_out"
     ],
@@ -55709,6 +55780,7 @@
     "invokes_transitive": [],
     "rpc_transitive": [
      "assess_vendor",
+     "get_my_2fa_status",
      "get_vendor_summary",
      "offboard_vendor",
      "register_vendor"
@@ -55824,6 +55896,7 @@
      "workflow-engine-v2"
     ],
     "rpc_transitive": [
+     "get_my_2fa_status",
      "is_user_locked_out"
     ],
     "deps_count": 47
@@ -60845,7 +60918,7 @@
   {
    "module": "src/contexts",
    "files": 1,
-   "lines": 154,
+   "lines": 157,
    "tables": [
     "auth_attempts",
     "user_roles"
@@ -60899,7 +60972,7 @@
   {
    "module": "src/hooks",
    "files": 45,
-   "lines": 4509,
+   "lines": 4506,
    "tables": [
     "agent_eval_datasets",
     "agent_eval_results",
@@ -60918,7 +60991,6 @@
     "slack_workspace_config",
     "trace_events",
     "usage_records",
-    "user_2fa",
     "workflow_steps",
     "workflows",
     "workspace_members",
@@ -61066,7 +61138,7 @@
   {
    "module": "src/integrations",
    "files": 5,
-   "lines": 15734,
+   "lines": 15746,
    "tables": [],
    "exports": [
     "index.ts: lovable",
@@ -61797,7 +61869,7 @@
   {
    "module": "src/test",
    "files": 206,
-   "lines": 30804,
+   "lines": 30808,
    "tables": [
     "tabela"
    ],
@@ -64276,14 +64348,6 @@
      "src/services/billingService.ts"
     ]
    },
-   "user_2fa": {
-    "upsert": [
-     "src/hooks/use2FA.ts"
-    ],
-    "delete": [
-     "src/hooks/use2FA.ts"
-    ]
-   },
    "user_research_configs": {
     "select": [
      "src/lib/researchConfig.ts"
@@ -65461,9 +65525,6 @@
     "tokens",
     "workspace_id"
    ],
-   "user_2fa": [
-    "user_id"
-   ],
    "user_research_configs": [
     "config",
     "user_id"
@@ -66123,6 +66184,12 @@
    "disable_all_chaos": [
     "src/services/chaosService.ts"
    ],
+   "disable_my_2fa": [
+    "src/hooks/use2FA.ts"
+   ],
+   "enable_my_2fa": [
+    "src/hooks/use2FA.ts"
+   ],
    "enforce_budget": [
     "src/services/budgetService.ts"
    ],
@@ -66196,6 +66263,7 @@
     "tests/rls/personas.test.ts"
    ],
    "get_my_2fa_status": [
+    "src/contexts/AuthContext.tsx",
     "src/hooks/use2FA.ts"
    ],
    "get_partition_health_snapshot": [
@@ -67457,6 +67525,7 @@
    "traces_2027_05",
    "traces_2027_06",
    "traces_2027_07",
+   "user_2fa",
    "user_filter_preferences",
    "wal_snapshots",
    "workflow_checkpoints",
@@ -115918,11 +115987,11 @@
    },
    {
     "file": "src/test/use2fa.test.ts",
-    "name": "enable valida o TOTP antes de gravar"
+    "name": "enable grava pela RPC enable_my_2fa"
    },
    {
     "file": "src/test/use2fa.test.ts",
-    "name": "código inválido é recusado e nada é gravado"
+    "name": "o banco recusando o código não ativa o fator"
    },
    {
     "file": "src/test/use2fa.test.ts",
@@ -128833,6 +128902,39 @@
     "tables": []
    },
    "SetofOptions": {
+    "args": "",
+    "returns": "?",
+    "lang": "",
+    "src": "src/integrations/supabase/types.ts",
+    "security_definer": false,
+    "search_path": false,
+    "body": "",
+    "raises": [],
+    "tables": []
+   },
+   "enable_my_2fa": {
+    "args": "",
+    "returns": "?",
+    "lang": "",
+    "src": "src/integrations/supabase/types.ts",
+    "security_definer": false,
+    "search_path": false,
+    "body": "",
+    "raises": [],
+    "tables": []
+   },
+   "disable_my_2fa": {
+    "args": "",
+    "returns": "?",
+    "lang": "",
+    "src": "src/integrations/supabase/types.ts",
+    "security_definer": false,
+    "search_path": false,
+    "body": "",
+    "raises": [],
+    "tables": []
+   },
+   "verify_my_2fa": {
     "args": "",
     "returns": "?",
     "lang": "",
@@ -160529,7 +160631,7 @@
   },
   "src/contexts/AuthContext.tsx": {
    "path": "src/contexts/AuthContext.tsx",
-   "lines": 154,
+   "lines": 157,
    "exports": [
     "function AuthProvider",
     "function useAuth"
@@ -160550,6 +160652,9 @@
      "user_id"
     ]
    },
+   "rpc": [
+    "get_my_2fa_status"
+   ],
    "rule_comments": [
     "Check if MFA is required for this user (Admin role)"
    ],
@@ -161060,27 +161165,14 @@
   },
   "src/hooks/use2FA.ts": {
    "path": "src/hooks/use2FA.ts",
-   "lines": 132,
+   "lines": 129,
    "exports": [
     "function generateBackupCodes",
     "function use2FA"
    ],
-   "tables": [
-    {
-     "table": "user_2fa",
-     "op": "upsert"
-    },
-    {
-     "table": "user_2fa",
-     "op": "delete"
-    }
-   ],
-   "table_cols": {
-    "user_2fa": [
-     "user_id"
-    ]
-   },
    "rpc": [
+    "disable_my_2fa",
+    "enable_my_2fa",
     "get_my_2fa_status"
    ],
    "errors": [
@@ -162331,7 +162423,7 @@
   },
   "src/integrations/supabase/types.ts": {
    "path": "src/integrations/supabase/types.ts",
-   "lines": 15460,
+   "lines": 15472,
    "exports": [
     "type Json",
     "type Database",
@@ -184812,14 +184904,14 @@
   },
   "src/test/use2fa.test.ts": {
    "path": "src/test/use2fa.test.ts",
-   "lines": 147,
+   "lines": 151,
    "is_test": true,
    "tests": [
     "use2FA lê o status pela RPC get_my_2fa_status",
     "usa a RPC como fonte e não consulta a tabela direto",
     "sem linha na RPC, o usuário aparece como desativado",
-    "enable valida o TOTP antes de gravar",
-    "código inválido é recusado e nada é gravado",
+    "enable grava pela RPC enable_my_2fa",
+    "o banco recusando o código não ativa o fator",
     "código válido grava o segredo e devolve 8 códigos de recuperação únicos",
     "disable remove o fator do usuário",
     "apaga a linha do próprio usuário e volta o estado a inativo",
@@ -196688,10 +196780,22 @@
   }
  },
  "git": {
-  "sha": "4631eb4e3080c841ba3359c9585b18a4ca144fb7",
+  "sha": "18aacbde4ce056f8bcaa3c945e4d4d193bd38f9e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "18aacbd",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "fix(2fa): ativacao e validacao do segundo fator via RPC do banco (#201)",
+    "files": [
+     "src/contexts/AuthContext.tsx",
+     "src/hooks/use2FA.ts",
+     "src/integrations/supabase/types.ts",
+     "src/test/use2fa.test.ts"
+    ]
+   },
    {
     "sha": "4631eb4",
     "date": "2026-11-27",
@@ -197011,15 +197115,6 @@
      "src/hooks/use2FA.ts",
      "src/test/use2fa.test.ts"
     ]
-   },
-   {
-    "sha": "0bbb244",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)",
-    "files": [
-     ".github/workflows/edge-prune.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -197040,6 +197135,14 @@
     3
    ],
    [
+    "src/hooks/use2FA.ts",
+    2
+   ],
+   [
+    "src/test/use2fa.test.ts",
+    2
+   ],
+   [
     "src/services/securityService.ts",
     2
    ],
@@ -197050,6 +197153,14 @@
    [
     "src/test/forum-safe-views.test.ts",
     2
+   ],
+   [
+    "src/contexts/AuthContext.tsx",
+    1
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    1
    ],
    [
     ".prbody.md",
@@ -197085,22 +197196,6 @@
    ],
    [
     "src/pages/GovernancePage.tsx",
-    1
-   ],
-   [
-    "src/services/geoCodeService.ts",
-    1
-   ],
-   [
-    "src/test/geo-code-service.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/geo-code/geo.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/geo-code/geo.ts",
     1
    ]
   ]

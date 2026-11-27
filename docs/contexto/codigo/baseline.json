@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4631eb4e3080c841ba3359c9585b18a4ca144fb7",
+  "commit": "18aacbde4ce056f8bcaa3c945e4d4d193bd38f9e",
   "branch": "main",
-  "data_commit": "2026-11-27T03:32:50-03:00",
+  "data_commit": "2026-11-27T03:47:29-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "18aacbd",
+    "data": "2026-11-27",
+    "assunto": "fix(2fa): ativacao e validacao do segundo fator via RPC do banco (#201)"
+   },
    {
     "sha": "4631eb4",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "897badb",
     "data": "2026-11-26",
     "assunto": "test(forum): trava as escritas do forum publico (#162)"
-   },
-   {
-    "sha": "ccf216d",
-    "data": "2026-11-26",
-    "assunto": "fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)"
    }
   ],
-  "arquivos_mudados_7d": 152,
+  "arquivos_mudados_7d": 153,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -188,11 +188,11 @@
     "mudancas": 4
    },
    {
-    "pasta": "src/pages/FineTuningPage.tsx",
+    "pasta": "src/integrations/supabase",
     "mudancas": 4
    },
    {
-    "pasta": "supabase/functions/agent-conversational-builder",
+    "pasta": "src/pages/FineTuningPage.tsx",
     "mudancas": 4
    }
   ],
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 92
+    "commits": 93
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 2042,
   "arquivos_codigo": 1477,
-  "linhas_codigo": 324793,
+  "linhas_codigo": 324809,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -476,7 +476,7 @@
   },
   "src/contexts": {
    "arquivos": 1,
-   "linhas": 154
+   "linhas": 157
   },
   "src/data": {
    "arquivos": 5,
@@ -484,7 +484,7 @@
   },
   "src/hooks": {
    "arquivos": 45,
-   "linhas": 4509
+   "linhas": 4506
   },
   "src/i18n": {
    "arquivos": 2,
@@ -492,7 +492,7 @@
   },
   "src/integrations": {
    "arquivos": 5,
-   "linhas": 15734
+   "linhas": 15746
   },
   "src/lib": {
    "arquivos": 93,
@@ -520,7 +520,7 @@
   },
   "src/test": {
    "arquivos": 206,
-   "linhas": 30804
+   "linhas": 30808
   },
   "src/tests": {
    "arquivos": 2,
@@ -566,7 +566,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 15460
+   "linhas": 15472
   },
   {
    "arquivo": "src/pages/SLODashboard.tsx",
@@ -848,6 +848,8 @@
    "workspaces"
   ],
   "rpcs_sem_definicao": [
+   "disable_my_2fa",
+   "enable_my_2fa",
    "exec_sql"
   ],
   "componentes_orfaos": [

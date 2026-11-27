@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4631eb4e3080c841ba3359c9585b18a4ca144fb7` (2026-11-27T03:32:50-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `18aacbde4ce056f8bcaa3c945e4d4d193bd38f9e` (2026-11-27T03:47:29-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2042 |
 | arquivos_codigo | 1477 |
-| linhas_codigo | 324793 |
+| linhas_codigo | 324809 |
 | rotas | 152 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -83,7 +83,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/knowledge | 0 | 0 | 11 | 0 | 8 | 8 |
 | components/monitoring | 0 | 0 | 9 | 0 | 1 | 7 |
 | components/oracle | 0 | 0 | 13 | 2 | 1 | 3 |
-| components/security | 0 | 0 | 17 | 7 | 1 | 15 |
+| components/security | 0 | 0 | 17 | 7 | 1 | 14 |
 | components/shared | 0 | 0 | 45 | 13 | 6 | 11 |
 | components/skills | 0 | 0 | 26 | 5 | 3 | 11 |
 | components/slack | 0 | 0 | 7 | 7 | 5 | 11 |
@@ -93,11 +93,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/workflows | 0 | 0 | 16 | 5 | 3 | 6 |
 | config | 0 | 0 | 10 | 0 | 0 | 0 |
 | data | 0 | 0 | 5 | 0 | 0 | 0 |
-| hooks | 0 | 0 | 45 | 69 | 14 | 33 |
-| lib | 0 | 0 | 45 | 87 | 63 | 126 |
+| hooks | 0 | 0 | 45 | 69 | 14 | 32 |
+| lib | 0 | 0 | 45 | 87 | 63 | 125 |
 | lib/skills | 0 | 0 | 19 | 0 | 0 | 2 |
 | lib/validations | 0 | 0 | 12 | 0 | 0 | 0 |
-| pages | 115 | 152 | 142 | 97 | 77 | 158 |
+| pages | 115 | 152 | 142 | 97 | 77 | 157 |
 | services | 0 | 0 | 150 | 28 | 61 | 124 |
 | services/presets | 0 | 0 | 5 | 0 | 0 | 0 |
 | services/types | 0 | 0 | 15 | 0 | 0 | 0 |
@@ -424,7 +424,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - tabelas_sem_rls: 4 — ex.: agent_traces_v2_2026_12, agent_traces_v2_2027_01, agent_usage
 - tabelas_usadas_sem_definicao: 0
 - tabelas_com_drift_migration_vs_types: 47 — ex.: agent_installed_skills, agent_memories, agent_memories_v2
-- rpcs_sem_definicao: 1 — ex.: exec_sql
+- rpcs_sem_definicao: 3 — ex.: disable_my_2fa, enable_my_2fa, exec_sql
 - componentes_orfaos: 36 — ex.: src/components/agents/AgentCardGrid.tsx, src/components/agents/detail/SLOPanel.tsx, src/components/agents/wizard/WizardStepComponents.tsx
 - componentes_com_nome_duplicado: 18 — ex.: AddressCard, CommandPalette, CrossDbResults
 - scripts_orfaos: 0
@@ -433,7 +433,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15476 nós · 39440 arestas · 1377 comunidades · grafo do commit `4631eb4e`
+- 15476 nós · 39440 arestas · 1377 comunidades · grafo do commit `18aacbde`
 - comunidades maiores: react (307), card.tsx (283), label.tsx (264), ref_https (220), App.tsx (128), cn (126), AgentDetailPage.tsx (108), templateSkillLinkService.ts (108), mod.ts (98), InteractiveSLOPanel.tsx (97), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (92), AgentTracesPage.tsx (92)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -580,6 +580,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `18aacbd` fix(2fa): ativacao e validacao do segundo fator via RPC do banco (#201)
 - 2026-11-27 `4631eb4` fix(a2a): agent card lê a tabela agents, não a inexistente agent_configs (#199)
 - 2026-11-27 `a3a3a9b` feat(obs): botão de smoke test pg_net na tela de System Jobs (#186)
 - 2026-11-27 `e33e3a8` fix(voice): alinha o schema da edge voice-session ao handler (#183)
@@ -594,7 +595,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `0b42f14` feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)
 - 2026-11-26 `0705b71` feat(custos): tela de baseline do detector de anomalias (#176)
 - 2026-11-26 `fe144d3` feat(custos): baseline do detector de anomalias ganha tela e recálculo (#174)
-- 2026-11-26 `aae4b7b` feat: expõe a trilha real de security_events no Audit Trail (#173)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

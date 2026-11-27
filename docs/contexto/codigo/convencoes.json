@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(2fa): ativacao e validacao do segundo fator via RPC do banco (#201)",
    "fix(a2a): agent card lê a tabela agents, não a inexistente agent_configs (#199)",
    "feat(obs): botão de smoke test pg_net na tela de System Jobs (#186)",
    "fix(voice): alinha o schema da edge voice-session ao handler (#183)",
-   "feat(geo): descobre o pais por endereco ou coordenadas na governanca (#182)",
-   "fix(guardrails): testador da UI chamava a edge sem action e nunca via os rails (#181)"
+   "feat(geo): descobre o pais por endereco ou coordenadas na governanca (#182)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

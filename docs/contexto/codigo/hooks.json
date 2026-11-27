@@ -246,13 +246,15 @@
    "hooks_exportados": [
     "useAuth"
    ],
-   "linhas": 154,
+   "linhas": 157,
    "dominio": "contexts",
    "tabelas": [
     "auth_attempts",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_my_2fa_status"
+   ],
    "edges": [],
    "hooks_internos": [
     "useContext",

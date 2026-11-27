@@ -35599,13 +35599,13 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 1,
+   "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [
     "update_user_2fa_updated_at"
    ],
    "sem_rls": false,
-   "nao_usada": false
+   "nao_usada": true
   },
   "user_filter_preferences": {
    "colunas": {
@@ -39492,6 +39492,16 @@
    "usada_em": 1
   },
   {
+   "nome": "disable_my_2fa",
+   "definida": false,
+   "usada_em": 1
+  },
+  {
+   "nome": "enable_my_2fa",
+   "definida": false,
+   "usada_em": 1
+  },
+  {
    "nome": "enforce_budget",
    "definida": true,
    "usada_em": 1
@@ -39599,7 +39609,7 @@
   {
    "nome": "get_my_2fa_status",
    "definida": true,
-   "usada_em": 1
+   "usada_em": 2
   },
   {
    "nome": "get_partition_health_snapshot",

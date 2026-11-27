@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4631eb4e30` · branch `main` · 2026-11-27 06:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `18aacbde4c` · branch `main` · 2026-11-27 06:48 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4190,7 +4190,7 @@ _nenhum item encontrado_
 | `src/test/e2ee-service.test.ts` | 10 | e2eeService — encrypt/decrypt round-trip · cifra e decifra preservando o payload · cada cifragem produz IV/salt distintos · rejeita passphrase curta … |
 | `src/test/geo-code-service.test.ts` | 10 | geoCodeService · geocodeAddress envia action=geocode com o endereço · reverseGeocode envia action=reverse com latitude/longitude numéricos · sem envelope data rejeita com mensagem legível … |
 | `src/test/skill-departments-parity.test.ts` | 10 | paridade taxonomia frontend x espelho Deno · o espelho declara exatamente os mesmos departamentos · o espelho do classificador LLM lista os mesmos departamentos, na mesma ordem · todo departamento tem uma dica semântica no prompt do classificador … |
-| `src/test/use2fa.test.ts` | 10 | use2FA lê o status pela RPC get_my_2fa_status · usa a RPC como fonte e não consulta a tabela direto · sem linha na RPC, o usuário aparece como desativado · enable valida o TOTP antes de gravar … |
+| `src/test/use2fa.test.ts` | 10 | use2FA lê o status pela RPC get_my_2fa_status · usa a RPC como fonte e não consulta a tabela direto · sem linha na RPC, o usuário aparece como desativado · enable grava pela RPC enable_my_2fa … |
 | `supabase/functions/rag-embed-v2/index.test.ts` | 10 | dimensão canônica espelha as colunas vector(1536) · hashEmbed devolve exatamente a dimensão pedida · hashEmbed é determinístico e normalizado em L2 · hashEmbed nunca produz NaN/Infinity … |
 | `e2e/agent-builder.spec.ts` | 9 | Agent Builder (unauthenticated) · redirects to auth when not logged in · Landing Page · renders the landing page … |
 | `e2e/auth.spec.ts` | 9 | Auth Page · has no critical/serious a11y violations on initial render · renders login form with all required elements · shows validation errors for empty fields … |

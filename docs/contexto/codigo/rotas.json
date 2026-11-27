@@ -65,6 +65,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -232,6 +233,7 @@
     "workspace_members"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -648,6 +650,7 @@
     "workspaces"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -1067,6 +1070,7 @@
     "workspace_members"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "increment_skill_installs",
     "is_user_locked_out",
     "log_audit_entry"
@@ -1163,6 +1167,7 @@
     "workspaces"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "increment_skill_installs",
     "is_user_locked_out"
    ],
@@ -1394,6 +1399,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -1773,6 +1779,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out",
     "log_audit_entry"
    ],
@@ -2660,6 +2667,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -2783,6 +2791,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -3644,6 +3653,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -3695,6 +3705,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -3752,6 +3763,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -4041,6 +4053,7 @@
     "workspaces"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -4224,6 +4237,7 @@
     "workspace_members"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -4391,6 +4405,7 @@
    ],
    "rpcs": [
     "get_knowledge_graph_health",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -4583,6 +4598,7 @@
     "acknowledge_cost_alert",
     "compute_cost_baselines",
     "detect_cost_anomalies",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -4785,6 +4801,7 @@
    ],
    "rpcs": [
     "get_current_oncall",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -4834,6 +4851,7 @@
    ],
    "rpcs": [
     "get_current_oncall",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -5176,6 +5194,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -5332,6 +5351,7 @@
     "workspace_members"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -5595,6 +5615,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -5773,13 +5794,14 @@
     "openclaw_events",
     "security_alerts",
     "security_events",
-    "user_2fa",
     "user_roles",
     "workspace_members",
     "workspace_secrets",
     "workspaces"
    ],
    "rpcs": [
+    "disable_my_2fa",
+    "enable_my_2fa",
     "get_db_health_snapshot",
     "get_db_rollback_rate",
     "get_masked_secrets",
@@ -5848,6 +5870,7 @@
     "audit_asset",
     "decommission_asset",
     "get_asset_summary",
+    "get_my_2fa_status",
     "is_user_locked_out",
     "register_asset"
    ],
@@ -5895,6 +5918,7 @@
    ],
    "rpcs": [
     "get_bcp_summary",
+    "get_my_2fa_status",
     "is_user_locked_out",
     "record_bcp_test",
     "register_business_system"
@@ -6007,6 +6031,7 @@
     "decide_change",
     "execute_change",
     "get_change_summary",
+    "get_my_2fa_status",
     "is_user_locked_out",
     "rollback_change",
     "submit_change_request"
@@ -6217,6 +6242,7 @@
    "rpcs": [
     "activate_ir_playbook",
     "get_ir_summary",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -6263,6 +6289,7 @@
    ],
    "rpcs": [
     "create_pentest_engagement",
+    "get_my_2fa_status",
     "get_pentest_summary",
     "is_user_locked_out",
     "record_pentest_finding",
@@ -6329,6 +6356,7 @@
     "workspaces"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [],
@@ -6550,6 +6578,7 @@
     "workspaces"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "get_secrets_status_summary",
     "is_user_locked_out",
     "mark_secret_retired",
@@ -6611,6 +6640,7 @@
    ],
    "rpcs": [
     "assess_vendor",
+    "get_my_2fa_status",
     "get_vendor_summary",
     "is_user_locked_out",
     "offboard_vendor",
@@ -6753,6 +6783,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -6882,6 +6913,7 @@
     "workspace_members"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [
@@ -7098,6 +7130,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "increment_skill_installs",
     "is_user_locked_out"
    ],
@@ -7455,6 +7488,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out",
     "log_audit_entry"
    ],
@@ -7674,6 +7708,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out",
     "log_audit_entry"
    ],
@@ -7837,6 +7872,7 @@
    ],
    "rpcs": [
     "accept_workspace_invitation",
+    "get_my_2fa_status",
     "get_pending_invites_for_email",
     "invite_workspace_member",
     "is_user_locked_out"
@@ -7905,6 +7941,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "increment_skill_installs",
     "is_user_locked_out"
    ],
@@ -8311,6 +8348,7 @@
     "workspace_members"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "edges": [

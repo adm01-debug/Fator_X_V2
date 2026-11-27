@@ -275,7 +275,6 @@
     "trace_events",
     "usage_records",
     "usage_records_cost_safe",
-    "user_2fa",
     "user_research_configs",
     "user_roles",
     "vector_indexes",
@@ -311,6 +310,8 @@
     "decommission_asset",
     "detect_cost_anomalies",
     "disable_all_chaos",
+    "disable_my_2fa",
+    "enable_my_2fa",
     "enforce_budget",
     "execute_change",
     "get_asset_summary",
@@ -685,6 +686,7 @@
     "workspaces"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "increment_skill_installs",
     "is_user_locked_out",
     "log_audit_entry"
@@ -1126,6 +1128,7 @@
     "acknowledge_cost_alert",
     "compute_cost_baselines",
     "detect_cost_anomalies",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "buckets": [],
@@ -2082,7 +2085,6 @@
     "trace_events",
     "usage_records",
     "usage_records_cost_safe",
-    "user_2fa",
     "user_research_configs",
     "user_roles",
     "vector_indexes",
@@ -2118,6 +2120,8 @@
     "decommission_asset",
     "detect_cost_anomalies",
     "disable_all_chaos",
+    "disable_my_2fa",
+    "enable_my_2fa",
     "enforce_budget",
     "execute_change",
     "get_asset_summary",
@@ -2657,6 +2661,7 @@
     "workspace_members"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "buckets": [],
@@ -2915,13 +2920,14 @@
     "openclaw_events",
     "security_alerts",
     "security_events",
-    "user_2fa",
     "user_roles",
     "workspace_members",
     "workspace_secrets",
     "workspaces"
    ],
    "rpcs": [
+    "disable_my_2fa",
+    "enable_my_2fa",
     "get_db_rollback_rate",
     "get_masked_secrets",
     "get_my_2fa_status",
@@ -3014,6 +3020,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "buckets": [],
@@ -3104,6 +3111,7 @@
    ],
    "rpcs": [
     "disable_all_chaos",
+    "get_my_2fa_status",
     "get_slo_summary",
     "is_user_locked_out"
    ],
@@ -3310,6 +3318,7 @@
     "workspace_members"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "buckets": [],
@@ -3478,6 +3487,7 @@
    ],
    "rpcs": [
     "get_masked_secrets",
+    "get_my_2fa_status",
     "is_user_locked_out",
     "log_audit_entry"
    ],
@@ -3828,6 +3838,7 @@
     "workspace_members"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "buckets": [],
@@ -3933,7 +3944,7 @@
    "modulo": "contexts",
    "arquivos": 1,
    "testes": 0,
-   "linhas": 154,
+   "linhas": 157,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3950,6 +3961,7 @@
     "user_roles"
    ],
    "rpcs": [
+    "get_my_2fa_status",
     "is_user_locked_out"
    ],
    "buckets": [],
@@ -3972,7 +3984,9 @@
      "auth_attempts",
      "user_roles"
     ],
-    "rpcs": []
+    "rpcs": [
+     "get_my_2fa_status"
+    ]
    },
    "importado_por_outros_modulos": [
     "components/agents",
@@ -4035,7 +4049,7 @@
    "modulo": "hooks",
    "arquivos": 45,
    "testes": 0,
-   "linhas": 4509,
+   "linhas": 4506,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4225,7 +4239,6 @@
     "template_skill_links",
     "trace_events",
     "usage_records",
-    "user_2fa",
     "user_roles",
     "workflow_runs",
     "workflow_steps",
@@ -4234,6 +4247,8 @@
     "workspaces"
    ],
    "rpcs": [
+    "disable_my_2fa",
+    "enable_my_2fa",
     "get_my_2fa_status",
     "get_slo_summary",
     "increment_skill_installs",
@@ -4292,13 +4307,14 @@
      "slack_workspace_config",
      "trace_events",
      "usage_records",
-     "user_2fa",
      "workflow_steps",
      "workflows",
      "workspace_members",
      "workspaces"
     ],
     "rpcs": [
+     "disable_my_2fa",
+     "enable_my_2fa",
      "get_my_2fa_status"
     ]
    },
@@ -4427,7 +4443,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 4,
    "testes": 0,
-   "linhas": 15695,
+   "linhas": 15707,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4765,7 +4781,6 @@
     "trace_events",
     "usage_records",
     "usage_records_cost_safe",
-    "user_2fa",
     "user_research_configs",
     "user_roles",
     "vector_indexes",
@@ -4801,6 +4816,8 @@
     "decommission_asset",
     "detect_cost_anomalies",
     "disable_all_chaos",
+    "disable_my_2fa",
+    "enable_my_2fa",
     "enforce_budget",
     "execute_change",
     "get_asset_summary",
@@ -5975,7 +5992,6 @@
     "trace_events",
     "usage_records",
     "usage_records_cost_safe",
-    "user_2fa",
     "user_research_configs",
     "user_roles",
     "vector_indexes",
@@ -6015,6 +6031,8 @@
     "decommission_asset",
     "detect_cost_anomalies",
     "disable_all_chaos",
+    "disable_my_2fa",
+    "enable_my_2fa",
     "enforce_budget",
     "execute_change",
     "explain_query_plan",
