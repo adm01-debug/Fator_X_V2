@@ -4,13 +4,13 @@
   "legacy_unmanaged_functions": [],
   "config": {
     "path": "supabase/config.toml",
-    "sha256": "230818133dd10e889f3ba2e24f945f0eae6cdf14bbc67bcf5e4005d7890f19c3"
+    "sha256": "052ef9b33c73346e503fa611a5d6bfdc8965f4e989c98e9a483c04d83e29757d"
   },
   "summary": {
     "function_count": 88,
     "source_file_count": 128,
-    "verify_jwt_true": 80,
-    "verify_jwt_false": 8
+    "verify_jwt_true": 79,
+    "verify_jwt_false": 9
   },
   "source_files": [
     {
@@ -285,8 +285,8 @@
     },
     {
       "path": "supabase/functions/geo-code/geo.ts",
-      "bytes": 6373,
-      "sha256": "a05e6a75a074a99847001958721828a8beba7753635e60acbdc17248162d1ef0"
+      "bytes": 7044,
+      "sha256": "172a3f6f73edbe84755922b1282f44e82f53b90478c37b3398dfc325b3eebc4b"
     },
     {
       "path": "supabase/functions/geo-code/index.ts",
@@ -610,8 +610,8 @@
     },
     {
       "path": "supabase/functions/voice-session/index.ts",
-      "bytes": 4032,
-      "sha256": "d23789012f4c5825e8f521f61878d0798f890762835faa834ab65653a071634e"
+      "bytes": 4281,
+      "sha256": "0b3cbecc1f1ec89bb8966bbe3e1fae7186b69718e7160149ffcf72ab20e05668"
     },
     {
       "path": "supabase/functions/voice-synthesize/index.ts",
@@ -1292,7 +1292,7 @@
       "name": "geo-code",
       "entrypoint": "supabase/functions/geo-code/index.ts",
       "verify_jwt": true,
-      "source_sha256": "41926ab88c4ad331f63e970c3403ebc6fb5638995a30b88e715ebec12c77c456",
+      "source_sha256": "60642ece6116d3bb0e78a2edf08eaf2dcf5dfc5ca0dbf7018f09fc7dbeec16db",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2131,8 +2131,8 @@
     {
       "name": "slack-agent-notify",
       "entrypoint": "supabase/functions/slack-agent-notify/index.ts",
-      "verify_jwt": true,
-      "source_sha256": "eb437db973c4b253729e35375bff486acc40ced79db724c0e0b134fd4105b8ee",
+      "verify_jwt": false,
+      "source_sha256": "e63cc8c87555a7219ec48595bb66e76b336e8bf151b7fb9faa4ad368638854f4",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/circuitBreaker.ts",
@@ -2454,7 +2454,7 @@
       "name": "voice-session",
       "entrypoint": "supabase/functions/voice-session/index.ts",
       "verify_jwt": true,
-      "source_sha256": "e5a5290fc5172dd53fa09e317328ebed2e86165e282d19f5cf000166960c4c28",
+      "source_sha256": "153e93d3b37b02615b865581d221e1c824dd39e82a1805b091ae31ba52cbbfeb",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2655,5 +2655,5 @@
       ]
     }
   ],
-  "manifest_sha256": "0b14f6ac09e23be9cbe135e3cbb40fd63362fc0e586b6a1b4020bd754a662058"
+  "manifest_sha256": "deddcc63f0eb084fb9d071d548da2bc1b73617289fcc231c68cf3ac69914854e"
 }

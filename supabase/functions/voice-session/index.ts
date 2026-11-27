@@ -11,7 +11,10 @@ import {
 } from '../_shared/mod.ts';
 const VoiceSessionBodySchema = z
   .object({
-    action: z.enum(['start', 'end', 'append', 'get']),
+    // O handler implementa start/end. append e get existiam só no schema: o transcript
+    // incremental já é gravado por voice-transcribe (role user) e voice-synthesize
+    // (role assistant), e a leitura da sessão é feita sob RLS direto em voice_sessions.
+    action: z.enum(['start', 'end']),
     agent_id: z.string().uuid().nullable().optional(),
     session_id: z.string().uuid().optional(),
   })
