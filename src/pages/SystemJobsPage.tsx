@@ -12,6 +12,10 @@ import { RefreshCw, CheckCircle2, XCircle, Clock, Activity, Info } from "lucide-
 import { PartitionHealthCard } from "@/components/system/PartitionHealthCard";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { runPgNetSmokeTest } from "@/services/pgNetSmokeService";
 
 type RetentionRun = {
   id: string;
@@ -166,6 +170,34 @@ export default function SystemJobsPage() {
     pgnet.refetch();
     entity.refetch();
     cron.refetch();
+  };
+
+  const queryClient = useQueryClient();
+  const [pgNetRunning, setPgNetRunning] = useState(false);
+
+  const handlePgNetSmoke = async () => {
+    setPgNetRunning(true);
+    try {
+      const result = await runPgNetSmokeTest();
+      if (result.ok) {
+        toast.success(
+          `pg_net OK — HTTP ${result.status_code ?? '—'} em ${result.latency_ms ?? '—'} ms`,
+        );
+      } else {
+        toast.error(
+          `pg_net falhou: ${result.error || result.phase || 'sem resposta'}${
+            result.status_code ? ` (HTTP ${result.status_code})` : ''
+          }`,
+        );
+      }
+      // Nenhuma rotina grava o resultado em pg_net_smoke_runs; recarrega o
+      // histórico para não exibir dado desatualizado após o teste.
+      queryClient.invalidateQueries({ queryKey: ["system-jobs", "pgnet"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Falha ao executar o smoke test');
+    } finally {
+      setPgNetRunning(false);
+    }
   };
 
   const cronJobs = cron.data ?? [];
@@ -434,8 +466,18 @@ export default function SystemJobsPage() {
 
         <TabsContent value="pgnet">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle>Smoke tests de pg_net</CardTitle>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handlePgNetSmoke}
+                disabled={pgNetRunning}
+                className="gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${pgNetRunning ? "animate-spin" : ""}`} />
+                {pgNetRunning ? "Testando..." : "Executar teste agora"}
+              </Button>
             </CardHeader>
             <CardContent>
               {pgnet.isLoading ? (
@@ -445,7 +487,9 @@ export default function SystemJobsPage() {
                   <Info className="h-4 w-4" />
                   <AlertTitle>Nenhum smoke test registrado</AlertTitle>
                   <AlertDescription>
-                    O job de verificação de pg_net roda automaticamente. Aguarde a próxima execução.
+                    O histórico só é preenchido por rotinas agendadas no banco. Use "Executar
+                    teste agora" para validar a entrega de webhooks de ponta a ponta neste
+                    momento.
                   </AlertDescription>
                 </Alert>
               ) : (
