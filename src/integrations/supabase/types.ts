@@ -14865,6 +14865,24 @@ export type Database = {
           score: number
         }[]
       }
+      hybrid_search_notebook: {
+        Args: {
+          p_query: string
+          p_notebook_id?: string
+          p_query_embedding?: string
+          p_limit?: number
+        }
+        Returns: {
+          chunk_id: string
+          document_id: string
+          document_title: string
+          content: string
+          bm25_score: number
+          vector_score: number
+          rrf_score: number
+          metadata: Json
+        }[]
+      }
       increment_skill_installs: {
         Args: { p_skill_id: string }
         Returns: undefined

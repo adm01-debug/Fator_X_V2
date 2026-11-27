@@ -26,6 +26,10 @@ import { CitedMarkdown } from './CitedMarkdown';
 import { splitCitationsSentinel, type CerebroCitation } from '@/types/cerebroCitations';
 import { useCerebroStore } from '@/stores/cerebroStore';
 import { useNotebooks } from '@/services/notebooksService';
+import {
+  searchNotebookChunks,
+  type NotebookChunkHit,
+} from '@/services/notebookSearchService';
 import { useCurrentWorkspace } from '@/hooks/useCurrentWorkspace';
 import { NotebookPen } from 'lucide-react';
 
@@ -88,11 +92,32 @@ export function SearchTab() {
   const { data: notebooks = [] } = useNotebooks(workspaceId);
   const activeNotebook = notebooks.find((n) => n.id === activeNotebookId) ?? null;
 
+  // Trechos recuperados direto do banco (BM25 + vetor). Não dependem do LLM,
+  // então garantem resultado mesmo quando o modelo não responde.
+  const [chunkHits, setChunkHits] = useState<NotebookChunkHit[]>([]);
+  const [isLoadingChunks, setIsLoadingChunks] = useState(false);
+  const [chunksError, setChunksError] = useState<string | null>(null);
+
+  const runChunkSearch = async (term: string) => {
+    setIsLoadingChunks(true);
+    setChunksError(null);
+    try {
+      setChunkHits(await searchNotebookChunks(term, activeNotebookId ?? null));
+    } catch (e) {
+      setChunkHits([]);
+      setChunksError(e instanceof Error ? e.message : 'Falha na busca por trechos');
+    } finally {
+      setIsLoadingChunks(false);
+    }
+  };
+
   const handleSearch = async () => {
     if (!query.trim()) return;
     setIsSearching(true);
     setSearchResults("");
     setCitations([]);
+    // Trechos do banco em paralelo: se o LLM falhar, o usuário ainda vê resultado.
+    void runChunkSearch(query);
     try {
       const body = await invokeCerebroQuery({ query, mode: 'chat', stream: true, notebook_id: activeNotebookId ?? undefined });
 
@@ -283,6 +308,53 @@ export function SearchTab() {
             Modo Chat
           </Button>
         </div>
+
+        {isLoadingChunks && (
+          <div className="flex items-center gap-2 text-meta text-muted-foreground">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" /> Buscando trechos nos documentos...
+          </div>
+        )}
+
+        {chunksError && (
+          <p className="text-meta text-destructive">Não foi possível buscar trechos: {chunksError}</p>
+        )}
+
+        {!isLoadingChunks && !chunksError && chunkHits.length > 0 && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h4 className="text-title-xs font-heading font-bold text-foreground flex items-center gap-2">
+                <Search className="h-4 w-4 text-primary" /> Trechos encontrados
+              </h4>
+              <Badge variant="outline" className="text-meta">
+                {chunkHits.length} · {activeNotebook ? activeNotebook.name : 'Todos os notebooks'}
+              </Badge>
+            </div>
+            {chunkHits.map((hit) => (
+              <div
+                key={hit.chunk_id}
+                className="rounded-xl border border-border/30 bg-background/40 p-3 space-y-1"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-meta font-semibold text-foreground truncate">
+                    {hit.document_title || 'Documento sem título'}
+                  </span>
+                  <span className="text-meta font-mono text-muted-foreground shrink-0">
+                    {hit.rrf_score.toFixed(3)}
+                  </span>
+                </div>
+                <p className="text-meta text-muted-foreground line-clamp-3 leading-relaxed">
+                  {hit.content}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!isLoadingChunks && !chunksError && chunkHits.length === 0 && searchResults !== null && (
+          <p className="text-meta text-muted-foreground">
+            Nenhum trecho de documento correspondeu à busca neste escopo.
+          </p>
+        )}
 
         {tieredResults && (
           <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
