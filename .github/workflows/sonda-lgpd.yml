@@ -24,8 +24,8 @@ jobs:
                   return json.loads(urllib.request.urlopen(req,timeout=90).read().decode())
               except Exception as e:
                   return {'error':str(e)}
-          print('C1', q("""select column_name, data_type, is_nullable from information_schema.columns where table_schema='public' and table_name='consent_records' order by ordinal_position"""), flush=True)
-          print('D1', q("""select column_name, data_type, is_nullable from information_schema.columns where table_schema='public' and table_name='data_deletion_requests' order by ordinal_position"""), flush=True)
-          print('M1', q("""select column_name from information_schema.columns where table_schema='public' and table_name='agent_memories' and column_name in ('user_id','workspace_id','agent_id')"""), flush=True)
-          print('T1', q("""select table_name, column_name from information_schema.columns where table_schema='public' and table_name in ('traces','agent_eval_runs','sessions') and column_name in ('user_id','workspace_id','created_by') order by 1"""), flush=True)
+          print('S1', q("""select table_name from information_schema.tables where table_schema='public' and table_name in ('session_traces','traces','agent_eval_runs','agent_memories')"""), flush=True)
+          print('S2', q("""select column_name from information_schema.columns where table_schema='public' and table_name='workspace_members' and column_name in ('role','user_id','workspace_id')"""), flush=True)
+          print('S3', q("""select indexdef from pg_indexes where schemaname='public' and tablename='consent_records'"""), flush=True)
+          print('S4', q("""select column_name from information_schema.columns where table_schema='public' and table_name='sessions' order by ordinal_position"""), flush=True)
           PYEOF
