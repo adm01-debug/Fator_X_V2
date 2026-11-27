@@ -2948,6 +2948,7 @@
    "src/services/noteTemplatesService.ts",
    "src/services/noteVersionsService.ts",
    "src/services/pentestService.ts",
+   "src/services/pgNetSmokeService.ts",
    "src/services/postmortemService.ts",
    "src/services/presets/connectorPresets.ts",
    "src/services/presets/credentialPresets.ts",

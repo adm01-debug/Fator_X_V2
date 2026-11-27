@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e33e3a834c` · branch `main` · 2026-11-27 03:26 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a3a3a9bc42` · branch `main` · 2026-11-27 04:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4039,7 +4039,7 @@ _nenhum item encontrado_
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +541 linhas — lista completa em `context.json` | |
+| … +542 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4425,6 +4425,7 @@ _nenhum item encontrado_
 | `sendNotification` | `src/services/notificationEngineService.ts` |
 | `invoke(` | `src/services/openclawDeployService.ts` |
 | `sendWhatsappMessage` | `src/services/openclawDeployService.ts` |
+| `invoke(` | `src/services/pgNetSmokeService.ts` |
 | `invoke(` | `src/services/productMockupService.ts` |
 | `enqueue(` | `src/services/queueManagerService.ts` |
 | `invoke(` | `src/services/queueManagerService.ts` |
@@ -4769,6 +4770,7 @@ _nenhum item encontrado_
 | * Prazo do Art. 18 §1 a partir de uma data (padrão: agora). */ | `src/services/lgpdGovernanceService.ts` |
 | All read/write operations MUST go through lgpd-manager Edge Function | `src/services/lgpdService.ts` |
 | ').eq('is_public', true).limit(limit); | `src/services/marketplaceService.ts` |
+| * A aba "pg_net" de System Jobs exibia apenas histórico e afirmava que o teste | `src/services/pgNetSmokeService.ts` |
 | Limit hot-loaded skills | `src/services/progressiveSkillLoader.ts` |
 | Elevated 10/10 with diffing, analytics and real-time validation | `src/services/promptVersionService.ts` |
 | * Por quê? O wizard rápido recomendava skills apenas por similaridade textual | `src/services/quickTypeTemplateMap.ts` |
@@ -4788,5 +4790,4 @@ _nenhum item encontrado_
 | * Mesma regra do fallback de classificação, e pelo mesmo motivo: 402 (créditos) | `src/services/skillEnrichmentService.ts` |
 | * Onde o próximo lote deve começar. */ | `src/services/skillHarvestService.ts` |
 | Falha de rede não pode derrubar a varredura: o local já guardou o avanço. | `src/services/skillHarvestService.ts` |
-| corre risco de estourar o limite de tempo da plataforma. | `src/services/skillHarvestService.ts` |
-| … +179 linhas — lista completa em `context.json` | |
+| … +180 linhas — lista completa em `context.json` | |

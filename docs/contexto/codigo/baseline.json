@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e33e3a834c2068a6c77092d4fdaf51496d1708ff",
+  "commit": "a3a3a9bc42adf57bf7ab250abf545fc48174dd3a",
   "branch": "main",
-  "data_commit": "2026-11-27T00:25:52-03:00",
+  "data_commit": "2026-11-27T01:14:03-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "a3a3a9b",
+    "data": "2026-11-27",
+    "assunto": "feat(obs): botão de smoke test pg_net na tela de System Jobs (#186)"
+   },
    {
     "sha": "e33e3a8",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "3c3acdb",
     "data": "2026-11-26",
     "assunto": "feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)"
-   },
-   {
-    "sha": "b2f4e91",
-    "data": "2026-11-26",
-    "assunto": "feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)"
    }
   ],
-  "arquivos_mudados_7d": 150,
+  "arquivos_mudados_7d": 151,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 90
+    "commits": 91
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2040,
-  "arquivos_codigo": 1475,
-  "linhas_codigo": 324567,
+  "arquivos_total": 2041,
+  "arquivos_codigo": 1476,
+  "linhas_codigo": 324640,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -504,15 +504,15 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 51435
+   "linhas": 51479
   },
   "src/security.test.ts": {
    "arquivos": 1,
    "linhas": 43
   },
   "src/services": {
-   "arquivos": 169,
-   "linhas": 33956
+   "arquivos": 170,
+   "linhas": 33985
   },
   "src/stores": {
    "arquivos": 12,
@@ -788,7 +788,6 @@
    "bitrix24-oauth",
    "guardrails-engine",
    "oracle-research",
-   "pg-net-smoke-test",
    "slack-agent-notify"
   ],
   "edges_chamadas_sem_pasta": [],

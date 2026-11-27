@@ -5962,7 +5962,8 @@
    "src/components/ui/scroll-area.tsx",
    "src/components/ui/skeleton.tsx",
    "src/components/ui/tabs.tsx",
-   "src/integrations/supabase/client.ts"
+   "src/integrations/supabase/client.ts",
+   "src/services/pgNetSmokeService.ts"
   ],
   "src/pages/TeamPage.tsx": [
    "src/components/dialogs/InviteMemberDialog.tsx",
@@ -6601,6 +6602,9 @@
    "src/integrations/supabase/externalClient.ts"
   ],
   "src/services/pentestService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/pgNetSmokeService.ts": [
    "src/integrations/supabase/client.ts"
   ],
   "src/services/postmortemService.ts": [

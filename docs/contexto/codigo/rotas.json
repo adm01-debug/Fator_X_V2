@@ -7760,6 +7760,7 @@
     "useLocation",
     "useNavigate",
     "useQuery",
+    "useQueryClient",
     "useState",
     "useUnsavedChanges"
    ],
@@ -7777,13 +7778,15 @@
     "get_cron_job_health",
     "get_partition_health_snapshot"
    ],
-   "edges": [],
+   "edges": [
+    "pg-net-smoke-test"
+   ],
    "canais_realtime": [],
    "flags": [],
    "papeis": [
     "alert"
    ],
-   "arquivos_puxados": 18
+   "arquivos_puxados": 19
   },
   {
    "protegida": true,

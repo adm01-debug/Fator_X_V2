@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e33e3a834c2068a6c77092d4fdaf51496d1708ff",
+  "sha": "a3a3a9bc42adf57bf7ab250abf545fc48174dd3a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 03:26 UTC",
-  "files_total": 2045,
-  "code_files": 1825,
-  "code_lines": 367012
+  "generated_at": "2026-11-27 04:14 UTC",
+  "files_total": 2046,
+  "code_files": 1826,
+  "code_lines": 367085
  },
  "version": "1.3.2",
- "facts_hash": "0e4acb1e03b58816",
+ "facts_hash": "28dfb6f8b422d10e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -246,8 +246,8 @@
   ],
   "package_manager": "bun",
   "languages": {
+   ".ts": 709,
    ".tsx": 709,
-   ".ts": 708,
    ".sql": 349,
    ".mjs": 47,
    ".js": 5,
@@ -55614,11 +55614,13 @@
     "file": "src/pages/SystemJobsPage.tsx",
     "component": "SystemJobsPage",
     "tables_transitive": [],
-    "invokes_transitive": [],
+    "invokes_transitive": [
+     "pg-net-smoke-test"
+    ],
     "rpc_transitive": [
      "get_partition_health_snapshot"
     ],
-    "deps_count": 18
+    "deps_count": 19
    },
    {
     "path": "",
@@ -61265,7 +61267,7 @@
   {
    "module": "src/pages",
    "files": 142,
-   "lines": 51435,
+   "lines": 51479,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -61459,8 +61461,8 @@
   },
   {
    "module": "src/services",
-   "files": 169,
-   "lines": 33956,
+   "files": 170,
+   "lines": 33985,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -66522,6 +66524,9 @@
    ],
    "other": [
     "scripts/ai-context/cenarios.mjs"
+   ],
+   "pg-net-smoke-test": [
+    "src/services/pgNetSmokeService.ts"
    ],
    "product-mockup": [
     "src/services/productMockupService.ts"
@@ -72801,6 +72806,10 @@
     "msg": ";\nimport { Button } from "
    },
    {
+    "file": "src/pages/SystemJobsPage.tsx",
+    "msg": "pg_net falhou: ${result.error || result.phase || "
+   },
+   {
     "file": "src/pages/ToolsPage.tsx",
     "msg": "Erro ao atualizar estado"
    },
@@ -74983,6 +74992,10 @@
    {
     "file": "src/services/marketplaceService.ts",
     "text": "').eq('is_public', true).limit(limit);"
+   },
+   {
+    "file": "src/services/pgNetSmokeService.ts",
+    "text": "* A aba \"pg_net\" de System Jobs exibia apenas histórico e afirmava que o teste"
    },
    {
     "file": "src/services/progressiveSkillLoader.ts",
@@ -117788,6 +117801,10 @@
    {
     "file": "src/services/openclawDeployService.ts",
     "call": "sendWhatsappMessage"
+   },
+   {
+    "file": "src/services/pgNetSmokeService.ts",
+    "call": "invoke("
    },
    {
     "file": "src/services/productMockupService.ts",
@@ -169380,7 +169397,7 @@
   },
   "src/pages/SystemJobsPage.tsx": {
    "path": "src/pages/SystemJobsPage.tsx",
-   "lines": 543,
+   "lines": 587,
    "exports": [
     "function SystemJobsPage"
    ],
@@ -169391,7 +169408,8 @@
     "/docs/partitioning"
    ],
    "errors": [
-    ";\nimport { Button } from "
+    ";\nimport { Button } from ",
+    "pg_net falhou: ${result.error || result.phase || "
    ],
    "status_values": [
     {
@@ -176028,6 +176046,24 @@
      "value": "false_positive",
      "kind": "compara"
     }
+   ]
+  },
+  "src/services/pgNetSmokeService.ts": {
+   "path": "src/services/pgNetSmokeService.ts",
+   "lines": 29,
+   "exports": [
+    "interface PgNetSmokeResult",
+    "function runPgNetSmokeTest"
+   ],
+   "invokes": [
+    "pg-net-smoke-test"
+   ],
+   "rule_comments": [
+    "* A aba \"pg_net\" de System Jobs exibia apenas histórico e afirmava que o teste"
+   ],
+   "doc": "Smoke test de pg_net sob demanda. A aba \"pg_net\" de System Jobs exibia apenas histórico e afirmava que o teste \"roda automaticamente\" — mas a edge `pg-net-smoke-test` não era chamada por nenhuma tela e nada gravava o resultado em `pg_net_smoke_runs`. Sem este serviço, um erro de configuração em `pg_ …",
+   "side_effects": [
+    "invoke("
    ]
   },
   "src/services/postmortemService.ts": {
@@ -196606,10 +196642,20 @@
   }
  },
  "git": {
-  "sha": "e33e3a834c2068a6c77092d4fdaf51496d1708ff",
+  "sha": "a3a3a9bc42adf57bf7ab250abf545fc48174dd3a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "a3a3a9b",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "feat(obs): botão de smoke test pg_net na tela de System Jobs (#186)",
+    "files": [
+     "src/pages/SystemJobsPage.tsx",
+     "src/services/pgNetSmokeService.ts"
+    ]
+   },
    {
     "sha": "e33e3a8",
     "date": "2026-11-27",
@@ -196926,19 +196972,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "140960a",
-    "date": "2026-11-24",
-    "author": "dependabot[bot]",
-    "subject": "chore(ci)(deps): bump actions/checkout from 6.1.0 to 7.0.1 (#150)",
-    "files": [
-     ".github/workflows/automation-local.yml",
-     ".github/workflows/ci.yml",
-     ".github/workflows/codeql.yml",
-     ".github/workflows/edge-deploy.yml",
-     ".github/workflows/guards.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -196967,12 +197000,16 @@
     2
    ],
    [
-    ".github/workflows/ci.yml",
+    "src/test/forum-safe-views.test.ts",
     2
    ],
    [
-    "src/test/forum-safe-views.test.ts",
-    2
+    "src/pages/SystemJobsPage.tsx",
+    1
+   ],
+   [
+    "src/services/pgNetSmokeService.ts",
+    1
    ],
    [
     "supabase/functions/_shared/edge-contract_test.ts",
@@ -197016,10 +197053,6 @@
    ],
    [
     "src/services/lgpdService.ts",
-    1
-   ],
-   [
-    "supabase/functions/lgpd-manager/index.ts",
     1
    ]
   ]
