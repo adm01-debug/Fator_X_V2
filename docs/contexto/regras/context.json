@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "1e12e7127abd64ad50a1058119803426dd43d571",
+  "sha": "7bb06901c5a6fef4b327e753c1b0e7adb3b09644",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 08:29 UTC",
-  "files_total": 2069,
+  "generated_at": "2026-11-27 09:14 UTC",
+  "files_total": 2070,
   "code_files": 1847,
   "code_lines": 369850
  },
@@ -198799,10 +198799,19 @@
   }
  },
  "git": {
-  "sha": "1e12e7127abd64ad50a1058119803426dd43d571",
+  "sha": "7bb06901c5a6fef4b327e753c1b0e7adb3b09644",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "7bb0690",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "chore(banco): registra o estado verificado do banco de producao (#208)",
+    "files": [
+     "docs/banco/estado-verificado.md"
+    ]
+   },
    {
     "sha": "1e12e71",
     "date": "2026-11-27",
@@ -199143,16 +199152,6 @@
      "src/services/billingService.ts",
      "src/test/billing-service.test.ts"
     ]
-   },
-   {
-    "sha": "74f4d20",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)",
-    "files": [
-     "src/pages/RiskRegisterPage.tsx",
-     "src/test/risk-register-rpc-ui.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -199187,6 +199186,10 @@
    [
     "src/services/fineTuningService.ts",
     2
+   ],
+   [
+    "docs/banco/estado-verificado.md",
+    1
    ],
    [
     ".github/workflows/schema-probe.yml",
@@ -199230,10 +199233,6 @@
    ],
    [
     "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql",
     1
    ]
   ]

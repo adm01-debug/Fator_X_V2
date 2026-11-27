@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1e12e7127abd64ad50a1058119803426dd43d571",
+  "commit": "7bb06901c5a6fef4b327e753c1b0e7adb3b09644",
   "branch": "main",
-  "data_commit": "2026-11-27T05:28:58-03:00",
+  "data_commit": "2026-11-27T05:48:31-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "7bb0690",
+    "data": "2026-11-27",
+    "assunto": "chore(banco): registra o estado verificado do banco de producao (#208)"
+   },
    {
     "sha": "1e12e71",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "9e84381",
     "data": "2026-11-26",
     "assunto": "feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)"
-   },
-   {
-    "sha": "71009dd",
-    "data": "2026-11-26",
-    "assunto": "feat(hf): configuração HuggingFace por workspace vira real (#171)"
    }
   ],
-  "arquivos_mudados_7d": 181,
+  "arquivos_mudados_7d": 182,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 100
+    "commits": 101
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2064,
+  "arquivos_total": 2065,
   "arquivos_codigo": 1482,
   "linhas_codigo": 326015,
   "rotas": 152,
@@ -327,7 +327,7 @@
   "testes": 259,
   "workflows": 13,
   "scripts": 45,
-  "docs_md": 134
+  "docs_md": 135
  },
  "por_pasta": {
   "e2e/agent-builder.spec.ts": {

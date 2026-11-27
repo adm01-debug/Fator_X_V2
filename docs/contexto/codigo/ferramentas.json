@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1424)",
    "SQL (364)",
-   "Markdown (134)",
+   "Markdown (135)",
    "JavaScript (54)",
    "JSON (25)",
    "YAML (19)",
@@ -932,6 +932,10 @@
   {
    "pasta": "docs/runbooks",
    "arquivos_md": 2
+  },
+  {
+   "pasta": "docs/banco",
+   "arquivos_md": 1
   },
   {
    "pasta": "docs/migration",

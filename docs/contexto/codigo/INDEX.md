@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1e12e7127abd64ad50a1058119803426dd43d571` (2026-11-27T05:28:58-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7bb06901c5a6fef4b327e753c1b0e7adb3b09644` (2026-11-27T05:48:31-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1424), SQL (364), Markdown (134), JavaScript (54), JSON (25), YAML (19), Shell (10), Python (5)
+- linguagens: TypeScript (1424), SQL (364), Markdown (135), JavaScript (54), JSON (25), YAML (19), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2064 |
+| arquivos_total | 2065 |
 | arquivos_codigo | 1482 |
 | linhas_codigo | 326015 |
 | rotas | 152 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 259 |
 | workflows | 13 |
 | scripts | 45 |
-| docs_md | 134 |
+| docs_md | 135 |
 
 ## Onde ficam as coisas
 - telas: src/pages (141)
@@ -435,8 +435,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15559 nós · 39547 arestas · 1405 comunidades · grafo do commit `1e12e712`
-- comunidades maiores: lucide-react (339), button.tsx (326), ref_https (217), App.tsx (209), @tanstack/react-query (166), react (144), QuickCreateWizard.tsx (134), mod.ts (105), cn (102), whatsapp-webhook/index.ts (101), services/index.ts (94), vitest (93)
+- 15564 nós · 39551 arestas · 1389 comunidades · grafo do commit `7bb06901`
+- comunidades maiores: lucide-react (376), react (301), App.tsx (300), mod.ts (209), button.tsx (180), VendorsPage.tsx (135), logger.ts (123), cn (123), fetchWithTimeout (112), useRBAC (109), agent-workflow-runner/index.ts (109), services/index.ts (96)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -580,10 +580,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/SLACK-INTEGRATION.md` — Integração Slack — Documentação Técnica (88 linhas)
 - `docs/TYPOGRAPHY-MIGRATION-REPORT.md` — Relatório da Migração de Tipografia — Fator X (79 linhas)
 - `docs/prod-readiness.md` (59 linhas)
-- subpastas de docs/: docs/pendencias (14), docs/auditoria-estado-2026-08 (11), docs/adr (7), docs/agentes (6), docs/qa (6), docs/architecture (2), docs/contexto (2), docs/runbooks (2), docs/migration (1)
+- subpastas de docs/: docs/pendencias (14), docs/auditoria-estado-2026-08 (11), docs/adr (7), docs/agentes (6), docs/qa (6), docs/architecture (2), docs/contexto (2), docs/runbooks (2), docs/banco (1), docs/migration (1)
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `7bb0690` chore(banco): registra o estado verificado do banco de producao (#208)
 - 2026-11-27 `1e12e71` infra(banco): sonda somente leitura do schema de producao (#207)
 - 2026-11-27 `c10942b` infra(banco): lote unico das 13 migrations pendentes em producao (#203)
 - 2026-11-27 `437f21d` infra(banco): workflow manual para aplicar migrations com dry-run e trava APLICAR (#206)
@@ -598,7 +599,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-27 `79b93e5` feat(geo): descobre o pais por endereco ou coordenadas na governanca (#182)
 - 2026-11-26 `26d3bba` fix(guardrails): testador da UI chamava a edge sem action e nunca via os rails (#181)
 - 2026-11-26 `1e1eaf2` feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)
-- 2026-11-26 `91e02fc` fix(lgpd): conserta exclusão, consentimento e anonimização contra o schema real (#179)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
