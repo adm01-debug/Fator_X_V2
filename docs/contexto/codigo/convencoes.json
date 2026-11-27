@@ -3,11 +3,11 @@
  "format_version": 2,
  "onde_ficam": {
   "telas": [
-   "src/pages (141)"
+   "src/pages (142)"
   ],
   "componentes": [
    "src/components (519)",
-   "src/pages (142)",
+   "src/pages (143)",
    "src/App.tsx (1)"
   ],
   "hooks": [
@@ -16,7 +16,7 @@
    "src/services (9)"
   ],
   "servicos_logica": [
-   "src/services (171)",
+   "src/services (172)",
    "src/lib (90)",
    "src/stores (12)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 9,
  "extensao_componentes": [
-  ".tsx (665)"
+  ".tsx (666)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(banco): tela do dicionario de esquema com busca e filtro (#213)",
    "fix(seguranca): fecha anon no dicionario de esquema e libera leitura admin (#212)",
    "fix(banco): agenda o refresh da MV knowledge_graph_health (#211)",
    "chore(banco): registra o fechamento dos grants de anon em funcoes (#210)",
-   "fix(seguranca): revoga EXECUTE de anon nas funcoes de public (#209)",
-   "chore(banco): registra o estado verificado do banco de producao (#208)"
+   "fix(seguranca): revoga EXECUTE de anon nas funcoes de public (#209)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

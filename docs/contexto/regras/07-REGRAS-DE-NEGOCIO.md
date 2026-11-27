@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3edcbedde0` · branch `main` · 2026-11-27 10:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1188ca3120` · branch `main` · 2026-11-27 10:51 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1568,6 +1568,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | RiskCategory | strategic \| operational \| technical \| security \| compliance \| financial \| reputational | `src/services/riskService.ts` |
 | RiskTreatment | accept \| mitigate \| transfer \| avoid | `src/services/riskService.ts` |
 | RiskStatus | identified \| assessed \| treated \| monitored \| closed | `src/services/riskService.ts` |
+| SchemaObjectKind | schema \| table \| column | `src/services/schemaDictionaryService.ts` |
 | SecretCategory | api_key \| oauth_client \| db_password \| jwt_signing \| webhook_secret \| encryption_key \| ssh_key \| certificate | `src/services/secretsRotationService.ts` |
 | SecretEnvironment | prod \| staging \| dev | `src/services/secretsRotationService.ts` |
 | SecretStatus | active \| pending_rotation \| overdue \| retired | `src/services/secretsRotationService.ts` |
@@ -3223,6 +3224,7 @@ _nenhum item encontrado_
 | `ROW_LIMIT` | `500` | `src/services/promptEvidenceLedgerService.ts` |
 | `EMBEDDING_DIM` | `1536` | `src/services/ragPipelineService.ts` |
 | `MAX_PER_AGENT` | `25` | `src/services/savedTestRunsStore.ts` |
+| `TABLE` | `'semantic_dictionary'` | `src/services/schemaDictionaryService.ts` |
 | `MAX_BODY_CHARS` | `200` | `src/services/shareService.ts` |
 | `SKETCH_EVENT` | `"cerebro:sketch-changed"` | `src/services/sketchService.ts` |
 | `LOW_CONFIDENCE_THRESHOLD` | `0.18` | `src/services/skillDepartmentClassifier.ts` |
@@ -3440,6 +3442,7 @@ _nenhum item encontrado_
 | `staleTime: 10 * 60 * 1000,` | `src/pages/GovernancePage.tsx` |
 | `setTimeout(() => navigate('/'), 2000);` | `src/pages/ResetPasswordPage.tsx` |
 | `const to = new Date(from.getTime() + 60 * 60 * 1000);` | `src/pages/SLODashboard.tsx` |
+| `staleTime: 5 * 60 * 1000,` | `src/pages/SchemaDictionaryPage.tsx` |
 | `await new Promise((r) => setTimeout(r, 1400));` | `src/pages/VisionAgentsPage.tsx` |
 | `return sum + d / (1000 * 60 * 60);` | `src/pages/VulnerabilitiesPage.tsx` |
 | `const horizon = now - 24 * 60 * 60_000;` | `src/services/alertRulesService.ts` |
@@ -4054,7 +4057,7 @@ _nenhum item encontrado_
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +549 linhas — lista completa em `context.json` | |
+| … +550 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

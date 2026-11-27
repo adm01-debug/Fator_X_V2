@@ -2,11 +2,11 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "resumo": {
-  "urls": 152,
+  "urls": 153,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 122,
-  "lazy": 163
+  "itens_menu": 123,
+  "lazy": 164
  },
  "urls": [
   {
@@ -5744,6 +5744,48 @@
    "indice": false,
    "lazy": true,
    "tipo": "tela",
+   "caminho": "/schema-dictionary",
+   "componente": "SchemaDictionaryPage",
+   "arquivo": "src/pages/SchemaDictionaryPage.tsx",
+   "definida_em": "src/App.tsx",
+   "redireciona": null,
+   "hooks": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useIsMobile",
+    "useLocation",
+    "useMemo",
+    "useNavigate",
+    "useQuery",
+    "useState",
+    "useUnsavedChanges"
+   ],
+   "hooks_locais": [
+    "useIsMobile",
+    "useUnsavedChanges"
+   ],
+   "tabelas": [],
+   "rpcs": [
+    "is_user_locked_out"
+   ],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "alert"
+   ],
+   "arquivos_puxados": 24
+  },
+  {
+   "protegida": false,
+   "wrappers": [
+    "SafePage"
+   ],
+   "pai": null,
+   "indice": false,
+   "lazy": true,
+   "tipo": "tela",
    "caminho": "/search",
    "componente": "SearchPage",
    "arquivo": "src/pages/SearchPage.tsx",
@@ -8985,6 +9027,15 @@
    "resolve_para": "src/pages/KnowledgeDecayPage.tsx"
   },
   {
+   "rotulo": "Dicionario do Banco",
+   "destino": "/schema-dictionary",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/AppSidebar.tsx",
+   "resolve_para": "src/pages/SchemaDictionaryPage.tsx"
+  },
+  {
    "rotulo": "Disaster Recovery",
    "destino": "/disaster-recovery",
    "grupo": null,
@@ -9926,6 +9977,7 @@
   "RoutingConfigPage": "src/pages/RoutingConfigPage.tsx",
   "SBOMPage": "src/pages/SBOMPage.tsx",
   "SLODashboard": "src/pages/SLODashboard.tsx",
+  "SchemaDictionaryPage": "src/pages/SchemaDictionaryPage.tsx",
   "SearchPage": "src/pages/SearchPage.tsx",
   "SecretsRotationPage": "src/pages/SecretsRotationPage.tsx",
   "SecurityPage": "src/pages/SecurityPage.tsx",

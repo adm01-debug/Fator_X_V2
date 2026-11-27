@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3edcbedde007e0542d3ca9884454a828e48d658b",
+  "commit": "1188ca3120e2224849c876d2e984f90496fcc16c",
   "branch": "main",
-  "data_commit": "2026-11-27T07:42:11-03:00",
+  "data_commit": "2026-11-27T07:50:39-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "1188ca3",
+    "data": "2026-11-27",
+    "assunto": "feat(banco): tela do dicionario de esquema com busca e filtro (#213)"
+   },
    {
     "sha": "3edcbed",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "9e812c6",
     "data": "2026-11-26",
     "assunto": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)"
-   },
-   {
-    "sha": "0b42f14",
-    "data": "2026-11-26",
-    "assunto": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)"
    }
   ],
-  "arquivos_mudados_7d": 185,
+  "arquivos_mudados_7d": 187,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -238,6 +238,10 @@
     "mudancas": 4
    },
    {
+    "arquivo": "src/components/layout/AppSidebar.tsx",
+    "mudancas": 4
+   },
+   {
     "arquivo": "src/pages/FineTuningPage.tsx",
     "mudancas": 4
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "AGENTS.md",
     "mudancas": 3
-   },
-   {
-    "arquivo": "CHANGELOG.md",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 105
+    "commits": 106
    },
    {
     "autor": "dependabot[bot]",
@@ -310,15 +310,15 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2068,
-  "arquivos_codigo": 1482,
-  "linhas_codigo": 326015,
-  "rotas": 152,
+  "arquivos_total": 2070,
+  "arquivos_codigo": 1484,
+  "linhas_codigo": 326367,
+  "rotas": 153,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 122,
+  "itens_menu": 123,
   "modulos": 72,
-  "componentes": 665,
+  "componentes": 666,
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 328,
@@ -464,11 +464,11 @@
   },
   "src/App.tsx": {
    "arquivos": 1,
-   "linhas": 1550
+   "linhas": 1559
   },
   "src/components": {
    "arquivos": 560,
-   "linhas": 104894
+   "linhas": 104895
   },
   "src/config": {
    "arquivos": 10,
@@ -503,16 +503,16 @@
    "linhas": 46
   },
   "src/pages": {
-   "arquivos": 142,
-   "linhas": 51817
+   "arquivos": 143,
+   "linhas": 52080
   },
   "src/security.test.ts": {
    "arquivos": 1,
    "linhas": 43
   },
   "src/services": {
-   "arquivos": 171,
-   "linhas": 34301
+   "arquivos": 172,
+   "linhas": 34380
   },
   "src/stores": {
    "arquivos": 12,
@@ -586,7 +586,7 @@
   },
   {
    "arquivo": "src/App.tsx",
-   "linhas": 1550
+   "linhas": 1559
   },
   {
    "arquivo": "src/components/agents/wizard/QuickCreateWizard.tsx",

@@ -156,6 +156,7 @@
    "src/pages/RoutingConfigPage.tsx",
    "src/pages/SBOMPage.tsx",
    "src/pages/SLODashboard.tsx",
+   "src/pages/SchemaDictionaryPage.tsx",
    "src/pages/SearchPage.tsx",
    "src/pages/SecretsRotationPage.tsx",
    "src/pages/SecurityPage.tsx",
@@ -5693,6 +5694,18 @@
    "src/lib/slo/sloTargets.ts",
    "src/lib/slo/useDrilldownAuditLog.ts"
   ],
+  "src/pages/SchemaDictionaryPage.tsx": [
+   "src/components/shared/PageHeader.tsx",
+   "src/components/ui/alert.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/services/schemaDictionaryService.ts"
+  ],
   "src/pages/SearchPage.tsx": [
    "src/components/search/VisualSearchButton.tsx",
    "src/components/ui/badge.tsx",
@@ -6694,6 +6707,9 @@
   ],
   "src/services/sbomService.ts": [
    "src/integrations/supabase/client.ts"
+  ],
+  "src/services/schemaDictionaryService.ts": [
+   "src/lib/supabaseExtended.ts"
   ],
   "src/services/searchService.ts": [
    "src/integrations/supabase/client.ts",

@@ -1808,7 +1808,7 @@
    "modulo": "components/layout",
    "arquivos": 3,
    "testes": 0,
-   "linhas": 851,
+   "linhas": 852,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5403,9 +5403,9 @@
   },
   {
    "modulo": "pages",
-   "arquivos": 142,
+   "arquivos": 143,
    "testes": 0,
-   "linhas": 51817,
+   "linhas": 52080,
    "itens_menu": [
     "A/B Test Prompts",
     "Admin BD",
@@ -5438,6 +5438,7 @@
     "Data Residency",
     "DataHub",
     "Decaimento de Conhecimento",
+    "Dicionario do Banco",
     "Disaster Recovery",
     "DR Drills",
     "Email Triggers",
@@ -5630,6 +5631,7 @@
     "/reset-password",
     "/residency",
     "/routing",
+    "/schema-dictionary",
     "/search",
     "/security",
     "/security/assets",
@@ -5678,7 +5680,7 @@
     "/workflows"
    ],
    "rotas_http": [],
-   "componentes": 142,
+   "componentes": 143,
    "hooks_locais": [
     "useAccessGuard",
     "useAgent",
@@ -6290,9 +6292,9 @@
   },
   {
    "modulo": "services",
-   "arquivos": 151,
+   "arquivos": 152,
    "testes": 0,
-   "linhas": 33056,
+   "linhas": 33135,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

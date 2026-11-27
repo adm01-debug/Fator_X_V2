@@ -1,14 +1,14 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 296,
+ "total": 297,
  "por_camada": {
   "config": 10,
   "data": 5,
   "integrations": 5,
   "lib": 90,
   "python": 3,
-  "services": 171,
+  "services": 172,
   "stores": 12
  },
  "arquivos": [
@@ -3079,7 +3079,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 47,
+   "usado_por": 48,
    "usado_por_modulos": [
     "components/agent-builder",
     "components/integrations",
@@ -8142,6 +8142,35 @@
    "flags": [],
    "papeis": [],
    "usado_por": 2,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/schemaDictionaryService.ts",
+   "camada": "services",
+   "exports": [
+    "DictionaryStats",
+    "SchemaDictionaryEntry",
+    "SchemaObjectKind",
+    "dictionaryStats",
+    "filterEntries",
+    "lastCapturedAt",
+    "listSchemaDictionary"
+   ],
+   "export_default": null,
+   "linhas": 79,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
    "usado_por_modulos": [
     "pages"
    ],

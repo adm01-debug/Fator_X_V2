@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1424)",
+   "TypeScript (1426)",
    "SQL (367)",
    "Markdown (135)",
    "JavaScript (54)",
@@ -1773,6 +1773,7 @@
    "/replay",
    "/reset-password",
    "/routing",
+   "/schema-dictionary",
    "/search",
    "/security/chaos-experiments",
    "/share/n",

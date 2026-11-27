@@ -1,24 +1,24 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1223,
- "arestas": 5321,
+ "nos": 1225,
+ "arestas": 5333,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 409
+   "importado_por": 410
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 362
+   "importado_por": 363
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 211
+   "importado_por": 212
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 189
+   "importado_por": 190
   },
   {
    "arquivo": "src/lib/logger.ts",
@@ -38,7 +38,7 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 132
+   "importado_por": 133
   },
   {
    "arquivo": "src/integrations/supabase/externalClient.ts",
@@ -54,7 +54,7 @@
   },
   {
    "arquivo": "src/components/shared/PageHeader.tsx",
-   "importado_por": 92
+   "importado_por": 93
   },
   {
    "arquivo": "supabase/functions/_shared/mod.ts",
@@ -70,11 +70,11 @@
   },
   {
    "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 59
+   "importado_por": 60
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 57
+   "importado_por": 58
   },
   {
    "arquivo": "src/components/ui/switch.tsx",
@@ -82,7 +82,7 @@
   },
   {
    "arquivo": "src/lib/supabaseExtended.ts",
-   "importado_por": 48
+   "importado_por": 49
   },
   {
    "arquivo": "supabase/functions/_shared/retry.ts",
@@ -134,7 +134,7 @@
   },
   {
    "arquivo": "src/components/ui/alert.tsx",
-   "importado_por": 25
+   "importado_por": 26
   },
   {
    "arquivo": "src/types/agentTypes.ts",

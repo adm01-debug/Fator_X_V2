@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 665,
+ "total": 666,
  "orfaos": 36,
  "nomes_duplicados": {
   "AddressCard": [
@@ -84,7 +84,7 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 1550,
+   "linhas": 1559,
    "dominio": null,
    "hooks_locais": [
     "useAuth"
@@ -3910,7 +3910,7 @@
     "AppSidebar"
    ],
    "export_default": null,
-   "linhas": 542,
+   "linhas": 543,
    "dominio": "components/layout",
    "hooks_locais": [
     "useAuth",
@@ -5312,7 +5312,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 91,
+   "usado_por": 92,
    "orfao": false
   },
   {
@@ -7135,7 +7135,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 24,
+   "usado_por": 25,
    "orfao": false
   },
   {
@@ -7166,7 +7166,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 361,
+   "usado_por": 362,
    "orfao": false
   },
   {
@@ -7201,7 +7201,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 407,
+   "usado_por": 408,
    "orfao": false
   },
   {
@@ -7235,7 +7235,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 210,
+   "usado_por": 211,
    "orfao": false
   },
   {
@@ -7460,7 +7460,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 189,
+   "usado_por": 190,
    "orfao": false
   },
   {
@@ -7620,7 +7620,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 59,
+   "usado_por": 60,
    "orfao": false
   },
   {
@@ -7643,7 +7643,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 131,
+   "usado_por": 132,
    "orfao": false
   },
   {
@@ -7733,7 +7733,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 57,
+   "usado_por": 58,
    "orfao": false
   },
   {
@@ -9937,6 +9937,20 @@
    "tabelas": [],
    "edges": [],
    "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/SchemaDictionaryPage.tsx",
+   "exports": [
+    "SchemaDictionaryPage"
+   ],
+   "export_default": "SchemaDictionaryPage",
+   "linhas": 263,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {
