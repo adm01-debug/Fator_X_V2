@@ -10,6 +10,7 @@ import { SessionManagement } from "@/components/security/SessionManagement";
 import { RateLimitingPanel } from "@/components/security/RateLimitingPanel";
 import { AuditLogSection } from "@/components/security/AuditLogSection";
 import { SecurityEventsPanel } from "@/components/security/SecurityEventsPanel";
+import { AccountLockoutsPanel } from "@/components/security/AccountLockoutsPanel";
 import { GuardrailsConfig } from "@/components/agent-builder/GuardrailsConfig";
 import { listApiKeys, createApiKey, revokeApiKey } from '@/services/securityService';
 import { Button } from '@/components/ui/button';
@@ -176,6 +177,21 @@ function ApiKeysPanel() {
 }
 
 export default function SecurityPage() {
+  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    import('@/services/workspaceContextService')
+      .then(({ getFirstWorkspaceId }) => getFirstWorkspaceId())
+      .then((id) => {
+        if (!cancelled) setWorkspaceId(id);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-8 max-w-[1440px] mx-auto animate-page-enter">
       {/* Header Elevated 10/10 */}
@@ -249,6 +265,7 @@ export default function SecurityPage() {
         <TabsContent value="access" className="space-y-8 animate-in fade-in duration-500">
           <AccessControlPanel />
           <ApiKeysPanel />
+          <AccountLockoutsPanel workspaceId={workspaceId} />
           <SessionManagement />
         </TabsContent>
 

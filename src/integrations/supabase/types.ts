@@ -15006,6 +15006,24 @@ export type Database = {
         Returns: string
       }
       is_mfa_valid_for_role: { Args: never; Returns: boolean }
+      admin_list_account_lockouts: {
+        Args: { p_workspace: string }
+        Returns: {
+          id: string
+          email: string | null
+          ip_address: string | null
+          lockout_type: string | null
+          reason: string | null
+          failure_count: number
+          locked_at: string
+          expires_at: string | null
+          unlocked_at: string | null
+        }[]
+      }
+      admin_release_account_lockout: {
+        Args: { p_lockout: string }
+        Returns: Json
+      }
       is_user_locked_out: { Args: { target_email: string }; Returns: boolean }
       is_workspace_admin:
         | { Args: { _user_id: string }; Returns: boolean }
