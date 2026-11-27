@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "infra(banco): sonda somente leitura do schema de producao (#207)",
    "infra(banco): lote unico das 13 migrations pendentes em producao (#203)",
    "infra(banco): workflow manual para aplicar migrations com dry-run e trava APLICAR (#206)",
    "feat(conhecimento): aba de saúde dos embeddings com reprocessamento de chunks travados (#205)",
-   "feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)",
-   "chore: remove rascunhos de corpo de PR versionados por engano (#200)"
+   "feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

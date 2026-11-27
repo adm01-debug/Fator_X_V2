@@ -8,7 +8,7 @@
    "Markdown (134)",
    "JavaScript (54)",
    "JSON (25)",
-   "YAML (18)",
+   "YAML (19)",
    "Shell (10)",
    "Python (5)"
   ],
@@ -526,6 +526,27 @@
    "actions": [
     "release-drafter/release-drafter"
    ]
+  },
+  {
+   "arquivo": ".github/workflows/schema-probe.yml",
+   "nome": "Schema Probe",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "probe"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": []
   }
  ],
  "hooks_git": [

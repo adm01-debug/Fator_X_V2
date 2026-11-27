@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c10942b86a0b99424e577efc8f013fdb7c97a543",
+  "commit": "1e12e7127abd64ad50a1058119803426dd43d571",
   "branch": "main",
-  "data_commit": "2026-11-27T05:13:48-03:00",
+  "data_commit": "2026-11-27T05:28:58-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "1e12e71",
+    "data": "2026-11-27",
+    "assunto": "infra(banco): sonda somente leitura do schema de producao (#207)"
+   },
    {
     "sha": "c10942b",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "71009dd",
     "data": "2026-11-26",
     "assunto": "feat(hf): configuração HuggingFace por workspace vira real (#171)"
-   },
-   {
-    "sha": "a77f3ba",
-    "data": "2026-11-26",
-    "assunto": "feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)"
    }
   ],
-  "arquivos_mudados_7d": 180,
+  "arquivos_mudados_7d": 181,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 99
+    "commits": 100
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2063,
+  "arquivos_total": 2064,
   "arquivos_codigo": 1482,
   "linhas_codigo": 326015,
   "rotas": 152,
@@ -325,7 +325,7 @@
   "migrations": 361,
   "cron_jobs": 39,
   "testes": 259,
-  "workflows": 12,
+  "workflows": 13,
   "scripts": 45,
   "docs_md": 134
  },

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c10942b86a0b99424e577efc8f013fdb7c97a543",
+  "sha": "1e12e7127abd64ad50a1058119803426dd43d571",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 08:15 UTC",
-  "files_total": 2068,
+  "generated_at": "2026-11-27 08:29 UTC",
+  "files_total": 2069,
   "code_files": 1847,
   "code_lines": 369850
  },
  "version": "1.3.2",
- "facts_hash": "bbd248902f53b77a",
+ "facts_hash": "2a0043884c7bff26",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -249,6 +249,13 @@
     "triggers": [
      "pull_request",
      "push"
+    ]
+   },
+   {
+    "file": ".github/workflows/schema-probe.yml",
+    "name": "Schema Probe",
+    "triggers": [
+     "workflow_dispatch"
     ]
    }
   ],
@@ -198792,10 +198799,19 @@
   }
  },
  "git": {
-  "sha": "c10942b86a0b99424e577efc8f013fdb7c97a543",
+  "sha": "1e12e7127abd64ad50a1058119803426dd43d571",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "1e12e71",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "infra(banco): sonda somente leitura do schema de producao (#207)",
+    "files": [
+     ".github/workflows/schema-probe.yml"
+    ]
+   },
    {
     "sha": "c10942b",
     "date": "2026-11-27",
@@ -199137,15 +199153,6 @@
      "src/pages/RiskRegisterPage.tsx",
      "src/test/risk-register-rpc-ui.test.tsx"
     ]
-   },
-   {
-    "sha": "f2a4f3a",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "chore(vercel): deep link da SPA deixa de dar 404 (#164)",
-    "files": [
-     "vercel.json"
-    ]
    }
   ],
   "hot_files": [
@@ -199180,6 +199187,10 @@
    [
     "src/services/fineTuningService.ts",
     2
+   ],
+   [
+    ".github/workflows/schema-probe.yml",
+    1
    ],
    [
     "src/pages/AgentAlertsPage.tsx",
@@ -199223,10 +199234,6 @@
    ],
    [
     "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql",
     1
    ]
   ]
