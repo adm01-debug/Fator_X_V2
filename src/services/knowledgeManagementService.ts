@@ -357,3 +357,64 @@ export async function markAsAnswer(postId: string, threadId: string) {
   await supabase.from('forum_posts').update({ is_answer: true }).eq('id', postId);
   await supabase.from('forum_threads').update({ is_resolved: true }).eq('id', threadId);
 }
+
+// ============ Saúde de embeddings dos chunks ============
+// `rag-embed-backfill` reprocessa chunk 'pending'/'failed' até 5 tentativas e
+// então o marca como dead-letter. Sem esta leitura, chunk morto é invisível:
+// o documento fica no banco mas nunca é achado pela busca.
+
+export interface EmbeddingHealth {
+  pending: number;
+  failed_retryable: number;
+  dead_letter: number;
+}
+
+export async function getEmbeddingHealth(): Promise<EmbeddingHealth> {
+  const [pending, failedRetryable, deadLetter] = await Promise.all([
+    supabase
+      .from('chunks')
+      .select('id', { count: 'exact', head: true })
+      .is('embedding', null)
+      .eq('embedding_status', 'pending'),
+    supabase
+      .from('chunks')
+      .select('id', { count: 'exact', head: true })
+      .is('embedding', null)
+      .eq('embedding_status', 'failed')
+      .lt('embed_attempts', 5),
+    supabase
+      .from('chunks')
+      .select('id', { count: 'exact', head: true })
+      .is('embedding', null)
+      .gte('embed_attempts', 5),
+  ]);
+
+  for (const r of [pending, failedRetryable, deadLetter]) if (r.error) throw r.error;
+
+  return {
+    pending: pending.count ?? 0,
+    failed_retryable: failedRetryable.count ?? 0,
+    dead_letter: deadLetter.count ?? 0,
+  };
+}
+
+export async function listDeadLetterChunks(limit = 20) {
+  const { data, error } = await supabase
+    .from('chunks')
+    .select('id, document_id, chunk_index, embed_attempts, embed_last_error, embed_last_attempt_at, content')
+    .is('embedding', null)
+    .gte('embed_attempts', 5)
+    .order('embed_last_attempt_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data ?? [];
+}
+
+/** Devolve o chunk ao retry do backfill: zera o contador e volta o status. */
+export async function retryDeadLetterChunk(chunkId: string) {
+  const { error } = await supabase
+    .from('chunks')
+    .update({ embed_attempts: 0, embed_last_error: null, embedding_status: 'pending' } as never)
+    .eq('id', chunkId);
+  if (error) throw error;
+}
