@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "ffdbf8c01bc5061227c0aeeb7e98462db69753d4",
+  "sha": "3d2bbaa92e4d68043b82c78000a49864ba67598c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 06:49 UTC",
-  "files_total": 2051,
+  "generated_at": "2026-11-27 07:15 UTC",
+  "files_total": 2049,
   "code_files": 1829,
   "code_lines": 367517
  },
@@ -196874,10 +196874,20 @@
   }
  },
  "git": {
-  "sha": "ffdbf8c01bc5061227c0aeeb7e98462db69753d4",
+  "sha": "3d2bbaa92e4d68043b82c78000a49864ba67598c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "3d2bbaa",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "chore: remove rascunhos de corpo de PR versionados por engano (#200)",
+    "files": [
+     ".prbody.md",
+     ".prbody2.md"
+    ]
+   },
    {
     "sha": "ffdbf8c",
     "date": "2026-11-27",
@@ -197201,16 +197211,6 @@
      "supabase/deployment-manifest.json",
      "supabase/functions/hf-autotrain/index.ts"
     ]
-   },
-   {
-    "sha": "ed56e32",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)",
-    "files": [
-     "src/pages/FineTuningPage.tsx",
-     "src/test/fine-tuning-page.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -197220,15 +197220,19 @@
    ],
    [
     "src/pages/FineTuningPage.tsx",
-    4
+    3
    ],
    [
     "src/services/fineTuningService.ts",
     3
    ],
    [
-    "src/test/fine-tuning-page.test.tsx",
-    3
+    ".prbody.md",
+    2
+   ],
+   [
+    ".prbody2.md",
+    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -197240,6 +197244,10 @@
    ],
    [
     "src/test/security-service.test.ts",
+    2
+   ],
+   [
+    "src/test/fine-tuning-page.test.tsx",
     2
    ],
    [
@@ -197268,14 +197276,6 @@
    ],
    [
     "src/test/use2fa.test.ts",
-    1
-   ],
-   [
-    ".prbody.md",
-    1
-   ],
-   [
-    ".prbody2.md",
     1
    ],
    [

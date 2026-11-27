@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ffdbf8c01bc5061227c0aeeb7e98462db69753d4",
+  "commit": "3d2bbaa92e4d68043b82c78000a49864ba67598c",
   "branch": "main",
-  "data_commit": "2026-11-27T03:47:35-03:00",
+  "data_commit": "2026-11-27T03:47:41-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "3d2bbaa",
+    "data": "2026-11-27",
+    "assunto": "chore: remove rascunhos de corpo de PR versionados por engano (#200)"
+   },
    {
     "sha": "ffdbf8c",
     "data": "2026-11-27",
@@ -126,11 +131,6 @@
     "sha": "74f4d20",
     "data": "2026-11-26",
     "assunto": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)"
-   },
-   {
-    "sha": "f2a4f3a",
-    "data": "2026-11-26",
-    "assunto": "chore(vercel): deep link da SPA deixa de dar 404 (#164)"
    }
   ],
   "arquivos_mudados_7d": 156,
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 94
+    "commits": 95
    },
    {
     "autor": "dependabot[bot]",
