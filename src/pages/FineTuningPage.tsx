@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   AlertCircle,
   CheckCircle2,
+  Copy,
   Cpu,
   Database,
+  Download,
   ExternalLink,
   Play,
   RefreshCw,
@@ -25,16 +27,23 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader';
 import { toast } from 'sonner';
 import {
+  exportTraces,
+  generateTrlConfig,
   getJobStatus,
   listFineTuneJobs,
+  listHubModels,
   listTrainingJobs,
   prepareDataset,
+  prepareDpoDataset,
   recordFineTuneJob,
   startTraining,
   syncFineTuneJob,
+  type DpoDataset,
   type FineTuneJobRecord,
+  type HubModel,
   type TaskType,
   type TrainingMethod,
+  type TrlConfig,
 } from '@/services/fineTuningService';
 import { logger } from '@/lib/logger';
 
@@ -103,6 +112,15 @@ export default function FineTuningPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [history, setHistory] = useState<FineTuneJobRecord[]>([]);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  const [hubModels, setHubModels] = useState<HubModel[]>([]);
+  const [hubUsername, setHubUsername] = useState<string | null>(null);
+  const [loadingModels, setLoadingModels] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [dpo, setDpo] = useState<DpoDataset | null>(null);
+  const [loadingDpo, setLoadingDpo] = useState(false);
+  const [trl, setTrl] = useState<TrlConfig | null>(null);
+  const [loadingTrl, setLoadingTrl] = useState(false);
+  const [exportingTraces, setExportingTraces] = useState(false);
 
   const loadJobs = useCallback(async () => {
     // As duas fontes falham de forma independente: o Hub pode estar fora sem derrubar o
@@ -252,6 +270,95 @@ export default function FineTuningPage() {
       toast.error(err instanceof Error ? err.message : 'Falha ao preparar o dataset');
     } finally {
       setPreparing(false);
+    }
+  };
+
+  const currentBaseModel = BASE_MODELS[baseModel] ?? baseModel;
+
+  const handleLoadModels = async () => {
+    setLoadingModels(true);
+    setModelsError(null);
+    try {
+      const result = await listHubModels();
+      setHubModels(result.models);
+      setHubUsername(result.hf_username ?? null);
+      if (result.models.length === 0) {
+        toast.info('Nenhum modelo publicado na sua conta do Hugging Face.');
+      }
+    } catch (err) {
+      setModelsError(err instanceof Error ? err.message : 'Falha ao listar modelos do Hub');
+    } finally {
+      setLoadingModels(false);
+    }
+  };
+
+  const handleExportTraces = async () => {
+    if (!agentId.trim()) {
+      toast.error('Informe o ID do agente para exportar as traces');
+      return;
+    }
+    setExportingTraces(true);
+    try {
+      const result = await exportTraces(agentId.trim());
+      const blob = new Blob([JSON.stringify(result.dataset, null, 2)], {
+        type: 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dataset-${agentId.trim()}-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setSamplesCount(result.dataset_size);
+      toast.success(`${result.dataset_size} exemplos exportados no formato ${result.format}`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Falha ao exportar traces');
+    } finally {
+      setExportingTraces(false);
+    }
+  };
+
+  const handleDpo = async () => {
+    if (!agentId.trim()) {
+      toast.error('Informe o ID do agente para montar o dataset DPO');
+      return;
+    }
+    setLoadingDpo(true);
+    try {
+      setDpo(await prepareDpoDataset(agentId.trim()));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Falha ao montar dataset DPO');
+    } finally {
+      setLoadingDpo(false);
+    }
+  };
+
+  const handleTrl = async () => {
+    setLoadingTrl(true);
+    try {
+      setTrl(
+        await generateTrlConfig({
+          base_model: currentBaseModel,
+          task: 'text-generation' as TaskType,
+          epochs: epochs[0],
+          learning_rate: lr[0] * 1e-4,
+          method: method as TrainingMethod,
+          ...(method !== 'full' ? { lora_rank: rank[0] } : {}),
+        }),
+      );
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Falha ao gerar configs TRL');
+    } finally {
+      setLoadingTrl(false);
+    }
+  };
+
+  const copyCommand = async (cmd: string) => {
+    try {
+      await navigator.clipboard.writeText(cmd);
+      toast.success('Comando copiado');
+    } catch {
+      toast.error('Não foi possível copiar o comando');
     }
   };
 
@@ -522,6 +629,165 @@ export default function FineTuningPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-body-sm flex items-center gap-2">
+            <Sparkles className="h-4 w-4" />
+            Pipeline avançado — SFT → DPO
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-meta text-muted-foreground">
+            Exporte o dataset das traces, confira os pares de preferência e copie os comandos TRL
+            usados no treinamento. O agente informado acima é o mesmo usado aqui.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={handleLoadModels} disabled={loadingModels}>
+              {loadingModels ? (
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <Cpu className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              Modelos do Hub
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportTraces}
+              disabled={exportingTraces}
+            >
+              {exportingTraces ? (
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <Download className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              Exportar traces
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleDpo} disabled={loadingDpo}>
+              {loadingDpo ? (
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <Database className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              Pares DPO
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleTrl} disabled={loadingTrl}>
+              {loadingTrl ? (
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <Play className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              Configs TRL
+            </Button>
+          </div>
+
+          {modelsError && (
+            <div role="alert" className="text-meta text-destructive flex items-start gap-1.5">
+              <AlertCircle className="h-3.5 w-3.5 mt-0.5" />
+              {modelsError}
+            </div>
+          )}
+
+          {hubModels.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-meta text-muted-foreground">
+                Modelos publicados{hubUsername ? ` em ${hubUsername}` : ''} — clique para usar como
+                base:
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {hubModels.map((m) => (
+                  <button
+                    key={m.id}
+                    onClick={() => {
+                      setBaseModel(m.id);
+                      toast.success(`Modelo base: ${m.name}`);
+                    }}
+                    className={`p-2.5 rounded-md border text-left transition-all ${
+                      currentBaseModel === m.id ? 'border-primary bg-primary/8' : 'border-border/40'
+                    }`}
+                  >
+                    <div className="text-body-sm font-semibold truncate flex items-center gap-1.5">
+                      {m.name}
+                      {m.private && (
+                        <Badge variant="outline" className="text-meta">
+                          privado
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="text-meta text-muted-foreground truncate font-mono">
+                      {m.id}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {dpo && (
+            <div className="p-3 bg-muted/20 rounded-md space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2 text-meta">
+                <Badge
+                  variant={dpo.status === 'ready' ? 'default' : 'outline'}
+                  className="text-meta"
+                >
+                  {dpo.status === 'ready' ? 'pronto' : 'insuficiente'}
+                </Badge>
+                <span className="font-mono">
+                  {dpo.complete_pairs} pares completos · {dpo.partial_pairs} parciais ·{' '}
+                  {dpo.total_feedback_traces} traces com feedback
+                </span>
+              </div>
+              <p className="text-meta text-muted-foreground">{dpo.note}</p>
+              {dpo.trl_command && (
+                <div className="flex items-center justify-between gap-2 p-2 bg-background rounded font-mono text-meta">
+                  <span className="truncate">{dpo.trl_command}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => void copyCommand(dpo.trl_command as string)}
+                    aria-label="Copiar comando DPO"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {trl && (
+            <div className="space-y-2">
+              <div className="text-meta text-muted-foreground font-mono">
+                TRL {trl.trl_version} · {trl.method}
+                {trl.method !== 'full' ? ` r=${trl.lora_rank}` : ''} · {trl.peft_args}
+              </div>
+              {Object.entries(trl.configs).map(([stage, cfg]) => (
+                <div key={stage} className="p-2.5 bg-muted/20 rounded-md space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-body-sm font-semibold uppercase">{stage}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => void copyCommand(cfg.command)}
+                      aria-label={`Copiar comando ${stage}`}
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                  <div className="text-meta text-muted-foreground">{cfg.description}</div>
+                  <code className="block text-meta font-mono break-all text-foreground">
+                    {cfg.command}
+                  </code>
+                </div>
+              ))}
+              <div className="text-meta text-muted-foreground">
+                Pipeline: {trl.pipeline.join(' → ')}
+              </div>
+              <div className="text-meta text-muted-foreground font-mono">{trl.requirements}</div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
