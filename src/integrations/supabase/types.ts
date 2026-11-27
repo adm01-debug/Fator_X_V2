@@ -15007,6 +15007,39 @@ export type Database = {
       }
       is_mfa_valid_for_role: { Args: never; Returns: boolean }
       is_user_locked_out: { Args: { target_email: string }; Returns: boolean }
+      list_my_consents: {
+        Args: { p_workspace?: string | null }
+        Returns: {
+          id: string
+          user_id: string
+          workspace_id: string | null
+          consent_type: string
+          granted: boolean
+          legal_basis: string | null
+          purpose: string | null
+          granted_at: string | null
+          revoked_at: string | null
+          version: number
+          updated_at: string
+        }[]
+      }
+      set_my_consent: {
+        Args: {
+          p_consent_type: string
+          p_granted: boolean
+          p_workspace?: string | null
+          p_legal_basis?: string | null
+          p_purpose?: string | null
+        }
+        Returns: {
+          id: string
+          consent_type: string
+          granted: boolean
+          granted_at: string | null
+          revoked_at: string | null
+          version: number
+        }
+      }
       is_workspace_admin:
         | { Args: { _user_id: string }; Returns: boolean }
         | {
