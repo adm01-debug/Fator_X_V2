@@ -540,8 +540,8 @@
     },
     {
       "path": "supabase/functions/slack-agent-notify/index.ts",
-      "bytes": 4986,
-      "sha256": "cd1f17ad370e96ff043505844d1914ce85145ee58fc0398d147d564dad6b58c5"
+      "bytes": 6875,
+      "sha256": "2c4f87c563d6e6949d9421bc2625b6b588d384060707872b2ac9c4d962de562a"
     },
     {
       "path": "supabase/functions/slack-alert-dispatcher/index.ts",
@@ -2132,7 +2132,7 @@
       "name": "slack-agent-notify",
       "entrypoint": "supabase/functions/slack-agent-notify/index.ts",
       "verify_jwt": true,
-      "source_sha256": "61666948cb945ec8fe2c4931c2c4ed1a796b3d479facc7ad9dbc88eb25402ea7",
+      "source_sha256": "eb437db973c4b253729e35375bff486acc40ced79db724c0e0b134fd4105b8ee",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/circuitBreaker.ts",
@@ -2655,5 +2655,5 @@
       ]
     }
   ],
-  "manifest_sha256": "be91d8a53361b0e5ebf2157bab3f9c0834010d31205cba9a013f430125e7db58"
+  "manifest_sha256": "0b14f6ac09e23be9cbe135e3cbb40fd63362fc0e586b6a1b4020bd754a662058"
 }

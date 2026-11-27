@@ -56,10 +56,22 @@ function renderTemplate(tpl: string, vars: Record<string, string>): string {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return handleCorsPreflight(req);
-  const identifier = getRateLimitIdentifier(req);
+  // O gatilho do banco chama em nome de toda a frota de agentes, então ele não pode
+  // entrar no balde do IP de origem (o do Postgres); ele manda o seu próprio balde.
+  const triggerBucket = req.headers.get('x-rate-limit-bucket');
+  const identifier =
+    triggerBucket === 'service' || triggerBucket === 'user'
+      ? `trigger:${triggerBucket}`
+      : getRateLimitIdentifier(req);
   const rate = await checkRateLimit(identifier, RATE_LIMITS.heavy);
   if (!rate.allowed) return createRateLimitResponse(rate, getCorsHeaders(req));
   if (req.method !== 'POST') return errorResponse(req, 'Method not allowed', 405);
+
+  // Chamada de confiança vem do gatilho do banco (pg_net), com segredo compartilhado:
+  // app.settings.slack_notify_secret aqui, x-slack-notify-secret no cabeçalho.
+  const triggerSecret = Deno.env.get('SLACK_NOTIFY_SECRET');
+  const isTriggerCall =
+    !!triggerSecret && req.headers.get('x-slack-notify-secret') === triggerSecret;
 
   let payload: z.infer<typeof PayloadSchema>;
   try {
@@ -74,6 +86,38 @@ Deno.serve(async (req) => {
     return errorResponse(req, 'SLACK_BOT_TOKEN não configurado', 503);
   }
 
+  let scopedWorkspaceId: string | null = null;
+  if (!isTriggerCall) {    // Sem o segredo do gatilho, a chamada é de usuário: exige JWT e admin do workspace.
+    const auth = req.headers.get('Authorization');
+    if (!auth) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
+    const userClient = createClient(
+      requireEnv('SUPABASE_URL'),
+      requireEnv('SUPABASE_ANON_KEY'),
+      { global: { headers: { Authorization: auth } }, auth: { persistSession: false } },
+    );
+    const {
+      data: { user },
+    } = await userClient.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
+    const { data: admin, error: adminErr } = await userClient.rpc('is_workspace_admin', {
+      _user_id: user.id,
+    });
+    if (adminErr || admin !== true) {
+      return errorResponse(req, 'Forbidden: workspace admin required', 403);
+    }
+    scopedWorkspaceId = payload.workspace_id;
+  }
+
   const supabase = createClient(
     requireEnv('SUPABASE_URL'),
     requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
@@ -83,7 +127,7 @@ Deno.serve(async (req) => {
   const { data: rules, error: rulesErr } = await supabase
     .from('slack_agent_notifications')
     .select('id, channel_id, channel_name, notify_on, template, enabled')
-    .eq('workspace_id', payload.workspace_id)
+    .eq('workspace_id', scopedWorkspaceId ?? payload.workspace_id)
     .eq('agent_id', payload.agent_id)
     .eq('enabled', true);
 
@@ -120,7 +164,7 @@ Deno.serve(async (req) => {
       title: `Agente ${vars.agent_name} — ${payload.status.toUpperCase()}`,
       description,
       severity,
-      event_type: 'agent_execution',
+      category: 'Agentes',
       actionUrl: vars.trace_url || undefined,
       actionLabel: 'Ver trace',
     });
