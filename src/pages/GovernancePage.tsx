@@ -34,6 +34,13 @@ import {
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
+  geocodeAddress,
+  reverseGeocode,
+  parseCoordinates,
+  isGeoCodeAvailable,
+  type GeoLookupResult,
+} from '@/services/geoCodeService';
+import {
   Snowflake,
   Globe2,
   Plus,
@@ -45,6 +52,8 @@ import {
   ShieldOff,
   ArrowUpRight,
   Ban,
+  MapPin,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -200,6 +209,50 @@ export default function GovernancePage() {
 
   const [customCode, setCustomCode] = useState('');
   const [customName, setCustomName] = useState('');
+  const [geoLookupInput, setGeoLookupInput] = useState('');
+  const [geoLookup, setGeoLookup] = useState<GeoLookupResult | null>(null);
+  const [geoResolving, setGeoResolving] = useState(false);
+
+  // `geo-code` só era alcançável por API key: a tela exigia o ISO-2 digitado de memória,
+  // e um código errado faz a regra de geo-restrição nunca bloquear ninguém.
+  const resolveGeoLookup = async () => {
+    const raw = geoLookupInput.trim();
+    if (raw.length < 3) {
+      toast.error('Informe um endereço, cidade ou "latitude, longitude"');
+      return;
+    }
+    setGeoResolving(true);
+    try {
+      const coords = parseCoordinates(raw);
+      const result = coords
+        ? await reverseGeocode(coords.latitude, coords.longitude)
+        : await geocodeAddress(raw);
+      setGeoLookup(result);
+      if (result.data.country_code) {
+        setCustomCode(result.data.country_code);
+        setCustomName(result.data.country ?? '');
+        toast.success(
+          `País identificado: ${result.data.country ?? result.data.country_code} (${result.data.country_code}) via ${result.provider}`,
+        );
+      } else {
+        toast.warning(
+          `Localizado "${result.data.formatted_address}", mas o provedor não retornou o país.`,
+        );
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Falha ao consultar o provedor de mapas');
+    } finally {
+      setGeoResolving(false);
+    }
+  };
+
+  const geoHealthQuery = useQuery({
+    queryKey: ['governance', 'geo-health'],
+    queryFn: isGeoCodeAvailable,
+    staleTime: 10 * 60 * 1000,
+    retry: false,
+  });
+
   const addCustomCountry = useMutation({
     mutationFn: async () => {
       const code = customCode.trim().toUpperCase();
@@ -512,36 +565,93 @@ export default function GovernancePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-body">Adicionar país personalizado</CardTitle>
+              <CardTitle className="text-body flex items-center gap-2">
+                <MapPin className="h-4 w-4" /> Adicionar país personalizado
+              </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-wrap gap-3 items-end">
-              <div>
-                <Label htmlFor="ccode">Código (ISO)</Label>
-                <Input
-                  id="ccode"
-                  value={customCode}
-                  onChange={(e) => setCustomCode(e.target.value.toUpperCase())}
-                  maxLength={2}
-                  className="w-24 font-mono uppercase"
-                  placeholder="BR"
-                />
+            <CardContent className="space-y-4">
+              <div className="rounded-lg border border-border/40 p-3 space-y-2 bg-secondary/20">
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="geolookup" className="text-meta">
+                    Descobrir o país por endereço ou coordenadas
+                  </Label>
+                  {geoHealthQuery.data === false && (
+                    <Badge variant="secondary" className="text-meta">
+                      provedor de mapas indisponível
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2 items-center">
+                  <Input
+                    id="geolookup"
+                    value={geoLookupInput}
+                    onChange={(e) => setGeoLookupInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') void resolveGeoLookup();
+                    }}
+                    placeholder="Av. Paulista 1000, São Paulo — ou -23.5614, -46.6559"
+                    className="flex-1 min-w-[240px]"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => void resolveGeoLookup()}
+                    disabled={geoResolving}
+                  >
+                    {geoResolving ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <MapPin className="h-4 w-4 mr-2" />
+                    )}
+                    Descobrir país
+                  </Button>
+                </div>
+                {geoLookup && (
+                  <div className="text-meta text-muted-foreground space-y-0.5">
+                    <div>{geoLookup.data.formatted_address}</div>
+                    <div>
+                      {geoLookup.data.country_code ?? 'sem ISO'}{' '}
+                      {geoLookup.data.country ? `· ${geoLookup.data.country}` : ''}
+                      {geoLookup.data.city ? ` · ${geoLookup.data.city}` : ''}
+                      {geoLookup.data.state ? ` · ${geoLookup.data.state}` : ''}
+                      {` · via ${geoLookup.provider}`}
+                    </div>
+                  </div>
+                )}
+                <p className="text-meta text-muted-foreground">
+                  O código ISO preenchido abaixo é o que a regra de geo-restrição compara no
+                  bloqueio de acesso.
+                </p>
               </div>
-              <div className="flex-1 min-w-[200px]">
-                <Label htmlFor="cname">Nome</Label>
-                <Input
-                  id="cname"
-                  value={customName}
-                  onChange={(e) => setCustomName(e.target.value)}
-                  placeholder="Brasil"
-                />
+              <div className="flex flex-wrap gap-3 items-end">
+                <div>
+                  <Label htmlFor="ccode">Código (ISO)</Label>
+                  <Input
+                    id="ccode"
+                    value={customCode}
+                    onChange={(e) => setCustomCode(e.target.value.toUpperCase())}
+                    maxLength={2}
+                    className="w-24 font-mono uppercase"
+                    placeholder="BR"
+                  />
+                </div>
+                <div className="flex-1 min-w-[200px]">
+                  <Label htmlFor="cname">Nome</Label>
+                  <Input
+                    id="cname"
+                    value={customName}
+                    onChange={(e) => setCustomName(e.target.value)}
+                    placeholder="Brasil"
+                  />
+                </div>
+                <Button
+                  onClick={() => addCustomCountry.mutate()}
+                  disabled={addCustomCountry.isPending}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar
+                </Button>
               </div>
-              <Button
-                onClick={() => addCustomCountry.mutate()}
-                disabled={addCustomCountry.isPending}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar
-              </Button>
             </CardContent>
           </Card>
 
