@@ -1529,11 +1529,11 @@
   {
    "arquivo": "src/test/security-service.test.ts",
    "tipo": "unit",
-   "linhas": 264,
+   "linhas": 292,
    "testa": [
     "src/services/securityService.ts"
    ],
-   "casos": 19
+   "casos": 21
   },
   {
    "arquivo": "src/test/services.test.ts",

@@ -4665,7 +4665,7 @@
     "GuardrailPolicies"
    ],
    "export_default": null,
-   "linhas": 304,
+   "linhas": 370,
    "dominio": "components/security",
    "hooks_locais": [],
    "tabelas": [],

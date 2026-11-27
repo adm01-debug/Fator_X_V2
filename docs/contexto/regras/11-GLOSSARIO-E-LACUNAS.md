@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1e1eaf2ee4` · branch `main` · 2026-11-27 02:56 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `26d3bba4e5` · branch `main` · 2026-11-27 02:57 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `traces_2027_03` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `traces_2027_04` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `traces_2027_05` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
-| … +307 linhas — lista completa em `context.json` | | | |
+| … +308 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 

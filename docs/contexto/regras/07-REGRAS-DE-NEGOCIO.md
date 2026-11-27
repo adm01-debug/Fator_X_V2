@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1e1eaf2ee4` · branch `main` · 2026-11-27 02:56 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `26d3bba4e5` · branch `main` · 2026-11-27 02:57 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1562,6 +1562,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | SecretEnvironment | prod \| staging \| dev | `src/services/secretsRotationService.ts` |
 | SecretStatus | active \| pending_rotation \| overdue \| retired | `src/services/secretsRotationService.ts` |
 | RotationReason | scheduled \| compromised \| employee_offboarding \| manual \| policy_change | `src/services/secretsRotationService.ts` |
+| GuardrailMode | check_input \| check_output \| check_full | `src/services/securityService.ts` |
 | ClassificationTier | domain \| transversal \| platform \| none | `src/services/skillDepartmentClassifier.ts` |
 | ApplyFailureKind | permission \| confidence \| conflict \| network \| unknown | `src/services/skillEnrichmentService.ts` |
 | CandidateStatus | pending \| approved \| rejected \| auto_rejected \| promoted | `src/services/skillHarvestService.ts` |
@@ -3375,6 +3376,7 @@ _nenhum item encontrado_
 | `setTimeout(() => { setSent(false); setPhone(''); setText(''); setOpen(false); }, 1500);` | `src/components/deployments/WhatsAppSendDialog.tsx` |
 | `setTimeout(() => { window.print(); setExporting(false); toast.success('Relatório gerado para impressão'); }, 1000);` | `src/components/evaluations/AuditReportDialog.tsx` |
 | `<span className="text-meta text-muted-foreground">Log retention: 30 days</span>` | `src/components/integrations/WhatsAppLiveConsole.tsx` |
+| `staleTime: 5 * 60 * 1000,` | `src/components/security/GuardrailPolicies.tsx` |
 | `const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();` | `src/components/security/OpenclawEventsPanel.tsx` |
 | `window.setTimeout(() => setRetryStatus('idle'), 2000);` | `src/components/shared/ManualCopyDialog.tsx` |
 | `const t = setTimeout(() => setVisible(true), 1200);` | `src/components/shared/OnboardingTour.tsx` |
@@ -4072,7 +4074,7 @@ _nenhum item encontrado_
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 | `workspace_admin` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 
-## K. Testes como especificação (3109 testes em 226 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3111 testes em 226 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4092,10 +4094,10 @@ _nenhum item encontrado_
 | `src/test/cost-calculator.test.ts` | 32 | costCalculatorService — pricing lookup · getAllPricing returns a promise that resolves to an array · getModelPricing returns null for unknown provider · getModelPricing finds a model … |
 | `src/test/retry-engine.test.ts` | 32 | retryEngineService — defaults and presets · DEFAULT_RETRY_POLICY has sensible defaults · RETRY_PRESETS contains named configurations · DEFAULT_CIRCUIT_CONFIG has thresholds … |
 | `src/test/skill-description-enrichment.test.ts` | 32 | fold · remove acentos, pontuação e caixa · é idempotente para qualquer entrada gerada · isDescriptionEmpty … |
+| `src/test/security-service.test.ts` | 31 | securityService · listApiKeys · nunca seleciona a coluna key_hash (vazamento de credencial) · propaga erro em vez de mascarar como lista vazia … |
 | `src/test/skill-demand-department-filter.test.ts` | 30 | normalizeDepartmentFilter · aceita a taxonomia canônica e os dois sentinelas · normaliza caixa e espaços sem perder o alvo · degrada entradas hostis para all em vez de lançar … |
 | `src/test/whatsapp-webhook.test.ts` | 30 | whatsappWebhookService — catálogo · exposes documented event types · exposes 4 supported providers · every provider has tokenEnv … |
 | `src/test/extended-services.test.ts` | 29 | Extended Service Layer Tests · llmGatewayService · exports invokeLLMGateway · exports invokeGuardrailsEngine … |
-| `src/test/security-service.test.ts` | 29 | securityService · listApiKeys · nunca seleciona a coluna key_hash (vazamento de credencial) · propaga erro em vez de mascarar como lista vazia … |
 | `src/test/skill-classification-efficacy.test.ts` | 28 | deriveVerdict · aprovar sobre departamento existente = erro do classificador · aprovar sobre vazio = preenchimento, não erro · rejeitar com departamento vigente = confirmação do rótulo automático … |
 | `src/test/normalize.test.ts` | 27 | normalizeCnpj · strips formatting from formatted CNPJ · returns digits-only CNPJ as-is · returns null for invalid length … |
 | `src/test/curation-highlight.test.ts` | 26 | highlightKey · casa exatamente com a chave usada pelo acumulador de pendentes · distingue duplas diferentes · beginHighlight … |

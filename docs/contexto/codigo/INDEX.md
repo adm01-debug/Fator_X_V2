@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1e1eaf2ee462716e6a34d5aa0d24a42e340599e6` (2026-11-26T23:55:59-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `26d3bba4e547ccbaf4692fc0de76129a4024a384` (2026-11-26T23:56:04-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2038 |
 | arquivos_codigo | 1473 |
-| linhas_codigo | 324128 |
+| linhas_codigo | 324256 |
 | rotas | 152 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -433,8 +433,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15436 nós · 39353 arestas · 1409 comunidades · grafo do commit `1e1eaf2e`
-- comunidades maiores: lucide-react (339), react (292), dialog.tsx (289), sonner (268), App.tsx (247), ref_https (221), mod.ts (109), cn (109), fetchWithTimeout (105), services/index.ts (97), whatsapp-webhook/index.ts (96), templateSkillLinkService.ts (96)
+- 15443 nós · 39366 arestas · 1385 comunidades · grafo do commit `26d3bba4`
+- comunidades maiores: badge.tsx (350), button.tsx (227), logger.ts (220), react (208), mod.ts (201), SuperCerebroPage.tsx (146), App.tsx (128), whatsapp-webhook/index.ts (123), templateSkillLinkService.ts (120), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (115), cn (108), agent-workflow-runner/index.ts (104)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -580,6 +580,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `26d3bba` fix(guardrails): testador da UI chamava a edge sem action e nunca via os rails (#181)
 - 2026-11-26 `1e1eaf2` feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)
 - 2026-11-26 `91e02fc` fix(lgpd): conserta exclusão, consentimento e anonimização contra o schema real (#179)
 - 2026-11-26 `ddbccc8` fix(forum): tira rascunho das views safe do forum (#163)
@@ -594,7 +595,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `71009dd` feat(hf): configuração HuggingFace por workspace vira real (#171)
 - 2026-11-26 `a77f3ba` feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)
 - 2026-11-26 `51fc68b` feat(metricas): cobertura de embeddings dos chunks de documentos (#169)
-- 2026-11-26 `c3e765c` fix(time): tela de time volta a mostrar o e-mail dos membros (#168)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

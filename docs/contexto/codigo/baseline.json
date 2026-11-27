@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1e1eaf2ee462716e6a34d5aa0d24a42e340599e6",
+  "commit": "26d3bba4e547ccbaf4692fc0de76129a4024a384",
   "branch": "main",
-  "data_commit": "2026-11-26T23:55:59-03:00",
+  "data_commit": "2026-11-26T23:56:04-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "26d3bba",
+    "data": "2026-11-26",
+    "assunto": "fix(guardrails): testador da UI chamava a edge sem action e nunca via os rails (#181)"
+   },
    {
     "sha": "1e1eaf2",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "70dccb4",
     "data": "2026-11-26",
     "assunto": "fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)"
-   },
-   {
-    "sha": "0bbb244",
-    "data": "2026-11-25",
-    "assunto": "fix(infra): prova real da remocao de edge orfa no edge-prune (#156)"
    }
   ],
-  "arquivos_mudados_7d": 145,
+  "arquivos_mudados_7d": 146,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 87
+    "commits": 88
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 2038,
   "arquivos_codigo": 1473,
-  "linhas_codigo": 324128,
+  "linhas_codigo": 324256,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -468,7 +468,7 @@
   },
   "src/components": {
    "arquivos": 560,
-   "linhas": 104756
+   "linhas": 104822
   },
   "src/config": {
    "arquivos": 10,
@@ -512,7 +512,7 @@
   },
   "src/services": {
    "arquivos": 168,
-   "linhas": 33840
+   "linhas": 33874
   },
   "src/stores": {
    "arquivos": 12,
@@ -520,7 +520,7 @@
   },
   "src/test": {
    "arquivos": 204,
-   "linhas": 30578
+   "linhas": 30606
   },
   "src/tests": {
    "arquivos": 2,

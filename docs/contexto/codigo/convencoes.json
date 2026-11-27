@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(guardrails): testador da UI chamava a edge sem action e nunca via os rails (#181)",
    "feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)",
    "fix(lgpd): conserta exclusão, consentimento e anonimização contra o schema real (#179)",
    "fix(forum): tira rascunho das views safe do forum (#163)",
-   "fix(ci): guard de drift deixa de bloquear todo PR com migration nova (#165)",
-   "fix(db): alinha o banco oficial ao schema do repo (1193 colunas e 10 objetos ausentes) (#175)"
+   "fix(ci): guard de drift deixa de bloquear todo PR com migration nova (#165)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
