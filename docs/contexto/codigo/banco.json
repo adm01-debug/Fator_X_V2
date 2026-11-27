@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 345,
+ "migrations": 346,
  "seeds": [],
  "avisos": [
   "455 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -2128,7 +2128,8 @@
    },
    "usada_no_front": 1,
    "usada_em_edges": [
-    "agent-eval-runner"
+    "agent-eval-runner",
+    "lgpd-manager"
    ],
    "triggers": [],
    "sem_rls": false,
@@ -11577,6 +11578,11 @@
     }
    ],
    "indices": [
+    {
+     "nome": "consent_records_user_purpose_uidx",
+     "colunas": "user_id, purpose",
+     "unico": true
+    },
     {
      "nome": "idx_consent_records_user",
      "colunas": "user_id",
@@ -29774,7 +29780,6 @@
    },
    "usada_no_front": 1,
    "usada_em_edges": [
-    "lgpd-manager",
     "llm-gateway"
    ],
    "triggers": [],
@@ -34902,7 +34907,8 @@
    },
    "usada_no_front": 0,
    "usada_em_edges": [
-    "_shared"
+    "_shared",
+    "lgpd-manager"
    ],
    "triggers": [],
    "sem_rls": false,
@@ -39110,6 +39116,7 @@
     "doc-rechunk",
     "eval-judge",
     "hf-autotrain",
+    "lgpd-manager",
     "llm-gateway",
     "memory-tools",
     "notebook-podcast-generate",

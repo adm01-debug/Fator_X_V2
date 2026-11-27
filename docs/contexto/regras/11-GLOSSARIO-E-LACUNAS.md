@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ddbccc854c` · branch `main` · 2026-11-27 02:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `91e02fc008` · branch `main` · 2026-11-27 02:43 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -396,7 +396,7 @@ _nenhum item encontrado_
 | coluna | coluna `summary` usada no código não existe no schema de `document_ingestions` |  |
 | coluna | coluna `title` usada no código não existe no schema de `document_ingestions` |  |
 | coluna | coluna `knowledge_base_id` usada no código não existe no schema de `chunks` |  |
-| coluna | coluna `user_id` usada no código não existe no schema de `session_traces` |  |
+| coluna | coluna `user_id` usada no código não existe no schema de `agent_eval_runs` |  |
 | coluna | coluna `avg_latency_ms` usada no código não existe no schema de `model_pricing` |  |
 | coluna | coluna `context_window` usada no código não existe no schema de `model_pricing` |  |
 | coluna | coluna `label` usada no código não existe no schema de `model_pricing` |  |

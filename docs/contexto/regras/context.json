@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ddbccc854ce8fd37e3aba928233dc52484e4fdab",
+  "sha": "91e02fc0088090ca2807bd309815e67a0c1e42b8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 02:20 UTC",
-  "files_total": 2042,
-  "code_files": 1822,
-  "code_lines": 365970
+  "generated_at": "2026-11-27 02:43 UTC",
+  "files_total": 2043,
+  "code_files": 1823,
+  "code_lines": 366237
  },
  "version": "1.3.2",
- "facts_hash": "1341ee3b7e012725",
+ "facts_hash": "0764b4d7dbff9737",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -248,7 +248,7 @@
   "languages": {
    ".tsx": 709,
    ".ts": 706,
-   ".sql": 348,
+   ".sql": 349,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -47449,6 +47449,14 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
+   },
+   {
+    "name": "consent_records_user_purpose_uidx",
+    "table": "consent_records",
+    "columns": "user_id, purpose",
+    "unique": true,
+    "where": "",
+    "src": "supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql"
    }
   ],
   "cron_jobs": [
@@ -48121,6 +48129,7 @@
    "supabase/migrations/20261127000000_recuperar_objetos_internos.sql",
    "supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql",
    "supabase/migrations/20261127140000_rls_particoes_orfas.sql",
+   "supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -56954,6 +56963,7 @@
     ],
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
+     "agent_eval_runs",
      "agent_memories",
      "agent_usage",
      "api_keys",
@@ -56961,8 +56971,8 @@
      "data_deletion_requests",
      "openclaw_events",
      "security_events",
-     "session_traces",
      "sessions",
+     "traces",
      "webhook_delivery_logs",
      "workspace_members"
     ],
@@ -61254,7 +61264,7 @@
   {
    "module": "src/pages",
    "files": 142,
-   "lines": 50983,
+   "lines": 51059,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -61449,7 +61459,7 @@
   {
    "module": "src/services",
    "files": 168,
-   "lines": 33734,
+   "lines": 33770,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -61967,7 +61977,7 @@
   {
    "module": "supabase/functions",
    "files": 138,
-   "lines": 33225,
+   "lines": 33378,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -62211,8 +62221,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 345,
-   "lines": 42132,
+   "files": 346,
+   "lines": 42134,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -62380,13 +62390,17 @@
    "agent_eval_runs": {
     "select": [
      "src/hooks/useAgentEvals.ts",
-     "supabase/functions/agent-eval-runner/index.ts"
+     "supabase/functions/agent-eval-runner/index.ts",
+     "supabase/functions/lgpd-manager/index.ts"
     ],
     "insert": [
      "supabase/functions/agent-eval-runner/index.ts"
     ],
     "update": [
      "supabase/functions/agent-eval-runner/index.ts"
+    ],
+    "delete": [
+     "supabase/functions/lgpd-manager/index.ts"
     ]
    },
    "agent_graphs": {
@@ -62448,6 +62462,7 @@
     ],
     "update": [
      "src/services/entityResolutionService.ts",
+     "supabase/functions/lgpd-manager/index.ts",
      "supabase/functions/memory-tools/index.ts"
     ],
     "insert": [
@@ -63089,6 +63104,9 @@
      "supabase/functions/lgpd-manager/index.ts"
     ],
     "select": [
+     "supabase/functions/lgpd-manager/index.ts"
+    ],
+    "update": [
      "supabase/functions/lgpd-manager/index.ts"
     ]
    },
@@ -63935,7 +63953,6 @@
    "session_traces": {
     "select": [
      "src/services/monitoringService.ts",
-     "supabase/functions/lgpd-manager/index.ts",
      "supabase/functions/llm-gateway/index.ts"
     ],
     "insert": [
@@ -63949,6 +63966,9 @@
      "supabase/functions/llm-gateway/index.ts"
     ],
     "delete": [
+     "supabase/functions/lgpd-manager/index.ts"
+    ],
+    "update": [
      "supabase/functions/lgpd-manager/index.ts"
     ],
     "insert": [
@@ -64226,6 +64246,12 @@
    "traces": {
     "insert": [
      "supabase/functions/_shared/otel.ts"
+    ],
+    "select": [
+     "supabase/functions/lgpd-manager/index.ts"
+    ],
+    "delete": [
+     "supabase/functions/lgpd-manager/index.ts"
     ]
    },
    "tx": {
@@ -64430,6 +64456,7 @@
      "supabase/functions/doc-rechunk/index.ts",
      "supabase/functions/eval-judge/index.ts",
      "supabase/functions/hf-autotrain/index.ts",
+     "supabase/functions/lgpd-manager/index.ts",
      "supabase/functions/llm-gateway/index.ts",
      "supabase/functions/memory-tools/index.ts",
      "supabase/functions/notebook-podcast-generate/index.ts",
@@ -64522,7 +64549,8 @@
     "run_id"
    ],
    "agent_eval_runs": [
-    "id"
+    "id",
+    "user_id"
    ],
    "agent_graphs": [
     "id",
@@ -64546,6 +64574,7 @@
     "metadata",
     "relevance_score",
     "source",
+    "user_id",
     "workspace_id"
    ],
    "agent_memories_v2": [
@@ -64812,7 +64841,6 @@
     "workspace_id"
    ],
    "consent_records": [
-    "id",
     "user_id"
    ],
    "cost_alerts": [
@@ -64876,6 +64904,7 @@
     "status"
    ],
    "data_deletion_requests": [
+    "id",
     "user_id"
    ],
    "deploy_connections": [
@@ -65287,8 +65316,7 @@
    ],
    "session_traces": [
     "id",
-    "session_id",
-    "user_id"
+    "session_id"
    ],
    "sessions": [
     "id",
@@ -65412,6 +65440,9 @@
     "event_type",
     "id",
     "session_trace_id"
+   ],
+   "traces": [
+    "user_id"
    ],
    "usage_records": [
     "cost_usd",
@@ -67448,7 +67479,7 @@
     "column": "knowledge_base_id"
    },
    {
-    "table": "session_traces",
+    "table": "agent_eval_runs",
     "column": "user_id"
    },
    {
@@ -100568,7 +100599,13 @@
    {
     "file": "supabase/functions/lgpd-manager/index.ts",
     "field": "status",
-    "value": "revoked",
+    "value": "pending",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/lgpd-manager/index.ts",
+    "field": "status",
+    "value": "pending",
     "kind": "escreve"
    },
    {
@@ -100586,7 +100623,7 @@
    {
     "file": "supabase/functions/lgpd-manager/index.ts",
     "field": "status",
-    "value": "granted",
+    "value": "completed",
     "kind": "escreve"
    },
    {
@@ -132569,6 +132606,7 @@
       "escreve:src/services/types/retryEngineTypes.ts",
       "escreve:src/services/workflowCheckpointService.ts",
       "escreve:src/types/agentTypes.ts",
+      "escreve:supabase/functions/lgpd-manager/index.ts",
       "filtra:src/services/agentHandoffService.ts",
       "filtra:src/services/queueManagerService.ts",
       "filtra:supabase/functions/queue-worker/index.ts"
@@ -145897,7 +145935,7 @@
    },
    {
     "kind": "coluna",
-    "msg": "coluna `user_id` usada no código não existe no schema de `session_traces`",
+    "msg": "coluna `user_id` usada no código não existe no schema de `agent_eval_runs`",
     "where": []
    },
    {
@@ -167956,7 +167994,7 @@
   },
   "src/pages/LGPDCompliancePage.tsx": {
    "path": "src/pages/LGPDCompliancePage.tsx",
-   "lines": 332,
+   "lines": 408,
    "exports": [
     "function LGPDCompliancePage"
    ],
@@ -174799,14 +174837,18 @@
   },
   "src/services/lgpdService.ts": {
    "path": "src/services/lgpdService.ts",
-   "lines": 61,
+   "lines": 97,
    "exports": [
     "interface ConsentRecord",
     "interface DeletionRequest",
     "function listConsentRecords",
     "function listDeletionRequests",
+    "interface ExportPayload",
+    "interface DeletionResult",
+    "interface AnonymizeResult",
     "function exportMyData",
     "function requestDeletion",
+    "function anonymizeMyData",
     "function manageConsent"
    ],
    "invokes": [
@@ -189756,7 +189798,7 @@
   },
   "supabase/functions/lgpd-manager/index.ts": {
    "path": "supabase/functions/lgpd-manager/index.ts",
-   "lines": 188,
+   "lines": 341,
    "tables": [
     {
      "table": "security_events",
@@ -189771,7 +189813,15 @@
      "op": "select"
     },
     {
-     "table": "session_traces",
+     "table": "traces",
+     "op": "select"
+    },
+    {
+     "table": "agent_eval_runs",
+     "op": "select"
+    },
+    {
+     "table": "workspace_members",
      "op": "select"
     },
     {
@@ -189783,8 +189833,20 @@
      "op": "delete"
     },
     {
+     "table": "traces",
+     "op": "delete"
+    },
+    {
+     "table": "agent_eval_runs",
+     "op": "delete"
+    },
+    {
      "table": "data_deletion_requests",
-     "op": "insert"
+     "op": "insert,select"
+    },
+    {
+     "table": "data_deletion_requests",
+     "op": "insert,select"
     },
     {
      "table": "consent_records",
@@ -189801,23 +189863,47 @@
     {
      "table": "consent_records",
      "op": "upsert"
+    },
+    {
+     "table": "agent_memories",
+     "op": "update"
+    },
+    {
+     "table": "sessions",
+     "op": "update"
+    },
+    {
+     "table": "data_deletion_requests",
+     "op": "update"
+    },
+    {
+     "table": "data_deletion_requests",
+     "op": "insert"
     }
    ],
    "table_cols": {
     "agent_memories": [
-     "workspace_id"
+     "user_id"
     ],
     "sessions": [
      "user_id"
     ],
-    "session_traces": [
+    "traces": [
      "user_id"
     ],
-    "consent_records": [
+    "agent_eval_runs": [
+     "user_id"
+    ],
+    "workspace_members": [
+     "role",
+     "user_id",
+     "workspace_id"
+    ],
+    "data_deletion_requests": [
      "id",
      "user_id"
     ],
-    "data_deletion_requests": [
+    "consent_records": [
      "user_id"
     ]
    },
@@ -189838,7 +189924,12 @@
     },
     {
      "field": "status",
-     "value": "revoked",
+     "value": "pending",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pending",
      "kind": "escreve"
     },
     {
@@ -189853,7 +189944,7 @@
     },
     {
      "field": "status",
-     "value": "granted",
+     "value": "completed",
      "kind": "escreve"
     },
     {
@@ -196140,6 +196231,10 @@
    "path": "supabase/migrations/20261127140000_rls_particoes_orfas.sql",
    "lines": 5
   },
+  "supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql": {
+   "path": "supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql",
+   "lines": 2
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -196301,10 +196396,24 @@
   }
  },
  "git": {
-  "sha": "ddbccc854ce8fd37e3aba928233dc52484e4fdab",
+  "sha": "91e02fc0088090ca2807bd309815e67a0c1e42b8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "91e02fc",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix(lgpd): conserta exclusão, consentimento e anonimização contra o schema real (#179)",
+    "files": [
+     "docs/migration/MATRIZ_EDGE_TABELA.md",
+     "src/pages/LGPDCompliancePage.tsx",
+     "src/services/lgpdService.ts",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/lgpd-manager/index.ts",
+     "supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql"
+    ]
+   },
    {
     "sha": "ddbccc8",
     "date": "2026-11-26",
@@ -196614,18 +196723,13 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "cbe4351",
-    "date": "2026-11-24",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @sentry/react (#151)",
-    "files": [
-     "package-lock.json"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "supabase/deployment-manifest.json",
+    4
+   ],
    [
     "src/pages/FineTuningPage.tsx",
     3
@@ -196635,12 +196739,8 @@
     3
    ],
    [
-    "supabase/deployment-manifest.json",
-    3
-   ],
-   [
-    "package-lock.json",
-    3
+    "docs/migration/MATRIZ_EDGE_TABELA.md",
+    2
    ],
    [
     ".github/workflows/ci.yml",
@@ -196659,8 +196759,28 @@
     2
    ],
    [
+    "package-lock.json",
+    2
+   ],
+   [
     "package.json",
     2
+   ],
+   [
+    "src/pages/LGPDCompliancePage.tsx",
+    1
+   ],
+   [
+    "src/services/lgpdService.ts",
+    1
+   ],
+   [
+    "supabase/functions/lgpd-manager/index.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql",
+    1
    ],
    [
     "supabase/migrations/20261126130000_forum_safe_views_is_published.sql",
@@ -196684,26 +196804,6 @@
    ],
    [
     "supabase/migrations/20261127000000_recuperar_objetos_internos.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261127140000_rls_particoes_orfas.sql",
-    1
-   ],
-   [
-    "src/components/cost/CostBaselinePanel.tsx",
-    1
-   ],
-   [
-    "src/pages/CostAnomaliesPage.tsx",
-    1
-   ],
-   [
-    "src/services/costAnomalyService.ts",
     1
    ]
   ]

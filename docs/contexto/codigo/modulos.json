@@ -5383,7 +5383,7 @@
    "modulo": "pages",
    "arquivos": 142,
    "testes": 0,
-   "linhas": 50983,
+   "linhas": 51059,
    "itens_menu": [
     "A/B Test Prompts",
     "Admin BD",
@@ -6266,7 +6266,7 @@
    "modulo": "services",
    "arquivos": 148,
    "testes": 0,
-   "linhas": 32489,
+   "linhas": 32525,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

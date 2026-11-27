@@ -1378,18 +1378,20 @@
    "nome": "lgpd-manager",
    "entrada": "supabase/functions/lgpd-manager/index.ts",
    "arquivos": 1,
-   "linhas": 188,
+   "linhas": 341,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
    ],
    "tabelas": [
+    "agent_eval_runs",
     "agent_memories",
     "consent_records",
     "data_deletion_requests",
     "security_events",
-    "session_traces",
-    "sessions"
+    "sessions",
+    "traces",
+    "workspace_members"
    ],
    "rpcs": [],
    "env": [],

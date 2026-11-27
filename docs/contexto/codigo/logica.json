@@ -6673,8 +6673,12 @@
    "arquivo": "src/services/lgpdService.ts",
    "camada": "services",
    "exports": [
+    "AnonymizeResult",
     "ConsentRecord",
     "DeletionRequest",
+    "DeletionResult",
+    "ExportPayload",
+    "anonymizeMyData",
     "exportMyData",
     "listConsentRecords",
     "listDeletionRequests",
@@ -6682,7 +6686,7 @@
     "requestDeletion"
    ],
    "export_default": null,
-   "linhas": 61,
+   "linhas": 97,
    "tabelas": [],
    "rpcs": [],
    "edges": [
