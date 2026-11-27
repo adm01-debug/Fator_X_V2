@@ -90,6 +90,48 @@ interface AgentConfig {
   updated_at: string;
 }
 
+/** Linha real de public.agents (o schema baseline + fix_stub_schemas). */
+interface AgentRow {
+  id: string;
+  name: string;
+  mission?: string | null;
+  model?: string | null;
+  status?: string | null;
+  config?: Record<string, unknown> | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+}
+
+/**
+ * Converte a linha de `agents` para a forma que generateAgentCard entende.
+ * Os campos que nao tem coluna propria (provider, tools, knowledge_bases,
+ * guardrails, orchestration_type) vivem em `config`, gravados pelo editor de
+ * agente. Sem esta conversao o card sai sem skills e sem tags.
+ */
+function rowToConfig(row: AgentRow): AgentConfig {
+  const cfg = (row.config ?? {}) as Record<string, unknown>;
+  const asArray = <T,>(v: unknown): T[] | undefined => (Array.isArray(v) ? (v as T[]) : undefined);
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.mission ?? '',
+    system_prompt: typeof cfg.system_prompt === 'string' ? cfg.system_prompt : '',
+    model: row.model ?? '',
+    provider: typeof cfg.provider === 'string' ? cfg.provider : '',
+    tools: asArray<{ name: string; description?: string }>(cfg.tools) ?? [],
+    knowledge_bases: asArray<string>(cfg.knowledge_bases),
+    guardrails:
+      cfg.guardrails && typeof cfg.guardrails === 'object'
+        ? (cfg.guardrails as Record<string, unknown>)
+        : undefined,
+    orchestration_type:
+      typeof cfg.orchestration_type === 'string' ? cfg.orchestration_type : undefined,
+    status: row.status ?? 'draft',
+    created_at: row.created_at ?? '',
+    updated_at: row.updated_at ?? '',
+  };
+}
+
 // ──────── Constants ────────
 
 const DEFAULT_PROVIDER: AgentProvider = {
@@ -219,14 +261,25 @@ export function generateAgentCardJSON(
  * Save an agent card to the database for caching/serving
  */
 export async function saveAgentCard(agentId: string, card: AgentCard): Promise<void> {
-  const { error } = await fromTable('agent_configs')
+  const { data: current, error: readError } = await fromTable('agents')
+    .select('config')
+    .eq('id', agentId)
+    .single();
+
+  if (readError) throw new Error(`Failed to save agent card: ${readError.message}`);
+
+  // Merge preserva o resto da configuração do agente; `agent_configs` nunca
+  // existiu no banco, então o card passa a viver em `agents.config`.
+  const config = ((current?.config as Record<string, unknown>) ?? {});
+  const { error } = await fromTable('agents')
     .update({
-      metadata: {
+      config: {
+        ...config,
         agent_card: card,
         agent_card_updated_at: new Date().toISOString(),
       },
     })
-    .eq('id' as never, agentId);
+    .eq('id', agentId);
 
   if (error) throw new Error(`Failed to save agent card: ${error.message}`);
 }
@@ -235,9 +288,9 @@ export async function saveAgentCard(agentId: string, card: AgentCard): Promise<v
  * Get a cached agent card from the database
  */
 export async function getAgentCard(agentId: string): Promise<AgentCard | null> {
-  const { data, error } = await fromTable('agent_configs')
-    .select('metadata')
-    .eq('id' as never, agentId)
+  const { data, error } = await fromTable('agents')
+    .select('config')
+    .eq('id', agentId)
     .single();
 
   if (error) {
@@ -246,8 +299,8 @@ export async function getAgentCard(agentId: string): Promise<AgentCard | null> {
     if (error.code === 'PGRST116') return null;
     throw new Error(`Failed to fetch agent card: ${error.message}`);
   }
-  const metadata = data?.metadata as Record<string, unknown> | null;
-  return (metadata?.agent_card as AgentCard) ?? null;
+  const config = data?.config as Record<string, unknown> | null;
+  return (config?.agent_card as AgentCard) ?? null;
 }
 
 /**
@@ -258,14 +311,14 @@ export async function generateAndSaveAgentCard(
   agentId: string,
   options?: Parameters<typeof generateAgentCard>[1],
 ): Promise<AgentCard> {
-  const { data, error } = await fromTable('agent_configs')
-    .select('*')
-    .eq('id' as never, agentId)
+  const { data, error } = await fromTable('agents')
+    .select('id, name, mission, model, status, config, created_at, updated_at')
+    .eq('id', agentId)
     .single();
 
   if (error) throw new Error(`Agent not found: ${error.message}`);
 
-  const agent = data as unknown as AgentConfig;
+  const agent = rowToConfig(data as AgentRow);
   const card = generateAgentCard(agent, options);
   await saveAgentCard(agentId, card);
   return card;
@@ -277,19 +330,20 @@ export async function generateAndSaveAgentCard(
  * List all agent cards in the workspace (for registry/marketplace)
  */
 export async function listAgentCards(): Promise<AgentCard[]> {
-  const { data, error } = await fromTable('agent_configs')
-    .select('id, name, description, metadata, model, provider, tools, status, updated_at')
-    .eq('status' as never, 'active');
+  const { data, error } = await fromTable('agents')
+    .select('id, name, mission, model, status, config, created_at, updated_at')
+    .eq('status', 'active');
 
   if (error) throw new Error(`Failed to list agents: ${error.message}`);
 
-  return (data ?? []).map((agent: { metadata?: Record<string, unknown> | null }) => {
-    const metadata = agent.metadata as Record<string, unknown> | null;
-    const cached = metadata?.agent_card as AgentCard | undefined;
+  return (data ?? []).map((row: AgentRow) => {
+    const cached = (row.config as Record<string, unknown> | null)?.agent_card as
+      | AgentCard
+      | undefined;
     if (cached) return cached;
 
     // Generate on-the-fly if not cached
-    return generateAgentCard(agent as unknown as AgentConfig);
+    return generateAgentCard(rowToConfig(row));
   });
 }
 
