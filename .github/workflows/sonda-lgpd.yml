@@ -24,9 +24,8 @@ jobs:
                   return json.loads(urllib.request.urlopen(req,timeout=90).read().decode())
               except Exception as e:
                   return {'error':str(e)}
-          print('L1', q("""select table_name, column_name, data_type from information_schema.columns where table_schema='public' and table_name in ('consent_records','data_deletion_requests','agent_memories') order by table_name, ordinal_position"""), flush=True)
-          print('L2', q("""select conrelid::regclass as t, conname, pg_get_constraintdef(oid) as def from pg_constraint where conrelid in ('public.consent_records'::regclass,'public.data_deletion_requests'::regclass) order by 1,2"""), flush=True)
-          print('L3', q("""select count(*) c from public.consent_records"""), flush=True)
-          print('L4', q("""select count(*) c from public.data_deletion_requests"""), flush=True)
-          print('L5', q("""select proname, pg_get_function_identity_arguments(oid) args, prosecdef from pg_proc where pronamespace='public'::regnamespace and proname in ('consent_grant','consent_revoke')"""), flush=True)
+          print('C1', q("""select column_name, data_type, is_nullable from information_schema.columns where table_schema='public' and table_name='consent_records' order by ordinal_position"""), flush=True)
+          print('D1', q("""select column_name, data_type, is_nullable from information_schema.columns where table_schema='public' and table_name='data_deletion_requests' order by ordinal_position"""), flush=True)
+          print('M1', q("""select column_name from information_schema.columns where table_schema='public' and table_name='agent_memories' and column_name in ('user_id','workspace_id','agent_id')"""), flush=True)
+          print('T1', q("""select table_name, column_name from information_schema.columns where table_schema='public' and table_name in ('traces','agent_eval_runs','sessions') and column_name in ('user_id','workspace_id','created_by') order by 1"""), flush=True)
           PYEOF
