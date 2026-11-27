@@ -1,0 +1,51 @@
+name: aplicar-lgpd
+on:
+  push:
+    paths: ['.github/workflows/aplicar-lgpd.yml']
+  workflow_dispatch: {}
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: aplicar
+        run: |
+          python3 - <<'PYEOF'
+          import json,os,urllib.request,time
+          REF='qdlnzopxrlsoljcrcmzv'
+          TOK=os.environ['SUPABASE_ACCESS_TOKEN']
+          def q(sql):
+              for attempt in range(5):
+                  req=urllib.request.Request(f'https://api.supabase.com/v1/projects/{REF}/database/query',
+                      data=json.dumps({'query':sql}).encode(),
+                      headers={'Authorization':'Bearer '+TOK,'Content-Type':'application/json'},
+                      method='POST')
+                  try:
+                      return json.loads(urllib.request.urlopen(req,timeout=120).read().decode() or 'null'), None
+                  except urllib.error.HTTPError as e:
+                      body=e.read().decode()
+                      if e.code==429:
+                          time.sleep(5*(attempt+1)); continue
+                      return None, f'{e.code} {body[:400]}'
+                  except Exception as e:
+                      return None, str(e)
+              return None,'throttled'
+          ver='20261127150000'
+          stmts=[l.strip() for l in open('supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql',encoding='utf-8') if l.strip()]
+          falhas=0
+          for i,s in enumerate(stmts,1):
+              out,err=q(s)
+              if err:
+                  print(f'[{ver}] {i}/{len(stmts)} FALHA: {err}', flush=True); falhas+=1
+              else:
+                  print(f'[{ver}] {i}/{len(stmts)} ok', flush=True)
+          if falhas==0:
+              q("insert into supabase_migrations.schema_migrations (version, name) values ('"+ver+"','consent_records unique user purpose') on conflict do nothing")
+              print('ledger gravado', flush=True)
+          print('FALHAS:', falhas, flush=True)
+          print('IDX', q("select indexdef from pg_indexes where schemaname='public' and tablename='consent_records' and indexname='consent_records_user_purpose_uidx'"), flush=True)
+          print('LEDGER', q("select count(*) c from supabase_migrations.schema_migrations"), flush=True)
+          PYEOF
