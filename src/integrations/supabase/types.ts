@@ -58,6 +58,81 @@ export type Database = {
           },
         ]
       }
+      alert_rules: {
+        Row: {
+          agent_id: string | null
+          aggregation: string
+          channels: string[]
+          cooldown_minutes: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_enabled: boolean | null
+          last_triggered_at: string | null
+          metric: string
+          name: string
+          operator: string
+          severity: string | null
+          threshold: number
+          updated_at: string
+          window_minutes: number
+          workspace_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          aggregation?: string
+          channels?: string[]
+          cooldown_minutes?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          last_triggered_at?: string | null
+          metric: string
+          name: string
+          operator: string
+          severity?: string | null
+          threshold: number
+          updated_at?: string
+          window_minutes?: number
+          workspace_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          aggregation?: string
+          channels?: string[]
+          cooldown_minutes?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          last_triggered_at?: string | null
+          metric?: string
+          name?: string
+          operator?: string
+          severity?: string | null
+          threshold?: number
+          updated_at?: string
+          window_minutes?: number
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_rules_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alert_rules_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_eval_datasets: {
         Row: {
           agent_id: string | null
