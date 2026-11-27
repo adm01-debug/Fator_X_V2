@@ -7,6 +7,7 @@
   "bitrix24-webhook",
   "openclaw-webhook",
   "rag-embed-backfill",
+  "slack-agent-notify",
   "slack-events-webhook",
   "webhook-receiver",
   "whatsapp-router",
@@ -2331,8 +2332,8 @@
    "nome": "slack-agent-notify",
    "entrada": "supabase/functions/slack-agent-notify/index.ts",
    "arquivos": 1,
-   "linhas": 160,
-   "verify_jwt": true,
+   "linhas": 204,
+   "verify_jwt": false,
    "metodos": [
     "OPTIONS",
     "POST"
@@ -2341,8 +2342,12 @@
     "audit_events",
     "slack_agent_notifications"
    ],
-   "rpcs": [],
-   "env": [],
+   "rpcs": [
+    "is_workspace_admin"
+   ],
+   "env": [
+    "SLACK_NOTIFY_SECRET"
+   ],
    "buckets": [],
    "chama_edges": [],
    "hosts_externos": [
@@ -2355,8 +2360,8 @@
    ],
    "chamada_pelo_front": [],
    "chamada_por_edges": [],
-   "chamada_por_sql_ou_cron": false,
-   "orfa": true,
+   "chamada_por_sql_ou_cron": true,
+   "orfa": false,
    "testes": 0
   },
   {

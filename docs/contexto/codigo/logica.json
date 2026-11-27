@@ -725,7 +725,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 165,
+   "usado_por": 166,
    "usado_por_modulos": [
     "components/admin",
     "components/agent-builder",
@@ -848,7 +848,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 15499,
+   "linhas": 15573,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -4331,7 +4331,7 @@
     "simulateRule24h"
    ],
    "export_default": null,
-   "linhas": 218,
+   "linhas": 298,
    "tabelas": [],
    "rpcs": [],
    "edges": [],

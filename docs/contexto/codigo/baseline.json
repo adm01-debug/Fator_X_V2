@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "437f21deb18d77dd210b15efcfce900c3a30dcbc",
+  "commit": "c10942b86a0b99424e577efc8f013fdb7c97a543",
   "branch": "main",
-  "data_commit": "2026-11-27T05:13:27-03:00",
+  "data_commit": "2026-11-27T05:13:48-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "c10942b",
+    "data": "2026-11-27",
+    "assunto": "infra(banco): lote unico das 13 migrations pendentes em producao (#203)"
+   },
    {
     "sha": "437f21d",
     "data": "2026-11-27",
@@ -126,18 +131,13 @@
     "sha": "a77f3ba",
     "data": "2026-11-26",
     "assunto": "feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)"
-   },
-   {
-    "sha": "51fc68b",
-    "data": "2026-11-26",
-    "assunto": "feat(metricas): cobertura de embeddings dos chunks de documentos (#169)"
    }
   ],
-  "arquivos_mudados_7d": 162,
+  "arquivos_mudados_7d": 180,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 27
+    "mudancas": 28
    },
    {
     "pasta": "package-lock.json",
@@ -164,11 +164,11 @@
     "mudancas": 7
    },
    {
-    "pasta": ".github/workflows/edge-deploy.yml",
-    "mudancas": 6
+    "pasta": "src/integrations/supabase",
+    "mudancas": 7
    },
    {
-    "pasta": "src/integrations/supabase",
+    "pasta": ".github/workflows/edge-deploy.yml",
     "mudancas": 6
    },
    {
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 27
+    "mudancas": 28
    },
    {
     "arquivo": "package-lock.json",
@@ -227,7 +227,7 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 5
+    "mudancas": 6
    },
    {
     "arquivo": ".github/workflows/contexto.yml",
@@ -239,6 +239,10 @@
    },
    {
     "arquivo": "src/pages/FineTuningPage.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/config.toml",
     "mudancas": 4
    },
    {
@@ -259,6 +263,10 @@
    },
    {
     "arquivo": "supabase/functions/doc-rechunk/index.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "supabase/functions/slack-agent-notify/index.ts",
     "mudancas": 4
    },
    {
@@ -288,20 +296,12 @@
    {
     "arquivo": "CHANGELOG.md",
     "mudancas": 3
-   },
-   {
-    "arquivo": "scripts/automation.config.json",
-    "mudancas": 3
-   },
-   {
-    "arquivo": "src/components/layout/AppSidebar.tsx",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 98
+    "commits": 99
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2048,
+  "arquivos_total": 2063,
   "arquivos_codigo": 1482,
-  "linhas_codigo": 325793,
+  "linhas_codigo": 326015,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -322,8 +322,8 @@
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 328,
-  "migrations": 346,
-  "cron_jobs": 37,
+  "migrations": 361,
+  "cron_jobs": 39,
   "testes": 259,
   "workflows": 12,
   "scripts": 45,
@@ -492,7 +492,7 @@
   },
   "src/integrations": {
    "arquivos": 5,
-   "linhas": 15773
+   "linhas": 15847
   },
   "src/lib": {
    "arquivos": 93,
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 51793
+   "linhas": 51817
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -512,7 +512,7 @@
   },
   "src/services": {
    "arquivos": 171,
-   "linhas": 34221
+   "linhas": 34301
   },
   "src/stores": {
    "arquivos": 12,
@@ -532,7 +532,7 @@
   },
   "supabase/functions": {
    "arquivos": 138,
-   "linhas": 33397
+   "linhas": 33441
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -566,7 +566,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 15499
+   "linhas": 15573
   },
   {
    "arquivo": "src/pages/SLODashboard.tsx",
@@ -787,15 +787,12 @@
    "bitrix24-api",
    "bitrix24-oauth",
    "guardrails-engine",
-   "oracle-research",
-   "slack-agent-notify"
+   "oracle-research"
   ],
   "edges_chamadas_sem_pasta": [],
   "tabelas_sem_rls": [
    "agent_traces_v2_2026_12",
-   "agent_traces_v2_2027_01",
-   "agent_usage",
-   "prompt_versions"
+   "agent_traces_v2_2027_01"
   ],
   "tabelas_usadas_sem_definicao": [],
   "tabelas_com_drift_migration_vs_types": [
@@ -848,10 +845,7 @@
    "workspaces"
   ],
   "rpcs_sem_definicao": [
-   "disable_my_2fa",
-   "enable_my_2fa",
-   "exec_sql",
-   "hybrid_search_notebook"
+   "exec_sql"
   ],
   "componentes_orfaos": [
    "src/components/agents/AgentCardGrid.tsx",

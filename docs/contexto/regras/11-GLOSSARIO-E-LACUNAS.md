@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `437f21deb1` · branch `main` · 2026-11-27 08:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c10942b86a` · branch `main` · 2026-11-27 08:15 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -46,7 +46,7 @@
 | `agent_workflow_runs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `agent_workflows` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `agents` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
-| `alert_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `alert_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
 | `alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `api_keys` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `asset_audits` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
@@ -421,7 +421,6 @@ _nenhum item encontrado_
 | tabela | tabela `tools_runtime` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
 | tabela | tabela `tx` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | rls | `agent_daily_metrics`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/agentDailyMetricsService.ts` |
-| rls | `agent_usage`: acessada do front (4 arquivo(s)) sem RLS (não encontrado) | `src/services/agentsService.ts`<br>`src/services/billingService.ts`<br>`src/services/dashboardService.ts`<br>`src/services/skillbookAuditService.ts` |
 | rls | `agents`: acessada do front (26 arquivo(s)) sem RLS (não encontrado) | `src/components/agent-builder/HandoffPanel.tsx`<br>`src/components/agents/VersionDiffDialog.tsx`<br>`src/components/agents/wizard/QuickCreateWizard.tsx`<br>`src/components/billing/CostOptimizationPanel.tsx` |
 | rls | `compliance_controls`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | rls | `compliance_controls`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
@@ -429,7 +428,8 @@ _nenhum item encontrado_
 | rls | `forum_posts_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | rls | `forum_threads_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | rls | `oncall_schedule_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/incidentService.ts` |
-| rls | `prompt_versions`: acessada do front (3 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeService.ts`<br>`src/services/promptVersionService.ts`<br>`src/stores/agentBuilderStore.ts` |
+| rls | `prompt_versions`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/services/promptVersionService.ts`<br>`src/stores/agentBuilderStore.ts` |
+| rls | `prompt_versions`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/services/promptVersionService.ts` |
 | rls | `usage_records_cost_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/billingService.ts` |
 | rls | `workspace_members_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/teamsService.ts` |
 | edge | edge function `dashboard-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
@@ -459,6 +459,7 @@ _nenhum item encontrado_
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/lib/signedUrlCache.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/lib/supabaseExtended.ts` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/adminCrudService.ts` |
+| dinâmico | 4 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/alertRulesService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/test/crm-scoring-service.test.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/test/crm-service.test.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/test/fine-tuning-jobs.test.ts` |
@@ -474,9 +475,7 @@ _nenhum item encontrado_
 | segurança | função `audit_trigger_fn` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260420000002_fix_audit_trigger_fn_v2.sql` |
 | segurança | função `user_has_permission` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260405000002_rbac_system.sql` |
 | segurança | função `auto_assign_admin_role` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260405000002_rbac_system.sql` |
-| segurança | função `increment_skill_installs` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | segurança | função `create_partition_if_not_exists` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
-| segurança | função `is_mfa_valid_for_role` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | webhook | edge function `skill-harvester` processa eventos de webhook sem sinal de idempotência (evento duplicado = efeito duplicado) | `supabase/functions/skill-harvester/index.ts` |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)

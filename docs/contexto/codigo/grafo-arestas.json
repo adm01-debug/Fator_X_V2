@@ -6204,6 +6204,7 @@
    "src/lib/logger.ts"
   ],
   "src/services/alertRulesService.ts": [
+   "src/integrations/supabase/client.ts",
    "src/lib/alertMetrics.ts",
    "src/services/agentTracesService.ts"
   ],

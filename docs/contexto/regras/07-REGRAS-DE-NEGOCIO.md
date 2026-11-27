@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `437f21deb1` · branch `main` · 2026-11-27 08:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c10942b86a` · branch `main` · 2026-11-27 08:15 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `change_approvals` | Admins insert approvals | INSERT | public | permissive |  | `approver_id = auth.uid() AND EXISTS ( SELECT 1 FROM public.change_requests cr WHERE cr.id = change_id AND public.is_workspace_admin(auth.uid(), cr.workspace_id) )` |
 | `freeze_windows` | Members view freeze windows | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `freeze_windows` | Admins manage freeze windows | ALL | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` | `public.is_workspace_admin(auth.uid(), workspace_id)` |
-| … +342 linhas — lista completa em `context.json` | | | | | | |
+| … +351 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `deploy_connections` | `agent_id` | obrigatório; FK → agents.id ON DELETE CASCADE |
 | `deploy_connections` | `workspace_id` | FK → workspaces.id ON DELETE CASCADE |
 | `deploy_connections` | `channel` | obrigatório |
-| … +2269 linhas — lista completa em `context.json` | | |
+| … +2274 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -741,6 +741,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_restore_field_presets_updated_at | BEFORE UPDATE | `restore_field_presets` | `update_updated_at_column` |  |
 | trg_risk_review_event | AFTER INSERT | `risk_review_events` | `handle_risk_review_event` |  |
 | trg_secret_rotation_event | AFTER INSERT | `secret_rotation_events` | `handle_secret_rotation_event` |  |
+| trg_notify_slack_on_trace_end | AFTER INSERT | `traces` | `notify_slack_on_agent_run` | `NEW.status = 'error'` |
+| trg_notify_slack_on_agent_trace | AFTER INSERT | `agent_traces` | `notify_slack_on_agent_run` | `NEW.event IN ('run_completed', 'run_failed')` |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -837,8 +839,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `audit_asset` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | `decommission_asset` | asset not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | `decommission_asset` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
-| `get_workspace_members_full` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
-| `get_oncall_with_contacts` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | `get_pending_invites_for_email` | forbidden: can only query own invites | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | `invite_workspace_member` | forbidden: only admins can invite members | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | `validate_oncall_workspace_consistency` | User % is not a member of workspace % | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
@@ -875,6 +875,16 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `smoke_test_connections_saturation` | detector ausente | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
 | `smoke_test_wal_growth` | detector ausente | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
 | `get_db_health_timeseries` | permission denied | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `enable_my_2fa` | not authenticated | `supabase/migrations/20261129000000_2fa_operante.sql` |
+| `enable_my_2fa` | secret obrigatório | `supabase/migrations/20261129000000_2fa_operante.sql` |
+| `enable_my_2fa` | código inválido | `supabase/migrations/20261129000000_2fa_operante.sql` |
+| `enable_my_2fa` | códigos de recuperação obrigatórios | `supabase/migrations/20261129000000_2fa_operante.sql` |
+| `enable_my_2fa` | código inválido | `supabase/migrations/20261129000000_2fa_operante.sql` |
+| `disable_my_2fa` | not authenticated | `supabase/migrations/20261129000000_2fa_operante.sql` |
+| `verify_my_2fa` | not authenticated | `supabase/migrations/20261129000000_2fa_operante.sql` |
+| `get_workspace_members_full` | forbidden: workspace admin required | `supabase/migrations/20261129001000_consertar_membros_e_oncall.sql` |
+| `get_oncall_with_contacts` | forbidden: workspace admin required | `supabase/migrations/20261129001000_consertar_membros_e_oncall.sql` |
+| `check_budget` | forbidden | `supabase/migrations/20261129006000_check_budget_guarda_escopo.sql` |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -2366,7 +2376,7 @@ _nenhum item encontrado_
 | `internal.write_amplification_report` | `WITH latest_tbl AS ( SELECT DISTINCT ON (schemaname, relname) * FROM internal.table_activity_snapshots ORDER BY schemaname, relname, captured_at DESC ), prev_tbl AS ( SELECT DISTINCT ON (schemaname, relname) * FROM internal.table_activity_snapshots WHERE captured_at < now() - interval '20 hours' ORD …` |
 | `llm_cost_by_caller` | `SELECT ur.workspace_id, COALESCE(NULLIF(ur.metadata->>'caller',''), 'external') AS caller, COALESCE(ur.metadata->>'provider', 'unknown') AS provider, COALESCE(ur.metadata->>'model', 'unknown') AS model, date_trunc('day', ur.created_at) AS day, COUNT(*) AS calls, SUM(ur.tokens)::bigint AS tokens, SUM …` |
 | `knowledge_graph_health` | `WITH ent AS ( SELECT workspace_id, id, entity_type, updated_at, properties FROM public.knowledge_entities WHERE workspace_id IS NOT NULL ), rel AS ( SELECT ke.workspace_id, kr.source_id, kr.target_id FROM public.knowledge_relations kr JOIN public.knowledge_entities ke ON ke.id = kr.source_id WHERE k …` |
-| `knowledge_graph_health_v` | `SELECT h.* FROM public.knowledge_graph_health h WHERE EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = h.workspace_id AND wm.user_id = auth.uid() )` |
+| `knowledge_graph_health_v` | `SELECT h.* FROM public.knowledge_graph_health h WHERE EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = h.workspace_id AND wm.user_id = (SELECT auth.uid()) )` |
 | `slack_dispatch_health` | `SELECT workspace_id, COALESCE(SUM((metadata->>'successes')::int), 0)::bigint AS successes, COALESCE(SUM((metadata->>'failures')::int), 0)::bigint AS failures, COUNT(*)::bigint AS total_dispatches, MAX(created_at) AS last_dispatch_at FROM public.audit_events WHERE event_type = 'slack_integration' AND …` |
 | `slack_dlq_stats` | `SELECT workspace_id, COUNT(*) FILTER (WHERE resolved_at IS NULL AND attempts < 5) AS pending, COUNT(*) FILTER (WHERE resolved_at IS NULL AND attempts >= 5) AS dead, COUNT(*) FILTER (WHERE resolved_at IS NOT NULL) AS resolved, MAX(created_at) FILTER (WHERE resolved_at IS NULL) AS oldest_pending_at, M …` |
 | `_audit_security_definer` | `SELECT p.proname AS function_name, n.nspname AS schema, pg_get_functiondef(p.oid) LIKE '%SET search_path%' AS has_search_path, NOT (pg_get_functiondef(p.oid) LIKE '%SET search_path%') AND p.prokind = 'f' AS needs_review, obj_description(p.oid, 'pg_proc') AS comment, array_to_string( NULLIF(current_s …` |
@@ -3192,6 +3202,7 @@ _nenhum item encontrado_
 | `MAX_DRAFTS_PER_AGENT` | `20` | `src/services/agentDraftVersionsService.ts` |
 | `INSTALLED_LIMIT` | `100` | `src/services/agentPromptSimulationService.ts` |
 | `ROW_LIMIT` | `5000` | `src/services/agentSkillLoadService.ts` |
+| `TABLE` | `'alert_rules'` | `src/services/alertRulesService.ts` |
 | `EVT` | `"cerebro:bookmarks-changed"` | `src/services/bookmarksService.ts` |
 | `MAX_PROBABILITY` | `0.5` | `src/services/chaosService.ts` |
 | `MAX_DURATION_SEC` | `3600` | `src/services/chaosService.ts` |
@@ -3616,6 +3627,10 @@ _nenhum item encontrado_
 | `CREATE OR REPLACE FUNCTION internal.test_partition_automation() RETURNS TABLE(test_name text, passed boolean, details text) LANGUAGE plpgsql SECURITY DEFINER SE …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
 | `CREATE OR REPLACE VIEW internal.write_amplification_report AS WITH latest_tbl AS ( SELECT DISTINCT ON (schemaname, relname) * FROM internal.table_activity_snaps …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
 | `CREATE OR REPLACE FUNCTION internal.ensure_monthly_partitions(p_months_ahead integer DEFAULT 12) RETURNS TABLE(created_partition text) LANGUAGE plpgsql SECURITY …` | `supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql` |
+| `AND triggered_at >= now() - interval '1 hour'` | `supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql` |
+| `WHERE t.created_at >= now() - interval '1 hour'` | `supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql` |
+| `WHERE t.created_at >= now() - interval '14 days'` | `supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql` |
+| `WHERE tt.created_at >= now() - interval '14 days'` | `supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql` |
 
 ### H.3 Limites de paginação
 
@@ -4039,7 +4054,7 @@ _nenhum item encontrado_
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +544 linhas — lista completa em `context.json` | |
+| … +549 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4491,6 +4506,8 @@ _nenhum item encontrado_
 | `notify_anpd_on_breach` | `supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql` |
 | `notify_emails` | `supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql` |
 | `notify_on` | `supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql` |
+| `notify` | `supabase/migrations/20261128000000_slack_agent_notify_trigger.sql` |
+| `notify_slack_on_agent_run` | `supabase/migrations/20261128000000_slack_agent_notify_trigger.sql` |
 
 ## N. Regras citadas em comentários do código
 
@@ -4796,4 +4813,4 @@ _nenhum item encontrado_
 | * Mesma regra do fallback de classificação, e pelo mesmo motivo: 402 (créditos) | `src/services/skillEnrichmentService.ts` |
 | * Onde o próximo lote deve começar. */ | `src/services/skillHarvestService.ts` |
 | Falha de rede não pode derrubar a varredura: o local já guardou o avanço. | `src/services/skillHarvestService.ts` |
-| … +180 linhas — lista completa em `context.json` | |
+| … +182 linhas — lista completa em `context.json` | |

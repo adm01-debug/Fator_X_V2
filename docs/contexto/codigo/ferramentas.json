@@ -4,7 +4,7 @@
  "stack": {
   "linguagens": [
    "TypeScript (1424)",
-   "SQL (349)",
+   "SQL (364)",
    "Markdown (134)",
    "JavaScript (54)",
    "JSON (25)",
@@ -997,6 +997,7 @@
    "SB_FUNCTION_NAME",
    "SLACK_ALERT_WEBHOOK_URL",
    "SLACK_BOT_TOKEN",
+   "SLACK_NOTIFY_SECRET",
    "SUPABASE_ANON_KEY",
    "SUPABASE_SERVICE_ROLE_KEY",
    "SUPABASE_URL",
@@ -1390,6 +1391,7 @@
    "RESEND_API_KEY",
    "SLACK_ALERT_WEBHOOK_URL",
    "SLACK_BOT_TOKEN",
+   "SLACK_NOTIFY_SECRET",
    "SLACK_SIGNING_SECRET",
    "TWILIO_AUTH_TOKEN",
    "VITE_LANGFUSE_SECRET_KEY",
@@ -1406,6 +1408,7 @@
    "bitrix24-webhook",
    "openclaw-webhook",
    "rag-embed-backfill",
+   "slack-agent-notify",
    "slack-events-webhook",
    "webhook-receiver",
    "whatsapp-router",
@@ -1773,9 +1776,7 @@
   "menu_com_papeis": [],
   "tabelas_sem_rls": [
    "agent_traces_v2_2026_12",
-   "agent_traces_v2_2027_01",
-   "agent_usage",
-   "prompt_versions"
+   "agent_traces_v2_2027_01"
   ]
  },
  "feature_flags": {

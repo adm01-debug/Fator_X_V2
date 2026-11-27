@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `437f21deb18d77dd210b15efcfce900c3a30dcbc` (2026-11-27T05:13:27-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c10942b86a0b99424e577efc8f013fdb7c97a543` (2026-11-27T05:13:48-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1424), SQL (349), Markdown (134), JavaScript (54), JSON (25), YAML (18), Shell (10), Python (5)
+- linguagens: TypeScript (1424), SQL (364), Markdown (134), JavaScript (54), JSON (25), YAML (18), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2048 |
+| arquivos_total | 2063 |
 | arquivos_codigo | 1482 |
-| linhas_codigo | 325793 |
+| linhas_codigo | 326015 |
 | rotas | 152 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -46,8 +46,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 76 |
 | edge_functions | 88 |
 | tabelas | 328 |
-| migrations | 346 |
-| cron_jobs | 37 |
+| migrations | 361 |
+| cron_jobs | 39 |
 | testes | 259 |
 | workflows | 12 |
 | scripts | 45 |
@@ -340,7 +340,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `skill-classify-llm` — tabelas: -; chamada por 1 arquivo(s) do front
 - `skill-describe-llm` — tabelas: -; chamada por 1 arquivo(s) do front
 - `skill-harvester` — tabelas: skill_harvest_candidates, skill_harvest_runs; chamada por 1 arquivo(s) do front
-- `slack-agent-notify` — tabelas: audit_events, slack_agent_notifications; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `slack-agent-notify` (verify_jwt=false) — tabelas: audit_events, slack_agent_notifications; chamada por 0 arquivo(s) do front, por SQL/cron
 - `slack-alert-dispatcher` — tabelas: audit_events, slack_channel_routes, slack_dispatch_dlq; chamada por 2 arquivo(s) do front, por SQL/cron
 - `slack-dlq-discard` — tabelas: slack_dispatch_dlq; chamada por 1 arquivo(s) do front
 - `slack-dlq-retry` — tabelas: slack_dispatch_dlq; chamada por 1 arquivo(s) do front, por SQL/cron
@@ -386,12 +386,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `pg-net-smoke-hourly` 7 * * * * (20260711150423_bba9de7c-1db3-4f2d-b5b6-0d350a14cd37.sql)
 - `prune-db-health-samples-daily` 20 3 * * * (20260722145902_bffbbc2f-7da7-4f0e-b6a8-be6145c81fd8.sql)
 - `prune-perf-snapshots` 0 4 * * 0 (20260712110111_d29cf27d-e265-45e4-9c07-ea47c7556b1d.sql)
+- `prune-traces-retention-daily` 10 3 * * * (20261129002000_agendar_retencao_traces.sql)
 - `prune-wal-snapshots` 17 3 * * * (20260712221141_8e272b4f-54a1-4f81-be5c-3f8cc75c1f27.sql)
 - `purge-crm-cadence-runs-daily` 17 4 * * * (20260726204455_55304cd4-8c37-46ac-85cf-57b2bdd78169.sql)
 - `purge-stale-harvest-checkpoints` 17 * * * * (20260728173157_f38e019d-7b41-4e45-b713-45fdd1057cbc.sql)
 - `purge-template-skill-links-daily` 20 3 * * * (20260727222828_0e04ba87-95df-4fb1-a15f-c0f1884b826b.sql)
 - `refresh-agent-daily-metrics` */15 * * * * (20260711184857_ce70aa1d-6251-4af5-875c-aab67f442443.sql)
 - `reset-pg-stat-statements-weekly` 0 4 * * 0 (20260722131714_a629dcc0-0085-420c-b3e8-cd4aa9ba2a44.sql)
+- `retention-job-health-watchdog` 40 * * * * (20261129002000_agendar_retencao_traces.sql)
 - `retention-traces-watchdog` 5 * * * * (20260711145341_79d9091c-8cdd-400d-9a95-7be037c213ef.sql)
 - `sample-rollback-stats` * * * * * (20260712220719_3fc26932-b5a6-4238-964a-fec84c988444.sql)
 - `sample-wal-stats` * * * * * (20260712221141_8e272b4f-54a1-4f81-be5c-3f8cc75c1f27.sql)
@@ -406,8 +408,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
 - hosts mais citados: router.huggingface.co, openrouter.ai, api.openai.com, huggingface.co, api.anthropic.com, generativelanguage.googleapis.com, nexus.promobrindes.com.br, qdlnzopxrlsoljcrcmzv.supabase.co, slack.com, ai.gateway.lovable.dev, api-inference.huggingface.co, api.cohere.ai, api.exemplo.com, api.hermes.ai, api.resend.com
-- webhooks recebidos: bitrix24-webhook, openclaw-webhook, rag-embed-backfill, slack-events-webhook, webhook-receiver, whatsapp-router, whatsapp-webhook, widget-proxy
-- env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, GOOGLE_MAPS_API_KEY, HERMES_API_KEY, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, MAPBOX_ACCESS_TOKEN, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, OPENROUTER_API_KEY, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
+- webhooks recebidos: bitrix24-webhook, openclaw-webhook, rag-embed-backfill, slack-agent-notify, slack-events-webhook, webhook-receiver, whatsapp-router, whatsapp-webhook, widget-proxy
+- env de integração (só nomes): ANTHROPIC_API_KEY, BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, COHERE_API_KEY, GITHUB_API_KEY, GITHUB_TOKEN, GOOGLE_MAPS_API_KEY, HERMES_API_KEY, HF_API_TOKEN, HUGGINGFACE_API_KEY, LOVABLE_API_KEY, MAPBOX_ACCESS_TOKEN, OPENAI_API_KEY, OPENCLAW_API_TOKEN, OPENCLAW_WEBHOOK_SECRET, OPENROUTER_API_KEY, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_BOT_TOKEN, SLACK_NOTIFY_SECRET, SLACK_SIGNING_SECRET, TWILIO_AUTH_TOKEN, VITE_LANGFUSE_SECRET_KEY, VITE_SENTRY_DSN, WHATSAPP_API_KEY, WHATSAPP_API_URL, WHATSAPP_EVOLUTION_TOKEN, WHATSAPP_INSTANCE, WHATSAPP_META_APP_SECRET, WHATSAPP_TWILIO_AUTH_TOKEN, WHATSAPP_ZAPI_TOKEN
 
 ## Permissões / papéis
 - papéis no código: user (61), button (45), system (42), status (31), alert (17), assistant (15), group (7), tab (7), tablist (7), admin (6), listbox (6), option (6), progressbar (5), radio (5), radiogroup (5), dialog (4), region (4), agent (2), anon (2), editor (2), img (2), log (2), navigation (2), presentation (2), service_role (2), article (1), ausente (1), authenticated (1), banner (1), combobox (1), finance (1), link (1), list (1), logistics (1), manager (1), menuitem (1), owner (1), purchasing (1), sales (1), searchbox (1), separator (1), string (1), sup (1), superadmin (1), support (1), switch (1), textbox (1), tool (1), toolbar (1), viewer (1), workspace_admin (1)
@@ -419,12 +421,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - rotas_sem_arquivo: 0
 - componentes_ambiguos: 0
 - menu_sem_destino: 7 — ex.: Coleções -> collections, Especialistas -> experts, Fatos -> facts
-- edges_orfas: 5 — ex.: bitrix24-api, bitrix24-oauth, guardrails-engine
+- edges_orfas: 4 — ex.: bitrix24-api, bitrix24-oauth, guardrails-engine
 - edges_chamadas_sem_pasta: 0
-- tabelas_sem_rls: 4 — ex.: agent_traces_v2_2026_12, agent_traces_v2_2027_01, agent_usage
+- tabelas_sem_rls: 2 — ex.: agent_traces_v2_2026_12, agent_traces_v2_2027_01
 - tabelas_usadas_sem_definicao: 0
 - tabelas_com_drift_migration_vs_types: 47 — ex.: agent_installed_skills, agent_memories, agent_memories_v2
-- rpcs_sem_definicao: 4 — ex.: disable_my_2fa, enable_my_2fa, exec_sql
+- rpcs_sem_definicao: 1 — ex.: exec_sql
 - componentes_orfaos: 36 — ex.: src/components/agents/AgentCardGrid.tsx, src/components/agents/detail/SLOPanel.tsx, src/components/agents/wizard/WizardStepComponents.tsx
 - componentes_com_nome_duplicado: 18 — ex.: AddressCard, CommandPalette, CrossDbResults
 - scripts_orfaos: 0
@@ -433,27 +435,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15504 nós · 39500 arestas · 1364 comunidades · grafo do commit `437f21de`
-- comunidades maiores: react (343), lucide-react (287), cn (223), App.tsx (216), ref_https (200), QuickCreateWizard.tsx (136), tabs.tsx (134), whatsapp-webhook/index.ts (119), mod.ts (117), fetchWithTimeout (111), getWorkspaceId (105), notesService.ts (104)
+- 15559 nós · 39547 arestas · 1405 comunidades · grafo do commit `c10942b8`
+- comunidades maiores: lucide-react (339), button.tsx (326), ref_https (217), App.tsx (209), @tanstack/react-query (166), react (144), QuickCreateWizard.tsx (134), mod.ts (105), cn (102), whatsapp-webhook/index.ts (101), services/index.ts (94), vitest (93)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- supabase/deployment-manifest.json (27)
+- supabase/deployment-manifest.json (28)
 - package-lock.json (26)
 - package.json (24)
 - .github/workflows/ci.yml (9)
 - docs/migration/MATRIZ_EDGE_TABELA.md (7)
 - supabase/functions/llm-gateway/index.ts (7)
 - .github/workflows/edge-deploy.yml (6)
-- src/integrations/supabase/types.ts (5)
+- src/integrations/supabase/types.ts (6)
 - .github/workflows/contexto.yml (4)
 - .github/workflows/guards.yml (4)
 - src/pages/FineTuningPage.tsx (4)
+- supabase/config.toml (4)
 - supabase/functions/agent-conversational-builder/index.ts (4)
 - supabase/functions/agent-workflow-runner/index.ts (4)
 - supabase/functions/code-interpreter-execute/index.ts (4)
-- supabase/functions/crm-enrich/index.ts (4)
 
 ## Workflows
 - `anti-stale-dependabot.yml` — Anti-stale dependabot (schedule, workflow_dispatch; cron 42 6 * * 5)
@@ -581,6 +583,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `c10942b` infra(banco): lote unico das 13 migrations pendentes em producao (#203)
 - 2026-11-27 `437f21d` infra(banco): workflow manual para aplicar migrations com dry-run e trava APLICAR (#206)
 - 2026-11-27 `046466f` feat(conhecimento): aba de saúde dos embeddings com reprocessamento de chunks travados (#205)
 - 2026-11-27 `98dda83` feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)
@@ -595,7 +598,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `1e1eaf2` feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)
 - 2026-11-26 `91e02fc` fix(lgpd): conserta exclusão, consentimento e anonimização contra o schema real (#179)
 - 2026-11-26 `ddbccc8` fix(forum): tira rascunho das views safe do forum (#163)
-- 2026-11-26 `37702c7` fix(ci): guard de drift deixa de bloquear todo PR com migration nova (#165)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

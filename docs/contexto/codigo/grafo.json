@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 1223,
- "arestas": 5320,
+ "arestas": 5321,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -26,7 +26,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 165
+   "importado_por": 166
   },
   {
    "arquivo": "src/lib/utils.ts",

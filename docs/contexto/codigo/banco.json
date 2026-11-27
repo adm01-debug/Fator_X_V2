@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 346,
+ "migrations": 361,
  "seeds": [],
  "avisos": [
   "455 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -189,6 +189,7 @@
   "audit_asset",
   "audit_trigger_fn",
   "auto_assign_admin_role",
+  "base32_decode",
   "check_auth_security",
   "check_budget",
   "check_budget_alert",
@@ -198,7 +199,6 @@
   "chunks_update_bm25",
   "claim_due_cadence_enrollments",
   "cleanup_auth_attempts",
-  "cleanup_old_auth_attempts",
   "cleanup_rate_limit_entries",
   "close_risk",
   "collections_fill_workspace",
@@ -217,6 +217,8 @@
   "detect_cost_anomalies",
   "detect_slow_queries_and_alert",
   "disable_all_chaos",
+  "disable_my_2fa",
+  "enable_my_2fa",
   "encrypt_secret_value",
   "enforce_budget",
   "enforce_freeze_window",
@@ -271,6 +273,7 @@
   "hybrid_memory_search",
   "hybrid_memory_search_notebook",
   "hybrid_search",
+  "hybrid_search_notebook",
   "increment_skill_installs",
   "increment_template_installs",
   "increment_version_column",
@@ -297,6 +300,7 @@
   "memory_relevance",
   "normalize_skill_department_provenance",
   "normalize_skill_meta_collection",
+  "notify_slack_on_agent_run",
   "offboard_vendor",
   "pg_net_schema",
   "pg_net_smoke_post",
@@ -343,6 +347,7 @@
   "submit_change_request",
   "template_skill_links_set_actor",
   "tg_notebook_canvases_updated_at",
+  "totp_matches",
   "touch_agent_routing_updated_at",
   "touch_chat_thread",
   "touch_document_ingestions",
@@ -361,7 +366,8 @@
   "validate_table_names_for_drill",
   "verify_api_key",
   "verify_api_key_bcrypt",
-  "verify_cron_token"
+  "verify_cron_token",
+  "verify_my_2fa"
  ],
  "triggers": [
   {
@@ -421,6 +427,13 @@
    "funcao": "trg_auto_partition"
   },
   {
+   "nome": "trg_notify_slack_on_agent_trace",
+   "quando": "after",
+   "evento": "insert",
+   "tabela": "agent_traces",
+   "funcao": "notify_slack_on_agent_run"
+  },
+  {
    "nome": "trg_agent_workflows_updated",
    "quando": "before",
    "evento": "update",
@@ -433,6 +446,13 @@
    "evento": "update",
    "tabela": "agents",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "alert_rules_set_updated_at",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "alert_rules",
+   "funcao": "set_updated_at"
   },
   {
    "nome": "update_api_keys_updated_at",
@@ -1121,6 +1141,13 @@
    "funcao": "update_updated_at_column"
   },
   {
+   "nome": "trg_notify_slack_on_trace_end",
+   "quando": "after",
+   "evento": "insert",
+   "tabela": "traces",
+   "funcao": "notify_slack_on_agent_run"
+  },
+  {
    "nome": "trg_usage_update_budget",
    "quando": "after",
    "evento": "insert",
@@ -1298,6 +1325,11 @@
    "migration": "20260712110111_d29cf27d-e265-45e4-9c07-ea47c7556b1d.sql"
   },
   {
+   "nome": "prune-traces-retention-daily",
+   "agenda": "10 3 * * *",
+   "migration": "20261129002000_agendar_retencao_traces.sql"
+  },
+  {
    "nome": "prune-wal-snapshots",
    "agenda": "17 3 * * *",
    "migration": "20260712221141_8e272b4f-54a1-4f81-be5c-3f8cc75c1f27.sql"
@@ -1326,6 +1358,11 @@
    "nome": "reset-pg-stat-statements-weekly",
    "agenda": "0 4 * * 0",
    "migration": "20260722131714_a629dcc0-0085-420c-b3e8-cd4aa9ba2a44.sql"
+  },
+  {
+   "nome": "retention-job-health-watchdog",
+   "agenda": "40 * * * *",
+   "migration": "20261129002000_agendar_retencao_traces.sql"
   },
   {
    "nome": "retention-traces-watchdog",
@@ -3876,6 +3913,24 @@
    "rls": true,
    "policies": [
     {
+     "nome": "Admin do workspace le as traces",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Dono insere traces dos proprios agentes",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Dono le as proprias traces",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "Users can see their own traces",
      "comando": "select",
      "para": "public",
@@ -3944,7 +3999,8 @@
     "smolagent-runtime"
    ],
    "triggers": [
-    "trg_agent_traces_partition"
+    "trg_agent_traces_partition",
+    "trg_notify_slack_on_agent_trace"
    ],
    "sem_rls": false,
    "nao_usada": false
@@ -4575,8 +4631,14 @@
      "ref": null
     }
    },
-   "rls": false,
+   "rls": true,
    "policies": [
+    {
+     "nome": "Admin do workspace le o uso",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "Users can delete own usage",
      "comando": "delete",
@@ -4598,6 +4660,18 @@
     {
      "nome": "Users can view own usage",
      "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Usuario le o proprio uso",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Usuario registra o proprio uso",
+     "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     }
@@ -4658,7 +4732,7 @@
     "llm-gateway"
    ],
    "triggers": [],
-   "sem_rls": true,
+   "sem_rls": false,
    "nao_usada": false
   },
   "agent_versions": {
@@ -5359,6 +5433,27 @@
   },
   "alert_rules": {
    "colunas": {
+    "agent_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "agents"
+    },
+    "aggregation": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'avg'",
+     "ref": null
+    },
+    "channels": {
+     "tipo": "text[]",
+     "nn": true,
+     "pk": false,
+     "default": "ARRAY['toast']::TEXT[]",
+     "ref": null
+    },
     "cooldown_minutes": {
      "tipo": "integer",
      "nn": false,
@@ -5371,6 +5466,13 @@
      "nn": false,
      "pk": false,
      "default": "now()",
+     "ref": null
+    },
+    "description": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
      "ref": null
     },
     "id": {
@@ -5429,6 +5531,20 @@
      "default": null,
      "ref": null
     },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "window_minutes": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "60",
+     "ref": null
+    },
     "workspace_id": {
      "tipo": "uuid",
      "nn": false,
@@ -5448,18 +5564,49 @@
    ],
    "indices": [
     {
+     "nome": "idx_alert_rules_agent_id",
+     "colunas": "agent_id, created_at DESC",
+     "unico": false
+    },
+    {
      "nome": "idx_alert_rules_workspace_id",
      "colunas": "workspace_id",
      "unico": false
     }
    ],
    "fks": [
+    "agent_id->agents",
     "workspace_id->workspaces"
    ],
    "criada_em": "20260401200000_implement_all_features.sql",
+   "colunas_types": {
+    "agent_id": "string | null",
+    "aggregation": "string",
+    "channels": "string[]",
+    "cooldown_minutes": "number | null",
+    "created_at": "string | null",
+    "description": "string | null",
+    "id": "string",
+    "is_enabled": "boolean | null",
+    "last_triggered_at": "string | null",
+    "metric": "string",
+    "name": "string",
+    "operator": "string",
+    "severity": "string | null",
+    "threshold": "number",
+    "updated_at": "string",
+    "window_minutes": "number",
+    "workspace_id": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
    "usada_no_front": 0,
    "usada_em_edges": [],
-   "triggers": [],
+   "triggers": [
+    "alert_rules_set_updated_at"
+   ],
    "sem_rls": false,
    "nao_usada": true
   },
@@ -27474,8 +27621,26 @@
      "ref": null
     }
    },
-   "rls": false,
+   "rls": true,
    "policies": [
+    {
+     "nome": "Admin do workspace le as versoes",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Dono grava versoes dos proprios agentes",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Dono le as versoes dos proprios agentes",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "Users can delete own prompt versions",
      "comando": "delete",
@@ -27538,7 +27703,7 @@
    "usada_no_front": 3,
    "usada_em_edges": [],
    "triggers": [],
-   "sem_rls": true,
+   "sem_rls": false,
    "nao_usada": false
   },
   "public": {
@@ -34910,7 +35075,9 @@
     "_shared",
     "lgpd-manager"
    ],
-   "triggers": [],
+   "triggers": [
+    "trg_notify_slack_on_trace_end"
+   ],
    "sem_rls": false,
    "nao_usada": false
   },
@@ -39493,12 +39660,12 @@
   },
   {
    "nome": "disable_my_2fa",
-   "definida": false,
+   "definida": true,
    "usada_em": 1
   },
   {
    "nome": "enable_my_2fa",
-   "definida": false,
+   "definida": true,
    "usada_em": 1
   },
   {
@@ -39673,7 +39840,7 @@
   },
   {
    "nome": "hybrid_search_notebook",
-   "definida": false,
+   "definida": true,
    "usada_em": 1
   },
   {
@@ -39699,7 +39866,7 @@
   {
    "nome": "is_workspace_admin",
    "definida": true,
-   "usada_em": 4
+   "usada_em": 5
   },
   {
    "nome": "log_audit_entry",

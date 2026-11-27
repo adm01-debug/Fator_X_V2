@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "437f21deb18d77dd210b15efcfce900c3a30dcbc",
+  "sha": "c10942b86a0b99424e577efc8f013fdb7c97a543",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 08:14 UTC",
-  "files_total": 2053,
-  "code_files": 1832,
-  "code_lines": 368238
+  "generated_at": "2026-11-27 08:15 UTC",
+  "files_total": 2068,
+  "code_files": 1847,
+  "code_lines": 369850
  },
  "version": "1.3.2",
- "facts_hash": "1ca32c778797f5a1",
+ "facts_hash": "bbd248902f53b77a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -256,7 +256,7 @@
   "languages": {
    ".ts": 713,
    ".tsx": 711,
-   ".sql": 349,
+   ".sql": 364,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -272,7 +272,8 @@
     "widget-proxy",
     "bitrix24-webhook",
     "whatsapp-webhook",
-    "webhook-receiver"
+    "webhook-receiver",
+    "slack-agent-notify"
    ],
    "auth": {}
   },
@@ -3349,6 +3350,48 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20260401200000_implement_all_features.sql"
+     },
+     {
+      "name": "agent_id",
+      "type": "UUID REFERENCES public.agents(id) ON DELETE CASCADE",
+      "fk": "agents.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20261129012000_alert_rules_banco.sql"
+     },
+     {
+      "name": "aggregation",
+      "type": "string not null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "channels",
+      "type": "string[] not null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "description",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "updated_at",
+      "type": "string not null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "window_minutes",
+      "type": "number not null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
      }
     ],
     "constraints": [],
@@ -37759,6 +37802,96 @@
     "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
     "check": "",
     "src": "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql"
+   },
+   {
+    "name": "Dono le as proprias traces",
+    "table": "agent_traces",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND a.user_id = (SELECT auth.uid()) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Admin do workspace le as traces",
+    "table": "agent_traces",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Dono insere traces dos proprios agentes",
+    "table": "agent_traces",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND a.user_id = (SELECT auth.uid()) )",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Usuario le o proprio uso",
+    "table": "agent_usage",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = (SELECT auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Admin do workspace le o uso",
+    "table": "agent_usage",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_usage.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Usuario registra o proprio uso",
+    "table": "agent_usage",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "user_id = (SELECT auth.uid())",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Dono le as versoes dos proprios agentes",
+    "table": "prompt_versions",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND a.user_id = (SELECT auth.uid()) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Admin do workspace le as versoes",
+    "table": "prompt_versions",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Dono grava versoes dos proprios agentes",
+    "table": "prompt_versions",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND a.user_id = (SELECT auth.uid()) )",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
    }
   ],
   "triggers": [
@@ -38823,6 +38956,24 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql"
+   },
+   {
+    "name": "trg_notify_slack_on_trace_end",
+    "when": "AFTER INSERT",
+    "table": "traces",
+    "function": "notify_slack_on_agent_run",
+    "condition": "NEW.status = 'error'",
+    "each": "row",
+    "src": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql"
+   },
+   {
+    "name": "trg_notify_slack_on_agent_trace",
+    "when": "AFTER INSERT",
+    "table": "agent_traces",
+    "function": "notify_slack_on_agent_run",
+    "condition": "NEW.event IN ('run_completed', 'run_failed')",
+    "each": "row",
+    "src": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql"
    }
   ],
   "functions": {
@@ -38883,19 +39034,6 @@
      "v_timeseries",
      "v_top_agents",
      "v_total"
-    ]
-   },
-   "cleanup_old_auth_attempts": {
-    "args": "",
-    "returns": "VOID",
-    "lang": "plpgsql",
-    "src": "supabase/migrations/20260513175210_4dba7ebe-924a-4906-af1c-31e94145799f.sql",
-    "security_definer": false,
-    "search_path": false,
-    "body": "BEGIN DELETE FROM public.auth_attempts WHERE created_at < (now() - interval '24 hours'); END;",
-    "raises": [],
-    "tables": [
-     "auth_attempts"
     ]
    },
    "log_audit_entry": {
@@ -39088,12 +39226,14 @@
     "args": "p_skill_id UUID",
     "returns": "VOID",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
     "security_definer": true,
-    "search_path": false,
-    "body": "BEGIN UPDATE public.skill_registry SET install_count = install_count + 1 WHERE id = p_skill_id; END;",
+    "search_path": true,
+    "body": "DECLARE v_uid UUID := auth.uid(); BEGIN IF v_uid IS NOT NULL AND NOT EXISTS ( SELECT 1 FROM public.agent_installed_skills ais JOIN public.agents a ON a.id = ais.agent_id WHERE ais.skill_id = p_skill_id AND ( a.user_id = v_uid OR a.workspace_id IN (SELECT public.get_user_workspace_ids(v_uid)) ) ) THEN RETURN; END IF; UPDATE public.skill_registry SET install_count = install_count + 1 WHERE id = p_skill_id; END;",
     "raises": [],
     "tables": [
+     "agent_installed_skills",
+     "agents",
      "skill_registry"
     ]
    },
@@ -39371,10 +39511,10 @@
     "args": "",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_inserted INTEGER := 0; BEGIN INSERT INTO public.cost_baselines (workspace_id, scope, scope_id, hour_of_day, day_of_week, avg_cost_usd, stddev_cost_usd, sample_count, computed_at) SELECT a.workspace_id, 'workspace', NULL, EXTRACT(HOUR FROM t.created_at)::int, EXTRACT(DOW FROM t.created_at)::int, COALESCE(AVG(hourly_cost), 0), COALESCE(STDDEV(hourly_cost), 0), COUNT(*) FROM ( SELECT tt.agent_id, date_trunc('hour', tt.created_at) AS hour_bucket, tt.created_at, SUM(tt.cost_usd) AS hourly_cost FROM public.agent_traces tt WHERE tt.created_at >= now() - interval '14 days' AND tt.cost_usd IS NOT NULL GROUP BY tt.agent_id, date_trunc('hour', tt.created_at), tt.created_at ) t JOIN public.age …",
+    "body": "DECLARE v_inserted INTEGER := 0; v_uid UUID := auth.uid(); BEGIN INSERT INTO public.cost_baselines (workspace_id, scope, scope_id, hour_of_day, day_of_week, avg_cost_usd, stddev_cost_usd, sample_count, computed_at) SELECT a.workspace_id, 'workspace', NULL, EXTRACT(HOUR FROM t.created_at)::int, EXTRACT(DOW FROM t.created_at)::int, COALESCE(AVG(hourly_cost), 0), COALESCE(STDDEV(hourly_cost), 0), COUNT(*), now() FROM ( SELECT tt.agent_id, date_trunc('hour', tt.created_at) AS hour_bucket, tt.created_at, SUM(tt.cost_usd) AS hourly_cost FROM public.agent_traces tt WHERE tt.created_at >= now() - interval '14 days' AND tt.cost_usd IS NOT NULL GROUP BY tt.agent_id, date_trunc('hour', tt.created_at), …",
     "raises": [],
     "tables": [
      "SET",
@@ -39388,10 +39528,10 @@
     "args": "",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_alerts INTEGER := 0; v_hour INTEGER := EXTRACT(HOUR FROM now())::int; v_dow INTEGER := EXTRACT(DOW FROM now())::int; r RECORD; v_z NUMERIC; v_severity TEXT; BEGIN FOR r IN SELECT a.workspace_id, a.id AS agent_id, a.name AS agent_name, SUM(t.cost_usd) AS observed FROM public.agent_traces t JOIN public.agents a ON a.id = t.agent_id WHERE t.created_at >= now() - interval '1 hour' AND t.cost_usd IS NOT NULL AND a.workspace_id IS NOT NULL GROUP BY a.workspace_id, a.id, a.name HAVING SUM(t.cost_usd) > 0.10 LOOP SELECT CASE WHEN cb.stddev_cost_usd > 0 THEN (r.observed - cb.avg_cost_usd) / cb.stddev_cost_usd ELSE 0 END, cb.avg_cost_usd INTO v_z, r.observed FROM public.cost_baselines cb WHE …",
+    "body": "DECLARE v_alerts INTEGER := 0; v_hour INTEGER := EXTRACT(HOUR FROM now())::int; v_dow INTEGER := EXTRACT(DOW FROM now())::int; v_uid UUID := auth.uid(); r RECORD; v_z NUMERIC; v_severity TEXT; BEGIN FOR r IN SELECT a.workspace_id, a.id AS agent_id, a.name AS agent_name, SUM(t.cost_usd) AS observed FROM public.agent_traces t JOIN public.agents a ON a.id = t.agent_id WHERE t.created_at >= now() - interval '1 hour' AND t.cost_usd IS NOT NULL AND a.workspace_id IS NOT NULL AND (v_uid IS NULL OR a.workspace_id IN (SELECT public.get_user_workspace_ids(v_uid))) GROUP BY a.workspace_id, a.id, a.name HAVING SUM(t.cost_usd) > 0.10 LOOP SELECT CASE WHEN cb.stddev_cost_usd > 0 THEN (r.observed - cb.avg_ …",
     "raises": [],
     "tables": [
      "agent_traces",
@@ -39440,11 +39580,13 @@
     "args": "p_workspace_id UUID",
     "returns": "JSONB",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_budget public.workspace_budgets%ROWTYPE; v_monthly_spend NUMERIC := 0; v_daily_spend NUMERIC := 0; v_monthly_pct NUMERIC := 0; v_daily_pct NUMERIC := 0; v_allowed BOOLEAN := true; v_reason TEXT := NULL; v_warning BOOLEAN := false; BEGIN SELECT * INTO v_budget FROM public.workspace_budgets WHERE workspace_id = p_workspace_id; IF NOT FOUND THEN RETURN jsonb_build_object('allowed', true, 'configured', false); END IF; SELECT COALESCE(SUM(t.cost_usd), 0) INTO v_monthly_spend FROM public.agent_traces t JOIN public.agents a ON a.id = t.agent_id WHERE a.workspace_id = p_workspace_id AND t.created_at >= date_trunc('month', now()) AND t.cost_usd IS NOT NULL; SELECT COALESCE(SUM(t.cost_usd), …",
-    "raises": [],
+    "body": "DECLARE v_budget public.workspace_budgets%ROWTYPE; v_monthly_spend NUMERIC := 0; v_daily_spend NUMERIC := 0; v_monthly_pct NUMERIC := 0; v_daily_pct NUMERIC := 0; v_allowed BOOLEAN := true; v_reason TEXT := NULL; v_warning BOOLEAN := false; BEGIN IF auth.uid() IS NOT NULL AND p_workspace_id NOT IN (SELECT public.get_user_workspace_ids(auth.uid())) THEN RAISE EXCEPTION 'forbidden'; END IF; SELECT * INTO v_budget FROM public.workspace_budgets WHERE workspace_id = p_workspace_id; IF NOT FOUND THEN RETURN jsonb_build_object('allowed', true, 'configured', false); END IF; SELECT COALESCE(SUM(t.cost_usd), 0) INTO v_monthly_spend FROM public.agent_traces t JOIN public.agents a ON a.id = t.agent_id W …",
+    "raises": [
+     "forbidden"
+    ],
     "tables": [
      "agent_traces",
      "agents",
@@ -40516,14 +40658,15 @@
     "args": "_workspace_id uuid",
     "returns": "TABLE (\n  id uuid, workspace_id uuid, user_id uuid, role text,\n  email text, name text, invited_at timestamptz, accepted_at timestamptz\n)",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF NOT public.is_workspace_admin(auth.uid(), _workspace_id) THEN RAISE EXCEPTION 'forbidden: workspace admin required'; END IF; RETURN QUERY SELECT m.id, m.workspace_id, m.user_id, m.role, m.email, m.name, m.invited_at, m.accepted_at FROM public.workspace_members m WHERE m.workspace_id = _workspace_id; END",
+    "body": "BEGIN IF NOT public.is_workspace_admin(auth.uid(), _workspace_id) THEN RAISE EXCEPTION 'forbidden: workspace admin required' USING ERRCODE = '42501'; END IF; RETURN QUERY SELECT m.id, m.workspace_id, m.user_id, m.role, public.mask_email(e.email) AS email, m.name, m.invited_at, m.accepted_at FROM public.workspace_members m LEFT JOIN public.workspace_member_emails e ON e.member_id = m.id WHERE m.workspace_id = _workspace_id; END;",
     "raises": [
      "forbidden: workspace admin required"
     ],
     "tables": [
+     "workspace_member_emails",
      "workspace_members"
     ]
    },
@@ -40531,15 +40674,16 @@
     "args": "_workspace_id uuid",
     "returns": "TABLE (\n  id uuid, workspace_id uuid, user_id uuid, user_name text, user_email text,\n  starts_at timestamptz, ends_at timestamptz, escalation_order int, notes text\n)",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF NOT public.is_workspace_admin(auth.uid(), _workspace_id) THEN RAISE EXCEPTION 'forbidden: workspace admin required'; END IF; RETURN QUERY SELECT o.id, o.workspace_id, o.user_id, o.user_name, o.user_email, o.starts_at, o.ends_at, o.escalation_order, o.notes FROM public.oncall_schedule o WHERE o.workspace_id = _workspace_id ORDER BY o.starts_at; END",
+    "body": "BEGIN IF NOT public.is_workspace_admin(auth.uid(), _workspace_id) THEN RAISE EXCEPTION 'forbidden: workspace admin required' USING ERRCODE = '42501'; END IF; RETURN QUERY SELECT o.id, o.workspace_id, o.user_id, o.user_name, public.mask_email(e.user_email) AS user_email, o.starts_at, o.ends_at, o.escalation_order, o.notes FROM public.oncall_schedule o LEFT JOIN public.oncall_schedule_emails e ON e.schedule_id = o.id WHERE o.workspace_id = _workspace_id ORDER BY o.starts_at; END;",
     "raises": [
      "forbidden: workspace admin required"
     ],
     "tables": [
-     "oncall_schedule"
+     "oncall_schedule",
+     "oncall_schedule_emails"
     ]
    },
    "get_my_2fa_status": {
@@ -40628,15 +40772,17 @@
    },
    "is_mfa_valid_for_role": {
     "args": "",
-    "returns": "BOOLEAN",
+    "returns": "boolean",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
     "security_definer": true,
-    "search_path": false,
-    "body": "DECLARE user_role TEXT; BEGIN SELECT role_key INTO user_role FROM public.user_roles WHERE user_id = auth.uid() LIMIT 1; IF user_role IS NULL OR user_role != 'workspace_admin' THEN RETURN TRUE; END IF; RETURN auth.jwt() ->> 'aal' = 'aal2'; END;",
+    "search_path": true,
+    "body": "DECLARE _role text; _has_2fa boolean; BEGIN SELECT ur.role_key INTO _role FROM public.user_roles ur WHERE ur.user_id = auth.uid() LIMIT 1; IF _role IS NULL OR _role <> 'workspace_admin' THEN RETURN true; END IF; IF (auth.jwt() ->> 'aal') = 'aal2' THEN RETURN true; END IF; SELECT (s.enabled AND s.last_verified_at IS NOT NULL) INTO _has_2fa FROM public.user_2fa s WHERE s.user_id = auth.uid(); RETURN COALESCE(_has_2fa, false); END;",
     "raises": [],
     "tables": [
-     "user_role",
+     "_has_2fa",
+     "_role",
+     "user_2fa",
      "user_roles"
     ]
    },
@@ -41449,13 +41595,16 @@
     "args": "p_query text, p_notebook_id uuid, p_limit int DEFAULT 15",
     "returns": "TABLE (\n  id uuid,\n  document_id uuid,\n  content text,\n  metadata jsonb,\n  score float\n)",
     "lang": "sql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "SELECT c.id, c.document_id, c.content, c.metadata, ts_rank(to_tsvector('portuguese', c.content), plainto_tsquery('portuguese', p_query))::float AS score FROM public.chunks c WHERE c.embedding_status = 'done' AND (p_notebook_id IS NULL OR c.metadata->>'collection_id' = p_notebook_id::text) AND to_tsvector('portuguese', c.content) @@ plainto_tsquery('portuguese', p_query) ORDER BY score DESC LIMIT p_limit;",
+    "body": "SELECT c.id, c.document_id, c.content, c.metadata, ts_rank(to_tsvector('portuguese', c.content), plainto_tsquery('portuguese', p_query))::float AS score FROM public.chunks c JOIN public.documents d ON d.id = c.document_id JOIN public.collections col ON col.id = d.collection_id JOIN public.knowledge_bases kb ON kb.id = col.knowledge_base_id WHERE c.embedding_status = 'done' AND (p_notebook_id IS NULL OR col.knowledge_base_id = p_notebook_id) AND kb.workspace_id IN ( SELECT public.get_user_workspace_ids(auth.uid()) ) AND to_tsvector('portuguese', c.content) @@ plainto_tsquery('portuguese', p_query) ORDER BY score DESC LIMIT p_limit;",
     "raises": [],
     "tables": [
-     "chunks"
+     "chunks",
+     "collections",
+     "documents",
+     "knowledge_bases"
     ]
    },
    "log_ingestion_event": {
@@ -42080,6 +42229,116 @@
      "pg_stat_user_tables"
     ]
    },
+   "hybrid_search_notebook": {
+    "args": "p_query text, p_notebook_id uuid, p_query_embedding extensions.vector(1024",
+    "returns": "TABLE (\n  chunk_id uuid,\n  document_id uuid,\n  document_title text,\n  content text,\n  bm25_score float,\n  vector_score float,\n  rrf_score float,\n  metadata jsonb\n)",
+    "lang": "sql",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "WITH k AS (SELECT 60::float AS rrf_k), allowed AS ( SELECT col.id AS collection_id, col.knowledge_base_id FROM public.collections col JOIN public.knowledge_bases kb ON kb.id = col.knowledge_base_id WHERE kb.workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) AND (p_notebook_id IS NULL OR col.knowledge_base_id = p_notebook_id) ), bm25 AS ( SELECT c.id AS chunk_id, c.document_id, c.content, c.metadata, ts_rank(to_tsvector('portuguese', c.content), plainto_tsquery('portuguese', p_query))::float AS score, ROW_NUMBER() OVER ( ORDER BY ts_rank(to_tsvector('portuguese', c.content), plainto_tsquery('portuguese', p_query)) DESC ) AS rn FROM public.chunks c JOIN public.documents d ON d. …",
+    "raises": [],
+    "tables": [
+     "allowed",
+     "bm25",
+     "chunks",
+     "collections",
+     "documents",
+     "fused",
+     "k",
+     "knowledge_bases",
+     "sem"
+    ]
+   },
+   "notify_slack_on_agent_run": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_base text := NULLIF(current_setting('app.settings.supabase_url', true), ''); v_secret text := NULLIF(current_setting('app.settings.slack_notify_secret', true), ''); v_status text; v_workspace uuid; v_agent uuid; v_duration int; v_cost numeric; v_error text; v_bucket text := 'user'; BEGIN IF TG_TABLE_NAME = 'traces' THEN IF NEW.status IS DISTINCT FROM 'error' THEN RETURN NEW; END IF; v_bucket := 'service'; v_status := 'failure'; v_agent := NEW.agent_id; v_duration := CASE WHEN NEW.end_time IS NOT NULL THEN ROUND(EXTRACT(EPOCH FROM (NEW.end_time - NEW.start_time)) * 1000)::int ELSE NULL END; v_error := NULL; ELSE IF NEW.event IS NULL OR NEW.event NOT IN ('run_completed', 'run_failed' …",
+    "raises": [],
+    "tables": [
+     "agents",
+     "v_workspace"
+    ]
+   },
+   "base32_decode": {
+    "args": "_value text",
+    "returns": "bytea",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE _alphabet text := 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; _clean text; _bits int := 0; _buffer int := 0; _out bytea := ''::bytea; _idx int; _ch text; BEGIN IF _value IS NULL THEN RETURN NULL; END IF; _clean := upper(replace(replace(replace(_value, ' ', ''), '-', ''), '=', '')); FOR i IN 1..length(_clean) LOOP _ch := substr(_clean, i, 1); _idx := position(_ch in _alphabet); IF _idx = 0 THEN RETURN NULL; END IF; _buffer := (_buffer << 5) | (_idx - 1); _bits := _bits + 5; IF _bits >= 8 THEN _bits := _bits - 8; _out := _out || set_byte('\\x00'::bytea, 0, (_buffer >> _bits) & 255); _buffer := _buffer & ((1 << _bits) - 1); END IF; END LOOP; RETURN _out; END;",
+    "raises": [],
+    "tables": []
+   },
+   "totp_matches": {
+    "args": "_secret text, _token text",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE _key bytea; _step bigint; _counter bigint; _msg bytea; _hash bytea; _offset int; _code text; BEGIN IF _secret IS NULL OR _token IS NULL OR _token !~ '^[0-9]{6}$' THEN RETURN false; END IF; _key := public.base32_decode(_secret); IF _key IS NULL OR length(_key) = 0 THEN RETURN false; END IF; FOR _step IN -1..1 LOOP _counter := (floor(extract(epoch FROM now()) / 30))::bigint + _step; _msg := decode(lpad(to_hex(_counter), 16, '0'), 'hex'); _hash := public.hmac(_msg, _key, 'sha1'); IF octet_length(_hash) < 20 THEN RETURN false; END IF; _offset := get_byte(_hash, 19) & 15; _code := lpad(( ((get_byte(_hash, _offset) & 127)::bigint * 16777216 + get_byte(_hash, _offset + 1)::bigint * 65536 + …",
+    "raises": [],
+    "tables": [
+     "now"
+    ]
+   },
+   "enable_my_2fa": {
+    "args": "_secret text, _token text, _backup_codes text[]",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE _now timestamptz := now(); BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'not authenticated' USING ERRCODE = '42501'; END IF; IF _secret IS NULL OR length(_secret) = 0 THEN RAISE EXCEPTION 'secret obrigatório' USING ERRCODE = '22023'; END IF; IF _token IS NULL OR _token !~ '^[0-9]{6}$' THEN RAISE EXCEPTION 'código inválido' USING ERRCODE = '22023'; END IF; IF _backup_codes IS NULL OR cardinality(_backup_codes) = 0 THEN RAISE EXCEPTION 'códigos de recuperação obrigatórios' USING ERRCODE = '22023'; END IF; IF public.totp_matches(_secret, _token) THEN INSERT INTO public.user_2fa (user_id, secret, enabled, backup_codes, last_verified_at) VALUES (auth.uid(), _secret, true, _backup_code …",
+    "raises": [
+     "not authenticated",
+     "secret obrigatório",
+     "código inválido",
+     "códigos de recuperação obrigatórios",
+     "código inválido"
+    ],
+    "tables": [
+     "SET",
+     "user_2fa"
+    ]
+   },
+   "disable_my_2fa": {
+    "args": "",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'not authenticated' USING ERRCODE = '42501'; END IF; DELETE FROM public.user_2fa WHERE user_id = auth.uid(); END;",
+    "raises": [
+     "not authenticated"
+    ],
+    "tables": [
+     "user_2fa"
+    ]
+   },
+   "verify_my_2fa": {
+    "args": "_token text",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE _secret text; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'not authenticated' USING ERRCODE = '42501'; END IF; SELECT s.secret INTO _secret FROM public.user_2fa s WHERE s.user_id = auth.uid() AND s.enabled; IF _secret IS NULL THEN RETURN false; END IF; IF public.totp_matches(_secret, _token) THEN UPDATE public.user_2fa SET last_verified_at = now() WHERE user_id = auth.uid(); RETURN true; END IF; RETURN false; END;",
+    "raises": [
+     "not authenticated"
+    ],
+    "tables": [
+     "_secret",
+     "user_2fa"
+    ]
+   },
    "Args": {
     "args": "",
     "returns": "?",
@@ -42103,50 +42362,6 @@
     "tables": []
    },
    "SetofOptions": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "enable_my_2fa": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "disable_my_2fa": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "verify_my_2fa": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "hybrid_search_notebook": {
     "args": "",
     "returns": "?",
     "lang": "",
@@ -47523,6 +47738,14 @@
     "unique": true,
     "where": "",
     "src": "supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql"
+   },
+   {
+    "name": "idx_alert_rules_agent_id",
+    "table": "alert_rules",
+    "columns": "agent_id, created_at DESC",
+    "unique": false,
+    "where": "WHERE agent_id IS NOT NULL",
+    "src": "supabase/migrations/20261129012000_alert_rules_banco.sql"
    }
   ],
   "cron_jobs": [
@@ -47753,6 +47976,18 @@
     "schedule": "17 4 * * *",
     "body": "SELECT internal.purge_crm_cadence_runs(90)",
     "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
+   },
+   {
+    "job": "prune-traces-retention-daily",
+    "schedule": "10 3 * * *",
+    "body": "SELECT public.run_prune_traces_retention_monitored(90);",
+    "src": "supabase/migrations/20261129002000_agendar_retencao_traces.sql"
+   },
+   {
+    "job": "retention-job-health-watchdog",
+    "schedule": "40 * * * *",
+    "body": "SELECT public.check_retention_job_health();",
+    "src": "supabase/migrations/20261129002000_agendar_retencao_traces.sql"
    }
   ],
   "views": {
@@ -47821,20 +48056,20 @@
     "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
    },
    "llm_cost_by_caller": {
-    "body": "SELECT ur.workspace_id, COALESCE(NULLIF(ur.metadata->>'caller',''), 'external') AS caller, COALESCE(ur.metadata->>'provider', 'unknown') AS provider, COALESCE(ur.metadata->>'model', 'unknown') AS model, date_trunc('day', ur.created_at) AS day, COUNT(*) AS calls, SUM(ur.tokens)::bigint AS tokens, SUM(ur.cost_usd)::numeric(14,6) AS cost_usd FROM public.usage_records ur WHERE ur.record_type = 'llm_call' GROUP BY 1,2,3,4,5",
-    "src": "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql"
+    "body": "SELECT ur.workspace_id, COALESCE(NULLIF(ur.metadata->>'caller',''), 'external') AS caller, COALESCE(ur.metadata->>'provider', 'unknown') AS provider, COALESCE(ur.metadata->>'model', 'unknown') AS model, date_trunc('day', ur.created_at) AS day, COUNT(*) AS calls, SUM(ur.tokens)::bigint AS tokens, SUM(ur.cost_usd)::numeric(14,6) AS cost_usd FROM public.usage_records ur WHERE ur.record_type = 'llm_call' AND ur.workspace_id IN ( SELECT wm.workspace_id FROM public.workspace_members wm WHERE wm.user_id = (SELECT auth.uid()) ) GROUP BY 1,2,3,4,5",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
    },
    "knowledge_graph_health": {
     "body": "WITH ent AS ( SELECT workspace_id, id, entity_type, updated_at, properties FROM public.knowledge_entities WHERE workspace_id IS NOT NULL ), rel AS ( SELECT ke.workspace_id, kr.source_id, kr.target_id FROM public.knowledge_relations kr JOIN public.knowledge_entities ke ON ke.id = kr.source_id WHERE ke.workspace_id IS NOT NULL ), orphans AS ( SELECT e.workspace_id, 20.0 * (1.0 - COALESCE( (SELECT COUNT(*)::numeric FROM ent e2 WHERE e2.workspace_id = e.workspace_id AND NOT EXISTS (SELECT 1 FROM rel r WHERE r.workspace_id = e2.workspace_id AND (r.source_id = e2.id OR r.target_id = e2.id))) / NULLI …",
     "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
    },
    "knowledge_graph_health_v": {
-    "body": "SELECT h.* FROM public.knowledge_graph_health h WHERE EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = h.workspace_id AND wm.user_id = auth.uid() )",
-    "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
+    "body": "SELECT h.* FROM public.knowledge_graph_health h WHERE EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = h.workspace_id AND wm.user_id = (SELECT auth.uid()) )",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
    },
    "slack_dispatch_health": {
-    "body": "SELECT workspace_id, COALESCE(SUM((metadata->>'successes')::int), 0)::bigint AS successes, COALESCE(SUM((metadata->>'failures')::int), 0)::bigint AS failures, COUNT(*)::bigint AS total_dispatches, MAX(created_at) AS last_dispatch_at FROM public.audit_events WHERE event_type = 'slack_integration' AND action = 'alert_dispatched' AND created_at > now() - INTERVAL '24 hours' GROUP BY workspace_id",
-    "src": "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql"
+    "body": "SELECT workspace_id, COALESCE(SUM((metadata->>'successes')::int), 0)::bigint AS successes, COALESCE(SUM((metadata->>'failures')::int), 0)::bigint AS failures, COUNT(*)::bigint AS total_dispatches, MAX(created_at) AS last_dispatch_at FROM public.audit_events WHERE event_type = 'slack_integration' AND action = 'alert_dispatched' AND created_at > now() - INTERVAL '24 hours' AND workspace_id IN ( SELECT wm.workspace_id FROM public.workspace_members wm WHERE wm.user_id = (SELECT auth.uid()) ) GROUP BY workspace_id",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
    },
    "slack_dlq_stats": {
     "body": "SELECT workspace_id, COUNT(*) FILTER (WHERE resolved_at IS NULL AND attempts < 5) AS pending, COUNT(*) FILTER (WHERE resolved_at IS NULL AND attempts >= 5) AS dead, COUNT(*) FILTER (WHERE resolved_at IS NOT NULL) AS resolved, MAX(created_at) FILTER (WHERE resolved_at IS NULL) AS oldest_pending_at, MAX(attempts) FILTER (WHERE resolved_at IS NULL) AS max_attempts FROM public.slack_dispatch_dlq GROUP BY workspace_id",
@@ -48196,6 +48431,21 @@
    "supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql",
    "supabase/migrations/20261127140000_rls_particoes_orfas.sql",
    "supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql",
+   "supabase/migrations/20261127170000_hybrid_search_notebook.sql",
+   "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
+   "supabase/migrations/20261129000000_2fa_operante.sql",
+   "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
+   "supabase/migrations/20261129002000_agendar_retencao_traces.sql",
+   "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql",
+   "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql",
+   "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql",
+   "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql",
+   "supabase/migrations/20261129007000_enforce_budget_service_role.sql",
+   "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql",
+   "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql",
+   "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
+   "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
+   "supabase/migrations/20261129012000_alert_rules_banco.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -48424,7 +48674,9 @@
    "audit_log_v2_2026_05": "enabled",
    "audit_log_v2_2026_06": "enabled",
    "trace_events_v2_2026_05": "enabled",
-   "trace_events_v2_2026_06": "enabled"
+   "trace_events_v2_2026_06": "enabled",
+   "agent_usage": "enabled",
+   "prompt_versions": "enabled"
   },
   "grants": [
    {
@@ -52818,6 +53070,494 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "hybrid_memory_search_notebook",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "hybrid_memory_search_notebook",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "hybrid_search_notebook",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "hybrid_search_notebook",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "notify_slack_on_agent_run",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "base32_decode",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "totp_matches",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "enable_my_2fa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "enable_my_2fa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "disable_my_2fa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "disable_my_2fa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "verify_my_2fa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "verify_my_2fa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "is_mfa_valid_for_role",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "is_mfa_valid_for_role",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "get_workspace_members_full",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_workspace_members_full",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "get_oncall_with_contacts",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_oncall_with_contacts",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mask_email",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "mask_email",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "llm_cost_by_caller",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "llm_cost_by_caller",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "slack_dispatch_health",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "slack_dispatch_health",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "knowledge_graph_health_v",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "is_user_locked_out",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "is_user_locked_out",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "is_user_locked_out",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "enforce_budget",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129007000_enforce_budget_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "enforce_budget",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129007000_enforce_budget_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "verify_api_key",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "verify_api_key",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "purge_stale_harvest_checkpoints",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "purge_stale_harvest_checkpoints",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "purge_removed_template_skill_links",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "purge_removed_template_skill_links",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "cleanup_auth_attempts",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "cleanup_auth_attempts",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "lgpd_apply_retention_policies",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "lgpd_apply_retention_policies",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "lgpd_send_review_reminders",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "lgpd_send_review_reminders",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "lgpd_check_sar_deadlines",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "lgpd_check_sar_deadlines",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "run_prune_traces_retention_monitored",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "run_prune_traces_retention_monitored",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "check_retention_job_health",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "check_retention_job_health",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "compute_cost_baselines",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "compute_cost_baselines",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "detect_cost_anomalies",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "detect_cost_anomalies",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "compute_experiment_stats",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "compute_experiment_stats",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "assign_variant",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "assign_variant",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "refresh_secrets_status",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "refresh_secrets_status",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "refresh_secrets_status",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "refresh_secrets_status",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
    }
   ],
   "raises": [
@@ -53277,16 +54017,6 @@
     "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
    },
    {
-    "function": "get_workspace_members_full",
-    "msg": "forbidden: workspace admin required",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
-   },
-   {
-    "function": "get_oncall_with_contacts",
-    "msg": "forbidden: workspace admin required",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
-   },
-   {
     "function": "get_pending_invites_for_email",
     "msg": "forbidden: can only query own invites",
     "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
@@ -53465,6 +54195,56 @@
     "function": "get_db_health_timeseries",
     "msg": "permission denied",
     "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "not authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "secret obrigatório",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "código inválido",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "códigos de recuperação obrigatórios",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "código inválido",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "disable_my_2fa",
+    "msg": "not authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "verify_my_2fa",
+    "msg": "not authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "get_workspace_members_full",
+    "msg": "forbidden: workspace admin required",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "function": "get_oncall_with_contacts",
+    "msg": "forbidden: workspace admin required",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "function": "check_budget",
+    "msg": "forbidden",
+    "src": "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql"
    }
   ],
   "seed": [],
@@ -53520,7 +54300,11 @@
    "column:skill_registry.department_confidence": "Confianca [0,1] da classificacao departamental; herdada do candidato na promocao.",
    "column:skill_registry.department_source": "Procedencia da classificacao: unknown | heuristic | llm | human | import.",
    "column:skill_registry.is_meta_collection": "true quando o item e uma coletanea (awesome-list, curso, roadmap, livro de links) e nao uma skill instalavel. Espelha isMetaRepository() do harvester. Excluido da fila de revisao departamental e da vitrine publica.",
-   "column:workspace_secrets.key_value": "Valor da chave em texto. Restaurado em 2026-11-21 (Int-001): o esquema de criptografia (encrypted_value) nunca entrou em producao."
+   "column:workspace_secrets.key_value": "Valor da chave em texto. Restaurado em 2026-11-21 (Int-001): o esquema de criptografia (encrypted_value) nunca entrou em producao.",
+   "column:alert_rules.agent_id": "Agente dono da regra. NULL = regra de workspace (todas as telas de agente veem).",
+   "column:alert_rules.aggregation": "Agregacao aplicada na janela: avg|sum|max|min|p95|count. Espelha AlertAggregation.",
+   "column:alert_rules.window_minutes": "Janela de avaliacao em minutos: 5|15|60|1440. Espelha AlertWindowMin.",
+   "column:alert_rules.channels": "Canais de notificacao: toast|email|webhook. Espelha AlertChannel[]."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -57834,7 +58618,7 @@
     "methods": [
      "OPTIONS"
     ],
-    "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
+    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
     "tables": [
      "agent_usage",
      "api_keys",
@@ -57844,7 +58628,9 @@
      "webhook_delivery_logs",
      "workspace_members"
     ],
-    "env": [],
+    "env": [
+     "SLACK_NOTIFY_SECRET"
+    ],
     "external": [],
     "invokes": [],
     "doc": "slack-agent-notify Fired at the end of agent/graph/eval executions (via pg_net.http_post from server code or triggers) to notify Slack channels about agent runs. Payload: { agent_id: uuid, workspace_id: uuid, status: 'success' | 'failure', duration_ms?: number, cost_usd?: number, trace_id?: string, …",
@@ -61188,7 +61974,7 @@
   {
    "module": "src/integrations",
    "files": 5,
-   "lines": 15773,
+   "lines": 15847,
    "tables": [],
    "exports": [
     "index.ts: lovable",
@@ -61389,7 +62175,7 @@
   {
    "module": "src/pages",
    "files": 142,
-   "lines": 51793,
+   "lines": 51817,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -61584,7 +62370,7 @@
   {
    "module": "src/services",
    "files": 171,
-   "lines": 34221,
+   "lines": 34301,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -62102,7 +62888,7 @@
   {
    "module": "supabase/functions",
    "files": 138,
-   "lines": 33397,
+   "lines": 33441,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -62346,8 +63132,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 346,
-   "lines": 42134,
+   "files": 361,
+   "lines": 43524,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -65941,6 +66727,9 @@
     "supabase/functions/_shared/slack.ts",
     "supabase/functions/notification-sender/index.ts"
    ],
+   "SLACK_NOTIFY_SECRET": [
+    "supabase/functions/slack-agent-notify/index.ts"
+   ],
    "SNAPSHOT_DIR": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
@@ -66383,6 +67172,7 @@
    "is_workspace_admin": [
     "supabase/functions/pg-net-smoke-test/index.ts",
     "supabase/functions/skill-harvester/index.ts",
+    "supabase/functions/slack-agent-notify/index.ts",
     "supabase/functions/slack-dlq-discard/index.ts",
     "supabase/functions/slack-verify-connection/index.ts"
    ],
@@ -66909,6 +67699,10 @@
     "count": 2
    },
    {
+    "file": "src/services/alertRulesService.ts",
+    "count": 4
+   },
+   {
     "file": "src/test/crm-scoring-service.test.ts",
     "count": 1
    },
@@ -67205,6 +67999,7 @@
     "trace_events",
     "agent_memories",
     "deploy_connections",
+    "alert_rules",
     "prompt_ab_tests",
     "agent_versions",
     "agent_experiments",
@@ -72100,6 +72895,26 @@
     "msg": "Erro ao deletar: ${msg}"
    },
    {
+    "file": "src/pages/AgentAlertsPage.tsx",
+    "msg": "Não foi possível alterar a regra"
+   },
+   {
+    "file": "src/pages/AgentAlertsPage.tsx",
+    "msg": "Não foi possível aplicar o template"
+   },
+   {
+    "file": "src/pages/AgentAlertsPage.tsx",
+    "msg": "Não foi possível carregar as regras"
+   },
+   {
+    "file": "src/pages/AgentAlertsPage.tsx",
+    "msg": "Não foi possível remover a regra"
+   },
+   {
+    "file": "src/pages/AgentAlertsPage.tsx",
+    "msg": "Não foi possível salvar a regra"
+   },
+   {
     "file": "src/pages/AgentArenaPage.tsx",
     "msg": "Erro na arena: "
    },
@@ -75792,6 +76607,10 @@
     "text": "`awesome` entre outros 19. Pela regra antiga (qualquer tópico da lista"
    },
    {
+    "file": "supabase/functions/slack-agent-notify/index.ts",
+    "text": "O gatilho do banco chama em nome de toda a frota de agentes, então ele não pode"
+   },
+   {
     "file": "supabase/functions/slack-rag-sync/index.ts",
     "text": "* Limite de segurança: 500 mensagens por canal por execução (evita timeout)."
    },
@@ -75926,6 +76745,10 @@
    {
     "file": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql",
     "text": "2 AND s.mean_exec_time > 5 AND s.calls > b.calls + 10 ORDER BY 5 DESC LIMIT 50;$$;"
+   },
+   {
+    "file": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
+    "text": "`traces`      — telemetria OTEL; apenas quando o span raiz fecha em 'error';"
    },
    {
     "file": "tests/load/llm-gateway.k6.js",
@@ -77517,6 +78340,31 @@
     "table": "alert_rules",
     "column": "created_at",
     "rule": "default now()"
+   },
+   {
+    "table": "alert_rules",
+    "column": "agent_id",
+    "rule": "FK → agents.id ON DELETE CASCADE"
+   },
+   {
+    "table": "alert_rules",
+    "column": "aggregation",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "alert_rules",
+    "column": "channels",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "alert_rules",
+    "column": "updated_at",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "alert_rules",
+    "column": "window_minutes",
+    "rule": "obrigatório"
    },
    {
     "table": "prompt_ab_tests",
@@ -89499,6 +90347,11 @@
     "file": "src/services/agentSkillLoadService.ts",
     "name": "ROW_LIMIT",
     "value": "5000"
+   },
+   {
+    "file": "src/services/alertRulesService.ts",
+    "name": "TABLE",
+    "value": "'alert_rules'"
    },
    {
     "file": "src/services/bookmarksService.ts",
@@ -104691,6 +105544,22 @@
    {
     "file": "supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql",
     "line": "CREATE OR REPLACE FUNCTION internal.ensure_monthly_partitions(p_months_ahead integer DEFAULT 12) RETURNS TABLE(created_partition text) LANGUAGE plpgsql SECURITY …"
+   },
+   {
+    "file": "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
+    "line": "AND triggered_at >= now() - interval '1 hour'"
+   },
+   {
+    "file": "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
+    "line": "WHERE t.created_at >= now() - interval '1 hour'"
+   },
+   {
+    "file": "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
+    "line": "WHERE t.created_at >= now() - interval '14 days'"
+   },
+   {
+    "file": "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
+    "line": "WHERE tt.created_at >= now() - interval '14 days'"
    }
   ],
   "percents": [
@@ -118287,6 +119156,14 @@
    {
     "file": "supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql",
     "call": "notify_on"
+   },
+   {
+    "file": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
+    "call": "notify"
+   },
+   {
+    "file": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
+    "call": "notify_slack_on_agent_run"
    }
   ],
   "db_policies": [
@@ -124709,6 +125586,96 @@
     "using": "workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))",
     "check": "",
     "src": "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql"
+   },
+   {
+    "name": "Dono le as proprias traces",
+    "table": "agent_traces",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND a.user_id = (SELECT auth.uid()) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Admin do workspace le as traces",
+    "table": "agent_traces",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Dono insere traces dos proprios agentes",
+    "table": "agent_traces",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND a.user_id = (SELECT auth.uid()) )",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Usuario le o proprio uso",
+    "table": "agent_usage",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "user_id = (SELECT auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Admin do workspace le o uso",
+    "table": "agent_usage",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_usage.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Usuario registra o proprio uso",
+    "table": "agent_usage",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "user_id = (SELECT auth.uid())",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Dono le as versoes dos proprios agentes",
+    "table": "prompt_versions",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND a.user_id = (SELECT auth.uid()) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Admin do workspace le as versoes",
+    "table": "prompt_versions",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a.workspace_id) )",
+    "check": "",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
+   },
+   {
+    "name": "Dono grava versoes dos proprios agentes",
+    "table": "prompt_versions",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND a.user_id = (SELECT auth.uid()) )",
+    "src": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql"
    }
   ],
   "db_triggers": [
@@ -125773,6 +126740,24 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql"
+   },
+   {
+    "name": "trg_notify_slack_on_trace_end",
+    "when": "AFTER INSERT",
+    "table": "traces",
+    "function": "notify_slack_on_agent_run",
+    "condition": "NEW.status = 'error'",
+    "each": "row",
+    "src": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql"
+   },
+   {
+    "name": "trg_notify_slack_on_agent_trace",
+    "when": "AFTER INSERT",
+    "table": "agent_traces",
+    "function": "notify_slack_on_agent_run",
+    "condition": "NEW.event IN ('run_completed', 'run_failed')",
+    "each": "row",
+    "src": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql"
    }
   ],
   "db_functions": {
@@ -125833,19 +126818,6 @@
      "v_timeseries",
      "v_top_agents",
      "v_total"
-    ]
-   },
-   "cleanup_old_auth_attempts": {
-    "args": "",
-    "returns": "VOID",
-    "lang": "plpgsql",
-    "src": "supabase/migrations/20260513175210_4dba7ebe-924a-4906-af1c-31e94145799f.sql",
-    "security_definer": false,
-    "search_path": false,
-    "body": "BEGIN DELETE FROM public.auth_attempts WHERE created_at < (now() - interval '24 hours'); END;",
-    "raises": [],
-    "tables": [
-     "auth_attempts"
     ]
    },
    "log_audit_entry": {
@@ -126038,12 +127010,14 @@
     "args": "p_skill_id UUID",
     "returns": "VOID",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
     "security_definer": true,
-    "search_path": false,
-    "body": "BEGIN UPDATE public.skill_registry SET install_count = install_count + 1 WHERE id = p_skill_id; END;",
+    "search_path": true,
+    "body": "DECLARE v_uid UUID := auth.uid(); BEGIN IF v_uid IS NOT NULL AND NOT EXISTS ( SELECT 1 FROM public.agent_installed_skills ais JOIN public.agents a ON a.id = ais.agent_id WHERE ais.skill_id = p_skill_id AND ( a.user_id = v_uid OR a.workspace_id IN (SELECT public.get_user_workspace_ids(v_uid)) ) ) THEN RETURN; END IF; UPDATE public.skill_registry SET install_count = install_count + 1 WHERE id = p_skill_id; END;",
     "raises": [],
     "tables": [
+     "agent_installed_skills",
+     "agents",
      "skill_registry"
     ]
    },
@@ -126321,10 +127295,10 @@
     "args": "",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_inserted INTEGER := 0; BEGIN INSERT INTO public.cost_baselines (workspace_id, scope, scope_id, hour_of_day, day_of_week, avg_cost_usd, stddev_cost_usd, sample_count, computed_at) SELECT a.workspace_id, 'workspace', NULL, EXTRACT(HOUR FROM t.created_at)::int, EXTRACT(DOW FROM t.created_at)::int, COALESCE(AVG(hourly_cost), 0), COALESCE(STDDEV(hourly_cost), 0), COUNT(*) FROM ( SELECT tt.agent_id, date_trunc('hour', tt.created_at) AS hour_bucket, tt.created_at, SUM(tt.cost_usd) AS hourly_cost FROM public.agent_traces tt WHERE tt.created_at >= now() - interval '14 days' AND tt.cost_usd IS NOT NULL GROUP BY tt.agent_id, date_trunc('hour', tt.created_at), tt.created_at ) t JOIN public.age …",
+    "body": "DECLARE v_inserted INTEGER := 0; v_uid UUID := auth.uid(); BEGIN INSERT INTO public.cost_baselines (workspace_id, scope, scope_id, hour_of_day, day_of_week, avg_cost_usd, stddev_cost_usd, sample_count, computed_at) SELECT a.workspace_id, 'workspace', NULL, EXTRACT(HOUR FROM t.created_at)::int, EXTRACT(DOW FROM t.created_at)::int, COALESCE(AVG(hourly_cost), 0), COALESCE(STDDEV(hourly_cost), 0), COUNT(*), now() FROM ( SELECT tt.agent_id, date_trunc('hour', tt.created_at) AS hour_bucket, tt.created_at, SUM(tt.cost_usd) AS hourly_cost FROM public.agent_traces tt WHERE tt.created_at >= now() - interval '14 days' AND tt.cost_usd IS NOT NULL GROUP BY tt.agent_id, date_trunc('hour', tt.created_at), …",
     "raises": [],
     "tables": [
      "SET",
@@ -126338,10 +127312,10 @@
     "args": "",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_alerts INTEGER := 0; v_hour INTEGER := EXTRACT(HOUR FROM now())::int; v_dow INTEGER := EXTRACT(DOW FROM now())::int; r RECORD; v_z NUMERIC; v_severity TEXT; BEGIN FOR r IN SELECT a.workspace_id, a.id AS agent_id, a.name AS agent_name, SUM(t.cost_usd) AS observed FROM public.agent_traces t JOIN public.agents a ON a.id = t.agent_id WHERE t.created_at >= now() - interval '1 hour' AND t.cost_usd IS NOT NULL AND a.workspace_id IS NOT NULL GROUP BY a.workspace_id, a.id, a.name HAVING SUM(t.cost_usd) > 0.10 LOOP SELECT CASE WHEN cb.stddev_cost_usd > 0 THEN (r.observed - cb.avg_cost_usd) / cb.stddev_cost_usd ELSE 0 END, cb.avg_cost_usd INTO v_z, r.observed FROM public.cost_baselines cb WHE …",
+    "body": "DECLARE v_alerts INTEGER := 0; v_hour INTEGER := EXTRACT(HOUR FROM now())::int; v_dow INTEGER := EXTRACT(DOW FROM now())::int; v_uid UUID := auth.uid(); r RECORD; v_z NUMERIC; v_severity TEXT; BEGIN FOR r IN SELECT a.workspace_id, a.id AS agent_id, a.name AS agent_name, SUM(t.cost_usd) AS observed FROM public.agent_traces t JOIN public.agents a ON a.id = t.agent_id WHERE t.created_at >= now() - interval '1 hour' AND t.cost_usd IS NOT NULL AND a.workspace_id IS NOT NULL AND (v_uid IS NULL OR a.workspace_id IN (SELECT public.get_user_workspace_ids(v_uid))) GROUP BY a.workspace_id, a.id, a.name HAVING SUM(t.cost_usd) > 0.10 LOOP SELECT CASE WHEN cb.stddev_cost_usd > 0 THEN (r.observed - cb.avg_ …",
     "raises": [],
     "tables": [
      "agent_traces",
@@ -126390,11 +127364,13 @@
     "args": "p_workspace_id UUID",
     "returns": "JSONB",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_budget public.workspace_budgets%ROWTYPE; v_monthly_spend NUMERIC := 0; v_daily_spend NUMERIC := 0; v_monthly_pct NUMERIC := 0; v_daily_pct NUMERIC := 0; v_allowed BOOLEAN := true; v_reason TEXT := NULL; v_warning BOOLEAN := false; BEGIN SELECT * INTO v_budget FROM public.workspace_budgets WHERE workspace_id = p_workspace_id; IF NOT FOUND THEN RETURN jsonb_build_object('allowed', true, 'configured', false); END IF; SELECT COALESCE(SUM(t.cost_usd), 0) INTO v_monthly_spend FROM public.agent_traces t JOIN public.agents a ON a.id = t.agent_id WHERE a.workspace_id = p_workspace_id AND t.created_at >= date_trunc('month', now()) AND t.cost_usd IS NOT NULL; SELECT COALESCE(SUM(t.cost_usd), …",
-    "raises": [],
+    "body": "DECLARE v_budget public.workspace_budgets%ROWTYPE; v_monthly_spend NUMERIC := 0; v_daily_spend NUMERIC := 0; v_monthly_pct NUMERIC := 0; v_daily_pct NUMERIC := 0; v_allowed BOOLEAN := true; v_reason TEXT := NULL; v_warning BOOLEAN := false; BEGIN IF auth.uid() IS NOT NULL AND p_workspace_id NOT IN (SELECT public.get_user_workspace_ids(auth.uid())) THEN RAISE EXCEPTION 'forbidden'; END IF; SELECT * INTO v_budget FROM public.workspace_budgets WHERE workspace_id = p_workspace_id; IF NOT FOUND THEN RETURN jsonb_build_object('allowed', true, 'configured', false); END IF; SELECT COALESCE(SUM(t.cost_usd), 0) INTO v_monthly_spend FROM public.agent_traces t JOIN public.agents a ON a.id = t.agent_id W …",
+    "raises": [
+     "forbidden"
+    ],
     "tables": [
      "agent_traces",
      "agents",
@@ -127466,14 +128442,15 @@
     "args": "_workspace_id uuid",
     "returns": "TABLE (\n  id uuid, workspace_id uuid, user_id uuid, role text,\n  email text, name text, invited_at timestamptz, accepted_at timestamptz\n)",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF NOT public.is_workspace_admin(auth.uid(), _workspace_id) THEN RAISE EXCEPTION 'forbidden: workspace admin required'; END IF; RETURN QUERY SELECT m.id, m.workspace_id, m.user_id, m.role, m.email, m.name, m.invited_at, m.accepted_at FROM public.workspace_members m WHERE m.workspace_id = _workspace_id; END",
+    "body": "BEGIN IF NOT public.is_workspace_admin(auth.uid(), _workspace_id) THEN RAISE EXCEPTION 'forbidden: workspace admin required' USING ERRCODE = '42501'; END IF; RETURN QUERY SELECT m.id, m.workspace_id, m.user_id, m.role, public.mask_email(e.email) AS email, m.name, m.invited_at, m.accepted_at FROM public.workspace_members m LEFT JOIN public.workspace_member_emails e ON e.member_id = m.id WHERE m.workspace_id = _workspace_id; END;",
     "raises": [
      "forbidden: workspace admin required"
     ],
     "tables": [
+     "workspace_member_emails",
      "workspace_members"
     ]
    },
@@ -127481,15 +128458,16 @@
     "args": "_workspace_id uuid",
     "returns": "TABLE (\n  id uuid, workspace_id uuid, user_id uuid, user_name text, user_email text,\n  starts_at timestamptz, ends_at timestamptz, escalation_order int, notes text\n)",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "BEGIN IF NOT public.is_workspace_admin(auth.uid(), _workspace_id) THEN RAISE EXCEPTION 'forbidden: workspace admin required'; END IF; RETURN QUERY SELECT o.id, o.workspace_id, o.user_id, o.user_name, o.user_email, o.starts_at, o.ends_at, o.escalation_order, o.notes FROM public.oncall_schedule o WHERE o.workspace_id = _workspace_id ORDER BY o.starts_at; END",
+    "body": "BEGIN IF NOT public.is_workspace_admin(auth.uid(), _workspace_id) THEN RAISE EXCEPTION 'forbidden: workspace admin required' USING ERRCODE = '42501'; END IF; RETURN QUERY SELECT o.id, o.workspace_id, o.user_id, o.user_name, public.mask_email(e.user_email) AS user_email, o.starts_at, o.ends_at, o.escalation_order, o.notes FROM public.oncall_schedule o LEFT JOIN public.oncall_schedule_emails e ON e.schedule_id = o.id WHERE o.workspace_id = _workspace_id ORDER BY o.starts_at; END;",
     "raises": [
      "forbidden: workspace admin required"
     ],
     "tables": [
-     "oncall_schedule"
+     "oncall_schedule",
+     "oncall_schedule_emails"
     ]
    },
    "get_my_2fa_status": {
@@ -127578,15 +128556,17 @@
    },
    "is_mfa_valid_for_role": {
     "args": "",
-    "returns": "BOOLEAN",
+    "returns": "boolean",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
     "security_definer": true,
-    "search_path": false,
-    "body": "DECLARE user_role TEXT; BEGIN SELECT role_key INTO user_role FROM public.user_roles WHERE user_id = auth.uid() LIMIT 1; IF user_role IS NULL OR user_role != 'workspace_admin' THEN RETURN TRUE; END IF; RETURN auth.jwt() ->> 'aal' = 'aal2'; END;",
+    "search_path": true,
+    "body": "DECLARE _role text; _has_2fa boolean; BEGIN SELECT ur.role_key INTO _role FROM public.user_roles ur WHERE ur.user_id = auth.uid() LIMIT 1; IF _role IS NULL OR _role <> 'workspace_admin' THEN RETURN true; END IF; IF (auth.jwt() ->> 'aal') = 'aal2' THEN RETURN true; END IF; SELECT (s.enabled AND s.last_verified_at IS NOT NULL) INTO _has_2fa FROM public.user_2fa s WHERE s.user_id = auth.uid(); RETURN COALESCE(_has_2fa, false); END;",
     "raises": [],
     "tables": [
-     "user_role",
+     "_has_2fa",
+     "_role",
+     "user_2fa",
      "user_roles"
     ]
    },
@@ -128399,13 +129379,16 @@
     "args": "p_query text, p_notebook_id uuid, p_limit int DEFAULT 15",
     "returns": "TABLE (\n  id uuid,\n  document_id uuid,\n  content text,\n  metadata jsonb,\n  score float\n)",
     "lang": "sql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "SELECT c.id, c.document_id, c.content, c.metadata, ts_rank(to_tsvector('portuguese', c.content), plainto_tsquery('portuguese', p_query))::float AS score FROM public.chunks c WHERE c.embedding_status = 'done' AND (p_notebook_id IS NULL OR c.metadata->>'collection_id' = p_notebook_id::text) AND to_tsvector('portuguese', c.content) @@ plainto_tsquery('portuguese', p_query) ORDER BY score DESC LIMIT p_limit;",
+    "body": "SELECT c.id, c.document_id, c.content, c.metadata, ts_rank(to_tsvector('portuguese', c.content), plainto_tsquery('portuguese', p_query))::float AS score FROM public.chunks c JOIN public.documents d ON d.id = c.document_id JOIN public.collections col ON col.id = d.collection_id JOIN public.knowledge_bases kb ON kb.id = col.knowledge_base_id WHERE c.embedding_status = 'done' AND (p_notebook_id IS NULL OR col.knowledge_base_id = p_notebook_id) AND kb.workspace_id IN ( SELECT public.get_user_workspace_ids(auth.uid()) ) AND to_tsvector('portuguese', c.content) @@ plainto_tsquery('portuguese', p_query) ORDER BY score DESC LIMIT p_limit;",
     "raises": [],
     "tables": [
-     "chunks"
+     "chunks",
+     "collections",
+     "documents",
+     "knowledge_bases"
     ]
    },
    "log_ingestion_event": {
@@ -129030,6 +130013,116 @@
      "pg_stat_user_tables"
     ]
    },
+   "hybrid_search_notebook": {
+    "args": "p_query text, p_notebook_id uuid, p_query_embedding extensions.vector(1024",
+    "returns": "TABLE (\n  chunk_id uuid,\n  document_id uuid,\n  document_title text,\n  content text,\n  bm25_score float,\n  vector_score float,\n  rrf_score float,\n  metadata jsonb\n)",
+    "lang": "sql",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "WITH k AS (SELECT 60::float AS rrf_k), allowed AS ( SELECT col.id AS collection_id, col.knowledge_base_id FROM public.collections col JOIN public.knowledge_bases kb ON kb.id = col.knowledge_base_id WHERE kb.workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) AND (p_notebook_id IS NULL OR col.knowledge_base_id = p_notebook_id) ), bm25 AS ( SELECT c.id AS chunk_id, c.document_id, c.content, c.metadata, ts_rank(to_tsvector('portuguese', c.content), plainto_tsquery('portuguese', p_query))::float AS score, ROW_NUMBER() OVER ( ORDER BY ts_rank(to_tsvector('portuguese', c.content), plainto_tsquery('portuguese', p_query)) DESC ) AS rn FROM public.chunks c JOIN public.documents d ON d. …",
+    "raises": [],
+    "tables": [
+     "allowed",
+     "bm25",
+     "chunks",
+     "collections",
+     "documents",
+     "fused",
+     "k",
+     "knowledge_bases",
+     "sem"
+    ]
+   },
+   "notify_slack_on_agent_run": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_base text := NULLIF(current_setting('app.settings.supabase_url', true), ''); v_secret text := NULLIF(current_setting('app.settings.slack_notify_secret', true), ''); v_status text; v_workspace uuid; v_agent uuid; v_duration int; v_cost numeric; v_error text; v_bucket text := 'user'; BEGIN IF TG_TABLE_NAME = 'traces' THEN IF NEW.status IS DISTINCT FROM 'error' THEN RETURN NEW; END IF; v_bucket := 'service'; v_status := 'failure'; v_agent := NEW.agent_id; v_duration := CASE WHEN NEW.end_time IS NOT NULL THEN ROUND(EXTRACT(EPOCH FROM (NEW.end_time - NEW.start_time)) * 1000)::int ELSE NULL END; v_error := NULL; ELSE IF NEW.event IS NULL OR NEW.event NOT IN ('run_completed', 'run_failed' …",
+    "raises": [],
+    "tables": [
+     "agents",
+     "v_workspace"
+    ]
+   },
+   "base32_decode": {
+    "args": "_value text",
+    "returns": "bytea",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE _alphabet text := 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; _clean text; _bits int := 0; _buffer int := 0; _out bytea := ''::bytea; _idx int; _ch text; BEGIN IF _value IS NULL THEN RETURN NULL; END IF; _clean := upper(replace(replace(replace(_value, ' ', ''), '-', ''), '=', '')); FOR i IN 1..length(_clean) LOOP _ch := substr(_clean, i, 1); _idx := position(_ch in _alphabet); IF _idx = 0 THEN RETURN NULL; END IF; _buffer := (_buffer << 5) | (_idx - 1); _bits := _bits + 5; IF _bits >= 8 THEN _bits := _bits - 8; _out := _out || set_byte('\\x00'::bytea, 0, (_buffer >> _bits) & 255); _buffer := _buffer & ((1 << _bits) - 1); END IF; END LOOP; RETURN _out; END;",
+    "raises": [],
+    "tables": []
+   },
+   "totp_matches": {
+    "args": "_secret text, _token text",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE _key bytea; _step bigint; _counter bigint; _msg bytea; _hash bytea; _offset int; _code text; BEGIN IF _secret IS NULL OR _token IS NULL OR _token !~ '^[0-9]{6}$' THEN RETURN false; END IF; _key := public.base32_decode(_secret); IF _key IS NULL OR length(_key) = 0 THEN RETURN false; END IF; FOR _step IN -1..1 LOOP _counter := (floor(extract(epoch FROM now()) / 30))::bigint + _step; _msg := decode(lpad(to_hex(_counter), 16, '0'), 'hex'); _hash := public.hmac(_msg, _key, 'sha1'); IF octet_length(_hash) < 20 THEN RETURN false; END IF; _offset := get_byte(_hash, 19) & 15; _code := lpad(( ((get_byte(_hash, _offset) & 127)::bigint * 16777216 + get_byte(_hash, _offset + 1)::bigint * 65536 + …",
+    "raises": [],
+    "tables": [
+     "now"
+    ]
+   },
+   "enable_my_2fa": {
+    "args": "_secret text, _token text, _backup_codes text[]",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE _now timestamptz := now(); BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'not authenticated' USING ERRCODE = '42501'; END IF; IF _secret IS NULL OR length(_secret) = 0 THEN RAISE EXCEPTION 'secret obrigatório' USING ERRCODE = '22023'; END IF; IF _token IS NULL OR _token !~ '^[0-9]{6}$' THEN RAISE EXCEPTION 'código inválido' USING ERRCODE = '22023'; END IF; IF _backup_codes IS NULL OR cardinality(_backup_codes) = 0 THEN RAISE EXCEPTION 'códigos de recuperação obrigatórios' USING ERRCODE = '22023'; END IF; IF public.totp_matches(_secret, _token) THEN INSERT INTO public.user_2fa (user_id, secret, enabled, backup_codes, last_verified_at) VALUES (auth.uid(), _secret, true, _backup_code …",
+    "raises": [
+     "not authenticated",
+     "secret obrigatório",
+     "código inválido",
+     "códigos de recuperação obrigatórios",
+     "código inválido"
+    ],
+    "tables": [
+     "SET",
+     "user_2fa"
+    ]
+   },
+   "disable_my_2fa": {
+    "args": "",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'not authenticated' USING ERRCODE = '42501'; END IF; DELETE FROM public.user_2fa WHERE user_id = auth.uid(); END;",
+    "raises": [
+     "not authenticated"
+    ],
+    "tables": [
+     "user_2fa"
+    ]
+   },
+   "verify_my_2fa": {
+    "args": "_token text",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE _secret text; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'not authenticated' USING ERRCODE = '42501'; END IF; SELECT s.secret INTO _secret FROM public.user_2fa s WHERE s.user_id = auth.uid() AND s.enabled; IF _secret IS NULL THEN RETURN false; END IF; IF public.totp_matches(_secret, _token) THEN UPDATE public.user_2fa SET last_verified_at = now() WHERE user_id = auth.uid(); RETURN true; END IF; RETURN false; END;",
+    "raises": [
+     "not authenticated"
+    ],
+    "tables": [
+     "_secret",
+     "user_2fa"
+    ]
+   },
    "Args": {
     "args": "",
     "returns": "?",
@@ -129053,50 +130146,6 @@
     "tables": []
    },
    "SetofOptions": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "enable_my_2fa": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "disable_my_2fa": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "verify_my_2fa": {
-    "args": "",
-    "returns": "?",
-    "lang": "",
-    "src": "src/integrations/supabase/types.ts",
-    "security_definer": false,
-    "search_path": false,
-    "body": "",
-    "raises": [],
-    "tables": []
-   },
-   "hybrid_search_notebook": {
     "args": "",
     "returns": "?",
     "lang": "",
@@ -129698,16 +130747,6 @@
     "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
    },
    {
-    "function": "get_workspace_members_full",
-    "msg": "forbidden: workspace admin required",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
-   },
-   {
-    "function": "get_oncall_with_contacts",
-    "msg": "forbidden: workspace admin required",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
-   },
-   {
     "function": "get_pending_invites_for_email",
     "msg": "forbidden: can only query own invites",
     "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
@@ -129886,6 +130925,56 @@
     "function": "get_db_health_timeseries",
     "msg": "permission denied",
     "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "not authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "secret obrigatório",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "código inválido",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "códigos de recuperação obrigatórios",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "enable_my_2fa",
+    "msg": "código inválido",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "disable_my_2fa",
+    "msg": "not authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "verify_my_2fa",
+    "msg": "not authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "function": "get_workspace_members_full",
+    "msg": "forbidden: workspace admin required",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "function": "get_oncall_with_contacts",
+    "msg": "forbidden: workspace admin required",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "function": "check_budget",
+    "msg": "forbidden",
+    "src": "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql"
    }
   ],
   "db_generated": [
@@ -129966,20 +131055,20 @@
     "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
    },
    "llm_cost_by_caller": {
-    "body": "SELECT ur.workspace_id, COALESCE(NULLIF(ur.metadata->>'caller',''), 'external') AS caller, COALESCE(ur.metadata->>'provider', 'unknown') AS provider, COALESCE(ur.metadata->>'model', 'unknown') AS model, date_trunc('day', ur.created_at) AS day, COUNT(*) AS calls, SUM(ur.tokens)::bigint AS tokens, SUM(ur.cost_usd)::numeric(14,6) AS cost_usd FROM public.usage_records ur WHERE ur.record_type = 'llm_call' GROUP BY 1,2,3,4,5",
-    "src": "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql"
+    "body": "SELECT ur.workspace_id, COALESCE(NULLIF(ur.metadata->>'caller',''), 'external') AS caller, COALESCE(ur.metadata->>'provider', 'unknown') AS provider, COALESCE(ur.metadata->>'model', 'unknown') AS model, date_trunc('day', ur.created_at) AS day, COUNT(*) AS calls, SUM(ur.tokens)::bigint AS tokens, SUM(ur.cost_usd)::numeric(14,6) AS cost_usd FROM public.usage_records ur WHERE ur.record_type = 'llm_call' AND ur.workspace_id IN ( SELECT wm.workspace_id FROM public.workspace_members wm WHERE wm.user_id = (SELECT auth.uid()) ) GROUP BY 1,2,3,4,5",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
    },
    "knowledge_graph_health": {
     "body": "WITH ent AS ( SELECT workspace_id, id, entity_type, updated_at, properties FROM public.knowledge_entities WHERE workspace_id IS NOT NULL ), rel AS ( SELECT ke.workspace_id, kr.source_id, kr.target_id FROM public.knowledge_relations kr JOIN public.knowledge_entities ke ON ke.id = kr.source_id WHERE ke.workspace_id IS NOT NULL ), orphans AS ( SELECT e.workspace_id, 20.0 * (1.0 - COALESCE( (SELECT COUNT(*)::numeric FROM ent e2 WHERE e2.workspace_id = e.workspace_id AND NOT EXISTS (SELECT 1 FROM rel r WHERE r.workspace_id = e2.workspace_id AND (r.source_id = e2.id OR r.target_id = e2.id))) / NULLI …",
     "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
    },
    "knowledge_graph_health_v": {
-    "body": "SELECT h.* FROM public.knowledge_graph_health h WHERE EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = h.workspace_id AND wm.user_id = auth.uid() )",
-    "src": "supabase/migrations/20261127000000_recuperar_objetos_internos.sql"
+    "body": "SELECT h.* FROM public.knowledge_graph_health h WHERE EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = h.workspace_id AND wm.user_id = (SELECT auth.uid()) )",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
    },
    "slack_dispatch_health": {
-    "body": "SELECT workspace_id, COALESCE(SUM((metadata->>'successes')::int), 0)::bigint AS successes, COALESCE(SUM((metadata->>'failures')::int), 0)::bigint AS failures, COUNT(*)::bigint AS total_dispatches, MAX(created_at) AS last_dispatch_at FROM public.audit_events WHERE event_type = 'slack_integration' AND action = 'alert_dispatched' AND created_at > now() - INTERVAL '24 hours' GROUP BY workspace_id",
-    "src": "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql"
+    "body": "SELECT workspace_id, COALESCE(SUM((metadata->>'successes')::int), 0)::bigint AS successes, COALESCE(SUM((metadata->>'failures')::int), 0)::bigint AS failures, COUNT(*)::bigint AS total_dispatches, MAX(created_at) AS last_dispatch_at FROM public.audit_events WHERE event_type = 'slack_integration' AND action = 'alert_dispatched' AND created_at > now() - INTERVAL '24 hours' AND workspace_id IN ( SELECT wm.workspace_id FROM public.workspace_members wm WHERE wm.user_id = (SELECT auth.uid()) ) GROUP BY workspace_id",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
    },
    "slack_dlq_stats": {
     "body": "SELECT workspace_id, COUNT(*) FILTER (WHERE resolved_at IS NULL AND attempts < 5) AS pending, COUNT(*) FILTER (WHERE resolved_at IS NULL AND attempts >= 5) AS dead, COUNT(*) FILTER (WHERE resolved_at IS NOT NULL) AS resolved, MAX(created_at) FILTER (WHERE resolved_at IS NULL) AS oldest_pending_at, MAX(attempts) FILTER (WHERE resolved_at IS NULL) AS max_attempts FROM public.slack_dispatch_dlq GROUP BY workspace_id",
@@ -134663,9 +135752,13 @@
    "agent_traces": {
     "rls": "enabled",
     "SELECT": [
-     "public: auth.uid() = user_id"
+     "public: auth.uid() = user_id",
+     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND a.user_id = (SELECT auth.uid()) )",
+     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND public.is_workspace_admin((SELECT auth.uid()), "
     ],
-    "INSERT": [],
+    "INSERT": [
+     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND a.user_id = (SELECT auth.uid()) )"
+    ],
     "UPDATE": [],
     "DELETE": []
    },
@@ -134789,12 +135882,15 @@
     "DELETE": []
    },
    "agent_usage": {
-    "rls": "não encontrado",
+    "rls": "enabled",
     "SELECT": [
-     "authenticated: user_id = auth.uid()"
+     "authenticated: user_id = auth.uid()",
+     "authenticated: user_id = (SELECT auth.uid())",
+     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_usage.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a"
     ],
     "INSERT": [
-     "authenticated: user_id = auth.uid()"
+     "authenticated: user_id = auth.uid()",
+     "authenticated: user_id = (SELECT auth.uid())"
     ],
     "UPDATE": [
      "authenticated: user_id = auth.uid()"
@@ -137116,9 +138212,14 @@
     ]
    },
    "prompt_versions": {
-    "rls": "não encontrado",
-    "SELECT": [],
-    "INSERT": [],
+    "rls": "enabled",
+    "SELECT": [
+     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND a.user_id = (SELECT auth.uid()) )",
+     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND public.is_workspace_admin((SELECT auth.uid()"
+    ],
+    "INSERT": [
+     "authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND a.user_id = (SELECT auth.uid()) )"
+    ],
     "UPDATE": [],
     "DELETE": []
    },
@@ -138635,16 +139736,6 @@
     ]
    },
    {
-    "table": "agent_usage",
-    "issue": "acessada do front (4 arquivo(s)) sem RLS (não encontrado)",
-    "files": [
-     "src/services/agentsService.ts",
-     "src/services/billingService.ts",
-     "src/services/dashboardService.ts",
-     "src/services/skillbookAuditService.ts"
-    ]
-   },
-   {
     "table": "agents",
     "issue": "acessada do front (26 arquivo(s)) sem RLS (não encontrado)",
     "files": [
@@ -138720,11 +139811,17 @@
    },
    {
     "table": "prompt_versions",
-    "issue": "acessada do front (3 arquivo(s)) sem RLS (não encontrado)",
+    "issue": "front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
     "files": [
-     "src/services/knowledgeService.ts",
      "src/services/promptVersionService.ts",
      "src/stores/agentBuilderStore.ts"
+    ]
+   },
+   {
+    "table": "prompt_versions",
+    "issue": "front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
+    "files": [
+     "src/services/promptVersionService.ts"
     ]
    },
    {
@@ -138922,6 +140019,19 @@
    "supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql",
    "supabase/migrations/20261127000000_recuperar_objetos_internos.sql",
    "supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql",
+   "supabase/migrations/20261127170000_hybrid_search_notebook.sql",
+   "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
+   "supabase/migrations/20261129000000_2fa_operante.sql",
+   "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
+   "supabase/migrations/20261129002000_agendar_retencao_traces.sql",
+   "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql",
+   "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql",
+   "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql",
+   "supabase/migrations/20261129007000_enforce_budget_service_role.sql",
+   "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql",
+   "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql",
+   "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
+   "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
    "tests/load/llm-gateway.k6.js",
    "tests/rls/personas.test.ts",
    "tests/rls/setup.ts",
@@ -138973,8 +140083,10 @@
    "detect_slo_breach_and_alert",
    "detect_slow_queries_and_alert",
    "disable_all_chaos",
+   "disable_my_2fa",
    "dispatch_security_alert_to_slack",
    "drop_old_partitions",
+   "enable_my_2fa",
    "encrypt_secret_value",
    "enforce_budget",
    "enforce_freeze_window",
@@ -139026,6 +140138,7 @@
    "hash_api_key_bcrypt",
    "hybrid_memory_search",
    "hybrid_memory_search_notebook",
+   "hybrid_search_notebook",
    "increment_skill_installs",
    "increment_webhook_counter",
    "insert_audit_log",
@@ -139043,6 +140156,7 @@
    "mark_secret_retired",
    "mark_vulnerability_fixed",
    "memory_relevance",
+   "notify_slack_on_agent_run",
    "offboard_vendor",
    "pg_net_schema",
    "pg_net_smoke_post",
@@ -139107,7 +140221,8 @@
    "validate_table_names_for_drill",
    "verify_api_key",
    "verify_api_key_bcrypt",
-   "verify_cron_token"
+   "verify_cron_token",
+   "verify_my_2fa"
   ],
   "public_functions": [
    "openclaw-webhook",
@@ -139117,7 +140232,8 @@
    "widget-proxy",
    "bitrix24-webhook",
    "whatsapp-webhook",
-   "webhook-receiver"
+   "webhook-receiver",
+   "slack-agent-notify"
   ],
   "auth_config": {},
   "grants": [
@@ -143512,6 +144628,494 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "hybrid_memory_search_notebook",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "hybrid_memory_search_notebook",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "hybrid_search_notebook",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "hybrid_search_notebook",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261127170000_hybrid_search_notebook.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "notify_slack_on_agent_run",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "base32_decode",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "totp_matches",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "enable_my_2fa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "enable_my_2fa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "disable_my_2fa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "disable_my_2fa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "verify_my_2fa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "verify_my_2fa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "is_mfa_valid_for_role",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "is_mfa_valid_for_role",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129000000_2fa_operante.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "get_workspace_members_full",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_workspace_members_full",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "get_oncall_with_contacts",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_oncall_with_contacts",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mask_email",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "mask_email",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "llm_cost_by_caller",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "llm_cost_by_caller",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "slack_dispatch_health",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "slack_dispatch_health",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "knowledge_graph_health_v",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "is_user_locked_out",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "is_user_locked_out",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "is_user_locked_out",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "enforce_budget",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129007000_enforce_budget_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "enforce_budget",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129007000_enforce_budget_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "verify_api_key",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "verify_api_key",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "purge_stale_harvest_checkpoints",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "purge_stale_harvest_checkpoints",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "purge_removed_template_skill_links",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "purge_removed_template_skill_links",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "cleanup_auth_attempts",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "cleanup_auth_attempts",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "lgpd_apply_retention_policies",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "lgpd_apply_retention_policies",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "lgpd_send_review_reminders",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "lgpd_send_review_reminders",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "lgpd_check_sar_deadlines",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "lgpd_check_sar_deadlines",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "run_prune_traces_retention_monitored",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "run_prune_traces_retention_monitored",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "check_retention_job_health",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "check_retention_job_health",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "compute_cost_baselines",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "compute_cost_baselines",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "detect_cost_anomalies",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "detect_cost_anomalies",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "compute_experiment_stats",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "compute_experiment_stats",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "assign_variant",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "assign_variant",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "refresh_secrets_status",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "refresh_secrets_status",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "refresh_secrets_status",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "refresh_secrets_status",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
    }
   ],
   "guards": [
@@ -144357,7 +145961,8 @@
     "updated_at"
    ],
    "alert_rules": [
-    "created_at"
+    "created_at",
+    "updated_at"
    ],
    "prompt_ab_tests": [
     "created_at"
@@ -146536,16 +148141,6 @@
    },
    {
     "kind": "rls",
-    "msg": "`agent_usage`: acessada do front (4 arquivo(s)) sem RLS (não encontrado)",
-    "where": [
-     "src/services/agentsService.ts",
-     "src/services/billingService.ts",
-     "src/services/dashboardService.ts",
-     "src/services/skillbookAuditService.ts"
-    ]
-   },
-   {
-    "kind": "rls",
     "msg": "`agents`: acessada do front (26 arquivo(s)) sem RLS (não encontrado)",
     "where": [
      "src/components/agent-builder/HandoffPanel.tsx",
@@ -146598,11 +148193,17 @@
    },
    {
     "kind": "rls",
-    "msg": "`prompt_versions`: acessada do front (3 arquivo(s)) sem RLS (não encontrado)",
+    "msg": "`prompt_versions`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
     "where": [
-     "src/services/knowledgeService.ts",
      "src/services/promptVersionService.ts",
      "src/stores/agentBuilderStore.ts"
+    ]
+   },
+   {
+    "kind": "rls",
+    "msg": "`prompt_versions`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
+    "where": [
+     "src/services/promptVersionService.ts"
     ]
    },
    {
@@ -146811,6 +148412,13 @@
    },
    {
     "kind": "dinâmico",
+    "msg": "4 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
+    "where": [
+     "src/services/alertRulesService.ts"
+    ]
+   },
+   {
+    "kind": "dinâmico",
     "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
     "where": [
      "src/test/crm-scoring-service.test.ts"
@@ -146916,21 +148524,7 @@
    },
    {
     "kind": "segurança",
-    "msg": "função `increment_skill_installs` é SECURITY DEFINER sem `set search_path` (risco de escalação)",
-    "where": [
-     "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
-    ]
-   },
-   {
-    "kind": "segurança",
     "msg": "função `create_partition_if_not_exists` é SECURITY DEFINER sem `set search_path` (risco de escalação)",
-    "where": [
-     "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
-    ]
-   },
-   {
-    "kind": "segurança",
-    "msg": "função `is_mfa_valid_for_role` é SECURITY DEFINER sem `set search_path` (risco de escalação)",
     "where": [
      "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql"
     ]
@@ -162588,7 +164182,7 @@
   },
   "src/integrations/supabase/types.ts": {
    "path": "src/integrations/supabase/types.ts",
-   "lines": 15499,
+   "lines": 15573,
    "exports": [
     "type Json",
     "type Database",
@@ -165886,9 +167480,16 @@
   },
   "src/pages/AgentAlertsPage.tsx": {
    "path": "src/pages/AgentAlertsPage.tsx",
-   "lines": 233,
+   "lines": 257,
    "exports": [
     "function AgentAlertsPage"
+   ],
+   "errors": [
+    "Não foi possível alterar a regra",
+    "Não foi possível aplicar o template",
+    "Não foi possível carregar as regras",
+    "Não foi possível remover a regra",
+    "Não foi possível salvar a regra"
    ]
   },
   "src/pages/AgentArenaPage.tsx": {
@@ -171116,7 +172717,7 @@
   },
   "src/services/alertRulesService.ts": {
    "path": "src/services/alertRulesService.ts",
-   "lines": 218,
+   "lines": 298,
    "exports": [
     "type AlertOperator",
     "type AlertSeverity",
@@ -171132,6 +172733,7 @@
     "function evaluateRule",
     "function simulateRule24h"
    ],
+   "dyn_from": 4,
    "enums": [
     {
      "name": "AlertOperator",
@@ -171146,7 +172748,13 @@
      "values": "toast | email | webhook"
     }
    ],
-   "doc": "alertRulesService — persistência client-side de regras de alerta por agente. Funções puras de avaliação e simulação sobre traces mockados.",
+   "params": [
+    {
+     "name": "TABLE",
+     "value": "'alert_rules'"
+    }
+   ],
+   "doc": "alertRulesService — persistência de regras de alerta por agente. Fonte da verdade: public.alert_rules (RLS por workspace). O localStorage continua como cache de leitura para render imediato e para modo offline; toda escrita vai para o banco e so depois atualiza o cache. Funcoes puras de avaliacao e …",
    "temporal": [
     "const horizon = now - 24 * 60 * 60_000;"
    ]
@@ -192941,7 +194549,7 @@
   },
   "supabase/functions/slack-agent-notify/index.ts": {
    "path": "supabase/functions/slack-agent-notify/index.ts",
-   "lines": 160,
+   "lines": 204,
    "tables": [
     {
      "table": "slack_agent_notifications",
@@ -192964,6 +194572,12 @@
      "workspace_id"
     ]
    },
+   "rpc": [
+    "is_workspace_admin"
+   ],
+   "env": [
+    "SLACK_NOTIFY_SECRET"
+   ],
    "zod": [
     {
      "name": "PayloadSchema",
@@ -192990,6 +194604,9 @@
      "value": "success",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "O gatilho do banco chama em nome de toda a frota de agentes, então ele não pode"
    ],
    "doc": "slack-agent-notify Fired at the end of agent/graph/eval executions (via pg_net.http_post from server code or triggers) to notify Slack channels about agent runs. Payload: { agent_id: uuid, workspace_id: uuid, status: 'success' | 'failure', duration_ms?: number, cost_usd?: number, trace_id?: string, …",
    "side_effects": [
@@ -196928,6 +198545,92 @@
    "path": "supabase/migrations/20261127150000_consent_records_unique_user_purpose.sql",
    "lines": 2
   },
+  "supabase/migrations/20261127170000_hybrid_search_notebook.sql": {
+   "path": "supabase/migrations/20261127170000_hybrid_search_notebook.sql",
+   "lines": 152,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql": {
+   "path": "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
+   "lines": 115,
+   "rule_comments": [
+    "`traces`      — telemetria OTEL; apenas quando o span raiz fecha em 'error';"
+   ],
+   "side_effects": [
+    "notify",
+    "notify_slack_on_agent_run"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129000000_2fa_operante.sql": {
+   "path": "supabase/migrations/20261129000000_2fa_operante.sql",
+   "lines": 239,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql": {
+   "path": "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
+   "lines": 81,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129002000_agendar_retencao_traces.sql": {
+   "path": "supabase/migrations/20261129002000_agendar_retencao_traces.sql",
+   "lines": 42,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql": {
+   "path": "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql",
+   "lines": 118
+  },
+  "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql": {
+   "path": "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql",
+   "lines": 82,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql": {
+   "path": "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql",
+   "lines": 22,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql": {
+   "path": "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql",
+   "lines": 91,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129007000_enforce_budget_service_role.sql": {
+   "path": "supabase/migrations/20261129007000_enforce_budget_service_role.sql",
+   "lines": 26,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql": {
+   "path": "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql",
+   "lines": 33,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql": {
+   "path": "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql",
+   "lines": 68,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql": {
+   "path": "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
+   "lines": 170,
+   "temporal": [
+    "AND triggered_at >= now() - interval '1 hour'",
+    "WHERE t.created_at >= now() - interval '1 hour'",
+    "WHERE t.created_at >= now() - interval '14 days'",
+    "WHERE tt.created_at >= now() - interval '14 days'"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql": {
+   "path": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
+   "lines": 77,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261129012000_alert_rules_banco.sql": {
+   "path": "supabase/migrations/20261129012000_alert_rules_banco.sql",
+   "lines": 74
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -197089,10 +198792,39 @@
   }
  },
  "git": {
-  "sha": "437f21deb18d77dd210b15efcfce900c3a30dcbc",
+  "sha": "c10942b86a0b99424e577efc8f013fdb7c97a543",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "c10942b",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "infra(banco): lote unico das 13 migrations pendentes em producao (#203)",
+    "files": [
+     "src/integrations/supabase/types.ts",
+     "src/pages/AgentAlertsPage.tsx",
+     "src/services/alertRulesService.ts",
+     "supabase/config.toml",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/slack-agent-notify/index.ts",
+     "supabase/migrations/20261127170000_hybrid_search_notebook.sql",
+     "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
+     "supabase/migrations/20261129000000_2fa_operante.sql",
+     "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
+     "supabase/migrations/20261129002000_agendar_retencao_traces.sql",
+     "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql",
+     "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql",
+     "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql",
+     "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql",
+     "supabase/migrations/20261129007000_enforce_budget_service_role.sql",
+     "supabase/migrations/20261129008000_verify_api_key_e_expurgos_service_role.sql",
+     "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql",
+     "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
+     "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
+     "supabase/migrations/20261129012000_alert_rules_banco.sql"
+    ]
+   },
    {
     "sha": "437f21d",
     "date": "2026-11-27",
@@ -197414,25 +199146,16 @@
     "files": [
      "vercel.json"
     ]
-   },
-   {
-    "sha": "897badb",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "test(forum): trava as escritas do forum publico (#162)",
-    "files": [
-     "src/test/forum-safe-views.test.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "supabase/deployment-manifest.json",
-    4
+    5
    ],
    [
     "src/integrations/supabase/types.ts",
-    3
+    4
    ],
    [
     ".prbody.md",
@@ -197459,51 +199182,51 @@
     2
    ],
    [
-    ".github/workflows/migrations-deploy.yml",
+    "src/pages/AgentAlertsPage.tsx",
     1
    ],
    [
-    "src/pages/KnowledgeManagementPage.tsx",
+    "src/services/alertRulesService.ts",
     1
    ],
    [
-    "src/services/knowledgeManagementService.ts",
+    "supabase/config.toml",
     1
    ],
    [
-    "src/test/knowledge-embedding-health-service.test.ts",
+    "supabase/functions/slack-agent-notify/index.ts",
     1
    ],
    [
-    "src/test/knowledge-embeddings-health.test.tsx",
+    "supabase/migrations/20261127170000_hybrid_search_notebook.sql",
     1
    ],
    [
-    "src/pages/AgentInstalledSkillsPage.tsx",
+    "supabase/migrations/20261128000000_slack_agent_notify_trigger.sql",
     1
    ],
    [
-    "src/test/agent-installed-skills-page.test.tsx",
+    "supabase/migrations/20261129000000_2fa_operante.sql",
     1
    ],
    [
-    "src/components/super-cerebro/SearchTab.tsx",
+    "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
     1
    ],
    [
-    "src/services/notebookSearchService.ts",
+    "supabase/migrations/20261129002000_agendar_retencao_traces.sql",
     1
    ],
    [
-    "src/test/notebook-search-service.test.ts",
+    "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql",
     1
    ],
    [
-    "src/contexts/AuthContext.tsx",
+    "supabase/migrations/20261129004000_views_escopadas_ao_workspace.sql",
     1
    ],
    [
-    "src/hooks/use2FA.ts",
+    "supabase/migrations/20261129005000_fecha_oraculo_lockout_anon.sql",
     1
    ]
   ]

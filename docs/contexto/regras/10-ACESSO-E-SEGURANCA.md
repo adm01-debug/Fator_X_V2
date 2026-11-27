@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `437f21deb1` · branch `main` · 2026-11-27 08:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c10942b86a` · branch `main` · 2026-11-27 08:15 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -32,7 +32,7 @@
 | `agent_routing_config` | enabled | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() )<br>public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() )<br>authenticated: public.is_workspace_admin(auth.uid(), workspace_id)<br>service_role: true | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() )<br>service_role: true | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() )<br>service_role: true | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() )<br>service_role: true |
 | `agent_skills` | enabled | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() ) OR current_setting('request.jwt.cla | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin', 'membe | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin', 'membe | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin') ) OR c |
 | `agent_templates` | enabled | authenticated: is_public = true OR created_by = auth.uid() | authenticated: created_by = auth.uid() | — | — |
-| `agent_traces` | enabled | public: auth.uid() = user_id | — | — | — |
+| `agent_traces` | enabled | public: auth.uid() = user_id<br>authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND a.user_id = (SELECT auth.uid()) )<br>authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND public.is_workspace_admin((SELECT auth.uid()),  | authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_traces.agent_id AND a.user_id = (SELECT auth.uid()) ) | — | — |
 | `agent_traces_v2` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `agent_traces_v2_2026_04` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `agent_traces_v2_2026_05` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
@@ -50,7 +50,7 @@
 | `agent_traces_v2_2027_05` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `agent_traces_v2_2027_06` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `agent_traces_v2_2027_07` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
-| `agent_usage` | não encontrado | authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() |
+| `agent_usage` | enabled | authenticated: user_id = auth.uid()<br>authenticated: user_id = (SELECT auth.uid())<br>authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = agent_usage.agent_id AND public.is_workspace_admin((SELECT auth.uid()), a | authenticated: user_id = auth.uid()<br>authenticated: user_id = (SELECT auth.uid()) | authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() |
 | `agent_versions` | enabled | authenticated: agent_id IN (SELECT id FROM public.agents WHERE user_id = auth.uid())<br>authenticated: agent_id IN (SELECT id FROM public.agents WHERE user_id = auth.uid()) | authenticated: agent_id IN (SELECT id FROM public.agents WHERE user_id = auth.uid())<br>authenticated: agent_id IN (SELECT id FROM public.agents WHERE user_id = auth.uid()) | authenticated: agent_id IN (SELECT id FROM public.agents WHERE user_id = auth.uid()) | authenticated: agent_id IN (SELECT id FROM public.agents WHERE user_id = auth.uid()) |
 | `agent_workflow_runs` | enabled | authenticated: workflow_id IN ( SELECT id FROM public.agent_workflows WHERE workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid() | authenticated: created_by = auth.uid() | authenticated: workflow_id IN ( SELECT id FROM public.agent_workflows WHERE workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid() | — |
 | `agent_workflows` | enabled | public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) | public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) AND created_by = auth.uid() | public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) | public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) |
@@ -222,7 +222,7 @@
 | `prompt_ab_tests` | enabled | authenticated: agent_id IN (SELECT a.id FROM public.agents a WHERE a.user_id = auth.uid()) | authenticated: agent_id IN (SELECT a.id FROM public.agents a WHERE a.user_id = auth.uid()) | authenticated: agent_id IN (SELECT a.id FROM public.agents a WHERE a.user_id = auth.uid()) | authenticated: agent_id IN (SELECT a.id FROM public.agents a WHERE a.user_id = auth.uid()) |
 | `prompt_experiment_runs` | enabled | authenticated: experiment_id IN ( SELECT id FROM public.prompt_experiments WHERE workspace_id IN (SELECT get_user_workspace_ids(auth.uid())) | authenticated: experiment_id IN ( SELECT id FROM public.prompt_experiments WHERE workspace_id IN (SELECT get_user_workspace_ids(auth.uid())) | — | — |
 | `prompt_experiments` | enabled | authenticated: workspace_id IN (SELECT get_user_workspace_ids(auth.uid())) | authenticated: workspace_id IN (SELECT get_user_workspace_ids(auth.uid())) AND created_by = auth.uid() | authenticated: created_by = auth.uid() OR is_workspace_admin(auth.uid(), workspace_id) | authenticated: created_by = auth.uid() OR is_workspace_admin(auth.uid(), workspace_id) |
-| `prompt_versions` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
+| `prompt_versions` | enabled | authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND a.user_id = (SELECT auth.uid()) )<br>authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND public.is_workspace_admin((SELECT auth.uid() | authenticated: EXISTS ( SELECT 1 FROM public.agents a WHERE a.id = prompt_versions.agent_id AND a.user_id = (SELECT auth.uid()) ) | — | — |
 | `queue_items` | enabled | public: workspace_id IS NULL OR workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid())<br>public: workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin'))<br>public: current_setting('request.jwt.claim.role', true) = 'service_role'<br>service_role: true | public: workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin'))<br>public: current_setting('request.jwt.claim.role', true) = 'service_role'<br>service_role: true | public: workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin'))<br>public: current_setting('request.jwt.claim.role', true) = 'service_role'<br>service_role: true | public: workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner','admin'))<br>public: current_setting('request.jwt.claim.role', true) = 'service_role'<br>service_role: true |
 | `rate_limit_entries` | enabled | public: false | public: false | public: false | public: false |
 | `rate_limit_logs` | enabled | public: auth.role() = 'service_role' | public: auth.role() = 'service_role' | public: auth.role() = 'service_role' | public: auth.role() = 'service_role' |
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 183 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 196 arquivo(s)
 
 - `e2e/auth-flows.spec.ts`
 - `e2e/helpers/auth-fixtures.ts`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260726161137_21809199-94e6-4a51-ad42-1a224926b6db.sql`
 - `supabase/migrations/20260726195702_c67b4a61-2895-4b1f-a3ab-2b98291792e3.sql`
 - `supabase/migrations/20260726200653_b8a5612b-6c59-4e82-b726-a0be5aee81dc.sql`
-- … +33 (lista completa em `context.json`)
+- … +46 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -521,8 +521,10 @@
 - `detect_slo_breach_and_alert`
 - `detect_slow_queries_and_alert`
 - `disable_all_chaos`
+- `disable_my_2fa`
 - `dispatch_security_alert_to_slack`
 - `drop_old_partitions`
+- `enable_my_2fa`
 - `encrypt_secret_value`
 - `enforce_budget`
 - `enforce_freeze_window`
@@ -574,6 +576,7 @@
 - `hash_api_key_bcrypt`
 - `hybrid_memory_search`
 - `hybrid_memory_search_notebook`
+- `hybrid_search_notebook`
 - `increment_skill_installs`
 - `increment_webhook_counter`
 - `insert_audit_log`
@@ -591,6 +594,7 @@
 - `mark_secret_retired`
 - `mark_vulnerability_fixed`
 - `memory_relevance`
+- `notify_slack_on_agent_run`
 - `offboard_vendor`
 - `pg_net_schema`
 - `pg_net_smoke_post`
@@ -656,6 +660,7 @@
 - `verify_api_key`
 - `verify_api_key_bcrypt`
 - `verify_cron_token`
+- `verify_my_2fa`
 
 ## Edge functions públicas (sem JWT — qualquer um chama)
 
@@ -667,6 +672,7 @@
 - `bitrix24-webhook`
 - `whatsapp-webhook`
 - `webhook-receiver`
+- `slack-agent-notify`
 
 ## Rotas protegidas no front
 
@@ -724,36 +730,36 @@ Middleware matcher (Next.js): nenhum
 |---|---|---|---|
 | grant | anon, authenticated | select | `forum_threads_public`, `forum_posts_public`, `forum_threads_public`, `forum_posts_public` |
 | grant | anon, authenticated, service_role | execute | `check_rate_limit`, `is_user_locked_out`, `check_rate_limit` |
-| grant | authenticated | execute | `get_user_workspace_ids`, `get_slo_summary`, `get_workspace_members_full`, `get_oncall_with_contacts`, `get_my_2fa_status`, `get_pending_invites_for_email`, `invite_workspace_member`, `get_wal_generation_rate`, `get_cron_job_health`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_snapshot` … +23 |
-| grant | authenticated | select | `audit_log_safe`, `audit_log_safe`, `workspace_members_safe`, `workspace_members_directory`, `workspace_members_safe`, `workspace_members_safe`, `workspace_members_safe`, `slo_metrics_hourly`, `slo_metrics_hourly`, `workspace_members_safe`, `workspace_members_safe`, `oncall_schedule_safe`, `workspace_members_safe`, `workspace_members_directory`, `oncall_schedule_safe` … +39 |
+| grant | authenticated | execute | `get_user_workspace_ids`, `get_slo_summary`, `get_workspace_members_full`, `get_oncall_with_contacts`, `get_my_2fa_status`, `get_pending_invites_for_email`, `invite_workspace_member`, `get_wal_generation_rate`, `get_cron_job_health`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_snapshot` … +28 |
+| grant | authenticated | select | `audit_log_safe`, `audit_log_safe`, `workspace_members_safe`, `workspace_members_directory`, `workspace_members_safe`, `workspace_members_safe`, `workspace_members_safe`, `slo_metrics_hourly`, `slo_metrics_hourly`, `workspace_members_safe`, `workspace_members_safe`, `oncall_schedule_safe`, `workspace_members_safe`, `workspace_members_directory`, `oncall_schedule_safe` … +42 |
 | grant | authenticated | select, insert, update | `citation_telemetry`, `skill_reclassification_reviews` |
 | grant | authenticated | select, insert, update, delete | `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `slack_workspace_config`, `slack_channel_routes`, `slack_agent_notifications`, `slack_rag_sources`, `slack_bot_bindings`, `document_ingestions`, `collections`, `notebook_notes`, `knowledge_links`, `notebook_podcasts` … +19 |
 | grant | authenticated, anon | select | `forum_threads_safe`, `forum_posts_safe`, `forum_threads_safe`, `forum_posts_safe`, `forum_threads_public`, `forum_posts_public`, `forum_threads_safe`, `forum_posts_safe` |
-| grant | authenticated, service_role | execute | `is_user_locked_out`, `is_mfa_valid_for_role`, `increment_webhook_counter`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_slo_summary`, `get_slo_summary`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `hybrid_memory_search`, `is_workspace_admin`, `touch_memory`, `get_slow_query_alerts_history` … +20 |
+| grant | authenticated, service_role | execute | `is_user_locked_out`, `is_mfa_valid_for_role`, `increment_webhook_counter`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_slo_summary`, `get_slo_summary`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `hybrid_memory_search`, `is_workspace_admin`, `touch_memory`, `get_slow_query_alerts_history` … +28 |
 | grant | authenticated, service_role | select | `agent_daily_metrics`, `agent_daily_metrics`, `agent_daily_metrics` |
 | grant | postgres | execute | `_fase8_snapshot_as`, `_fase8_snapshot_as` |
 | grant | postgres, service_role | execute | `handle_new_user` |
 | grant | service_role | all | `retention_job_runs`, `pg_net_smoke_runs`, `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `openclaw_events`, `openclaw_agent_templates`, `slack_workspace_config`, `slack_channel_routes`, `slack_event_dedupe`, `slack_user_cache`, `slack_agent_notifications`, `slack_rag_sources` … +59 |
-| grant | service_role | execute | `cleanup_rate_limit_entries`, `increment_webhook_counter`, `prune_traces_retention`, `prune_traces_retention`, `run_prune_traces_retention_monitored`, `check_retention_job_health`, `pg_net_schema`, `pg_net_smoke_post`, `pg_net_smoke_response`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `refresh_agent_daily_metrics`, `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions` … +85 |
-| grant | service_role | select | `agent_daily_metrics`, `internal.agent_daily_metrics`, `llm_cost_by_caller`, `knowledge_graph_health`, `internal.agent_daily_metrics`, `llm_cost_by_caller`, `slack_dispatch_health`, `knowledge_graph_health` |
+| grant | service_role | execute | `cleanup_rate_limit_entries`, `increment_webhook_counter`, `prune_traces_retention`, `prune_traces_retention`, `run_prune_traces_retention_monitored`, `check_retention_job_health`, `pg_net_schema`, `pg_net_smoke_post`, `pg_net_smoke_response`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `refresh_agent_daily_metrics`, `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions` … +97 |
+| grant | service_role | select | `agent_daily_metrics`, `internal.agent_daily_metrics`, `llm_cost_by_caller`, `knowledge_graph_health`, `internal.agent_daily_metrics`, `llm_cost_by_caller`, `slack_dispatch_health`, `knowledge_graph_health`, `llm_cost_by_caller`, `slack_dispatch_health` |
 | grant | service_role | update, delete | `audit_log` |
 | grant | supabase_admin | execute | `public` |
 | revoke | PUBLIC | all | `prune_traces_retention`, `pg_net_schema`, `pg_net_smoke_post`, `pg_net_smoke_response`, `internal.check_partition_health`, `get_db_rollback_rate`, `knowledge_graph_health`, `hybrid_memory_search`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `claim_due_cadence_enrollments`, `internal.cron_tokens`, `decide_skill_reclassification`, `apply_skill_description` … +4 |
-| revoke | PUBLIC | execute | `get_user_workspace_ids`, `is_user_locked_out`, `is_mfa_valid_for_role`, `validate_oncall_workspace_consistency`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `get_user_workspace_ids`, `is_workspace_admin`, `get_knowledge_graph_health` |
-| revoke | PUBLIC, anon | all | `get_slo_summary`, `get_slo_summary`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_timeseries`, `get_detector_slo_status`, `get_partition_health_snapshot`, `match_documents`, `get_chunk_embedding_coverage` |
-| revoke | PUBLIC, anon | execute | `get_db_health_snapshot`, `get_slow_query_alerts_history`, `get_db_health_snapshot`, `get_vendor_summary`, `get_asset_summary`, `get_bcp_summary`, `get_change_summary`, `get_ir_summary`, `get_secrets_status_summary`, `get_user_workspace_ids`, `is_workspace_admin`, `is_workspace_admin` |
-| revoke | PUBLIC, anon, authenticated | all | `run_prune_traces_retention_monitored`, `check_retention_job_health`, `internal.check_partition_health`, `trg_openclaw_whatsapp_autoreply`, `knowledge_graph_health`, `internal.cleanup_slack_ephemeral`, `_fase8_snapshot_as`, `internal.db_health_samples`, `internal.capture_db_health_sample`, `internal.prune_db_health_samples`, `internal.detect_health_trend_and_alert`, `internal.smoke_test_health_alerts`, `internal.smoke_test_wal_growth`, `internal.smoke_test_connections_saturation`, `internal.detector_slo_state` … +18 |
-| revoke | PUBLIC, anon, authenticated | execute | `prune_traces_retention`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `get_cron_job_health`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_wal_generation_rate`, `internal.test_partition_automation`, `detect_slow_queries_and_alert`, `internal.detect_slo_breach_and_alert`, `collections_fill_workspace`, `explain_query_plan`, `log_ingestion_event`, `snapshot_note_version` … +18 |
+| revoke | PUBLIC | execute | `get_user_workspace_ids`, `is_user_locked_out`, `is_mfa_valid_for_role`, `validate_oncall_workspace_consistency`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `get_user_workspace_ids`, `is_workspace_admin`, `get_knowledge_graph_health`, `is_user_locked_out`, `refresh_secrets_status` |
+| revoke | PUBLIC, anon | all | `get_slo_summary`, `get_slo_summary`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_timeseries`, `get_detector_slo_status`, `get_partition_health_snapshot`, `match_documents`, `get_chunk_embedding_coverage`, `hybrid_memory_search_notebook`, `hybrid_search_notebook`, `enable_my_2fa`, `disable_my_2fa`, `verify_my_2fa`, `is_mfa_valid_for_role` … +3 |
+| revoke | PUBLIC, anon | execute | `get_db_health_snapshot`, `get_slow_query_alerts_history`, `get_db_health_snapshot`, `get_vendor_summary`, `get_asset_summary`, `get_bcp_summary`, `get_change_summary`, `get_ir_summary`, `get_secrets_status_summary`, `get_user_workspace_ids`, `is_workspace_admin`, `is_workspace_admin`, `compute_cost_baselines`, `detect_cost_anomalies`, `assign_variant` |
+| revoke | PUBLIC, anon, authenticated | all | `run_prune_traces_retention_monitored`, `check_retention_job_health`, `internal.check_partition_health`, `trg_openclaw_whatsapp_autoreply`, `knowledge_graph_health`, `internal.cleanup_slack_ephemeral`, `_fase8_snapshot_as`, `internal.db_health_samples`, `internal.capture_db_health_sample`, `internal.prune_db_health_samples`, `internal.detect_health_trend_and_alert`, `internal.smoke_test_health_alerts`, `internal.smoke_test_wal_growth`, `internal.smoke_test_connections_saturation`, `internal.detector_slo_state` … +21 |
+| revoke | PUBLIC, anon, authenticated | execute | `prune_traces_retention`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `get_cron_job_health`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_wal_generation_rate`, `internal.test_partition_automation`, `detect_slow_queries_and_alert`, `internal.detect_slo_breach_and_alert`, `collections_fill_workspace`, `explain_query_plan`, `log_ingestion_event`, `snapshot_note_version` … +29 |
 | revoke | PUBLIC, authenticated | execute | `recompute_memory_tier`, `refresh_knowledge_graph_health` |
 | revoke | PUBLIC, authenticated, anon | execute | `internal.slack_cleanup_dedupe` |
 | revoke | anon | all | `get_slow_query_alerts_history`, `explain_query_plan`, `claim_due_cadence_enrollments`, `get_partition_health_snapshot`, `get_cron_job_health`, `get_wal_generation_rate`, `chat_threads`, `chat_messages` |
-| revoke | anon | execute | `validate_oncall_workspace_consistency`, `public`, `log_audit_entry` |
+| revoke | anon | execute | `validate_oncall_workspace_consistency`, `public`, `log_audit_entry`, `is_user_locked_out`, `refresh_secrets_status` |
 | revoke | anon | insert, update, delete | `compliance_frameworks` |
 | revoke | anon | insert, update, delete, truncate | `rate_limit_entries` |
 | revoke | anon, PUBLIC | execute | `get_embedding_coverage`, `get_knowledge_graph_health`, `hybrid_memory_search`, `hybrid_memory_search`, `reset_embedding_dead_letter`, `touch_memory`, `memory_relevance`, `is_workspace_admin`, `touch_memory` |
 | revoke | anon, authenticated, PUBLIC | execute | `recompute_memory_tier`, `refresh_knowledge_graph_health` |
 | revoke | authenticated | all | `claim_due_cadence_enrollments` |
-| revoke | authenticated | execute | `validate_oncall_workspace_consistency` |
+| revoke | authenticated | execute | `validate_oncall_workspace_consistency`, `refresh_secrets_status` |
 | revoke | authenticated | insert, update, delete | `compliance_frameworks` |
 | revoke | authenticated | update, delete | `audit_log` |
 | revoke | authenticated, anon | all | `traces`, `spans` |
@@ -767,7 +773,6 @@ Middleware matcher (Next.js): nenhum
 | Tabela | Problema | Arquivos |
 |---|---|---|
 | `agent_daily_metrics` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/agentDailyMetricsService.ts` |
-| `agent_usage` | acessada do front (4 arquivo(s)) sem RLS (não encontrado) | `src/services/agentsService.ts`<br>`src/services/billingService.ts`<br>`src/services/dashboardService.ts`<br>`src/services/skillbookAuditService.ts` |
 | `agents` | acessada do front (26 arquivo(s)) sem RLS (não encontrado) | `src/components/agent-builder/HandoffPanel.tsx`<br>`src/components/agents/VersionDiffDialog.tsx`<br>`src/components/agents/wizard/QuickCreateWizard.tsx`<br>`src/components/billing/CostOptimizationPanel.tsx`<br>… +22 |
 | `compliance_controls` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | `compliance_controls` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
@@ -775,7 +780,8 @@ Middleware matcher (Next.js): nenhum
 | `forum_posts_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | `forum_threads_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | `oncall_schedule_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/incidentService.ts` |
-| `prompt_versions` | acessada do front (3 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeService.ts`<br>`src/services/promptVersionService.ts`<br>`src/stores/agentBuilderStore.ts` |
+| `prompt_versions` | front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/services/promptVersionService.ts`<br>`src/stores/agentBuilderStore.ts` |
+| `prompt_versions` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/services/promptVersionService.ts` |
 | `usage_records_cost_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/billingService.ts` |
 | `workspace_members_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/teamsService.ts` |
 
@@ -849,7 +855,7 @@ Middleware matcher (Next.js): nenhum
 | `model_pricing` | `created_at`, `updated_at` |
 | `workflow_runs` | `created_at` |
 | `deploy_connections` | `created_at`, `updated_at` |
-| `alert_rules` | `created_at` |
+| `alert_rules` | `created_at`, `updated_at` |
 | `prompt_ab_tests` | `created_at` |
 | `consent_records` | `created_at`, `updated_at` |
 | `agent_versions` | `created_at`, `created_by` |
