@@ -15006,6 +15006,21 @@ export type Database = {
         Returns: string
       }
       is_mfa_valid_for_role: { Args: never; Returns: boolean }
+      check_auth_security: {
+        Args: { p_email: string; p_ip_address?: string | null; p_action?: string }
+        Returns: Json
+      }
+      record_auth_attempt: {
+        Args: {
+          p_email: string
+          p_success: boolean
+          p_ip_address?: string | null
+          p_requires_captcha?: boolean
+          p_captcha_token?: string | null
+          p_lockout_id?: string | null
+        }
+        Returns: string
+      }
       is_user_locked_out: { Args: { target_email: string }; Returns: boolean }
       is_workspace_admin:
         | { Args: { _user_id: string }; Returns: boolean }
