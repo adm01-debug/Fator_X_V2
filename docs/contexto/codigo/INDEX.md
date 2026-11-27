@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `79b93e5a611cf3d9cb50eb308ceba76779a4292b` (2026-11-27T00:08:24-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e33e3a834c2068a6c77092d4fdaf51496d1708ff` (2026-11-27T00:25:52-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2040 |
 | arquivos_codigo | 1475 |
-| linhas_codigo | 324562 |
+| linhas_codigo | 324567 |
 | rotas | 152 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -433,14 +433,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15458 nós · 39402 arestas · 1380 comunidades · grafo do commit `79b93e5a`
+- 15458 nós · 39402 arestas · 1380 comunidades · grafo do commit `e33e3a83`
 - comunidades maiores: lucide-react (292), App.tsx (250), ref_https (209), input.tsx (203), @tanstack/react-query (196), tabs.tsx (135), cn (131), fromTable (120), templateSkillLinkService.ts (116), VendorsPage.tsx (107), mod.ts (102), whatsapp-webhook/index.ts (101)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
+- supabase/deployment-manifest.json (27)
 - package-lock.json (26)
-- supabase/deployment-manifest.json (26)
 - package.json (24)
 - .github/workflows/ci.yml (9)
 - docs/migration/MATRIZ_EDGE_TABELA.md (7)
@@ -580,6 +580,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `e33e3a8` fix(voice): alinha o schema da edge voice-session ao handler (#183)
 - 2026-11-27 `79b93e5` feat(geo): descobre o pais por endereco ou coordenadas na governanca (#182)
 - 2026-11-26 `26d3bba` fix(guardrails): testador da UI chamava a edge sem action e nunca via os rails (#181)
 - 2026-11-26 `1e1eaf2` feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)
@@ -594,7 +595,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `aae4b7b` feat: expõe a trilha real de security_events no Audit Trail (#173)
 - 2026-11-26 `9e84381` feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)
 - 2026-11-26 `71009dd` feat(hf): configuração HuggingFace por workspace vira real (#171)
-- 2026-11-26 `a77f3ba` feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

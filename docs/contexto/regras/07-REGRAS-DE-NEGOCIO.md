@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `79b93e5a61` · branch `main` · 2026-11-27 03:09 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e33e3a834c` · branch `main` · 2026-11-27 03:26 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2232,7 +2232,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
   ```
 - **VoiceSessionBodySchema** (`supabase/functions/voice-session/index.ts`, z.object):
   ```ts
-  { action: z.enum(['start', 'end', 'append', 'get']), agent_id: z.string().uuid().nullable().optional(), session_id: z.string().uuid().optional(), }
+  { // O handler implementa start/end. append e get existiam só no schema: o transcript // incremental já é gravado por voice-transcribe (role user) e voice-synthesize // (role assistant), e a leitura da sessão é feita sob RLS direto em voice_sessions. action: z.enum(['start', 'end']), agent_id: z.string().uuid().nullable().optional(), session_id: z.string().uuid().optional(), }
   ```
 - **InputSchema** (`supabase/functions/voice-synthesize/index.ts`, z.object):
   ```ts

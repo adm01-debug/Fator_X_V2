@@ -2788,7 +2788,7 @@
    "nome": "voice-session",
    "entrada": "supabase/functions/voice-session/index.ts",
    "arquivos": 1,
-   "linhas": 121,
+   "linhas": 124,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
