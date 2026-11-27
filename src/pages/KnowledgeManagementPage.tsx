@@ -87,20 +87,22 @@ export default function KnowledgeManagementPage() {
     enabled: !!selectedKb,
   });
 
+  const workspaceId = workspace?.id;
   const {
     data: embHealth,
     error: embHealthError,
     isLoading: embHealthLoading,
   } = useQuery({
-    queryKey: ['kb_embed_health'],
-    queryFn: getEmbeddingHealth,
+    queryKey: ['kb_embed_health', workspaceId],
+    queryFn: () => getEmbeddingHealth(workspaceId as string),
+    enabled: !!workspaceId,
     refetchInterval: 60_000,
   });
 
   const { data: deadLetter = [] } = useQuery({
-    queryKey: ['kb_embed_dead_letter'],
-    queryFn: () => listDeadLetterChunks(20),
-    enabled: (embHealth?.dead_letter ?? 0) > 0,
+    queryKey: ['kb_embed_dead_letter', workspaceId],
+    queryFn: () => listDeadLetterChunks(workspaceId as string, 20),
+    enabled: !!workspaceId && (embHealth?.dead_letter ?? 0) > 0,
   });
 
   const [retryingId, setRetryingId] = useState<string | null>(null);

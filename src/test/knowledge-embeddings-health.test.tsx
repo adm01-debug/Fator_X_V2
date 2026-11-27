@@ -4,18 +4,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import KnowledgeManagementPage from "@/pages/KnowledgeManagementPage";
 
-vi.mock("@/components/ui/tabs", () => {
-  return {
-    Tabs: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-    TabsList: ({ children }: { children: React.ReactNode }) => <div role="tablist">{children}</div>,
-    TabsTrigger: ({ children }: { children: React.ReactNode }) => (
-      <button type="button" role="tab">
-        {children}
-      </button>
-    ),
-    TabsContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  };
-});
+vi.mock("@/components/ui/tabs", () => ({
+  Tabs: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  TabsList: ({ children }: { children: React.ReactNode }) => <div role="tablist">{children}</div>,
+  TabsTrigger: ({ children }: { children: React.ReactNode }) => (
+    <button type="button" role="tab">
+      {children}
+    </button>
+  ),
+  TabsContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
 
 vi.mock("@/services/workspaceContextService", () => ({
   getCurrentUserWorkspace: vi.fn(async () => ({ id: "ws-1" })),
@@ -23,6 +21,7 @@ vi.mock("@/services/workspaceContextService", () => ({
 vi.mock("@/services/knowledgeService", () => ({
   listKnowledgeBases: vi.fn(async () => []),
 }));
+vi.mock("@/integrations/supabase/client", () => ({ supabase: {} }));
 vi.mock("@/services/knowledgeManagementService", async () => {
   const actual = await vi.importActual<typeof import("@/services/knowledgeManagementService")>(
     "@/services/knowledgeManagementService",
@@ -57,18 +56,21 @@ describe("Embedding health tab", () => {
   });
 
   it("mostra os tres contadores de chunks sem vetor", async () => {
+    const svc = await import("@/services/knowledgeManagementService");
     render(<KnowledgeManagementPage />, { wrapper });
     expect(await screen.findByText(/Sa.de dos embeddings/)).toBeInTheDocument();
+    await waitFor(() => expect(svc.getEmbeddingHealth).toHaveBeenCalledWith("ws-1"));
     expect(screen.getByText("Na fila")).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText("7")).toBeInTheDocument());
     expect(screen.getByText("3")).toBeInTheDocument();
     expect(screen.getByText("Travados (dead-letter)")).toBeInTheDocument();
   });
 
-  it("lista o chunk travado e devolve para a fila", async () => {
+  it("lista o chunk travado escopado ao workspace e devolve para a fila", async () => {
     const svc = await import("@/services/knowledgeManagementService");
     render(<KnowledgeManagementPage />, { wrapper });
     expect(await screen.findByText(/Trecho orfao da busca/)).toBeInTheDocument();
+    await waitFor(() => expect(svc.listDeadLetterChunks).toHaveBeenCalledWith("ws-1", 20));
     fireEvent.click(screen.getByRole("button", { name: /Reprocessar/ }));
     await waitFor(() => expect(svc.retryDeadLetterChunk).toHaveBeenCalledWith("ch-1"));
   });
