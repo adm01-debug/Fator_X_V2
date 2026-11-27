@@ -51,9 +51,19 @@ function num(v) {
 }
 
 function readAlerts() {
+  // `-f` codifica a query string; sem -X GET o gh enviaria POST (404).
   const raw = execFileSync(
     "gh",
-    ["api", `repos/${repo}/dependabot/alerts?state=open&per_page=100`],
+    [
+      "api",
+      "-X",
+      "GET",
+      `repos/${repo}/dependabot/alerts`,
+      "-f",
+      "state=open",
+      "-f",
+      "per_page=100",
+    ],
     { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 },
   );
   return JSON.parse(raw);
