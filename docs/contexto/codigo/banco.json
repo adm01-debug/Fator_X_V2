@@ -39672,6 +39672,11 @@
    "usada_em": 1
   },
   {
+   "nome": "hybrid_search_notebook",
+   "definida": false,
+   "usada_em": 1
+  },
+  {
    "nome": "increment_skill_installs",
    "definida": true,
    "usada_em": 1

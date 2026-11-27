@@ -6914,7 +6914,7 @@
     "SearchTab"
    ],
    "export_default": null,
-   "linhas": 515,
+   "linhas": 587,
    "dominio": "components/super-cerebro",
    "hooks_locais": [
     "useCerebroStore",

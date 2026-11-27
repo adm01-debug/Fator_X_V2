@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `18aacbde4c` · branch `main` · 2026-11-27 06:48 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ffdbf8c01b` · branch `main` · 2026-11-27 06:49 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4075,7 +4075,7 @@ _nenhum item encontrado_
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 | `workspace_admin` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 
-## K. Testes como especificação (3125 testes em 228 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3131 testes em 229 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4254,6 +4254,7 @@ _nenhum item encontrado_
 | `src/test/local-graph-view.test.tsx` | 6 | LocalGraphView · mostra empty state quando não há links · renderiza nó central e periféricos in/out · clique em nó backlink chama setActiveNote com source_id … |
 | `src/test/model-router-service.test.ts` | 6 | modelRouterService · routeQuery falls back to local heuristic · routes simple queries to fast tier · routes complex queries to higher tier … |
 | `src/test/monitoring-service.test.ts` | 6 | monitoringService exports · module exports the documented public surface · monitoringService types · exports at least 9 functions … |
+| `src/test/notebook-search-service.test.ts` | 6 | searchNotebookChunks · não consulta o banco com query vazia · envia o vetor da consulta quando o embedding está disponível · cai para busca textual pura quando o embedding falha … |
 | `src/test/openclaw-runtime.test.tsx` | 6 | OpenclawDeployPage (Runtime OpenClaw) · renderiza o título Runtime OpenClaw · mostra saúde do runtime após carregar · lista agents retornados pelo service … |
 | `src/test/oracle-service.test.ts` | 6 | oracleService exports · module exports the documented public surface · oracleService types · exports exactly 3 functions … |
 | `src/test/real-time-cost-stream.test.tsx` | 6 | RealTimeCostStream · renders header, totals and waiting state on mount · starts with CONECTANDO badge before subscribe callback fires · pause button toggles label between Pausar and Retomar … |
@@ -4422,6 +4423,7 @@ _nenhum item encontrado_
 | `invoke(` | `src/services/modelRouterService.ts` |
 | `invoke(` | `src/services/nlpPipelineService.ts` |
 | `invoke(` | `src/services/notebookPodcastsService.ts` |
+| `invoke(` | `src/services/notebookSearchService.ts` |
 | `invoke(` | `src/services/notificationEngineService.ts` |
 | `sendNotification` | `src/services/notificationEngineService.ts` |
 | `invoke(` | `src/services/openclawDeployService.ts` |

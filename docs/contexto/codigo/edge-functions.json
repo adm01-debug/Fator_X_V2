@@ -2011,6 +2011,7 @@
     "retry.ts"
    ],
    "chamada_pelo_front": [
+    "src/services/notebookSearchService.ts",
     "src/services/ragPipelineService.ts"
    ],
    "chamada_por_edges": [

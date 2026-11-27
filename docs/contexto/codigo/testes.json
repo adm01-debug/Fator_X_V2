@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 255,
+ "total": 256,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 240
+  "unit": 241
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 212
+   "arquivos": 213
   },
   {
    "padrao": "outro",
@@ -1256,6 +1256,15 @@
     "src/lib/normalize.ts"
    ],
    "casos": 21
+  },
+  {
+   "arquivo": "src/test/notebook-search-service.test.ts",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/services/notebookSearchService.ts"
+   ],
+   "casos": 5
   },
   {
    "arquivo": "src/test/notification-and-middleware.test.ts",
@@ -2581,6 +2590,7 @@
   "src/services/modelRouterService.ts": 1,
   "src/services/monitoringService.ts": 2,
   "src/services/nlpPipelineService.ts": 1,
+  "src/services/notebookSearchService.ts": 1,
   "src/services/notesService.ts": 3,
   "src/services/notificationEngineService.ts": 4,
   "src/services/openclawDeployService.ts": 2,

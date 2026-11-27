@@ -3205,6 +3205,7 @@
    "src/services/cerebroService.ts",
    "src/services/contextTiersService.ts",
    "src/services/knowledgeService.ts",
+   "src/services/notebookSearchService.ts",
    "src/services/notebooksService.ts",
    "src/stores/cerebroStore.ts",
    "src/types/cerebroCitations.ts"
@@ -6574,6 +6575,9 @@
    "src/integrations/supabase/externalClient.ts",
    "src/lib/logger.ts",
    "src/lib/signedUrlCache.ts"
+  ],
+  "src/services/notebookSearchService.ts": [
+   "src/integrations/supabase/client.ts"
   ],
   "src/services/notebooksService.ts": [
    "src/integrations/supabase/client.ts",

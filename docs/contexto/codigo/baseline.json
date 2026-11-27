@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "18aacbde4ce056f8bcaa3c945e4d4d193bd38f9e",
+  "commit": "ffdbf8c01bc5061227c0aeeb7e98462db69753d4",
   "branch": "main",
-  "data_commit": "2026-11-27T03:47:29-03:00",
+  "data_commit": "2026-11-27T03:47:35-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "ffdbf8c",
+    "data": "2026-11-27",
+    "assunto": "feat(busca): trechos do notebook direto do banco no Super Cerebro (#202)"
+   },
    {
     "sha": "18aacbd",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "f2a4f3a",
     "data": "2026-11-26",
     "assunto": "chore(vercel): deep link da SPA deixa de dar 404 (#164)"
-   },
-   {
-    "sha": "897badb",
-    "data": "2026-11-26",
-    "assunto": "test(forum): trava as escritas do forum publico (#162)"
    }
   ],
-  "arquivos_mudados_7d": 153,
+  "arquivos_mudados_7d": 156,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -168,6 +168,10 @@
     "mudancas": 6
    },
    {
+    "pasta": "src/integrations/supabase",
+    "mudancas": 5
+   },
+   {
     "pasta": "supabase/functions/geo-code",
     "mudancas": 5
    },
@@ -185,10 +189,6 @@
    },
    {
     "pasta": "src/components/shared",
-    "mudancas": 4
-   },
-   {
-    "pasta": "src/integrations/supabase",
     "mudancas": 4
    },
    {
@@ -231,6 +231,10 @@
    },
    {
     "arquivo": ".github/workflows/guards.yml",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 4
    },
    {
@@ -292,16 +296,12 @@
    {
     "arquivo": "src/components/layout/AppSidebar.tsx",
     "mudancas": 3
-   },
-   {
-    "arquivo": "src/components/shared/OnboardingTour.tsx",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 93
+    "commits": 94
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2042,
-  "arquivos_codigo": 1477,
-  "linhas_codigo": 324809,
+  "arquivos_total": 2044,
+  "arquivos_codigo": 1479,
+  "linhas_codigo": 325072,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 328,
   "migrations": 346,
   "cron_jobs": 37,
-  "testes": 255,
+  "testes": 256,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -468,7 +468,7 @@
   },
   "src/components": {
    "arquivos": 560,
-   "linhas": 104822
+   "linhas": 104894
   },
   "src/config": {
    "arquivos": 10,
@@ -492,7 +492,7 @@
   },
   "src/integrations": {
    "arquivos": 5,
-   "linhas": 15746
+   "linhas": 15764
   },
   "src/lib": {
    "arquivos": 93,
@@ -511,16 +511,16 @@
    "linhas": 43
   },
   "src/services": {
-   "arquivos": 170,
-   "linhas": 34040
+   "arquivos": 171,
+   "linhas": 34121
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 206,
-   "linhas": 30808
+   "arquivos": 207,
+   "linhas": 30900
   },
   "src/tests": {
    "arquivos": 2,
@@ -566,7 +566,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 15472
+   "linhas": 15490
   },
   {
    "arquivo": "src/pages/SLODashboard.tsx",
@@ -850,7 +850,8 @@
   "rpcs_sem_definicao": [
    "disable_my_2fa",
    "enable_my_2fa",
-   "exec_sql"
+   "exec_sql",
+   "hybrid_search_notebook"
   ],
   "componentes_orfaos": [
    "src/components/agents/AgentCardGrid.tsx",

@@ -1780,6 +1780,7 @@
    "rpcs": [
     "get_masked_secrets",
     "get_my_2fa_status",
+    "hybrid_search_notebook",
     "is_user_locked_out",
     "log_audit_entry"
    ],
@@ -1791,6 +1792,7 @@
     "memory-manager",
     "memory-tools",
     "notebook-podcast-generate",
+    "rag-embed-v2",
     "rag-rerank"
    ],
    "canais_realtime": [
@@ -1806,7 +1808,7 @@
     "option",
     "workspace_admin"
    ],
-   "arquivos_puxados": 146
+   "arquivos_puxados": 147
   },
   {
    "protegida": false,
@@ -7489,6 +7491,7 @@
    "rpcs": [
     "get_masked_secrets",
     "get_my_2fa_status",
+    "hybrid_search_notebook",
     "is_user_locked_out",
     "log_audit_entry"
    ],
@@ -7500,6 +7503,7 @@
     "memory-manager",
     "memory-tools",
     "notebook-podcast-generate",
+    "rag-embed-v2",
     "rag-rerank"
    ],
    "canais_realtime": [
@@ -7515,7 +7519,7 @@
     "option",
     "workspace_admin"
    ],
-   "arquivos_puxados": 146
+   "arquivos_puxados": 147
   },
   {
    "protegida": false,
@@ -7709,6 +7713,7 @@
    "rpcs": [
     "get_masked_secrets",
     "get_my_2fa_status",
+    "hybrid_search_notebook",
     "is_user_locked_out",
     "log_audit_entry"
    ],
@@ -7720,6 +7725,7 @@
     "memory-manager",
     "memory-tools",
     "notebook-podcast-generate",
+    "rag-embed-v2",
     "rag-rerank"
    ],
    "canais_realtime": [
@@ -7735,7 +7741,7 @@
     "option",
     "workspace_admin"
    ],
-   "arquivos_puxados": 146
+   "arquivos_puxados": 147
   },
   {
    "protegida": false,
