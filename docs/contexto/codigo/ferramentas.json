@@ -4,7 +4,7 @@
  "stack": {
   "linguagens": [
    "TypeScript (1426)",
-   "SQL (368)",
+   "SQL (369)",
    "Markdown (135)",
    "JavaScript (55)",
    "JSON (25)",
@@ -571,6 +571,7 @@
    ],
    "npm_scripts": [],
    "secrets": [
+    "DEPENDABOT_TOKEN",
     "SUPABASE_ACCESS_TOKEN"
    ],
    "actions": [
@@ -1094,6 +1095,7 @@
   ],
   "secrets_em_workflows": [
    "DB_MCP_URL",
+   "DEPENDABOT_TOKEN",
    "GITHUB_TOKEN",
    "GOOGLE_MAPS_API_KEY",
    "HERMES_API_KEY",

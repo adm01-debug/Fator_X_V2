@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "85f4ec27ab7763d73c86c54d7286bdec6c518139",
+  "commit": "42ee11ae339cccfbabd41b74e9b3a52783f3cbe4",
   "branch": "main",
-  "data_commit": "2026-11-27T09:06:51-03:00",
+  "data_commit": "2026-11-27T09:50:25-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "42ee11a",
+    "data": "2026-11-27",
+    "assunto": "fix: alimenta a tela de vulnerabilidades (token do Dependabot + fonte no CHECK) (#218)"
+   },
+   {
+    "sha": "c2d780f",
+    "data": "2026-11-27",
+    "assunto": "fix(vulnerabilidades): corrige a leitura dos alertas do Dependabot (#217)"
+   },
    {
     "sha": "85f4ec2",
     "data": "2026-11-27",
@@ -121,19 +131,9 @@
     "sha": "1e1eaf2",
     "data": "2026-11-26",
     "assunto": "feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)"
-   },
-   {
-    "sha": "91e02fc",
-    "data": "2026-11-26",
-    "assunto": "fix(lgpd): conserta exclusão, consentimento e anonimização contra o schema real (#179)"
-   },
-   {
-    "sha": "ddbccc8",
-    "data": "2026-11-26",
-    "assunto": "fix(forum): tira rascunho das views safe do forum (#163)"
    }
   ],
-  "arquivos_mudados_7d": 191,
+  "arquivos_mudados_7d": 192,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 109
+    "commits": 111
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2073,
+  "arquivos_total": 2074,
   "arquivos_codigo": 1485,
-  "linhas_codigo": 326504,
+  "linhas_codigo": 326514,
   "rotas": 153,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -322,7 +322,7 @@
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 328,
-  "migrations": 365,
+  "migrations": 366,
   "cron_jobs": 40,
   "testes": 259,
   "workflows": 14,
@@ -460,7 +460,7 @@
   },
   "scripts/sync-dependabot-findings.mjs": {
    "arquivos": 1,
-   "linhas": 137
+   "linhas": 147
   },
   "scripts/template-link-coverage.ts": {
    "arquivos": 1,

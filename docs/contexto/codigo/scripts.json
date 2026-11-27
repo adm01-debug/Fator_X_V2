@@ -498,7 +498,7 @@
   {
    "arquivo": "scripts/sync-dependabot-findings.mjs",
    "descricao": "* Sincroniza os alertas abertos do Dependabot para `vulnerability_findings`.",
-   "linhas": 137,
+   "linhas": 147,
    "env": [
     "GITHUB_REPOSITORY",
     "PROJECT_REF",

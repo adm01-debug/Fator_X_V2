@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `85f4ec27ab` · branch `main` · 2026-11-27 12:08 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `42ee11ae33` · branch `main` · 2026-11-27 12:52 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `deploy_connections` | `agent_id` | obrigatório; FK → agents.id ON DELETE CASCADE |
 | `deploy_connections` | `workspace_id` | FK → workspaces.id ON DELETE CASCADE |
 | `deploy_connections` | `channel` | obrigatório |
-| … +2274 linhas — lista completa em `context.json` | | |
+| … +2275 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `85f4ec27ab7763d73c86c54d7286bdec6c518139` (2026-11-27T09:06:51-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `42ee11ae339cccfbabd41b74e9b3a52783f3cbe4` (2026-11-27T09:50:25-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1426), SQL (368), Markdown (135), JavaScript (55), JSON (25), YAML (20), Shell (10), Python (5)
+- linguagens: TypeScript (1426), SQL (369), Markdown (135), JavaScript (55), JSON (25), YAML (20), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2073 |
+| arquivos_total | 2074 |
 | arquivos_codigo | 1485 |
-| linhas_codigo | 326504 |
+| linhas_codigo | 326514 |
 | rotas | 153 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 76 |
 | edge_functions | 88 |
 | tabelas | 328 |
-| migrations | 365 |
+| migrations | 366 |
 | cron_jobs | 40 |
 | testes | 259 |
 | workflows | 14 |
@@ -437,7 +437,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15592 nós · 39622 arestas · 1385 comunidades · grafo do commit `85f4ec27`
+- 15594 nós · 39622 arestas · 1387 comunidades · grafo do commit `42ee11ae`
 - comunidades maiores: Button (319), lucide-react (276), App.tsx (208), ref_https (191), templateSkillLinkService.ts (126), cn (125), VendorsPage.tsx (121), sonner (116), notesService.ts (114), mod.ts (112), whatsapp-webhook/index.ts (112), fetchWithTimeout (107)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -587,6 +587,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `42ee11a` fix: alimenta a tela de vulnerabilidades (token do Dependabot + fonte no CHECK) (#218)
+- 2026-11-27 `c2d780f` fix(vulnerabilidades): corrige a leitura dos alertas do Dependabot (#217)
 - 2026-11-27 `85f4ec2` chore(deps): zera as 2 vulnerabilidades criticas do Dependabot (#216)
 - 2026-11-27 `49ad081` feat(vulnerabilidades): sincroniza alertas do Dependabot para a tela (#215)
 - 2026-11-27 `6b55c8b` fix(seguranca): revoga select de anon nas tabelas de config vazias (#214)
@@ -600,8 +602,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-27 `c10942b` infra(banco): lote unico das 13 migrations pendentes em producao (#203)
 - 2026-11-27 `437f21d` infra(banco): workflow manual para aplicar migrations com dry-run e trava APLICAR (#206)
 - 2026-11-27 `046466f` feat(conhecimento): aba de saúde dos embeddings com reprocessamento de chunks travados (#205)
-- 2026-11-27 `98dda83` feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)
-- 2026-11-27 `3d2bbaa` chore: remove rascunhos de corpo de PR versionados por engano (#200)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "85f4ec27ab7763d73c86c54d7286bdec6c518139",
+  "sha": "42ee11ae339cccfbabd41b74e9b3a52783f3cbe4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 12:08 UTC",
-  "files_total": 2078,
-  "code_files": 1854,
-  "code_lines": 370525
+  "generated_at": "2026-11-27 12:52 UTC",
+  "files_total": 2079,
+  "code_files": 1855,
+  "code_lines": 370551
  },
  "version": "1.3.2",
- "facts_hash": "421e56e4f5eed520",
+ "facts_hash": "457c4f7ffdaad15c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -271,7 +271,7 @@
   "languages": {
    ".ts": 714,
    ".tsx": 712,
-   ".sql": 368,
+   ".sql": 369,
    ".mjs": 48,
    ".js": 5,
    ".py": 5,
@@ -12835,7 +12835,9 @@
       "src": "supabase/migrations/20260418125950_10d9c8a1-51e3-48ea-aa8b-c20f60835b0e.sql"
      }
     ],
-    "constraints": [],
+    "constraints": [
+     "constraint sbom_snapshots_source_check CHECK (source = ANY (ARRAY['package.json'::text, 'manual'::text, 'upload'::text, 'dependabot'::text]))"
+    ],
     "src": "supabase/migrations/20260418125950_10d9c8a1-51e3-48ea-aa8b-c20f60835b0e.sql",
     "comment": "",
     "origin": "migration"
@@ -48460,6 +48462,7 @@
    "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
    "supabase/migrations/20261129015000_dicionario_esquema_anon.sql",
    "supabase/migrations/20261129016000_anon_sem_select_config_agente.sql",
+   "supabase/migrations/20261129017000_sbom_fonte_dependabot.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -61348,7 +61351,7 @@
   {
    "module": "scripts",
    "files": 60,
-   "lines": 21949,
+   "lines": 21959,
    "tables": [
     "a",
     "contacts",
@@ -63170,8 +63173,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 365,
-   "lines": 43710,
+   "files": 366,
+   "lines": 43726,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -83233,6 +83236,11 @@
     "table": "sbom_snapshots",
     "column": "created_at",
     "rule": "default now()"
+   },
+   {
+    "table": "sbom_snapshots",
+    "column": "(tabela)",
+    "rule": "constraint sbom_snapshots_source_check CHECK (source = ANY (ARRAY['package.json'::text, 'manual'::text, 'upload'::text, 'dependabot'::text]))"
    },
    {
     "table": "sbom_components",
@@ -149259,7 +149267,7 @@
   },
   "scripts/sync-dependabot-findings.mjs": {
    "path": "scripts/sync-dependabot-findings.mjs",
-   "lines": 137,
+   "lines": 147,
    "env": [
     "GITHUB_REPOSITORY",
     "PROJECT_REF",
@@ -198769,6 +198777,10 @@
    "path": "supabase/migrations/20261129016000_anon_sem_select_config_agente.sql",
    "lines": 46
   },
+  "supabase/migrations/20261129017000_sbom_fonte_dependabot.sql": {
+   "path": "supabase/migrations/20261129017000_sbom_fonte_dependabot.sql",
+   "lines": 16
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -198930,10 +198942,29 @@
   }
  },
  "git": {
-  "sha": "85f4ec27ab7763d73c86c54d7286bdec6c518139",
+  "sha": "42ee11ae339cccfbabd41b74e9b3a52783f3cbe4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "42ee11a",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "fix: alimenta a tela de vulnerabilidades (token do Dependabot + fonte no CHECK) (#218)",
+    "files": [
+     ".github/workflows/sync-vulnerabilities.yml",
+     "supabase/migrations/20261129017000_sbom_fonte_dependabot.sql"
+    ]
+   },
+   {
+    "sha": "c2d780f",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "fix(vulnerabilidades): corrige a leitura dos alertas do Dependabot (#217)",
+    "files": [
+     "scripts/sync-dependabot-findings.mjs"
+    ]
+   },
    {
     "sha": "85f4ec2",
     "date": "2026-11-27",
@@ -199246,20 +199277,6 @@
     "author": "adm01-debug",
     "subject": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)",
     "files": []
-   },
-   {
-    "sha": "0b42f14",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)",
-    "files": []
-   },
-   {
-    "sha": "0705b71",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "feat(custos): tela de baseline do detector de anomalias (#176)",
-    "files": []
    }
   ],
   "hot_files": [
@@ -199270,6 +199287,14 @@
    [
     "supabase/deployment-manifest.json",
     4
+   ],
+   [
+    ".github/workflows/sync-vulnerabilities.yml",
+    2
+   ],
+   [
+    "scripts/sync-dependabot-findings.mjs",
+    2
    ],
    [
     "docs/banco/estado-verificado.md",
@@ -199284,6 +199309,10 @@
     2
    ],
    [
+    "supabase/migrations/20261129017000_sbom_fonte_dependabot.sql",
+    1
+   ],
+   [
     "package-lock.json",
     1
    ],
@@ -199292,15 +199321,7 @@
     1
    ],
    [
-    ".github/workflows/sync-vulnerabilities.yml",
-    1
-   ],
-   [
     "scripts/automation.config.json",
-    1
-   ],
-   [
-    "scripts/sync-dependabot-findings.mjs",
     1
    ],
    [
@@ -199337,10 +199358,6 @@
    ],
    [
     ".github/workflows/schema-probe.yml",
-    1
-   ],
-   [
-    "src/pages/AgentAlertsPage.tsx",
     1
    ]
   ]
