@@ -8352,7 +8352,7 @@
     "AgentInstalledSkillsPage"
    ],
    "export_default": "AgentInstalledSkillsPage",
-   "linhas": 439,
+   "linhas": 598,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [

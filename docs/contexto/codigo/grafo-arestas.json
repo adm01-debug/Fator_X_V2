@@ -4395,7 +4395,8 @@
    "src/components/ui/select.tsx",
    "src/components/ui/skeleton.tsx",
    "src/components/ui/textarea.tsx",
-   "src/integrations/supabase/client.ts"
+   "src/integrations/supabase/client.ts",
+   "src/services/agentEvolutionService.ts"
   ],
   "src/pages/AgentMetricsPage.tsx": [
    "src/components/charts/index.ts",

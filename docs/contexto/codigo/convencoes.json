@@ -21,7 +21,7 @@
    "src/stores (12)"
   ],
   "testes": [
-   "co-localizado (*.test) (213)",
+   "co-localizado (*.test) (214)",
    "outro (23)",
    "e2e/ (9)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)",
    "chore: remove rascunhos de corpo de PR versionados por engano (#200)",
    "feat(busca): trechos do notebook direto do banco no Super Cerebro (#202)",
    "fix(2fa): ativacao e validacao do segundo fator via RPC do banco (#201)",
-   "fix(a2a): agent card lê a tabela agents, não a inexistente agent_configs (#199)",
-   "feat(obs): botão de smoke test pg_net na tela de System Jobs (#186)"
+   "fix(a2a): agent card lê a tabela agents, não a inexistente agent_configs (#199)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

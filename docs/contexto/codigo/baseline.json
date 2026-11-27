@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3d2bbaa92e4d68043b82c78000a49864ba67598c",
+  "commit": "98dda830c276c273616b15d58aa8ea31a2ba15a0",
   "branch": "main",
-  "data_commit": "2026-11-27T03:47:41-03:00",
+  "data_commit": "2026-11-27T04:16:39-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "98dda83",
+    "data": "2026-11-27",
+    "assunto": "feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)"
+   },
    {
     "sha": "3d2bbaa",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "9e06f43",
     "data": "2026-11-26",
     "assunto": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)"
-   },
-   {
-    "sha": "74f4d20",
-    "data": "2026-11-26",
-    "assunto": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)"
    }
   ],
-  "arquivos_mudados_7d": 156,
+  "arquivos_mudados_7d": 158,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 95
+    "commits": 96
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2044,
-  "arquivos_codigo": 1479,
-  "linhas_codigo": 325072,
+  "arquivos_total": 2045,
+  "arquivos_codigo": 1480,
+  "linhas_codigo": 325381,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 328,
   "migrations": 346,
   "cron_jobs": 37,
-  "testes": 256,
+  "testes": 257,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 51479
+   "linhas": 51638
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -519,8 +519,8 @@
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 207,
-   "linhas": 30900
+   "arquivos": 208,
+   "linhas": 31050
   },
   "src/tests": {
    "arquivos": 2,
@@ -671,7 +671,7 @@
   "ts_ignore": 0,
   "eslint_disable": 5,
   "todos": 16,
-  "arquivos_acima_500_linhas": 95
+  "arquivos_acima_500_linhas": 96
  },
  "todos": [
   {

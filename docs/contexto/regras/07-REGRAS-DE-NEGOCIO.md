@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3d2bbaa92e` · branch `main` · 2026-11-27 07:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `98dda830c2` · branch `main` · 2026-11-27 07:17 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4075,7 +4075,7 @@ _nenhum item encontrado_
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 | `workspace_admin` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 
-## K. Testes como especificação (3131 testes em 229 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3134 testes em 230 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4298,6 +4298,7 @@ _nenhum item encontrado_
 | `src/test/template-department-coverage.test.ts` | 4 | Cobertura departamental dos templates · toda categoria usada por um template existe no filtro da galeria · toda categoria do filtro possui ao menos um template · cobre os departamentos antes ausentes |
 | `src/security.test.ts` | 3 | Security Service · fetches security alerts correctly · resolves security alerts correctly |
 | `src/components/security/SecurityMonitoringPanel.test.tsx` | 3 | SecurityMonitoringPanel · should render the monitoring central header · should show the loading state initially |
+| `src/test/agent-installed-skills-page.test.tsx` | 3 | AgentInstalledSkillsPage — skills aprendidas · mostra o skillbook do agente escolhido, com confiança e taxa de acerto · mostra o erro do skillbook em vez de tela vazia |
 | `src/test/edge-symbol-guard.test.ts` | 3 | Edge Functions — símbolos compartilhados · varre um conjunto representativo de arquivos · não usa helper compartilhado sem import nem definição local |
 | `src/test/mcp-client.test.ts` | 3 | MCP Client · can import NexusMCPClient · creates client instance |
 | `src/test/otel-genai.test.ts` | 3 | OTel GenAI Semantic Conventions · creates attributes with correct keys · estimates cost for known models |

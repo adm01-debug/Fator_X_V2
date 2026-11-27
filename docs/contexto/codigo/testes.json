@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 256,
+ "total": 257,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 241
+  "unit": 242
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 213
+   "arquivos": 214
   },
   {
    "padrao": "outro",
@@ -421,6 +421,15 @@
     "src/services/agentHandoffService.ts"
    ],
    "casos": 30
+  },
+  {
+   "arquivo": "src/test/agent-installed-skills-page.test.tsx",
+   "tipo": "unit",
+   "linhas": 150,
+   "testa": [
+    "src/pages/AgentInstalledSkillsPage.tsx"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/test/agent-routing.test.ts",
@@ -2541,6 +2550,7 @@
   "src/lib/validations/quickAgentSchema.ts": 2,
   "src/lib/validations/researchConfig.ts": 1,
   "src/lib/wikilink.ts": 1,
+  "src/pages/AgentInstalledSkillsPage.tsx": 1,
   "src/pages/DashboardPage.tsx": 1,
   "src/pages/FineTuningPage.tsx": 1,
   "src/pages/OpenclawDeployPage.tsx": 1,
@@ -2645,7 +2655,6 @@
    "src/pages/AgentDetailPage.tsx",
    "src/pages/AgentEvalsPage.tsx",
    "src/pages/AgentExperimentsPage.tsx",
-   "src/pages/AgentInstalledSkillsPage.tsx",
    "src/pages/AgentMetricsPage.tsx",
    "src/pages/AgentOrchestrationPage.tsx",
    "src/pages/AgentSessionsPage.tsx",
