@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1188ca3120e2224849c876d2e984f90496fcc16c",
+  "sha": "6b55c8bc053229ce7d6c9fae9adaf4e1c2c0f387",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 10:51 UTC",
-  "files_total": 2075,
-  "code_files": 1852,
-  "code_lines": 370342
+  "generated_at": "2026-11-27 10:52 UTC",
+  "files_total": 2076,
+  "code_files": 1853,
+  "code_lines": 370388
  },
  "version": "1.3.2",
- "facts_hash": "6f650bc85ea9d999",
+ "facts_hash": "4c020ca355bb6148",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -263,7 +263,7 @@
   "languages": {
    ".ts": 714,
    ".tsx": 712,
-   ".sql": 367,
+   ".sql": 368,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -48451,6 +48451,7 @@
    "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
    "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
    "supabase/migrations/20261129015000_dicionario_esquema_anon.sql",
+   "supabase/migrations/20261129016000_anon_sem_select_config_agente.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -63155,8 +63156,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 364,
-   "lines": 43664,
+   "files": 365,
+   "lines": 43710,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -198720,6 +198721,10 @@
    "path": "supabase/migrations/20261129015000_dicionario_esquema_anon.sql",
    "lines": 54
   },
+  "supabase/migrations/20261129016000_anon_sem_select_config_agente.sql": {
+   "path": "supabase/migrations/20261129016000_anon_sem_select_config_agente.sql",
+   "lines": 46
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -198881,10 +198886,19 @@
   }
  },
  "git": {
-  "sha": "1188ca3120e2224849c876d2e984f90496fcc16c",
+  "sha": "6b55c8bc053229ce7d6c9fae9adaf4e1c2c0f387",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "6b55c8b",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "fix(seguranca): revoga select de anon nas tabelas de config vazias (#214)",
+    "files": [
+     "supabase/migrations/20261129016000_anon_sem_select_config_agente.sql"
+    ]
+   },
    {
     "sha": "1188ca3",
     "date": "2026-11-27",
@@ -199207,18 +199221,6 @@
      "src/test/security-events-panel.test.tsx",
      "src/test/security-service.test.ts"
     ]
-   },
-   {
-    "sha": "9e84381",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)",
-    "files": [
-     "src/pages/FineTuningPage.tsx",
-     "src/services/fineTuningService.ts",
-     "src/test/fine-tuning-jobs.test.ts",
-     "src/test/fine-tuning-page.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -199251,12 +199253,8 @@
     2
    ],
    [
-    "src/pages/FineTuningPage.tsx",
-    2
-   ],
-   [
-    "src/services/fineTuningService.ts",
-    2
+    "supabase/migrations/20261129016000_anon_sem_select_config_agente.sql",
+    1
    ],
    [
     "src/App.tsx",
@@ -199300,6 +199298,10 @@
    ],
    [
     "supabase/config.toml",
+    1
+   ],
+   [
+    "supabase/functions/slack-agent-notify/index.ts",
     1
    ]
   ]

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1188ca3120e2224849c876d2e984f90496fcc16c` (2026-11-27T07:50:39-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6b55c8bc053229ce7d6c9fae9adaf4e1c2c0f387` (2026-11-27T07:50:49-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1426), SQL (367), Markdown (135), JavaScript (54), JSON (25), YAML (19), Shell (10), Python (5)
+- linguagens: TypeScript (1426), SQL (368), Markdown (135), JavaScript (54), JSON (25), YAML (19), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2070 |
+| arquivos_total | 2071 |
 | arquivos_codigo | 1484 |
 | linhas_codigo | 326367 |
 | rotas | 153 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 76 |
 | edge_functions | 88 |
 | tabelas | 328 |
-| migrations | 364 |
+| migrations | 365 |
 | cron_jobs | 40 |
 | testes | 259 |
 | workflows | 13 |
@@ -437,7 +437,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15582 nós · 39611 arestas · 1396 comunidades · grafo do commit `1188ca31`
+- 15583 nós · 39611 arestas · 1397 comunidades · grafo do commit `6b55c8bc`
 - comunidades maiores: react (337), lucide-react (325), App.tsx (187), Button (184), ref_https (164), cn (151), notesService.ts (141), QuickCreateWizard.tsx (134), VendorsPage.tsx (129), vitest (118), fromTable (115), logger.ts (113)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -586,6 +586,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `6b55c8b` fix(seguranca): revoga select de anon nas tabelas de config vazias (#214)
 - 2026-11-27 `1188ca3` feat(banco): tela do dicionario de esquema com busca e filtro (#213)
 - 2026-11-27 `3edcbed` fix(seguranca): fecha anon no dicionario de esquema e libera leitura admin (#212)
 - 2026-11-27 `74a1b48` fix(banco): agenda o refresh da MV knowledge_graph_health (#211)
@@ -600,7 +601,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-27 `3d2bbaa` chore: remove rascunhos de corpo de PR versionados por engano (#200)
 - 2026-11-27 `ffdbf8c` feat(busca): trechos do notebook direto do banco no Super Cerebro (#202)
 - 2026-11-27 `18aacbd` fix(2fa): ativacao e validacao do segundo fator via RPC do banco (#201)
-- 2026-11-27 `4631eb4` fix(a2a): agent card lê a tabela agents, não a inexistente agent_configs (#199)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

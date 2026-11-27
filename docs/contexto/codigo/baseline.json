@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1188ca3120e2224849c876d2e984f90496fcc16c",
+  "commit": "6b55c8bc053229ce7d6c9fae9adaf4e1c2c0f387",
   "branch": "main",
-  "data_commit": "2026-11-27T07:50:39-03:00",
+  "data_commit": "2026-11-27T07:50:49-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "6b55c8b",
+    "data": "2026-11-27",
+    "assunto": "fix(seguranca): revoga select de anon nas tabelas de config vazias (#214)"
+   },
    {
     "sha": "1188ca3",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "710145b",
     "data": "2026-11-26",
     "assunto": "fix(db): alinha o banco oficial ao schema do repo (1193 colunas e 10 objetos ausentes) (#175)"
-   },
-   {
-    "sha": "9e812c6",
-    "data": "2026-11-26",
-    "assunto": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)"
    }
   ],
-  "arquivos_mudados_7d": 187,
+  "arquivos_mudados_7d": 188,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 106
+    "commits": 107
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2070,
+  "arquivos_total": 2071,
   "arquivos_codigo": 1484,
   "linhas_codigo": 326367,
   "rotas": 153,
@@ -322,7 +322,7 @@
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 328,
-  "migrations": 364,
+  "migrations": 365,
   "cron_jobs": 40,
   "testes": 259,
   "workflows": 13,

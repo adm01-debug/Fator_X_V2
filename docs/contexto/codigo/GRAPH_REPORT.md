@@ -1,17 +1,17 @@
 # Graph Report - Fator_X_V2  (2026-11-27)
 
 ## Corpus Check
-- 2008 files · ~1,661,217 words
+- 2009 files · ~1,661,449 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 26 file(s) not represented in the graph (top: (none) 10, .toml 5, .css 3)
 
 ## Summary
-- 15582 nodes · 39611 edges · 1396 communities (667 shown, 729 thin omitted)
+- 15583 nodes · 39611 edges · 1397 communities (667 shown, 730 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 1170 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1188ca31`
+- Built from commit: `6b55c8bc`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1291,7 +1291,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (1396 total, 729 thin omitted)
+## Communities (1397 total, 730 thin omitted)
 
 ### Community 0 - "react"
 Cohesion: 0.03
@@ -3963,18 +3963,18 @@ Nodes (3): public.lgpd_apply_retention_policies(), information_schema.tables, pu
 
 ## Knowledge Gaps
 - **3908 isolated node(s):** `session-start.sh script`, `PATH`, `$schema`, `config:recommended`, `:semanticCommits` (+3903 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 6114 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **729 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 6115 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **730 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `react` connect `react` to `lucide-react`, `App.tsx`, `Button`, `cn`, `notesService.ts`, `QuickCreateWizard.tsx`, `VendorsPage.tsx`, `vitest`, `StateDiff.tsx`, `logger.ts`, `client.ts`, `agentsService.ts`, `SuperCerebroPage.tsx`, `CitationDialog.tsx`, `templateSkillLinkService.ts`, `StepQuickPrompt.tsx`, `SkillReclassifyDialog.tsx`, `RestoreVersionDialog.tsx`, `nexus-complete-test-suite.test.ts`, `SkillDemandPanel.tsx`, `WorkflowCanvasTab`, `KnowledgePage.tsx`, `E2EESyncPanel.tsx`, `ui/index.ts`, `package.json`, `AgentDetailPage.tsx`, `knowledgeService.ts`, `FineTuningPage.tsx`, `AppLayout.tsx`, `ChatWithAgentPage.tsx`, `OracleHistory.tsx`, `DataBrowser.tsx`, `notificationEngineService.ts`, `SearchTab.tsx`, `useAgentBuilderStore`, `promptContradictions.ts`, `SkillHarvestPage.tsx`, `AgentVersioningPage.tsx`, `DataHubPage.tsx`, `SLODashboard.tsx`, `charts/index.ts`, `AgentEvalsPage.tsx`, `promptSanitizer.ts`, `alertRulesService.ts`, `securityService.ts`, `RestoreDiffPreview.tsx`, `KPIDeepInsightsPanel.tsx`, `agentTypes.ts`, `DocumentUploadTab.tsx`, `RunFilter.tsx`, `useToast`, `BasesPanel.tsx`, `LGPDGovernancePage.tsx`, `AgentLivePreviewCard.tsx`, `I18nProvider.tsx`, `PostmortemEditorPage.tsx`, `WorkflowTimeTravelPanel.tsx`, `AdvancedSearchPanel.tsx`, `credentialVaultService.ts`, `DashboardAlerts.tsx`, `useRBAC`, `StreamingChat.tsx`, `AudioVisualizer.tsx`, `AgentBuilder.tsx`, `AgentTracesPage.tsx`, `DeploymentsPage.tsx`, `AuthPage.tsx`, `design-improvements.test.tsx`, `MonitoringPage.tsx`, `BillingModule.tsx`, `DayDrillDownDrawer.tsx`, `restoreValidation.ts`, `useCurationRealtime.ts`, `DashboardPage.tsx`, `MCPServersPanel.tsx`, `noteTemplatesService.ts`, `EmojiPicker.tsx`, `VisualSearchButton.tsx`, `AgentMetricsPage.tsx`, `ExecutionTimeline.tsx`, `BrainModule.tsx`, `VoiceAgentsPage.tsx`, `CustomNodes.tsx`, `SkillComposerPage.tsx`, `main.tsx`, `CanvasEditor.tsx`, `productMockupService.ts`, `HuggingFaceTab.tsx`, `3.1 Órfãos de produto (domínio/transversal) — 23 arquivos `.tsx` + 1 barrel`, `RestorePresetMenu.tsx`, `RestoreFeedbackBanner.tsx`, `WhatsAppWebhookPanel.tsx`, `WorkflowCanvas.tsx`, `ReadinessModule.tsx`, `PromptHistoryPanel.tsx`, `healthAlertsService.ts`, `BehaviorImpactPanel.tsx`, `CostAnomaliesPage.tsx`, `GuardrailsModule.tsx`, `ExecutionList.tsx`, `carousel.tsx`, `SpanTreeView.tsx`, `useAutomationRules.ts`, `form.tsx`, `lib/researchConfig.ts`, `chaosService.ts`, `PublicNoteView.tsx`, `PromptModule.tsx`, `CompareTracesSheet.tsx`, `useNLPAnalysis`, `ObservabilityModule.tsx`, `toast.tsx`, `agentTestSimulationService.ts`, `PIIScannerPanel.tsx`, `use2FA.ts`, `useDrilldownAuditLog.ts`, `useFilterPersistence.ts`, `SettingsModule.tsx`, `WebVitalsPanel.tsx`, `DeepResearchPanel.tsx`, `TraceCompareDialog.tsx`?**
-  _High betweenness centrality (0.080) - this node is a cross-community bridge._
+  _High betweenness centrality (0.078) - this node is a cross-community bridge._
 - **Why does `vitest` connect `vitest` to `lucide-react`, `App.tsx`, `cn`, `notesService.ts`, `QuickCreateWizard.tsx`, `fromTable`, `ref_node_fs`, `services/index.ts`, `client.ts`, `agentsService.ts`, `SuperCerebroPage.tsx`, `CitationDialog.tsx`, `templateSkillLinkService.ts`, `SkillReclassifyDialog.tsx`, `nexus-complete-test-suite.test.ts`, `SkillDemandPanel.tsx`, `agent-templates-merge.test.ts`, `E2EESyncPanel.tsx`, `package.json`, `skillDepartmentClassifier.ts`, `templateSkillRegistry.ts`, `knowledgeService.ts`, `FineTuningPage.tsx`, `AppLayout.tsx`, `ChatWithAgentPage.tsx`, `notificationEngineService.ts`, `SearchTab.tsx`, `agent-workflow-runner/index.ts`, `promptContradictions.ts`, `skillEnrichmentService.ts`, `SkillHarvestPage.tsx`, `observability.ts`, `skillDraft.ts`, `classificationEfficacy.ts`, `securityService.ts`, `promptSimulation.ts`, `attribution.ts`, `agentTypes.ts`, `BasesPanel.tsx`, `LGPDGovernancePage.tsx`, `AgentLivePreviewCard.tsx`, `thresholdCalibration.ts`, `I18nProvider.tsx`, `AdvancedSearchPanel.tsx`, `webhookTriggerService.ts`, `credentialVaultService.ts`, `llmClassificationQueue.ts`, `useRBAC`, `knowledgeManagementService.ts`, `template-skill-links-rebuild.test.ts`, `evaluationsService.ts`, `tracing.ts`, `AgentTracesPage.tsx`, `agentHandoffService.ts`, `crmScoringService.ts`, `design-improvements.test.tsx`, `MonitoringPage.tsx`, `memoryService.ts`, `progressiveSkillLoader.ts`, `test-exaustivo.cjs`, `queueManagerService.ts`, `useCurationRealtime.ts`, `billingService.ts`, `DashboardPage.tsx`, `installGuard.ts`, `datahubService.ts`, `openclawDeployService.ts`, `MCPServersPanel.tsx`, `noteTemplatesService.ts`, `services.test.ts`, `agentSchema.ts`, `BrainModule.tsx`, `VoiceAgentsPage.tsx`, `skillsRegistryService.ts`, `promptEvidenceLedger.ts`, `skillRecommenderService.ts`, `installCapLedger.ts`, `batchProcessorService.ts`, `HuggingFaceTab.tsx`, `connectorRegistryService.ts`, `curation-feed.test.ts`, `RestoreFeedbackBanner.tsx`, `WhatsAppWebhookPanel.tsx`, `WorkflowCanvas.tsx`, `workflowCheckpointService.ts`, `zod`, `calibrationCsv.ts`, `healthAlertsService.ts`, `workspaceContextService.ts`, `calibrationGovernance.ts`, `GuardrailsModule.tsx`, `promptAuditArtifact.ts`, `nexus-design.js`, `createSSEEmitter`, `TemplateLinkedSkillsPanel`, `SpanTreeView.tsx`, `agentEvolutionService.ts`, `promptOverflowAlert.ts`, `geoCodeService.ts`, `ErrorBoundary`, `llm-gateway-providers.test.ts`, `PIIScannerPanel.tsx`, `dialogSchemas.ts`, `forum-safe-views.test.ts`, `whatsappOutboundService.ts`, `use2FA.ts`, `freezeWindowService.ts`, `schema-contract.test.ts`, `GenAIProtocolPanel`, `knowledge-embedding-health-service.test.ts`, `rls/setup.ts`?**
-  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+  _High betweenness centrality (0.052) - this node is a cross-community bridge._
 - **Why does `lucide-react` connect `lucide-react` to `react`, `App.tsx`, `Button`, `cn`, `notesService.ts`, `QuickCreateWizard.tsx`, `VendorsPage.tsx`, `fromTable`, `StateDiff.tsx`, `logger.ts`, `client.ts`, `agentsService.ts`, `SuperCerebroPage.tsx`, `CitationDialog.tsx`, `templateSkillLinkService.ts`, `StepQuickPrompt.tsx`, `SkillReclassifyDialog.tsx`, `RestoreVersionDialog.tsx`, `nexus-complete-test-suite.test.ts`, `SkillDemandPanel.tsx`, `KnowledgePage.tsx`, `E2EESyncPanel.tsx`, `ui/index.ts`, `package.json`, `AgentDetailPage.tsx`, `FineTuningPage.tsx`, `AppLayout.tsx`, `ChatWithAgentPage.tsx`, `OracleHistory.tsx`, `DataBrowser.tsx`, `SearchTab.tsx`, `useAgentBuilderStore`, `promptContradictions.ts`, `SkillHarvestPage.tsx`, `AgentVersioningPage.tsx`, `DataHubPage.tsx`, `SLODashboard.tsx`, `observability.ts`, `AgentEvalsPage.tsx`, `promptSanitizer.ts`, `alertRulesService.ts`, `securityService.ts`, `RestoreDiffPreview.tsx`, `KPIDeepInsightsPanel.tsx`, `agentTypes.ts`, `DocumentUploadTab.tsx`, `RunFilter.tsx`, `useToast`, `BasesPanel.tsx`, `LGPDGovernancePage.tsx`, `AgentLivePreviewCard.tsx`, `PostmortemEditorPage.tsx`, `WorkflowTimeTravelPanel.tsx`, `AdvancedSearchPanel.tsx`, `useRBAC`, `PaginationControls.tsx`, `StreamingChat.tsx`, `AgentBuilder.tsx`, `AgentTracesPage.tsx`, `DeploymentsPage.tsx`, `AuthPage.tsx`, `design-improvements.test.tsx`, `MonitoringPage.tsx`, `BillingModule.tsx`, `DayDrillDownDrawer.tsx`, `restoreValidation.ts`, `DashboardPage.tsx`, `datahubService.ts`, `MCPServersPanel.tsx`, `noteTemplatesService.ts`, `EmojiPicker.tsx`, `VisualSearchButton.tsx`, `AgentMetricsPage.tsx`, `ExecutionTimeline.tsx`, `BrainModule.tsx`, `VoiceAgentsPage.tsx`, `SkillComposerPage.tsx`, `CanvasEditor.tsx`, `productMockupService.ts`, `HuggingFaceTab.tsx`, `3.1 Órfãos de produto (domínio/transversal) — 23 arquivos `.tsx` + 1 barrel`, `RestorePresetMenu.tsx`, `RestoreFeedbackBanner.tsx`, `WhatsAppWebhookPanel.tsx`, `ReadinessModule.tsx`, `PromptHistoryPanel.tsx`, `BehaviorImpactPanel.tsx`, `CostAnomaliesPage.tsx`, `GuardrailsModule.tsx`, `ExecutionList.tsx`, `carousel.tsx`, `SpanTreeView.tsx`, `healthService.ts`, `WizardStepComponents.tsx`, `chaosService.ts`, `PublicNoteView.tsx`, `PromptModule.tsx`, `CompareTracesSheet.tsx`, `ObservabilityModule.tsx`, `toast.tsx`, `agentTestSimulationService.ts`, `PIIScannerPanel.tsx`, `SettingsModule.tsx`, `WebVitalsPanel.tsx`, `DeepResearchPanel.tsx`, `TraceCompareDialog.tsx`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+  _High betweenness centrality (0.047) - this node is a cross-community bridge._
 - **What connects `session-start.sh script`, `PATH`, `$schema` to the rest of the system?**
   _3908 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `react` be split into smaller, more focused modules?**
