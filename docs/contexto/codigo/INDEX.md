@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `49ad081916d5739667014db483d197fc46547fd0` (2026-11-27T09:06:45-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `85f4ec27ab7763d73c86c54d7286bdec6c518139` (2026-11-27T09:06:51-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -437,15 +437,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15589 nós · 39619 arestas · 1406 comunidades · grafo do commit `49ad0819`
-- comunidades maiores: badge.tsx (311), sonner (226), ref_https (209), button.tsx (199), lib/utils.ts (139), App.tsx (136), routePrefetch.ts (131), mod.ts (124), ref_node_fs (117), VendorsPage.tsx (116), tabs.tsx (114), fetchWithTimeout (108)
+- 15592 nós · 39622 arestas · 1385 comunidades · grafo do commit `85f4ec27`
+- comunidades maiores: Button (319), lucide-react (276), App.tsx (208), ref_https (191), templateSkillLinkService.ts (126), cn (125), VendorsPage.tsx (121), sonner (116), notesService.ts (114), mod.ts (112), whatsapp-webhook/index.ts (112), fetchWithTimeout (107)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - supabase/deployment-manifest.json (28)
-- package-lock.json (26)
-- package.json (24)
+- package-lock.json (27)
+- package.json (25)
 - .github/workflows/ci.yml (9)
 - docs/migration/MATRIZ_EDGE_TABELA.md (7)
 - supabase/functions/llm-gateway/index.ts (7)
@@ -587,6 +587,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `85f4ec2` chore(deps): zera as 2 vulnerabilidades criticas do Dependabot (#216)
 - 2026-11-27 `49ad081` feat(vulnerabilidades): sincroniza alertas do Dependabot para a tela (#215)
 - 2026-11-27 `6b55c8b` fix(seguranca): revoga select de anon nas tabelas de config vazias (#214)
 - 2026-11-27 `1188ca3` feat(banco): tela do dicionario de esquema com busca e filtro (#213)
@@ -601,7 +602,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-27 `046466f` feat(conhecimento): aba de saúde dos embeddings com reprocessamento de chunks travados (#205)
 - 2026-11-27 `98dda83` feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)
 - 2026-11-27 `3d2bbaa` chore: remove rascunhos de corpo de PR versionados por engano (#200)
-- 2026-11-27 `ffdbf8c` feat(busca): trechos do notebook direto do banco no Super Cerebro (#202)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "49ad081916d5739667014db483d197fc46547fd0",
+  "sha": "85f4ec27ab7763d73c86c54d7286bdec6c518139",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 12:07 UTC",
+  "generated_at": "2026-11-27 12:08 UTC",
   "files_total": 2078,
   "code_files": 1854,
   "code_lines": 370525
@@ -198930,10 +198930,20 @@
   }
  },
  "git": {
-  "sha": "49ad081916d5739667014db483d197fc46547fd0",
+  "sha": "85f4ec27ab7763d73c86c54d7286bdec6c518139",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "85f4ec2",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "chore(deps): zera as 2 vulnerabilidades criticas do Dependabot (#216)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "49ad081",
     "date": "2026-11-27",
@@ -199250,19 +199260,6 @@
     "author": "adm01-debug",
     "subject": "feat(custos): tela de baseline do detector de anomalias (#176)",
     "files": []
-   },
-   {
-    "sha": "fe144d3",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "feat(custos): baseline do detector de anomalias ganha tela e recálculo (#174)",
-    "files": [
-     "src/components/cost/CostBaselinePanel.tsx",
-     "src/pages/CostAnomaliesPage.tsx",
-     "src/services/costAnomalyService.ts",
-     "src/test/cost-anomaly-service.test.ts",
-     "src/test/cost-baseline-panel.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -199285,6 +199282,14 @@
    [
     ".prbody2.md",
     2
+   ],
+   [
+    "package-lock.json",
+    1
+   ],
+   [
+    "package.json",
+    1
    ],
    [
     ".github/workflows/sync-vulnerabilities.yml",
@@ -199336,14 +199341,6 @@
    ],
    [
     "src/pages/AgentAlertsPage.tsx",
-    1
-   ],
-   [
-    "src/services/alertRulesService.ts",
-    1
-   ],
-   [
-    "supabase/config.toml",
     1
    ]
   ]

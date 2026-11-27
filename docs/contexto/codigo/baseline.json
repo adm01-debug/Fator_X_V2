@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "49ad081916d5739667014db483d197fc46547fd0",
+  "commit": "85f4ec27ab7763d73c86c54d7286bdec6c518139",
   "branch": "main",
-  "data_commit": "2026-11-27T09:06:45-03:00",
+  "data_commit": "2026-11-27T09:06:51-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "85f4ec2",
+    "data": "2026-11-27",
+    "assunto": "chore(deps): zera as 2 vulnerabilidades criticas do Dependabot (#216)"
+   },
    {
     "sha": "49ad081",
     "data": "2026-11-27",
@@ -126,11 +131,6 @@
     "sha": "ddbccc8",
     "data": "2026-11-26",
     "assunto": "fix(forum): tira rascunho das views safe do forum (#163)"
-   },
-   {
-    "sha": "37702c7",
-    "data": "2026-11-26",
-    "assunto": "fix(ci): guard de drift deixa de bloquear todo PR com migration nova (#165)"
    }
   ],
   "arquivos_mudados_7d": 191,
@@ -141,11 +141,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "pasta": "package.json",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -203,11 +203,11 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 26
+    "mudancas": 27
    },
    {
     "arquivo": "package.json",
-    "mudancas": 24
+    "mudancas": 25
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 108
+    "commits": 109
    },
    {
     "autor": "dependabot[bot]",

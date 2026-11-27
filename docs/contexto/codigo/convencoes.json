@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "chore(deps): zera as 2 vulnerabilidades criticas do Dependabot (#216)",
    "feat(vulnerabilidades): sincroniza alertas do Dependabot para a tela (#215)",
    "fix(seguranca): revoga select de anon nas tabelas de config vazias (#214)",
    "feat(banco): tela do dicionario de esquema com busca e filtro (#213)",
-   "fix(seguranca): fecha anon no dicionario de esquema e libera leitura admin (#212)",
-   "fix(banco): agenda o refresh da MV knowledge_graph_health (#211)"
+   "fix(seguranca): fecha anon no dicionario de esquema e libera leitura admin (#212)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
