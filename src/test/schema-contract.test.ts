@@ -37,6 +37,12 @@ const KNOWN_ABSENT: Record<string, string> = {
   // banco local. A ausência é tratada com degradação graciosa no chamador
   // (`list_rls_policies` reporta a conexão como indisponível, sem lançar).
   exec_sql: 'RPC de projeto externo; ausência já tratada com fallback em datahub-query',
+  // A tabela EXISTE no banco (criada em 20260404210000_huggingface_phase4.sql,
+  // com RLS e policies). O que está desatualizado é `types.ts`, gerado antes
+  // dessa migration: regenerá-lo exige acesso ao banco de produção. Enquanto
+  // isso, o front acessa por `fromTable()` (supabaseExtended) e o edge por
+  // `.from()` direto. Remover esta exceção quando `types.ts` for regerado.
+  hf_config: 'existe desde a migration 20260404210000; types.ts está desatualizado',
 };
 
 function walk(dir: string, out: string[] = []): string[] {

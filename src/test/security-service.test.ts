@@ -131,23 +131,42 @@ describe('securityService', () => {
   });
 
   describe('getSecurityEvents', () => {
-    it('lê da view segura audit_log_safe e normaliza action → event_type', async () => {
-      ext.setTableResult('audit_log_safe', {
-        data: [{ action: 'login_failed', created_at: '2026-07-25T00:00:00Z' }],
+    it('lê a tabela security_events com a severidade real, sem inventar "info"', async () => {
+      ext.setTableResult('security_events', {
+        data: [{
+          id: 'e1',
+          event_type: 'lgpd_delete_data',
+          severity: 'critical',
+          user_id: 'u-1',
+          workspace_id: 'w-1',
+          ip_address: '203.0.113.7',
+          details: { scope: 'memories' },
+          created_at: '2026-07-25T00:00:00Z',
+        }],
         error: null,
       });
       const { getSecurityEvents } = await import('@/services/securityService');
       const events = await getSecurityEvents({ limit: 5 });
 
-      expect(ext.calls.from).toHaveBeenCalledWith('audit_log_safe');
-      expect(events[0]).toMatchObject({ event_type: 'login_failed', severity: 'info' });
+      expect(ext.calls.from).toHaveBeenCalledWith('security_events');
+      expect(events[0]).toMatchObject({ event_type: 'lgpd_delete_data', severity: 'critical' });
       expect(ext.calls.limit).toHaveBeenCalledWith(5);
       // Trilha de auditoria é dado, não auth: jamais pode cair no client local.
       expect(local.calls.from).not.toHaveBeenCalled();
     });
 
+    it('filtra por severidade só quando informada', async () => {
+      const { getSecurityEvents } = await import('@/services/securityService');
+      await getSecurityEvents({ severity: 'critical' });
+      expect(ext.calls.eq).toHaveBeenCalledWith('severity', 'critical');
+
+      ext.reset();
+      await getSecurityEvents();
+      expect(ext.calls.eq).not.toHaveBeenCalled();
+    });
+
     it('degrada para lista vazia em erro', async () => {
-      ext.setTableResult('audit_log_safe', { data: null, error: { message: 'view ausente' } });
+      ext.setTableResult('security_events', { data: null, error: { message: 'RLS negou' } });
       const { getSecurityEvents } = await import('@/services/securityService');
       expect(await getSecurityEvents()).toEqual([]);
     });

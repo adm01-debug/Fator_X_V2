@@ -61,19 +61,47 @@ export async function revokeApiKey(id: string) {
   if (error) throw error;
 }
 
-export async function getSecurityEvents(options?: { severity?: string; limit?: number }) {
+/**
+ * Linha de `public.security_events`. `ip_address` e `user_agent` existem no DDL
+ * (20260405000001_shared_security_infrastructure.sql) mas não no `types.ts`
+ * gerado — por isso são opcionais aqui e o resultado entra por cast.
+ */
+export interface SecurityEventRow {
+  id: string;
+  event_type: string;
+  severity: string;
+  user_id: string | null;
+  workspace_id: string | null;
+  ip_address?: string | null;
+  user_agent?: string | null;
+  details: Record<string, unknown> | null;
+  created_at: string;
+}
+
+/**
+ * Eventos de segurança de verdade (`security_events`), escritos só pelo
+ * service_role — hoje por `lgpd-manager`, que registra toda ação LGPD.
+ * A RLS libera a leitura apenas para admin do workspace, então lista vazia
+ * pode significar "sem eventos" ou "sem permissão": quem chama deve dizer qual.
+ */
+export async function getSecurityEvents(options?: {
+  severity?: string;
+  eventType?: string;
+  limit?: number;
+}): Promise<SecurityEventRow[]> {
   try {
-    const { data, error } = await fromTable('audit_log_safe')
+    let query = supabaseExternal
+      .from('security_events')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(options?.limit || 50);
 
+    if (options?.severity) query = query.eq('severity', options.severity);
+    if (options?.eventType) query = query.eq('event_type', options.eventType);
+
+    const { data, error } = await query;
     if (error) throw error;
-    return (data ?? []).map((entry: { action: string; [key: string]: unknown }) => ({
-      ...entry,
-      severity: 'info',
-      event_type: entry.action,
-    }));
+    return (data ?? []) as unknown as SecurityEventRow[];
   } catch (err) {
     logger.error('getSecurityEvents failed', { error: String(err) });
     return [];

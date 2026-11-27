@@ -9,7 +9,7 @@ import { getWorkspaceId } from "@/lib/agentService";
 import { useAuth } from "@/contexts/AuthContext";
 import { InviteMemberDialog } from "@/components/dialogs/InviteMemberDialog";
 import { toast } from "sonner";
-import { listMembers, removeMember, getPendingInvites, acceptInvite } from "@/services/teamsService";
+import { listMembersForTeam, removeMember, getPendingInvites, acceptInvite } from "@/services/teamsService";
 
 const roleLabels: Record<string, string> = { admin: 'Admin', editor: 'Editor', viewer: 'Viewer', operator: 'Operator', owner: 'Owner' };
 
@@ -21,7 +21,7 @@ export default function TeamPage() {
     queryKey: ['workspace_members'],
     queryFn: async () => {
       const wsId = await getWorkspaceId();
-      return listMembers(wsId);
+      return listMembersForTeam(wsId);
     },
   });
 

@@ -104,9 +104,12 @@ export async function getAgentUsage(days = 30): Promise<AgentUsageRow[]> {
 }
 
 export async function getUsageRecords(limit = 50): Promise<UsageRecordRow[]> {
+  // `usage_records_cost_safe` é a view de column-level security: `cost_usd` e
+  // `metadata` só voltam para admin do workspace (NULL/'{}' para os demais).
+  // Ler `usage_records` cru expunha o custo de todos os agentes a qualquer membro.
   const { data, error } = await supabaseExternal
-    .from('usage_records')
-    .select('*')
+    .from('usage_records_cost_safe')
+    .select('id, workspace_id, record_type, tokens, cost_usd, created_at')
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw error;

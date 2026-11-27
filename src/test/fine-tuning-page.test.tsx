@@ -7,17 +7,26 @@ vi.mock('@/services/fineTuningService', () => ({
   startTraining: vi.fn(),
   getJobStatus: vi.fn(),
   prepareDataset: vi.fn(),
+  listFineTuneJobs: vi.fn(),
+  recordFineTuneJob: vi.fn(),
+  syncFineTuneJob: vi.fn(),
 }));
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 import FineTuningPage from '@/pages/FineTuningPage';
-import { listTrainingJobs, startTraining, prepareDataset } from '@/services/fineTuningService';
+import {
+  listTrainingJobs,
+  listFineTuneJobs,
+  startTraining,
+  prepareDataset,
+} from '@/services/fineTuningService';
 import { toast } from 'sonner';
 
 const mockList = listTrainingJobs as unknown as ReturnType<typeof vi.fn>;
 const mockStart = startTraining as unknown as ReturnType<typeof vi.fn>;
 const mockPrepare = prepareDataset as unknown as ReturnType<typeof vi.fn>;
+const mockHistory = listFineTuneJobs as unknown as ReturnType<typeof vi.fn>;
 
 describe('FineTuningPage', () => {
   beforeEach(() => {
@@ -32,6 +41,7 @@ describe('FineTuningPage', () => {
     }
     vi.clearAllMocks();
     mockList.mockResolvedValue({ jobs: [] });
+    mockHistory.mockResolvedValue([]);
   });
 
   it('lista os jobs devolvidos pelo servico em vez de dados fixos', async () => {

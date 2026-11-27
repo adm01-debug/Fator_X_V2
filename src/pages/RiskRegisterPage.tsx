@@ -5,9 +5,24 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { AlertTriangle, Plus, ShieldAlert, TrendingUp, CheckCircle2, Clock } from 'lucide-react';
+import {
+  AlertTriangle,
+  Plus,
+  ShieldAlert,
+  TrendingUp,
+  CheckCircle2,
+  ClipboardCheck,
+  Clock,
+} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useWorkspaceId } from '@/hooks/use-data';
+import {
+  closeRisk,
+  getRiskSummary,
+  listRiskReviews,
+  registerRisk,
+  reviewRisk,
+} from '@/services/riskService';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -117,6 +132,16 @@ export default function RiskRegisterPage() {
     enabled: !!workspaceId,
   });
 
+  // Indicadores agregados no banco por get_risk_summary: severidade por
+  // COALESCE(residual, inerente), revisões vencidas e encerrados.
+  const { data: summary } = useQuery({
+    queryKey: ['risk_summary', workspaceId],
+    queryFn: () => getRiskSummary(workspaceId!),
+    enabled: !!workspaceId,
+  });
+
+  const [reviewTarget, setReviewTarget] = useState<Risk | null>(null);
+
   // Heatmap 5x5: matrix[likelihood - 1][impact - 1] = riscos abertos naquela célula
   const heatmap = useMemo(() => {
     const matrix: Risk[][][] = Array.from({ length: 5 }, () =>
@@ -144,25 +169,23 @@ export default function RiskRegisterPage() {
   }, [risks]);
 
   const createRisk = useMutation({
-    mutationFn: async (input: DbRow) => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error('não autenticado');
-      const { error } = await supabase.from('risk_register').insert({
-        workspace_id: workspaceId!,
-        title: input.title,
-        description: input.description || null,
-        category: input.category,
-        likelihood: input.likelihood,
-        impact: input.impact,
-        treatment: input.treatment,
-        mitigation_plan: input.mitigation_plan || null,
-        created_by: user.user.id,
-      });
-      if (error) throw error;
-    },
+    // register_risk valida admin do workspace e grava o evento risk.registered
+    // no audit_log — o insert direto deixava o registro sem trilha de auditoria.
+    mutationFn: (input: DbRow) =>
+      registerRisk({
+        workspaceId: workspaceId!,
+        title: input.title as string,
+        description: (input.description as string) || undefined,
+        category: input.category as RiskCategory,
+        likelihood: input.likelihood as number,
+        impact: input.impact as number,
+        treatment: input.treatment as RiskTreatment,
+        mitigationPlan: (input.mitigation_plan as string) || undefined,
+      }),
     onSuccess: () => {
       toast.success('Risco registrado');
       qc.invalidateQueries({ queryKey: ['risk_register'] });
+      qc.invalidateQueries({ queryKey: ['risk_summary'] });
       setDialogOpen(false);
     },
     onError: (e: Error) => toast.error(e.message),
@@ -170,14 +193,32 @@ export default function RiskRegisterPage() {
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: RiskStatus }) => {
-      const patch: { status: RiskStatus; closed_at?: string } = { status };
-      if (status === 'closed') patch.closed_at = new Date().toISOString();
-      const { error } = await supabase.from('risk_register').update(patch).eq('id', id);
+      // Encerrar tem RPC própria: seta closed_at e grava risk.closed na auditoria.
+      if (status === 'closed') {
+        await closeRisk(id);
+        return;
+      }
+      const { error } = await supabase.from('risk_register').update({ status }).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success('Status atualizado');
       qc.invalidateQueries({ queryKey: ['risk_register'] });
+      qc.invalidateQueries({ queryKey: ['risk_summary'] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const review = useMutation({
+    // review_risk grava em risk_review_events; o trigger do banco recalcula
+    // residual_score, reagenda a revisão (30/90 dias) e promove identified→assessed.
+    mutationFn: ({ id, score, notes }: { id: string; score: number; notes: string }) =>
+      reviewRisk(id, score, notes || undefined),
+    onSuccess: (_eventId, vars) => {
+      toast.success('Revisão registrada');
+      qc.invalidateQueries({ queryKey: ['risk_register'] });
+      qc.invalidateQueries({ queryKey: ['risk_summary'] });
+      qc.invalidateQueries({ queryKey: ['risk_reviews', vars.id] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -204,10 +245,30 @@ export default function RiskRegisterPage() {
       />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={ShieldAlert} label="Total" value={stats.total} tone="muted" />
-        <StatCard icon={AlertTriangle} label="Abertos" value={stats.open} tone="warning" />
-        <StatCard icon={TrendingUp} label="Críticos (≥15)" value={stats.critical} tone="danger" />
-        <StatCard icon={Clock} label="Revisão Atrasada" value={stats.overdue} tone="warning" />
+        <StatCard
+          icon={ShieldAlert}
+          label="Total"
+          value={summary ? summary.total + summary.closed : stats.total}
+          tone="muted"
+        />
+        <StatCard
+          icon={AlertTriangle}
+          label="Abertos"
+          value={summary?.total ?? stats.open}
+          tone="warning"
+        />
+        <StatCard
+          icon={TrendingUp}
+          label="Críticos (≥15)"
+          value={summary?.critical ?? stats.critical}
+          tone="danger"
+        />
+        <StatCard
+          icon={Clock}
+          label="Revisão Atrasada"
+          value={summary?.overdue_reviews ?? stats.overdue}
+          tone="warning"
+        />
       </div>
 
       <Card>
@@ -309,23 +370,35 @@ export default function RiskRegisterPage() {
                       {new Date(r.next_review_due).toLocaleDateString('pt-BR')}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Select
-                        value={r.status}
-                        onValueChange={(v) =>
-                          updateStatus.mutate({ id: r.id, status: v as RiskStatus })
-                        }
-                      >
-                        <SelectTrigger className="w-32 h-8 text-meta ml-auto">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {STATUSES.map((s) => (
-                            <SelectItem key={s} value={s} className="capitalize">
-                              {s}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          aria-label={`Revisar ${r.title}`}
+                          title="Registrar revisão"
+                          onClick={() => setReviewTarget(r)}
+                        >
+                          <ClipboardCheck className="h-4 w-4" />
+                        </Button>
+                        <Select
+                          value={r.status}
+                          onValueChange={(v) =>
+                            updateStatus.mutate({ id: r.id, status: v as RiskStatus })
+                          }
+                        >
+                          <SelectTrigger className="w-32 h-8 text-meta">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {STATUSES.map((s) => (
+                              <SelectItem key={s} value={s} className="capitalize">
+                                {s}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -334,6 +407,16 @@ export default function RiskRegisterPage() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={!!reviewTarget} onOpenChange={(open) => !open && setReviewTarget(null)}>
+        {reviewTarget && (
+          <ReviewRiskDialog
+            risk={reviewTarget}
+            isPending={review.isPending}
+            onSubmit={({ score, notes }) => review.mutate({ id: reviewTarget.id, score, notes })}
+          />
+        )}
+      </Dialog>
     </div>
   );
 }
@@ -501,6 +584,98 @@ function NewRiskDialog({ onSubmit, isPending }: NewRiskDialogProps) {
       <DialogFooter>
         <Button onClick={submit} disabled={isPending}>
           {isPending ? 'Registrando...' : 'Registrar Risco'}
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  );
+}
+
+interface ReviewRiskDialogProps {
+  risk: Risk;
+  onSubmit: (v: { score: number; notes: string }) => void;
+  isPending: boolean;
+}
+
+function ReviewRiskDialog({ risk, onSubmit, isPending }: ReviewRiskDialogProps) {
+  const [score, setScore] = useState<number>(risk.residual_score ?? risk.inherent_score);
+  const [notes, setNotes] = useState('');
+  const { data: reviews = [] } = useQuery({
+    queryKey: ['risk_reviews', risk.id],
+    queryFn: () => listRiskReviews(risk.id),
+  });
+
+  const submit = () => {
+    if (!Number.isFinite(score) || score < 1 || score > 25) {
+      toast.error('Score residual deve estar entre 1 e 25');
+      return;
+    }
+    onSubmit({ score, notes });
+  };
+
+  return (
+    <DialogContent className="max-w-xl">
+      <DialogHeader>
+        <DialogTitle>Revisar risco</DialogTitle>
+        <DialogDescription>{risk.title}</DialogDescription>
+      </DialogHeader>
+      <div className="grid gap-4 py-2">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-md bg-muted p-3">
+            <p className="text-meta text-muted-foreground">Score inerente</p>
+            <p className="font-bold">{risk.inherent_score}</p>
+          </div>
+          <div className="rounded-md bg-muted p-3">
+            <p className="text-meta text-muted-foreground">Score residual atual</p>
+            <p className="font-bold">{risk.residual_score ?? '—'}</p>
+          </div>
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="risk-residual-score">Novo score residual (1-25)</Label>
+          <Input
+            id="risk-residual-score"
+            type="number"
+            min={1}
+            max={25}
+            value={score}
+            onChange={(e) => setScore(Number(e.target.value))}
+          />
+          <p className="text-meta text-muted-foreground">
+            A próxima revisão é reagendada em 30 dias (score ≥15) ou 90 dias.
+          </p>
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="risk-review-notes">Notas da revisão</Label>
+          <Textarea
+            id="risk-review-notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label>Histórico de revisões</Label>
+          {reviews.length === 0 ? (
+            <p className="text-body-sm text-muted-foreground">Nenhuma revisão registrada.</p>
+          ) : (
+            <ul className="space-y-2 max-h-48 overflow-y-auto">
+              {reviews.map((rev) => (
+                <li key={rev.id} className="rounded-md border p-2 text-body-sm">
+                  <span className="text-meta text-muted-foreground">
+                    {new Date(rev.reviewed_at).toLocaleString('pt-BR')}
+                  </span>
+                  <span className="ml-2 font-medium">
+                    {rev.previous_residual_score ?? '—'} → {rev.new_residual_score ?? '—'}
+                  </span>
+                  {rev.notes && <p className="text-meta text-muted-foreground">{rev.notes}</p>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+      <DialogFooter>
+        <Button onClick={submit} disabled={isPending}>
+          {isPending ? 'Registrando...' : 'Registrar revisão'}
         </Button>
       </DialogFooter>
     </DialogContent>

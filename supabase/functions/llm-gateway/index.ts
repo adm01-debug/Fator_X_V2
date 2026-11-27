@@ -108,21 +108,21 @@ function redactPII(text: string): { redacted: string; detected: string[] } {
 }
 
 // ═══ Prompt Injection Detection (ML — HuggingFace ProtectAI) ═══
-const HF_INJECTION_MODEL = 'protectai/deberta-v3-base-prompt-injection-v2';
 const HF_INJECTION_TIMEOUT_MS = 3000;
 
 async function detectInjectionML(
   text: string,
+  config: HfConfig,
 ): Promise<{ detected: boolean; label: string; score: number; method: 'ml' }> {
   const hfToken = Deno.env.get('HF_API_TOKEN');
-  if (!hfToken || Deno.env.get('ENABLE_ML_INJECTION_CHECK') === 'false') {
+  if (!hfToken || !config.enable_ml_injection || envDisabled('ENABLE_ML_INJECTION_CHECK')) {
     return { detected: false, label: 'skipped', score: 0, method: 'ml' };
   }
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), HF_INJECTION_TIMEOUT_MS);
     const resp = await fetch(
-      `https://router.huggingface.co/hf-inference/models/${HF_INJECTION_MODEL}`,
+      `https://router.huggingface.co/hf-inference/models/${config.preferred_injection_model}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${hfToken}` },
@@ -629,6 +629,7 @@ import {
 } from '../_shared/ai-provider.ts';
 import { getBreaker } from '../_shared/circuitBreaker.ts';
 import { drainBreakerTransition } from '../_shared/breakerEvents.ts';
+import { loadHfConfig, envDisabled, type HfConfig } from '../_shared/hf-config.ts';
 
 async function callWithFallback(
   chain: ProviderOption[],
@@ -771,7 +772,8 @@ serve(async (req) => {
     const t0 = Date.now();
 
     // ═══ PROMPT INJECTION DETECTION (Layer 1: ML via HuggingFace) ═══
-    const injectionML = await detectInjectionML(userMessage);
+    const hfConfig = await loadHfConfig(supabase, workspaceId);
+    const injectionML = await detectInjectionML(userMessage, hfConfig);
     if (injectionML.detected) {
       recordTrace(supabase, {
         workspaceId,

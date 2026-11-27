@@ -38,6 +38,45 @@ export async function listMembers(workspaceId: string): Promise<WorkspaceMemberR
   return (data ?? []) as unknown as WorkspaceMemberRow[];
 }
 
+/**
+ * E-mails dos membros — `workspace_member_emails` é a fonte da verdade desde o
+ * QA V6.1: o hardening P0 revogou `workspace_members.email`, copiou os e-mails
+ * para essa tabela isolada e `invite_workspace_member` passou a gravar só nela.
+ * A RLS entrega o e-mail de todos ao admin/owner e apenas o próprio aos demais.
+ */
+async function listMemberEmails(workspaceId: string): Promise<Map<string, string>> {
+  const { data, error } = await supabaseExternal
+    .from('workspace_member_emails')
+    .select('member_id, email')
+    .eq('workspace_id', workspaceId);
+
+  // Sem e-mail a lista de membros continua útil: não derruba a tela de time.
+  if (error) return new Map();
+
+  return new Map(
+    ((data ?? []) as Array<{ member_id: string; email: string }>).map((row) => [
+      row.member_id,
+      row.email,
+    ]),
+  );
+}
+
+/**
+ * Leitura da tela de time: nomes e papéis vêm da view `workspace_members_safe`
+ * e os e-mails da tabela isolada, cujo RLS decide quem vê o quê. A RPC
+ * `get_workspace_members_full` é anterior à tabela isolada e lê a coluna
+ * revogada, então não serve como fonte de e-mail.
+ */
+export async function listMembersForTeam(workspaceId: string): Promise<WorkspaceMemberRow[]> {
+  const members = await listMembers(workspaceId);
+  const emails = await listMemberEmails(workspaceId);
+
+  return members.map((member) => ({
+    ...member,
+    email: emails.get(member.id) ?? member.email ?? null,
+  }));
+}
+
 export async function inviteMember(
   workspaceId: string,
   email: string,
