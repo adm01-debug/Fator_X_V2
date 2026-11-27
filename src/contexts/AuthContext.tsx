@@ -72,10 +72,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       p_ip_address: null,
       p_action: 'login',
     });
+    const decision = (gate ?? {}) as {
+      allowed?: boolean;
+      reason?: string;
+      requires_captcha?: boolean;
+    };
     if (gateError) {
       // Falha do guard não pode trancar o produto fora; segue o login.
       logger.warn('check_auth_security indisponível', { error: gateError.message });
-    } else if (gate && gate.allowed === false) {
+    } else if (decision.allowed === false) {
       await supabase.rpc('record_auth_attempt', {
         p_email: email,
         p_success: false,
@@ -83,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         p_requires_captcha: false,
       });
       const message =
-        gate.reason === 'permanent_lockout'
+        decision.reason === 'permanent_lockout'
           ? 'Conta bloqueada. Procure o administrador.'
           : 'Muitas tentativas falhas. Sua conta está temporariamente bloqueada por 15 minutos.';
       return { error: new Error(message) };
@@ -96,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       p_email: email,
       p_success: !error,
       p_ip_address: null,
-      p_requires_captcha: Boolean(gate?.requires_captcha),
+      p_requires_captcha: Boolean(decision.requires_captcha),
     });
     if (recordError) {
       logger.warn('record_auth_attempt falhou', { error: recordError.message });
