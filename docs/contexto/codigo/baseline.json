@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "046466fbdfe79e002c8a3bfc60c9b26a170d6280",
+  "commit": "437f21deb18d77dd210b15efcfce900c3a30dcbc",
   "branch": "main",
-  "data_commit": "2026-11-27T04:34:09-03:00",
+  "data_commit": "2026-11-27T05:13:27-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "437f21d",
+    "data": "2026-11-27",
+    "assunto": "infra(banco): workflow manual para aplicar migrations com dry-run e trava APLICAR (#206)"
+   },
    {
     "sha": "046466f",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "51fc68b",
     "data": "2026-11-26",
     "assunto": "feat(metricas): cobertura de embeddings dos chunks de documentos (#169)"
-   },
-   {
-    "sha": "c3e765c",
-    "data": "2026-11-26",
-    "assunto": "fix(time): tela de time volta a mostrar o e-mail dos membros (#168)"
    }
   ],
-  "arquivos_mudados_7d": 161,
+  "arquivos_mudados_7d": 162,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 97
+    "commits": 98
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2047,
+  "arquivos_total": 2048,
   "arquivos_codigo": 1482,
   "linhas_codigo": 325793,
   "rotas": 152,
@@ -325,7 +325,7 @@
   "migrations": 346,
   "cron_jobs": 37,
   "testes": 259,
-  "workflows": 11,
+  "workflows": 12,
   "scripts": 45,
   "docs_md": 134
  },

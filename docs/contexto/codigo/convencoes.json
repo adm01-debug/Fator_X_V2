@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "infra(banco): workflow manual para aplicar migrations com dry-run e trava APLICAR (#206)",
    "feat(conhecimento): aba de saúde dos embeddings com reprocessamento de chunks travados (#205)",
    "feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)",
    "chore: remove rascunhos de corpo de PR versionados por engano (#200)",
-   "feat(busca): trechos do notebook direto do banco no Super Cerebro (#202)",
-   "fix(2fa): ativacao e validacao do segundo fator via RPC do banco (#201)"
+   "feat(busca): trechos do notebook direto do banco no Super Cerebro (#202)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

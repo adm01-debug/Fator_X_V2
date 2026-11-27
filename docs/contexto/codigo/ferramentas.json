@@ -8,7 +8,7 @@
    "Markdown (134)",
    "JavaScript (54)",
    "JSON (25)",
-   "YAML (17)",
+   "YAML (18)",
    "Shell (10)",
    "Python (5)"
   ],
@@ -474,6 +474,30 @@
     "actions/setup-node",
     "actions/upload-artifact",
     "peter-evans/create-pull-request"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/migrations-deploy.yml",
+   "nome": "Migrations Deploy",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "push"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
    ]
   },
   {

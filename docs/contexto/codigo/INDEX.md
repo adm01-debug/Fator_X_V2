@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `046466fbdfe79e002c8a3bfc60c9b26a170d6280` (2026-11-27T04:34:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `437f21deb18d77dd210b15efcfce900c3a30dcbc` (2026-11-27T05:13:27-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1424), SQL (349), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
+- linguagens: TypeScript (1424), SQL (349), Markdown (134), JavaScript (54), JSON (25), YAML (18), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2047 |
+| arquivos_total | 2048 |
 | arquivos_codigo | 1482 |
 | linhas_codigo | 325793 |
 | rotas | 152 |
@@ -49,7 +49,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | migrations | 346 |
 | cron_jobs | 37 |
 | testes | 259 |
-| workflows | 11 |
+| workflows | 12 |
 | scripts | 45 |
 | docs_md | 134 |
 
@@ -433,7 +433,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15504 nós · 39500 arestas · 1364 comunidades · grafo do commit `046466fb`
+- 15504 nós · 39500 arestas · 1364 comunidades · grafo do commit `437f21de`
 - comunidades maiores: react (343), lucide-react (287), cn (223), App.tsx (216), ref_https (200), QuickCreateWizard.tsx (136), tabs.tsx (134), whatsapp-webhook/index.ts (119), mod.ts (117), fetchWithTimeout (111), getWorkspaceId (105), notesService.ts (104)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -466,6 +466,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `edge-prune.yml` — Edge Prune (workflow_dispatch)
 - `guards.yml` — Guards (pull_request, push, workflow_dispatch)
 - `inventario-estado-semanal.yml` — Inventário do estado real (semanal) (schedule, workflow_dispatch; cron 23 10 * * 1)
+- `migrations-deploy.yml` — Migrations Deploy (workflow_dispatch)
 - `release-drafter.yml` — release-drafter (pull_request, push)
 
 ## Scripts npm
@@ -580,6 +581,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `437f21d` infra(banco): workflow manual para aplicar migrations com dry-run e trava APLICAR (#206)
 - 2026-11-27 `046466f` feat(conhecimento): aba de saúde dos embeddings com reprocessamento de chunks travados (#205)
 - 2026-11-27 `98dda83` feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)
 - 2026-11-27 `3d2bbaa` chore: remove rascunhos de corpo de PR versionados por engano (#200)
@@ -594,7 +596,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `91e02fc` fix(lgpd): conserta exclusão, consentimento e anonimização contra o schema real (#179)
 - 2026-11-26 `ddbccc8` fix(forum): tira rascunho das views safe do forum (#163)
 - 2026-11-26 `37702c7` fix(ci): guard de drift deixa de bloquear todo PR com migration nova (#165)
-- 2026-11-26 `710145b` fix(db): alinha o banco oficial ao schema do repo (1193 colunas e 10 objetos ausentes) (#175)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
