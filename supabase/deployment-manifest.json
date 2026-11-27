@@ -610,8 +610,8 @@
     },
     {
       "path": "supabase/functions/voice-session/index.ts",
-      "bytes": 4032,
-      "sha256": "d23789012f4c5825e8f521f61878d0798f890762835faa834ab65653a071634e"
+      "bytes": 4281,
+      "sha256": "0b3cbecc1f1ec89bb8966bbe3e1fae7186b69718e7160149ffcf72ab20e05668"
     },
     {
       "path": "supabase/functions/voice-synthesize/index.ts",
@@ -2454,7 +2454,7 @@
       "name": "voice-session",
       "entrypoint": "supabase/functions/voice-session/index.ts",
       "verify_jwt": true,
-      "source_sha256": "e5a5290fc5172dd53fa09e317328ebed2e86165e282d19f5cf000166960c4c28",
+      "source_sha256": "153e93d3b37b02615b865581d221e1c824dd39e82a1805b091ae31ba52cbbfeb",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2655,5 +2655,5 @@
       ]
     }
   ],
-  "manifest_sha256": "1b0702fb6b1791e1e0b51040ac34ee5b34c0e468dd5873317225ab58fce3b468"
+  "manifest_sha256": "42aca9b326fc829b2efea8590f8f63a905589cb272905406ec383d1d14223825"
 }
