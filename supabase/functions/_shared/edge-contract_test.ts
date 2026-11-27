@@ -66,6 +66,8 @@ const TARGETS: Target[] = [
   { name: 'llm-gateway', invalidBody: { model: 'x', messages: [] } },
   // geo-code: sem address viola o schema (action geocode exige address)
   { name: 'geo-code', invalidBody: { action: 'geocode' } },
+  // voice-session: action fora de ['start','end'] viola o enum
+  { name: 'voice-session', invalidBody: { action: 'append' } },
 ];
 
 const fnUrl = (name: string) => `${SUPABASE_URL}/functions/v1/${name}`;
