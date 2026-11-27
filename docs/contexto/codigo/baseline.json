@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "97b28067fa626adedb1c73c8cb00f74f09f1ea15",
+  "commit": "74a1b4866cc6f203ec22ce6c1a3a4def5f6e687f",
   "branch": "main",
-  "data_commit": "2026-11-27T06:25:28-03:00",
+  "data_commit": "2026-11-27T07:08:16-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "74a1b48",
+    "data": "2026-11-27",
+    "assunto": "fix(banco): agenda o refresh da MV knowledge_graph_health (#211)"
+   },
+   {
+    "sha": "77d1416",
+    "data": "2026-11-27",
+    "assunto": "chore(banco): registra o fechamento dos grants de anon em funcoes (#210)"
+   },
    {
     "sha": "97b2806",
     "data": "2026-11-27",
@@ -121,19 +131,9 @@
     "sha": "0705b71",
     "data": "2026-11-26",
     "assunto": "feat(custos): tela de baseline do detector de anomalias (#176)"
-   },
-   {
-    "sha": "fe144d3",
-    "data": "2026-11-26",
-    "assunto": "feat(custos): baseline do detector de anomalias ganha tela e recálculo (#174)"
-   },
-   {
-    "sha": "aae4b7b",
-    "data": "2026-11-26",
-    "assunto": "feat: expõe a trilha real de security_events no Audit Trail (#173)"
    }
   ],
-  "arquivos_mudados_7d": 183,
+  "arquivos_mudados_7d": 184,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 102
+    "commits": 104
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2066,
+  "arquivos_total": 2067,
   "arquivos_codigo": 1482,
   "linhas_codigo": 326015,
   "rotas": 152,
@@ -322,8 +322,8 @@
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 328,
-  "migrations": 362,
-  "cron_jobs": 39,
+  "migrations": 363,
+  "cron_jobs": 40,
   "testes": 259,
   "workflows": 13,
   "scripts": 45,

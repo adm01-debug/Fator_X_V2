@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `97b28067fa` · branch `main` · 2026-11-27 09:26 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `74a1b4866c` · branch `main` · 2026-11-27 10:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 196 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 197 arquivo(s)
 
 - `e2e/auth-flows.spec.ts`
 - `e2e/helpers/auth-fixtures.ts`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260726161137_21809199-94e6-4a51-ad42-1a224926b6db.sql`
 - `supabase/migrations/20260726195702_c67b4a61-2895-4b1f-a3ab-2b98291792e3.sql`
 - `supabase/migrations/20260726200653_b8a5612b-6c59-4e82-b726-a0be5aee81dc.sql`
-- … +46 (lista completa em `context.json`)
+- … +47 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 

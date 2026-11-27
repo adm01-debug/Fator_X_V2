@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 362,
+ "migrations": 363,
  "seeds": [],
  "avisos": [
   "456 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -1352,6 +1352,11 @@
    "nome": "refresh-agent-daily-metrics",
    "agenda": "*/15 * * * *",
    "migration": "20260711184857_ce70aa1d-6251-4af5-875c-aab67f442443.sql"
+  },
+  {
+   "nome": "refresh-knowledge-graph-health-daily",
+   "agenda": "20 3 * * *",
+   "migration": "20261129014000_agendar_refresh_grafo.sql"
   },
   {
    "nome": "reset-pg-stat-statements-weekly",

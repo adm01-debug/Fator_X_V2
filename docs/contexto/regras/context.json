@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "97b28067fa626adedb1c73c8cb00f74f09f1ea15",
+  "sha": "74a1b4866cc6f203ec22ce6c1a3a4def5f6e687f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 09:26 UTC",
-  "files_total": 2071,
-  "code_files": 1848,
-  "code_lines": 369900
+  "generated_at": "2026-11-27 10:08 UTC",
+  "files_total": 2072,
+  "code_files": 1849,
+  "code_lines": 369936
  },
  "version": "1.3.2",
- "facts_hash": "ec6fb8b30154cb4a",
+ "facts_hash": "8d4de24d28908da3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -263,7 +263,7 @@
   "languages": {
    ".ts": 713,
    ".tsx": 711,
-   ".sql": 365,
+   ".sql": 366,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -47984,6 +47984,12 @@
     "schedule": "40 * * * *",
     "body": "SELECT public.check_retention_job_health();",
     "src": "supabase/migrations/20261129002000_agendar_retencao_traces.sql"
+   },
+   {
+    "job": "refresh-knowledge-graph-health-daily",
+    "schedule": "20 3 * * *",
+    "body": "SELECT public.refresh_knowledge_graph_health();",
+    "src": "supabase/migrations/20261129014000_agendar_refresh_grafo.sql"
    }
   ],
   "views": {
@@ -48443,6 +48449,7 @@
    "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
    "supabase/migrations/20261129012000_alert_rules_banco.sql",
    "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
+   "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -63129,8 +63136,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 362,
-   "lines": 43574,
+   "files": 363,
+   "lines": 43610,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -140018,6 +140025,7 @@
    "supabase/migrations/20261129009000_rotinas_sistema_service_role.sql",
    "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
    "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
+   "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
    "tests/load/llm-gateway.k6.js",
    "tests/rls/personas.test.ts",
    "tests/rls/setup.ts",
@@ -198620,6 +198628,11 @@
    "path": "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
    "lines": 50
   },
+  "supabase/migrations/20261129014000_agendar_refresh_grafo.sql": {
+   "path": "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
+   "lines": 36,
+   "uses_service_role": true
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -198781,10 +198794,28 @@
   }
  },
  "git": {
-  "sha": "97b28067fa626adedb1c73c8cb00f74f09f1ea15",
+  "sha": "74a1b4866cc6f203ec22ce6c1a3a4def5f6e687f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "74a1b48",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "fix(banco): agenda o refresh da MV knowledge_graph_health (#211)",
+    "files": [
+     "supabase/migrations/20261129014000_agendar_refresh_grafo.sql"
+    ]
+   },
+   {
+    "sha": "77d1416",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "chore(banco): registra o fechamento dos grants de anon em funcoes (#210)",
+    "files": [
+     "docs/banco/estado-verificado.md"
+    ]
+   },
    {
     "sha": "97b2806",
     "date": "2026-11-27",
@@ -199110,28 +199141,6 @@
      "src/services/lgpdGovernanceService.ts",
      "src/test/lgpd-governance.test.ts"
     ]
-   },
-   {
-    "sha": "51fc68b",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "feat(metricas): cobertura de embeddings dos chunks de documentos (#169)",
-    "files": [
-     "src/components/metrics/EmbeddingCoverageCard.tsx",
-     "src/components/metrics/KnowledgeGraphHealthCard.tsx",
-     "src/test/metrics-embedding-coverage.test.tsx"
-    ]
-   },
-   {
-    "sha": "c3e765c",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "fix(time): tela de time volta a mostrar o e-mail dos membros (#168)",
-    "files": [
-     "src/pages/TeamPage.tsx",
-     "src/services/teamsService.ts",
-     "src/test/teams-members-full.test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -199142,6 +199151,10 @@
    [
     "src/integrations/supabase/types.ts",
     4
+   ],
+   [
+    "docs/banco/estado-verificado.md",
+    2
    ],
    [
     ".prbody.md",
@@ -199168,11 +199181,11 @@
     2
    ],
    [
-    "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
+    "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
     1
    ],
    [
-    "docs/banco/estado-verificado.md",
+    "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
     1
    ],
    [
@@ -199209,10 +199222,6 @@
    ],
    [
     "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261129002000_agendar_retencao_traces.sql",
     1
    ]
   ]
