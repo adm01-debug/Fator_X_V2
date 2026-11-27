@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6b55c8bc053229ce7d6c9fae9adaf4e1c2c0f387",
+  "commit": "49ad081916d5739667014db483d197fc46547fd0",
   "branch": "main",
-  "data_commit": "2026-11-27T07:50:49-03:00",
+  "data_commit": "2026-11-27T09:06:45-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "49ad081",
+    "data": "2026-11-27",
+    "assunto": "feat(vulnerabilidades): sincroniza alertas do Dependabot para a tela (#215)"
+   },
    {
     "sha": "6b55c8b",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "37702c7",
     "data": "2026-11-26",
     "assunto": "fix(ci): guard de drift deixa de bloquear todo PR com migration nova (#165)"
-   },
-   {
-    "sha": "710145b",
-    "data": "2026-11-26",
-    "assunto": "fix(db): alinha o banco oficial ao schema do repo (1193 colunas e 10 objetos ausentes) (#175)"
    }
   ],
-  "arquivos_mudados_7d": 188,
+  "arquivos_mudados_7d": 191,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -184,15 +184,15 @@
     "mudancas": 4
    },
    {
+    "pasta": "scripts/automation.config.json",
+    "mudancas": 4
+   },
+   {
     "pasta": "src/components/admin",
     "mudancas": 4
    },
    {
     "pasta": "src/components/shared",
-    "mudancas": 4
-   },
-   {
-    "pasta": "src/pages/FineTuningPage.tsx",
     "mudancas": 4
    }
   ],
@@ -235,6 +235,10 @@
    },
    {
     "arquivo": ".github/workflows/guards.yml",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 4
    },
    {
@@ -292,16 +296,12 @@
    {
     "arquivo": ".github/workflows/inventario-estado-semanal.yml",
     "mudancas": 3
-   },
-   {
-    "arquivo": "AGENTS.md",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 107
+    "commits": 108
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2071,
-  "arquivos_codigo": 1484,
-  "linhas_codigo": 326367,
+  "arquivos_total": 2073,
+  "arquivos_codigo": 1485,
+  "linhas_codigo": 326504,
   "rotas": 153,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -325,8 +325,8 @@
   "migrations": 365,
   "cron_jobs": 40,
   "testes": 259,
-  "workflows": 13,
-  "scripts": 45,
+  "workflows": 14,
+  "scripts": 46,
   "docs_md": 135
  },
  "por_pasta": {
@@ -457,6 +457,10 @@
   "scripts/supabase_snapshot": {
    "arquivos": 2,
    "linhas": 2669
+  },
+  "scripts/sync-dependabot-findings.mjs": {
+   "arquivos": 1,
+   "linhas": 137
   },
   "scripts/template-link-coverage.ts": {
    "arquivos": 1,
@@ -667,7 +671,7 @@
  ],
  "qualidade": {
   "any": 114,
-  "console_log": 110,
+  "console_log": 114,
   "ts_ignore": 0,
   "eslint_disable": 5,
   "todos": 16,

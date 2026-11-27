@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 45,
+ "total": 46,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -492,6 +492,21 @@
    "npm_scripts": [],
    "workflows": [
     "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/sync-dependabot-findings.mjs",
+   "descricao": "* Sincroniza os alertas abertos do Dependabot para `vulnerability_findings`.",
+   "linhas": 137,
+   "env": [
+    "GITHUB_REPOSITORY",
+    "PROJECT_REF",
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "sync-vulnerabilities.yml"
    ],
    "orfao": false
   },

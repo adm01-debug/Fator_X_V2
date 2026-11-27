@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6b55c8bc05` · branch `main` · 2026-11-27 10:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `49ad081916` · branch `main` · 2026-11-27 12:07 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3763,6 +3763,7 @@ _nenhum item encontrado_
 | MCP HTTP ${res.status}: ${await res.text().catch(() =>  | `scripts/db-drift-check.mjs` |
 | MCP error: ${JSON.stringify(payload.error)} | `scripts/db-drift-check.mjs` |
 | Resposta MCP inesperada: ${JSON.stringify(result).slice(0, 400)} | `scripts/db-drift-check.mjs` |
+| Management API ${res.status}: ${text.slice(0, 800)} | `scripts/sync-dependabot-findings.mjs` |
 | ${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)} | `scripts/ai-context/cenarios.mjs` |
 | Argumento desconhecido: ${arg} | `scripts/ci/a11y-button-name-ratchet.mjs` |
 | Valor ausente para ${arg}. | `scripts/ci/a11y-button-name-ratchet.mjs` |
@@ -4056,8 +4057,7 @@ _nenhum item encontrado_
 | Descreva o motivo da rejeição — é o que fica na auditoria. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +550 linhas — lista completa em `context.json` | |
+| … +551 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6b55c8bc053229ce7d6c9fae9adaf4e1c2c0f387` (2026-11-27T07:50:49-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `49ad081916d5739667014db483d197fc46547fd0` (2026-11-27T09:06:45-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1426), SQL (368), Markdown (135), JavaScript (54), JSON (25), YAML (19), Shell (10), Python (5)
+- linguagens: TypeScript (1426), SQL (368), Markdown (135), JavaScript (55), JSON (25), YAML (20), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2071 |
-| arquivos_codigo | 1484 |
-| linhas_codigo | 326367 |
+| arquivos_total | 2073 |
+| arquivos_codigo | 1485 |
+| linhas_codigo | 326504 |
 | rotas | 153 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -49,8 +49,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | migrations | 365 |
 | cron_jobs | 40 |
 | testes | 259 |
-| workflows | 13 |
-| scripts | 45 |
+| workflows | 14 |
+| scripts | 46 |
 | docs_md | 135 |
 
 ## Onde ficam as coisas
@@ -437,8 +437,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15583 nós · 39611 arestas · 1397 comunidades · grafo do commit `6b55c8bc`
-- comunidades maiores: react (337), lucide-react (325), App.tsx (187), Button (184), ref_https (164), cn (151), notesService.ts (141), QuickCreateWizard.tsx (134), VendorsPage.tsx (129), vitest (118), fromTable (115), logger.ts (113)
+- 15589 nós · 39619 arestas · 1406 comunidades · grafo do commit `49ad0819`
+- comunidades maiores: badge.tsx (311), sonner (226), ref_https (209), button.tsx (199), lib/utils.ts (139), App.tsx (136), routePrefetch.ts (131), mod.ts (124), ref_node_fs (117), VendorsPage.tsx (116), tabs.tsx (114), fetchWithTimeout (108)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -453,11 +453,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/integrations/supabase/types.ts (6)
 - .github/workflows/contexto.yml (4)
 - .github/workflows/guards.yml (4)
+- scripts/automation.config.json (4)
 - src/components/layout/AppSidebar.tsx (4)
 - src/pages/FineTuningPage.tsx (4)
 - supabase/config.toml (4)
 - supabase/functions/agent-conversational-builder/index.ts (4)
-- supabase/functions/agent-workflow-runner/index.ts (4)
 
 ## Workflows
 - `anti-stale-dependabot.yml` — Anti-stale dependabot (schedule, workflow_dispatch; cron 42 6 * * 5)
@@ -473,6 +473,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `migrations-deploy.yml` — Migrations Deploy (workflow_dispatch)
 - `release-drafter.yml` — release-drafter (pull_request, push)
 - `schema-probe.yml` — Schema Probe (workflow_dispatch)
+- `sync-vulnerabilities.yml` — Sincronizar vulnerabilidades (Dependabot) (schedule, workflow_dispatch; cron 17 5 * * *)
 
 ## Scripts npm
 - `maintenance:doctor`: `sh scripts/maintenance/run.sh doctor --root .`
@@ -586,6 +587,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `49ad081` feat(vulnerabilidades): sincroniza alertas do Dependabot para a tela (#215)
 - 2026-11-27 `6b55c8b` fix(seguranca): revoga select de anon nas tabelas de config vazias (#214)
 - 2026-11-27 `1188ca3` feat(banco): tela do dicionario de esquema com busca e filtro (#213)
 - 2026-11-27 `3edcbed` fix(seguranca): fecha anon no dicionario de esquema e libera leitura admin (#212)
@@ -600,7 +602,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-27 `98dda83` feat(skills): tela de skills aprendidas com aprender agora e expurgo (#204)
 - 2026-11-27 `3d2bbaa` chore: remove rascunhos de corpo de PR versionados por engano (#200)
 - 2026-11-27 `ffdbf8c` feat(busca): trechos do notebook direto do banco no Super Cerebro (#202)
-- 2026-11-27 `18aacbd` fix(2fa): ativacao e validacao do segundo fator via RPC do banco (#201)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

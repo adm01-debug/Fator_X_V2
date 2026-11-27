@@ -6,9 +6,9 @@
    "TypeScript (1426)",
    "SQL (368)",
    "Markdown (135)",
-   "JavaScript (54)",
+   "JavaScript (55)",
    "JSON (25)",
-   "YAML (19)",
+   "YAML (20)",
    "Shell (10)",
    "Python (5)"
   ],
@@ -547,6 +547,36 @@
     "SUPABASE_ACCESS_TOKEN"
    ],
    "actions": []
+  },
+  {
+   "arquivo": ".github/workflows/sync-vulnerabilities.yml",
+   "nome": "Sincronizar vulnerabilidades (Dependabot)",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 5 * * *"
+   ],
+   "branches": [],
+   "jobs": [
+    "sincronizar"
+   ],
+   "permissoes": [
+    "contents: read",
+    "security-events: read # ler os alertas do Dependabot"
+   ],
+   "scripts_usados": [
+    "scripts/sync-dependabot-findings.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
   }
  ],
  "hooks_git": [
@@ -1188,6 +1218,10 @@
     "arquivos": 2
    },
    {
+    "host": "api.supabase.com",
+    "arquivos": 2
+   },
+   {
     "host": "app.promobrindes.com.br",
     "arquivos": 2
    },
@@ -1241,10 +1275,6 @@
    },
    {
     "host": "api.pwnedpasswords.com",
-    "arquivos": 1
-   },
-   {
-    "host": "api.supabase.com",
     "arquivos": 1
    },
    {
