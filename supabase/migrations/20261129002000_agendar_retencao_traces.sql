@@ -30,3 +30,12 @@ BEGIN
   END IF;
 END;
 $$;
+
+-- `cleanup_old_auth_attempts` (20260401000004…sql:232) é a duplicata antiga de
+-- `cleanup_auth_attempts`: apaga `auth_attempts` com mais de **30 dias**, o
+-- que contraria a política LGPD vigente de **90 dias** (20260724000011…sql:259-264,
+-- a que roda no cron `lgpd-cleanup-auth-attempts`). Nenhum objeto, edge ou
+-- código do app a chama; só a `service_role` tem EXECUTE. Manter uma rotina de
+-- expurgo de PII com prazo errado ao alcance de qualquer script é risco sem
+-- contrapartida, então ela sai.
+DROP FUNCTION IF EXISTS public.cleanup_old_auth_attempts();
