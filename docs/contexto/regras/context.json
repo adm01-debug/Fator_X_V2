@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "74a1b4866cc6f203ec22ce6c1a3a4def5f6e687f",
+  "sha": "3edcbedde007e0542d3ca9884454a828e48d658b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 10:08 UTC",
-  "files_total": 2072,
-  "code_files": 1849,
-  "code_lines": 369936
+  "generated_at": "2026-11-27 10:42 UTC",
+  "files_total": 2073,
+  "code_files": 1850,
+  "code_lines": 369990
  },
  "version": "1.3.2",
- "facts_hash": "8d4de24d28908da3",
+ "facts_hash": "6b982069d0ea951c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -263,7 +263,7 @@
   "languages": {
    ".ts": 713,
    ".tsx": 711,
-   ".sql": 366,
+   ".sql": 367,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -48450,6 +48450,7 @@
    "supabase/migrations/20261129012000_alert_rules_banco.sql",
    "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
    "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
+   "supabase/migrations/20261129015000_dicionario_esquema_anon.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -63136,8 +63137,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 363,
-   "lines": 43610,
+   "files": 364,
+   "lines": 43664,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -198633,6 +198634,10 @@
    "lines": 36,
    "uses_service_role": true
   },
+  "supabase/migrations/20261129015000_dicionario_esquema_anon.sql": {
+   "path": "supabase/migrations/20261129015000_dicionario_esquema_anon.sql",
+   "lines": 54
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -198794,10 +198799,19 @@
   }
  },
  "git": {
-  "sha": "74a1b4866cc6f203ec22ce6c1a3a4def5f6e687f",
+  "sha": "3edcbedde007e0542d3ca9884454a828e48d658b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "3edcbed",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "fix(seguranca): fecha anon no dicionario de esquema e libera leitura admin (#212)",
+    "files": [
+     "supabase/migrations/20261129015000_dicionario_esquema_anon.sql"
+    ]
+   },
    {
     "sha": "74a1b48",
     "date": "2026-11-27",
@@ -199128,19 +199142,6 @@
      "supabase/functions/llm-gateway/index.ts",
      "supabase/functions/rag-rerank/index.ts"
     ]
-   },
-   {
-    "sha": "a77f3ba",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)",
-    "files": [
-     "src/App.tsx",
-     "src/components/layout/AppSidebar.tsx",
-     "src/pages/LGPDGovernancePage.tsx",
-     "src/services/lgpdGovernanceService.ts",
-     "src/test/lgpd-governance.test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -199181,6 +199182,10 @@
     2
    ],
    [
+    "supabase/migrations/20261129015000_dicionario_esquema_anon.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
     1
    ],
@@ -199218,10 +199223,6 @@
    ],
    [
     "supabase/migrations/20261129000000_2fa_operante.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261129001000_consertar_membros_e_oncall.sql",
     1
    ]
   ]

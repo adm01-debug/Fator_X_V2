@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "74a1b4866cc6f203ec22ce6c1a3a4def5f6e687f",
+  "commit": "3edcbedde007e0542d3ca9884454a828e48d658b",
   "branch": "main",
-  "data_commit": "2026-11-27T07:08:16-03:00",
+  "data_commit": "2026-11-27T07:42:11-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "3edcbed",
+    "data": "2026-11-27",
+    "assunto": "fix(seguranca): fecha anon no dicionario de esquema e libera leitura admin (#212)"
+   },
    {
     "sha": "74a1b48",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "0b42f14",
     "data": "2026-11-26",
     "assunto": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)"
-   },
-   {
-    "sha": "0705b71",
-    "data": "2026-11-26",
-    "assunto": "feat(custos): tela de baseline do detector de anomalias (#176)"
    }
   ],
-  "arquivos_mudados_7d": 184,
+  "arquivos_mudados_7d": 185,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 104
+    "commits": 105
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2067,
+  "arquivos_total": 2068,
   "arquivos_codigo": 1482,
   "linhas_codigo": 326015,
   "rotas": 152,
@@ -322,7 +322,7 @@
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 328,
-  "migrations": 363,
+  "migrations": 364,
   "cron_jobs": 40,
   "testes": 259,
   "workflows": 13,

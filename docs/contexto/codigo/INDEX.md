@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `74a1b4866cc6f203ec22ce6c1a3a4def5f6e687f` (2026-11-27T07:08:16-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3edcbedde007e0542d3ca9884454a828e48d658b` (2026-11-27T07:42:11-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1424), SQL (366), Markdown (135), JavaScript (54), JSON (25), YAML (19), Shell (10), Python (5)
+- linguagens: TypeScript (1424), SQL (367), Markdown (135), JavaScript (54), JSON (25), YAML (19), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2067 |
+| arquivos_total | 2068 |
 | arquivos_codigo | 1482 |
 | linhas_codigo | 326015 |
 | rotas | 152 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 76 |
 | edge_functions | 88 |
 | tabelas | 328 |
-| migrations | 363 |
+| migrations | 364 |
 | cron_jobs | 40 |
 | testes | 259 |
 | workflows | 13 |
@@ -436,7 +436,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15567 nós · 39552 arestas · 1409 comunidades · grafo do commit `74a1b486`
+- 15568 nós · 39552 arestas · 1410 comunidades · grafo do commit `3edcbedd`
 - comunidades maiores: lucide-react (358), button.tsx (221), react (216), ref_https (208), App.tsx (146), VendorsPage.tsx (132), tabs.tsx (130), requireEnv (111), whatsapp-webhook/index.ts (109), cn (108), mod.ts (105), services/index.ts (95)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -585,6 +585,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `3edcbed` fix(seguranca): fecha anon no dicionario de esquema e libera leitura admin (#212)
 - 2026-11-27 `74a1b48` fix(banco): agenda o refresh da MV knowledge_graph_health (#211)
 - 2026-11-27 `77d1416` chore(banco): registra o fechamento dos grants de anon em funcoes (#210)
 - 2026-11-27 `97b2806` fix(seguranca): revoga EXECUTE de anon nas funcoes de public (#209)
@@ -599,7 +600,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-27 `18aacbd` fix(2fa): ativacao e validacao do segundo fator via RPC do banco (#201)
 - 2026-11-27 `4631eb4` fix(a2a): agent card lê a tabela agents, não a inexistente agent_configs (#199)
 - 2026-11-27 `a3a3a9b` feat(obs): botão de smoke test pg_net na tela de System Jobs (#186)
-- 2026-11-27 `e33e3a8` fix(voice): alinha o schema da edge voice-session ao handler (#183)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

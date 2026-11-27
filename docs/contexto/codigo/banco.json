@@ -8,10 +8,10 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 363,
+ "migrations": 364,
  "seeds": [],
  "avisos": [
-  "456 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
+  "457 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
  "extensoes": [
   "pg_cron",

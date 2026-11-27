@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(seguranca): fecha anon no dicionario de esquema e libera leitura admin (#212)",
    "fix(banco): agenda o refresh da MV knowledge_graph_health (#211)",
    "chore(banco): registra o fechamento dos grants de anon em funcoes (#210)",
    "fix(seguranca): revoga EXECUTE de anon nas funcoes de public (#209)",
-   "chore(banco): registra o estado verificado do banco de producao (#208)",
-   "infra(banco): sonda somente leitura do schema de producao (#207)"
+   "chore(banco): registra o estado verificado do banco de producao (#208)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
