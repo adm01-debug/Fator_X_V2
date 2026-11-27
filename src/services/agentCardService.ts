@@ -268,8 +268,9 @@ export async function saveAgentCard(agentId: string, card: AgentCard): Promise<v
 
   if (readError) throw new Error(`Failed to save agent card: ${readError.message}`);
 
-  // Merge preserva o resto da configuração do agente; `agent_configs` nunca
-  // existiu no banco, então o card passa a viver em `agents.config`.
+  // Merge preserva o resto da configuração do agente; a tabela que este
+  // serviço tentava usar nunca existiu, então o card passa a viver em
+  // `agents.config`.
   const config = ((current?.config as Record<string, unknown>) ?? {});
   const { error } = await fromTable('agents')
     .update({

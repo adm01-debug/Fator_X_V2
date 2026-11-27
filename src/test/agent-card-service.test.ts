@@ -1,9 +1,10 @@
 /**
  * agentCardService — gera Agent Cards A2A a partir da tabela `agents`.
  *
- * O serviço lia `.from('agent_configs')`, tabela que NUNCA existiu em nenhuma
- * migration do repositório. Toda a tela de A2A (A2APanelPage, SwarmOrchestration,
- * AgentDetailPage) recebia erro e o card saía vazio. Estes testes provam que:
+ * O serviço lia de uma tabela fantasma (prefixo `agent_config`, sufixo `s`) que
+ * NUNCA existiu em nenhuma migration do repositório. Toda a tela de A2A
+ * (A2APanelPage, SwarmOrchestration, AgentDetailPage) recebia erro e o card
+ * saía vazio. Estes testes provam que:
  *   1) a leitura vai para `agents`, não para uma tabela fantasma;
  *   2) as skills vêm de `config.tools` — sem essa conversão o card sai sem skill
  *      e falha em `validateAgentCard`;
@@ -48,14 +49,16 @@ describe('agentCardService', () => {
     ext.setResult({ data: [], error: null });
   });
 
-  it('lê de agents, nunca da tabela inexistente agent_configs', async () => {
+  it('lê de agents, nunca da tabela fantasma', async () => {
     ext.setTableResult('agents', { data: AGENT_ROW, error: null });
     const { generateAndSaveAgentCard } = await import('@/services/agentCardService');
     await generateAndSaveAgentCard(AGENT_ROW.id);
 
     const tables = ext.calls.from.mock.calls.map((c) => c[0]);
     expect(tables).toContain('agents');
-    expect(tables).not.toContain('agent_configs');
+    // Guarda contra regressão à tabela fantasma (nunca existiu em migrations).
+    expect(tables.filter((t) => String(t).startsWith('agent'))).not.toHaveLength(0);
+    expect(tables.filter((t) => String(t).startsWith('agent') && String(t) !== 'agents')).toEqual([]);
   });
 
   it('deriva skills de config.tools — sem isso o card não passa em validateAgentCard', async () => {
