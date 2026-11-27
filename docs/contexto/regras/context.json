@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "37702c7d0270c9268615d2f0b5f0de52f774782c",
+  "sha": "ddbccc854ce8fd37e3aba928233dc52484e4fdab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 02:10 UTC",
-  "files_total": 2041,
-  "code_files": 1821,
-  "code_lines": 365941
+  "generated_at": "2026-11-27 02:20 UTC",
+  "files_total": 2042,
+  "code_files": 1822,
+  "code_lines": 365970
  },
  "version": "1.3.2",
- "facts_hash": "8a453f05cb9c2f12",
+ "facts_hash": "1341ee3b7e012725",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -248,7 +248,7 @@
   "languages": {
    ".tsx": 709,
    ".ts": 706,
-   ".sql": 347,
+   ".sql": 348,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -48114,6 +48114,7 @@
    "supabase/migrations/20261121103000_embed_retry_chunks.sql",
    "supabase/migrations/20261121110000_restore_workspace_secrets_key_value.sql",
    "supabase/migrations/20261121120000_finish_partial_work_entidades.sql",
+   "supabase/migrations/20261126130000_forum_safe_views_is_published.sql",
    "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql",
    "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
    "supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql",
@@ -51854,6 +51855,22 @@
     "objkind": "function",
     "roles": "authenticated, service_role",
     "src": "supabase/migrations/20261121120000_finish_partial_work_entidades.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "forum_threads_safe",
+    "objkind": "table",
+    "roles": "authenticated, anon",
+    "src": "supabase/migrations/20261126130000_forum_safe_views_is_published.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "forum_posts_safe",
+    "objkind": "table",
+    "roles": "authenticated, anon",
+    "src": "supabase/migrations/20261126130000_forum_safe_views_is_published.sql"
    },
    {
     "kind": "grant",
@@ -62194,8 +62211,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 344,
-   "lines": 42103,
+   "files": 345,
+   "lines": 42132,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -142143,6 +142160,22 @@
    {
     "kind": "grant",
     "privs": "select",
+    "object": "forum_threads_safe",
+    "objkind": "table",
+    "roles": "authenticated, anon",
+    "src": "supabase/migrations/20261126130000_forum_safe_views_is_published.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "forum_posts_safe",
+    "objkind": "table",
+    "roles": "authenticated, anon",
+    "src": "supabase/migrations/20261126130000_forum_safe_views_is_published.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
     "object": "pg_net_smoke_runs",
     "objkind": "table",
     "roles": "authenticated",
@@ -195944,6 +195977,10 @@
    ],
    "uses_service_role": true
   },
+  "supabase/migrations/20261126130000_forum_safe_views_is_published.sql": {
+   "path": "supabase/migrations/20261126130000_forum_safe_views_is_published.sql",
+   "lines": 29
+  },
   "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql": {
    "path": "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql",
    "lines": 2098,
@@ -196264,10 +196301,19 @@
   }
  },
  "git": {
-  "sha": "37702c7d0270c9268615d2f0b5f0de52f774782c",
+  "sha": "ddbccc854ce8fd37e3aba928233dc52484e4fdab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "ddbccc8",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix(forum): tira rascunho das views safe do forum (#163)",
+    "files": [
+     "supabase/migrations/20261126130000_forum_safe_views_is_published.sql"
+    ]
+   },
    {
     "sha": "37702c7",
     "date": "2026-11-26",
@@ -196577,23 +196623,9 @@
     "files": [
      "package-lock.json"
     ]
-   },
-   {
-    "sha": "b1ace07",
-    "date": "2026-11-24",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps)(deps): bump @supabase/supabase-js (#149)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "package-lock.json",
-    4
-   ],
    [
     "src/pages/FineTuningPage.tsx",
     3
@@ -196607,7 +196639,7 @@
     3
    ],
    [
-    "package.json",
+    "package-lock.json",
     3
    ],
    [
@@ -196625,6 +196657,14 @@
    [
     ".github/workflows/edge-prune.yml",
     2
+   ],
+   [
+    "package.json",
+    2
+   ],
+   [
+    "supabase/migrations/20261126130000_forum_safe_views_is_published.sql",
+    1
    ],
    [
     "scripts/db-drift-check.mjs",
@@ -196664,10 +196704,6 @@
    ],
    [
     "src/services/costAnomalyService.ts",
-    1
-   ],
-   [
-    "src/test/cost-anomaly-service.test.ts",
     1
    ]
   ]

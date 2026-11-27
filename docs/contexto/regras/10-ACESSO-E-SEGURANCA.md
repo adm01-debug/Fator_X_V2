@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `37702c7d02` · branch `main` · 2026-11-27 02:10 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ddbccc854c` · branch `main` · 2026-11-27 02:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -728,7 +728,7 @@ Middleware matcher (Next.js): nenhum
 | grant | authenticated | select | `audit_log_safe`, `audit_log_safe`, `workspace_members_safe`, `workspace_members_directory`, `workspace_members_safe`, `workspace_members_safe`, `workspace_members_safe`, `slo_metrics_hourly`, `slo_metrics_hourly`, `workspace_members_safe`, `workspace_members_safe`, `oncall_schedule_safe`, `workspace_members_safe`, `workspace_members_directory`, `oncall_schedule_safe` … +39 |
 | grant | authenticated | select, insert, update | `citation_telemetry`, `skill_reclassification_reviews` |
 | grant | authenticated | select, insert, update, delete | `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `slack_workspace_config`, `slack_channel_routes`, `slack_agent_notifications`, `slack_rag_sources`, `slack_bot_bindings`, `document_ingestions`, `collections`, `notebook_notes`, `knowledge_links`, `notebook_podcasts` … +19 |
-| grant | authenticated, anon | select | `forum_threads_safe`, `forum_posts_safe`, `forum_threads_public`, `forum_posts_public`, `forum_threads_safe`, `forum_posts_safe` |
+| grant | authenticated, anon | select | `forum_threads_safe`, `forum_posts_safe`, `forum_threads_safe`, `forum_posts_safe`, `forum_threads_public`, `forum_posts_public`, `forum_threads_safe`, `forum_posts_safe` |
 | grant | authenticated, service_role | execute | `is_user_locked_out`, `is_mfa_valid_for_role`, `increment_webhook_counter`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_slo_summary`, `get_slo_summary`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `hybrid_memory_search`, `is_workspace_admin`, `touch_memory`, `get_slow_query_alerts_history` … +20 |
 | grant | authenticated, service_role | select | `agent_daily_metrics`, `agent_daily_metrics`, `agent_daily_metrics` |
 | grant | postgres | execute | `_fase8_snapshot_as`, `_fase8_snapshot_as` |
