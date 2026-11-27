@@ -6,6 +6,7 @@ import { supabaseExternal } from '@/integrations/supabase/externalClient';
 import { supabase } from '@/integrations/supabase/client';
 import { fromTable } from '@/lib/supabaseExtended';
 import { logger } from '@/lib/logger';
+import type { Json } from '@/integrations/supabase/types';
 import { invokeTracedFunction } from '@/services/llmGatewayService';
 
 export async function listApiKeys() {
@@ -27,7 +28,7 @@ export async function listApiKeys() {
  */
 export async function logSecurityEvent(
   eventType: string,
-  options?: { severity?: string; workspaceId?: string | null; details?: Record<string, unknown> },
+  options?: { severity?: string; workspaceId?: string | null; details?: Json },
 ): Promise<void> {
   try {
     const { error } = await supabaseExternal.rpc('registrar_evento_seguranca', {
