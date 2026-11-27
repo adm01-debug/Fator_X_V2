@@ -49,7 +49,7 @@
 | `incident-orchestrator` | `agents`, `chaos_experiments`, `incident_playbooks` |
 | `kb-analyze-gaps` | `kb_query_gaps`, `oracle_history` |
 | `kb-translate-article` | `kb_articles`, `kb_translations` |
-| `lgpd-manager` | `agent_memories`, `consent_records`, `data_deletion_requests`, `security_events`, `session_traces`, `sessions` |
+| `lgpd-manager` | `agent_eval_runs`, `agent_memories`, `consent_records`, `data_deletion_requests`, `security_events`, `sessions`, `traces`, `workspace_members` |
 | `llm-gateway` | `agent_traces`, `agent_usage`, `agents`, `audit_events`, `budgets`, `model_pricing`, `session_traces`, `sessions`, `trace_events`, `usage_records`, `workspace_members`, `workspace_secrets` |
 | `memory-manager` | `agent_memories` |
 | `memory-tools` | `agent_memories`, `workspace_members` |
@@ -106,7 +106,7 @@
 | `access_blocked_log` | `validate-access` |
 | `agent_eval_datasets` | `agent-eval-runner`, `global-search` |
 | `agent_eval_results` | `agent-eval-runner` |
-| `agent_eval_runs` | `agent-eval-runner` |
+| `agent_eval_runs` | `agent-eval-runner`, `lgpd-manager` |
 | `agent_graphs` | `graph-execute` |
 | `agent_memories` | `cerebro-brain`, `lgpd-manager`, `memory-manager`, `memory-tools` |
 | `agent_memories_v2` | `rag-embed-backfill`, `slack-rag-sync` |
@@ -169,7 +169,7 @@
 | `sbom_components` | `sbom-scanner` |
 | `sbom_snapshots` | `sbom-scanner` |
 | `security_events` | `lgpd-manager` |
-| `session_traces` | `lgpd-manager`, `llm-gateway` |
+| `session_traces` | `llm-gateway` |
 | `sessions` | `lgpd-manager`, `llm-gateway` |
 | `skill_harvest_candidates` | `skill-harvester` |
 | `skill_harvest_runs` | `skill-harvester` |
@@ -185,6 +185,7 @@
 | `test_cases` | `eval-judge` |
 | `tool_integrations` | `cerebro-brain` |
 | `trace_events` | `bitrix24-webhook`, `llm-gateway`, `whatsapp-webhook` |
+| `traces` | `lgpd-manager` |
 | `usage_records` | `llm-gateway` |
 | `voice_sessions` | `voice-session`, `voice-synthesize`, `voice-transcribe` |
 | `webhook_endpoints` | `webhook-receiver` |
@@ -193,6 +194,6 @@
 | `workflow_runs` | `workflow-engine-v2` |
 | `workflow_steps` | `cerebro-brain`, `workflow-engine-v2` |
 | `workflows` | `cerebro-brain`, `workflow-engine-v2` |
-| `workspace_members` | `cerebro-brain`, `cerebro-query`, `doc-rechunk`, `eval-judge`, `hf-autotrain`, `llm-gateway`, `memory-tools`, `notebook-podcast-generate`, `rag-embed-v2`, `rag-ingest`, `rag-rerank`, `rag-rerank-v2`, `smolagent-runtime` |
+| `workspace_members` | `cerebro-brain`, `cerebro-query`, `doc-rechunk`, `eval-judge`, `hf-autotrain`, `lgpd-manager`, `llm-gateway`, `memory-tools`, `notebook-podcast-generate`, `rag-embed-v2`, `rag-ingest`, `rag-rerank`, `rag-rerank-v2`, `smolagent-runtime` |
 | `workspace_secrets` | `bitrix24-api`, `bitrix24-oauth`, `bitrix24-webhook`, `crm-bitrix-sync`, `eval-judge`, `llm-gateway`, `rag-embed-v2`, `rag-ingest`, `rag-rerank`, `rag-rerank-v2`, `whatsapp-outbound`, `whatsapp-webhook` |
 | `workspaces` | `health-check`, `voice-session` |
