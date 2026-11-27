@@ -13,6 +13,7 @@ const mockGte = vi.fn();
 const mockOrder = vi.fn();
 const mockLimit = vi.fn();
 const mockMaybeSingle = vi.fn();
+const mockRpc = vi.fn();
 
 const chainMock = () => ({
   select: mockSelect,
@@ -26,6 +27,16 @@ const chainMock = () => ({
   limit: mockLimit,
   maybeSingle: mockMaybeSingle,
 });
+
+vi.mock('@/integrations/supabase/externalClient', () => ({
+  supabaseExternal: {
+    from: (...args: DbRow[]) => {
+      mockFrom(...args);
+      return chainMock();
+    },
+    rpc: mockRpc,
+  },
+}));
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -125,6 +136,56 @@ describe('Service Layer', () => {
     it('exports getAuditLog', async () => {
       const { getAuditLog } = await import('@/services/securityService');
       expect(typeof getAuditLog).toBe('function');
+    });
+
+    it('exports logSecurityEvent', async () => {
+      const { logSecurityEvent } = await import('@/services/securityService');
+      expect(typeof logSecurityEvent).toBe('function');
+    });
+
+    it('logSecurityEvent chama a RPC de auditoria com o autor implicito', async () => {
+      const { supabaseExternal } = await import('@/integrations/supabase/externalClient');
+      const rpc = vi.mocked(supabaseExternal.rpc);
+      rpc.mockResolvedValueOnce({ data: 'evt-1', error: null } as never);
+
+      const { logSecurityEvent } = await import('@/services/securityService');
+      await logSecurityEvent('api_key_revoked', {
+        severity: 'medium',
+        workspaceId: null,
+        details: { api_key_id: 'k1' },
+      });
+
+      expect(rpc).toHaveBeenCalledWith('registrar_evento_seguranca', {
+        p_event_type: 'api_key_revoked',
+        p_severity: 'medium',
+        p_workspace: null,
+        p_details: { api_key_id: 'k1' },
+      });
+    });
+
+    it('logSecurityEvent nunca lanca: falha de auditoria nao derruba a operacao', async () => {
+      const { supabaseExternal } = await import('@/integrations/supabase/externalClient');
+      const rpc = vi.mocked(supabaseExternal.rpc);
+      rpc.mockResolvedValueOnce({ data: null, error: new Error('42501') } as never);
+
+      const { logSecurityEvent } = await import('@/services/securityService');
+      await expect(logSecurityEvent('x')).resolves.toBeUndefined();
+    });
+
+    it('logSecurityEvent usa info como severidade padrao', async () => {
+      const { supabaseExternal } = await import('@/integrations/supabase/externalClient');
+      const rpc = vi.mocked(supabaseExternal.rpc);
+      rpc.mockResolvedValueOnce({ data: 'evt-2', error: null } as never);
+
+      const { logSecurityEvent } = await import('@/services/securityService');
+      await logSecurityEvent('login_ok');
+
+      expect(rpc).toHaveBeenCalledWith('registrar_evento_seguranca', {
+        p_event_type: 'login_ok',
+        p_severity: 'info',
+        p_workspace: null,
+        p_details: {},
+      });
     });
   });
 

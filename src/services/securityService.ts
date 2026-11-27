@@ -17,6 +17,31 @@ export async function listApiKeys() {
   return data ?? [];
 }
 
+/**
+ * Grava um evento na trilha de auditoria (security_events).
+ *
+ * A tabela so aceita escrita por service_role, entao o front nao pode fazer
+ * insert direto -- usa a RPC `registrar_evento_seguranca`, que valida o
+ * usuario e o vinculo com o workspace. Falha de auditoria nunca derruba a
+ * operacao de negocio que a originou, mas tambem nunca fica silenciosa.
+ */
+export async function logSecurityEvent(
+  eventType: string,
+  options?: { severity?: string; workspaceId?: string | null; details?: Record<string, unknown> },
+): Promise<void> {
+  try {
+    const { error } = await supabaseExternal.rpc('registrar_evento_seguranca', {
+      p_event_type: eventType,
+      p_severity: options?.severity ?? 'info',
+      p_workspace: options?.workspaceId ?? null,
+      p_details: options?.details ?? {},
+    });
+    if (error) throw error;
+  } catch (err) {
+    logger.error('logSecurityEvent failed', { eventType, error: String(err) });
+  }
+}
+
 export async function createApiKey(name: string, scopes: string[] = ['read', 'execute']) {
   const rawKey = `nxs_${crypto.randomUUID().replace(/-/g, '')}`;
   const keyPrefix = rawKey.substring(0, 12);
@@ -50,6 +75,13 @@ export async function createApiKey(name: string, scopes: string[] = ['read', 'ex
   });
 
   if (error) throw error;
+
+  await logSecurityEvent('api_key_created', {
+    severity: 'low',
+    workspaceId: member?.workspace_id ?? null,
+    details: { name, key_prefix: keyPrefix, scopes },
+  });
+
   return { raw_key: rawKey, key_prefix: keyPrefix };
 }
 
@@ -59,6 +91,11 @@ export async function revokeApiKey(id: string) {
     .update({ is_active: false })
     .eq('id', id);
   if (error) throw error;
+
+  await logSecurityEvent('api_key_revoked', {
+    severity: 'medium',
+    details: { api_key_id: id },
+  });
 }
 
 /**
@@ -226,6 +263,11 @@ export async function deleteGuardrailPolicy(id: string) {
     logger.error('deleteGuardrailPolicy failed', { error: error.message });
     throw error;
   }
+
+  await logSecurityEvent('guardrail_deleted', {
+    severity: 'medium',
+    details: { guardrail_id: id },
+  });
 }
 
 export async function installGuardrailPreset(
@@ -256,6 +298,12 @@ export async function installGuardrailPreset(
     logger.error('installGuardrailPreset failed', { error: error.message, preset: preset.id });
     throw error;
   }
+
+  await logSecurityEvent('guardrail_installed', {
+    severity: 'low',
+    workspaceId,
+    details: { preset_id: preset.id, name: preset.name, type: preset.type },
+  });
 }
 
 export type GuardrailMode = 'check_input' | 'check_output' | 'check_full';

@@ -1,0 +1,78 @@
+# docs:
+#   gatilho: dispatch
+#   prova: src/integrations/supabase/types.ts volta a bater com o banco real
+#   falha: o job fica vermelho e types.ts nao muda
+#   avisa: abre PR com os tipos atualizados -- nao commita direto na main
+name: Gerar tipos do Supabase
+
+# types.ts alimenta o guard `contrato de schema` (src/test/schema-contract.test.ts),
+# que reprova qualquer .rpc() ou .from() apontando para objeto inexistente.
+# Sem este job, cada migration que cria funcao/tabela nova deixa o guard
+# vermelho e a unica saida seria editar types.ts a mao.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: gerar-tipos-supabase
+  cancel-in-progress: false
+
+jobs:
+  gerar:
+    name: Regenerar types.ts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: qdlnzopxrlsoljcrcmzv
+      GH_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '20'
+
+      - name: Guarda de autorizacao
+        run: |
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+            echo "::error::SUPABASE_ACCESS_TOKEN ausente."
+            exit 1
+          fi
+
+      - name: Gerar tipos
+        run: |
+          npx --yes supabase@latest gen types typescript --project-id "$PROJECT_REF" \
+            > /tmp/types.ts
+          test -s /tmp/types.ts || { echo "::error::types vazio"; exit 1; }
+          cp /tmp/types.ts src/integrations/supabase/types.ts
+          echo "linhas: $(wc -l < src/integrations/supabase/types.ts)"
+
+      - name: Abrir PR quando houver diferenca
+        run: |
+          if git diff --quiet -- src/integrations/supabase/types.ts; then
+            echo "types.ts ja esta em dia."
+            exit 0
+          fi
+          git diff --stat -- src/integrations/supabase/types.ts
+          STAMP=$(TZ=America/Sao_Paulo date +%y%m%d-%H%M)
+          BRANCH="claude/chore-tipos-gerados-$STAMP"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add src/integrations/supabase/types.ts
+          git commit -q -m "chore(tipos): regenera types.ts a partir do banco"
+          git push -q "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "chore(tipos): regenera types.ts a partir do banco" \
+            --body "Gerado por \`gen-types.yml\`. Mantem o guard \`contrato de schema\` alinhado com o banco real." \
+            || echo "::warning::PR nao criada (talvez ja exista)."
