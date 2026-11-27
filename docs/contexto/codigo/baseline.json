@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7bb06901c5a6fef4b327e753c1b0e7adb3b09644",
+  "commit": "97b28067fa626adedb1c73c8cb00f74f09f1ea15",
   "branch": "main",
-  "data_commit": "2026-11-27T05:48:31-03:00",
+  "data_commit": "2026-11-27T06:25:28-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "97b2806",
+    "data": "2026-11-27",
+    "assunto": "fix(seguranca): revoga EXECUTE de anon nas funcoes de public (#209)"
+   },
    {
     "sha": "7bb0690",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "aae4b7b",
     "data": "2026-11-26",
     "assunto": "feat: expõe a trilha real de security_events no Audit Trail (#173)"
-   },
-   {
-    "sha": "9e84381",
-    "data": "2026-11-26",
-    "assunto": "feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)"
    }
   ],
-  "arquivos_mudados_7d": 182,
+  "arquivos_mudados_7d": 183,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 101
+    "commits": 102
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2065,
+  "arquivos_total": 2066,
   "arquivos_codigo": 1482,
   "linhas_codigo": 326015,
   "rotas": 152,
@@ -322,7 +322,7 @@
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 328,
-  "migrations": 361,
+  "migrations": 362,
   "cron_jobs": 39,
   "testes": 259,
   "workflows": 13,

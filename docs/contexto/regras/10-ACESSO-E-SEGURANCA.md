@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7bb06901c5` · branch `main` · 2026-11-27 09:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `97b28067fa` · branch `main` · 2026-11-27 09:26 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -476,7 +476,6 @@
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
-- `_fase8_snapshot_as`
 - `accept_workspace_invitation`
 - `acknowledge_cost_alert`
 - `acknowledge_vulnerability`

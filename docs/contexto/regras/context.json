@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7bb06901c5a6fef4b327e753c1b0e7adb3b09644",
+  "sha": "97b28067fa626adedb1c73c8cb00f74f09f1ea15",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 09:14 UTC",
-  "files_total": 2070,
-  "code_files": 1847,
-  "code_lines": 369850
+  "generated_at": "2026-11-27 09:26 UTC",
+  "files_total": 2071,
+  "code_files": 1848,
+  "code_lines": 369900
  },
  "version": "1.3.2",
- "facts_hash": "2a0043884c7bff26",
+ "facts_hash": "ec6fb8b30154cb4a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -263,7 +263,7 @@
   "languages": {
    ".ts": 713,
    ".tsx": 711,
-   ".sql": 364,
+   ".sql": 365,
    ".mjs": 47,
    ".js": 5,
    ".py": 5,
@@ -42160,17 +42160,6 @@
      "vector_results"
     ]
    },
-   "_fase8_snapshot_as": {
-    "args": "_uid uuid",
-    "returns": "jsonb",
-    "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
-    "security_definer": true,
-    "search_path": true,
-    "body": "DECLARE v jsonb; BEGIN PERFORM set_config('request.jwt.claim.sub', COALESCE(_uid::text,''), true); BEGIN v := public.get_db_health_snapshot(); RETURN v; EXCEPTION WHEN OTHERS THEN RETURN jsonb_build_object('__error__', SQLERRM); END; END;",
-    "raises": [],
-    "tables": []
-   },
    "detect_perf_regressions": {
     "args": "",
     "returns": "TABLE( queryid BIGINT, query_sample TEXT, baseline_mean_ms NUMERIC, current_mean_ms NUMERIC, slowdown_factor NUMERIC, calls_delta BIGINT )",
@@ -48453,6 +48442,7 @@
    "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
    "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
    "supabase/migrations/20261129012000_alert_rules_banco.sql",
+   "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -63139,8 +63129,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 361,
-   "lines": 43524,
+   "files": 362,
+   "lines": 43574,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -129944,17 +129934,6 @@
      "vector_results"
     ]
    },
-   "_fase8_snapshot_as": {
-    "args": "_uid uuid",
-    "returns": "jsonb",
-    "lang": "plpgsql",
-    "src": "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
-    "security_definer": true,
-    "search_path": true,
-    "body": "DECLARE v jsonb; BEGIN PERFORM set_config('request.jwt.claim.sub', COALESCE(_uid::text,''), true); BEGIN v := public.get_db_health_snapshot(); RETURN v; EXCEPTION WHEN OTHERS THEN RETURN jsonb_build_object('__error__', SQLERRM); END; END;",
-    "raises": [],
-    "tables": []
-   },
    "detect_perf_regressions": {
     "args": "",
     "returns": "TABLE( queryid BIGINT, query_sample TEXT, baseline_mean_ms NUMERIC, current_mean_ms NUMERIC, slowdown_factor NUMERIC, calls_delta BIGINT )",
@@ -140045,7 +140024,6 @@
    "vitest.rls.config.ts"
   ],
   "security_definer_fns": [
-   "_fase8_snapshot_as",
    "accept_workspace_invitation",
    "acknowledge_cost_alert",
    "acknowledge_vulnerability",
@@ -198638,6 +198616,10 @@
    "path": "supabase/migrations/20261129012000_alert_rules_banco.sql",
    "lines": 74
   },
+  "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql": {
+   "path": "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
+   "lines": 50
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -198799,10 +198781,19 @@
   }
  },
  "git": {
-  "sha": "7bb06901c5a6fef4b327e753c1b0e7adb3b09644",
+  "sha": "97b28067fa626adedb1c73c8cb00f74f09f1ea15",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "97b2806",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "fix(seguranca): revoga EXECUTE de anon nas funcoes de public (#209)",
+    "files": [
+     "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql"
+    ]
+   },
    {
     "sha": "7bb0690",
     "date": "2026-11-27",
@@ -199141,17 +199132,6 @@
      "src/services/teamsService.ts",
      "src/test/teams-members-full.test.ts"
     ]
-   },
-   {
-    "sha": "9e06f43",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)",
-    "files": [
-     "src/pages/BillingPage.tsx",
-     "src/services/billingService.ts",
-     "src/test/billing-service.test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -199186,6 +199166,10 @@
    [
     "src/services/fineTuningService.ts",
     2
+   ],
+   [
+    "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
+    1
    ],
    [
     "docs/banco/estado-verificado.md",
@@ -199229,10 +199213,6 @@
    ],
    [
     "supabase/migrations/20261129002000_agendar_retencao_traces.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261129003000_rls_agent_traces_usage_prompt_versions.sql",
     1
    ]
   ]
