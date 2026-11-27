@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `710145b29bfed2d0029ffb353e481ab4ccecf595` (2026-11-26T23:02:56-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `37702c7d0270c9268615d2f0b5f0de52f774782c` (2026-11-26T23:10:21-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2036 |
 | arquivos_codigo | 1473 |
-| linhas_codigo | 323500 |
+| linhas_codigo | 323527 |
 | rotas | 152 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -433,8 +433,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15413 nós · 39315 arestas · 1372 comunidades · grafo do commit `710145b2`
-- comunidades maiores: lucide-react (292), react (265), sonner (198), label.tsx (195), ref_https (178), App.tsx (133), BCPPage.tsx (129), requireEnv (127), routePrefetch.ts (123), cn (120), logger.ts (108), templateSkillLinkService.ts (107)
+- 15416 nós · 39319 arestas · 1388 comunidades · grafo do commit `37702c7d`
+- comunidades maiores: card.tsx (320), input.tsx (292), react (248), ref_https (203), tabs.tsx (156), App.tsx (133), button.tsx (121), sonner (120), AssetInventoryPage.tsx (120), whatsapp-webhook/index.ts (118), mod.ts (114), cn (109)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -442,7 +442,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (26)
 - package.json (24)
 - supabase/deployment-manifest.json (24)
-- .github/workflows/ci.yml (8)
+- .github/workflows/ci.yml (9)
 - supabase/functions/llm-gateway/index.ts (7)
 - .github/workflows/edge-deploy.yml (6)
 - docs/migration/MATRIZ_EDGE_TABELA.md (6)
@@ -580,6 +580,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `37702c7` fix(ci): guard de drift deixa de bloquear todo PR com migration nova (#165)
 - 2026-11-26 `710145b` fix(db): alinha o banco oficial ao schema do repo (1193 colunas e 10 objetos ausentes) (#175)
 - 2026-11-26 `9e812c6` fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)
 - 2026-11-26 `0b42f14` feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)
@@ -594,7 +595,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `9e06f43` fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)
 - 2026-11-26 `74f4d20` feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)
 - 2026-11-26 `f2a4f3a` chore(vercel): deep link da SPA deixa de dar 404 (#164)
-- 2026-11-26 `897badb` test(forum): trava as escritas do forum publico (#162)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

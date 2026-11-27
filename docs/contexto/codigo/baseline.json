@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "710145b29bfed2d0029ffb353e481ab4ccecf595",
+  "commit": "37702c7d0270c9268615d2f0b5f0de52f774782c",
   "branch": "main",
-  "data_commit": "2026-11-26T23:02:56-03:00",
+  "data_commit": "2026-11-26T23:10:21-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "37702c7",
+    "data": "2026-11-26",
+    "assunto": "fix(ci): guard de drift deixa de bloquear todo PR com migration nova (#165)"
+   },
    {
     "sha": "710145b",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "266f5fd",
     "data": "2026-11-24",
     "assunto": "chore(ci)(deps): bump actions/dependency-review-action (#147)"
-   },
-   {
-    "sha": "7fc063a",
-    "data": "2026-11-24",
-    "assunto": "infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)"
    }
   ],
-  "arquivos_mudados_7d": 139,
+  "arquivos_mudados_7d": 140,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": ".github/workflows/ci.yml",
-    "mudancas": 6
+    "mudancas": 7
    },
    {
     "pasta": ".github/workflows/edge-deploy.yml",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 8
+    "mudancas": 9
    },
    {
     "arquivo": "supabase/functions/llm-gateway/index.ts",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 83
+    "commits": 84
    },
    {
     "autor": "dependabot[bot]",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 2036,
   "arquivos_codigo": 1473,
-  "linhas_codigo": 323500,
+  "linhas_codigo": 323527,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -412,7 +412,7 @@
   },
   "scripts/db-drift-check.mjs": {
    "arquivos": 1,
-   "linhas": 128
+   "linhas": 155
   },
   "scripts/edge-deploy": {
    "arquivos": 3,

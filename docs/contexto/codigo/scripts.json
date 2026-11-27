@@ -210,9 +210,10 @@
   {
    "arquivo": "scripts/db-drift-check.mjs",
    "descricao": "* ═══════════════════════════════════════════════════════════════════",
-   "linhas": 128,
+   "linhas": 155,
    "env": [
-    "DB_MCP_URL"
+    "DB_MCP_URL",
+    "GITHUB_BASE_REF"
    ],
    "npm_scripts": [],
    "workflows": [
