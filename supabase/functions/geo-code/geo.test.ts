@@ -35,7 +35,7 @@ const GOOGLE_OK = {
         { long_name: 'Av. Paulista', types: ['route'] },
         { long_name: 'São Paulo', types: ['administrative_area_level_2'] },
         { long_name: 'São Paulo', types: ['administrative_area_level_1'] },
-        { long_name: 'Brasil', types: ['country'] },
+        { long_name: 'Brasil', short_name: 'BR', types: ['country'] },
         { long_name: '01310-100', types: ['postal_code'] },
       ],
     },
@@ -72,6 +72,7 @@ Deno.test('mapboxGeocode: normaliza endereço completo', async () => {
   assertEquals(r.city, 'São Paulo');
   assertEquals(r.state, 'São Paulo');
   assertEquals(r.country, 'Brasil');
+  assertEquals(r.country_code, 'BR');
   assertEquals(r.postal_code, '01310-100');
   assertEquals((r.raw as { provider: string }).provider, 'mapbox');
 });
@@ -106,6 +107,7 @@ Deno.test('googleGeocode: normaliza resposta do Google', async () => {
   assertEquals(r.city, 'São Paulo');
   assertEquals(r.state, 'São Paulo');
   assertEquals(r.country, 'Brasil');
+  assertEquals(r.country_code, 'BR');
   assertEquals(r.postal_code, '01310-100');
   assertEquals((r.raw as { place_id: string }).place_id, 'ChIJ-test');
 });
@@ -114,6 +116,7 @@ Deno.test('googleReverse: normaliza latlng', async () => {
   const r = await withMock(GOOGLE_OK, 200, () => googleReverse(-23.5505, -46.6333, 'AIza.test'));
   assertEquals(r.latitude, -23.5505);
   assertEquals(r.country, 'Brasil');
+  assertEquals(r.country_code, 'BR');
 });
 
 Deno.test('googleGeocode: status ZERO_RESULTS lança', async () => {

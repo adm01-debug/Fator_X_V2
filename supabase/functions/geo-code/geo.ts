@@ -13,6 +13,7 @@ export type GeoResult = {
   formatted_address: string;
   place_name?: string;
   country?: string;
+  country_code?: string;
   state?: string;
   city?: string;
   postal_code?: string;
@@ -22,13 +23,16 @@ export type GeoResult = {
 type CtxItem = { id: string; text?: string; short_code?: string };
 function mapboxCtx(f: {
   context?: CtxItem[];
-}): Pick<GeoResult, 'country' | 'state' | 'city' | 'postal_code'> {
+}): Pick<GeoResult, 'country' | 'country_code' | 'state' | 'city' | 'postal_code'> {
   const ctx = (f.context ?? []) as CtxItem[];
   const pick = (prefix: string) => ctx.find((c) => c.id.startsWith(prefix))?.text;
   const cc = (prefix: string) => ctx.find((c) => c.id.startsWith(prefix))?.short_code;
   const p = pick('postcode');
+  const countryCode = cc('country');
   return {
     country: pick('country'),
+    // ISO 3166-1 alpha-2 — é o que `geo_allowed_countries.country_code` exige.
+    country_code: countryCode ? countryCode.toUpperCase() : undefined,
     state: pick('region'),
     city: pick('place'),
     postal_code: cc('postcode') ?? p,
@@ -100,9 +104,14 @@ export async function mapboxReverse(lat: number, lng: number, token: string): Pr
   };
 }
 
-type GComp = { types: string[]; long_name: string };
+type GComp = { types: string[]; long_name: string; short_name?: string };
 function googleComp(comps: GComp[] | undefined, t: string): string | undefined {
   return comps?.find((c) => c.types.includes(t))?.long_name;
+}
+// ISO 3166-1 alpha-2 (`short_name`) do país — o Google só expõe o nome longo em `long_name`.
+function googleCountryCode(comps: GComp[] | undefined): string | undefined {
+  const raw = comps?.find((c) => c.types.includes('country'))?.short_name;
+  return raw ? raw.toUpperCase() : undefined;
 }
 export async function googleGeocode(address: string, key: string): Promise<GeoResult> {
   const url = new URL(GOOGLE_URL);
@@ -133,6 +142,7 @@ export async function googleGeocode(address: string, key: string): Promise<GeoRe
       googleComp(r.address_components, 'sublocality') ??
       googleComp(r.address_components, 'neighborhood'),
     country: googleComp(r.address_components, 'country'),
+    country_code: googleCountryCode(r.address_components),
     state: googleComp(r.address_components, 'administrative_area_level_1'),
     city:
       googleComp(r.address_components, 'administrative_area_level_2') ??
@@ -171,6 +181,7 @@ export async function googleReverse(lat: number, lng: number, key: string): Prom
       googleComp(r.address_components, 'sublocality') ??
       googleComp(r.address_components, 'neighborhood'),
     country: googleComp(r.address_components, 'country'),
+    country_code: googleCountryCode(r.address_components),
     state: googleComp(r.address_components, 'administrative_area_level_1'),
     city:
       googleComp(r.address_components, 'administrative_area_level_2') ??
