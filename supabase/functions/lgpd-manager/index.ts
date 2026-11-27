@@ -63,72 +63,145 @@ serve(async (req) => {
     switch (action) {
       case 'export_data': {
         const exportData: Record<string, unknown> = {};
+        const counts: Record<string, number> = {};
 
-        // agent_memories is workspace-scoped
-        const memScope = scope === 'all' || scope === 'memories';
-        if (memScope) {
+        if (scope === 'all' || scope === 'memories') {
           const { data } = await supabaseAdmin
             .from('agent_memories')
             .select('*')
-            .eq('workspace_id', workspaceId)
+            .eq('user_id', targetId)
             .limit(1000);
-          exportData.agent_memories = data || [];
+          exportData.memories = data || [];
+          counts.memories = (data || []).length;
         }
 
-        // sessions, traces, evaluations are user-scoped
-        if (scope !== 'memories') {
-          if (scope === 'all' || scope === 'sessions') {
-            const { data } = await supabaseAdmin
-              .from('sessions')
-              .select('*')
-              .eq('user_id', targetId)
-              .limit(1000);
-            exportData.sessions = data || [];
-          }
-          if (scope === 'all' || scope === 'traces') {
-            const { data } = await supabaseAdmin
-              .from('session_traces')
-              .select('*')
-              .eq('user_id', targetId)
-              .limit(1000);
-            exportData.session_traces = data || [];
-          }
+        if (scope === 'all' || scope === 'sessions') {
+          const { data } = await supabaseAdmin
+            .from('sessions')
+            .select('*')
+            .eq('user_id', targetId)
+            .limit(1000);
+          exportData.sessions = data || [];
+          counts.sessions = (data || []).length;
         }
 
-        return jsonResponse(req, { action, user_id: targetId, data: exportData });
+        if (scope === 'all' || scope === 'traces') {
+          const { data } = await supabaseAdmin
+            .from('traces')
+            .select('*')
+            .eq('user_id', targetId)
+            .limit(1000);
+          exportData.traces = data || [];
+          counts.traces = (data || []).length;
+        }
+
+        if (scope === 'all' || scope === 'evaluations') {
+          const { data } = await supabaseAdmin
+            .from('agent_eval_runs')
+            .select('*')
+            .eq('user_id', targetId)
+            .limit(1000);
+          exportData.evaluations = data || [];
+          counts.evaluations = (data || []).length;
+        }
+
+        return jsonResponse(req, { action, user_id: targetId, data: exportData, counts });
       }
 
       case 'delete_data': {
+        if (target_user_id && target_user_id !== user.id) {
+          const { data: membership } = await supabaseAdmin
+            .from('workspace_members')
+            .select('role')
+            .eq('workspace_id', workspaceId)
+            .eq('user_id', user.id)
+            .maybeSingle();
+          const role = String((membership as { role?: string } | null)?.role ?? '').toLowerCase();
+          if (!['owner', 'admin', 'administrator'].includes(role)) {
+            return errorResponse(
+              req,
+              'Apenas owner ou admin do workspace pode excluir dados de outro usuário.',
+              403,
+            );
+          }
+        }
+
         const deleted: Record<string, number> = {};
         if (scope === 'all' || scope === 'memories') {
-          const { count: memCount } = await supabaseAdmin
+          const { count } = await supabaseAdmin
             .from('agent_memories')
             .delete({ count: 'exact' })
-            .eq('workspace_id', workspaceId);
-          deleted.memories = memCount ?? 0;
+            .eq('user_id', targetId);
+          deleted.memories = count ?? 0;
         }
         if (scope === 'all' || scope === 'sessions') {
-          const { count: sessCount } = await supabaseAdmin
+          const { count } = await supabaseAdmin
             .from('sessions')
             .delete({ count: 'exact' })
             .eq('user_id', targetId);
-          deleted.sessions = sessCount ?? 0;
+          deleted.sessions = count ?? 0;
+        }
+        if (scope === 'all' || scope === 'traces') {
+          const { count } = await supabaseAdmin
+            .from('traces')
+            .delete({ count: 'exact' })
+            .eq('user_id', targetId);
+          deleted.traces = count ?? 0;
+        }
+        if (scope === 'all' || scope === 'evaluations') {
+          const { count } = await supabaseAdmin
+            .from('agent_eval_runs')
+            .delete({ count: 'exact' })
+            .eq('user_id', targetId);
+          deleted.evaluations = count ?? 0;
         }
 
-        // Record deletion request
-        await supabaseAdmin.from('data_deletion_requests').insert({
-          user_id: targetId,
-          scope,
-          reason: reason || 'LGPD right to erasure',
-          status: 'completed',
-          deleted_counts: deleted,
-        });
+        const itemsDeleted = Object.values(deleted).reduce((acc, n) => acc + n, 0);
+        const { data: record } = await supabaseAdmin
+          .from('data_deletion_requests')
+          .insert({
+            user_id: targetId,
+            workspace_id: workspaceId,
+            scope,
+            reason: reason || 'LGPD right to erasure',
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+            items_deleted: itemsDeleted,
+          })
+          .select('id')
+          .maybeSingle();
 
-        return jsonResponse(req, { action, deleted });
+        return jsonResponse(req, {
+          action,
+          request_id: (record as { id?: string } | null)?.id ?? null,
+          deleted,
+          items_deleted: itemsDeleted,
+        });
       }
 
-      case 'request_deletion':
-        break; // fallthrough to delete_data
+      case 'request_deletion': {
+        const { data: created, error } = await supabaseAdmin
+          .from('data_deletion_requests')
+          .insert({
+            user_id: targetId,
+            workspace_id: workspaceId,
+            scope,
+            reason: reason || 'LGPD right to erasure',
+            status: 'pending',
+          })
+          .select('id')
+          .maybeSingle();
+        if (error) {
+          console.error('[lgpd-manager] falha ao registrar solicitação:', error);
+          return errorResponse(req, 'Não foi possível registrar a solicitação', 500);
+        }
+        return jsonResponse(req, {
+          action,
+          request_id: (created as { id?: string } | null)?.id ?? null,
+          status: 'pending',
+          items_deleted: 0,
+        });
+      }
 
       case 'list_consents': {
         const { data } = await supabaseAdmin
@@ -150,31 +223,111 @@ serve(async (req) => {
 
       case 'revoke_consent':
       case 'consent_revoke': {
-        if (!consent_id) return errorResponse(req, 'consent_id required', 400);
-        await supabaseAdmin
+        if (!consent_id && !purpose) {
+          return errorResponse(req, 'consent_id ou purpose é obrigatório', 400);
+        }
+        let revoke = supabaseAdmin
           .from('consent_records')
-          .update({ status: 'revoked', revoked_at: new Date().toISOString() })
-          .eq('id', consent_id);
-        return jsonResponse(req, { action, consent_id, status: 'revoked' });
+          .update({
+            granted: false,
+            revoked_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('user_id', targetId);
+        revoke = consent_id ? revoke.eq('id', consent_id) : revoke.eq('purpose', purpose as string);
+        const { data: revoked, error } = await revoke.select('id');
+        if (error) {
+          console.error('[lgpd-manager] falha ao revogar consentimento:', error);
+          return errorResponse(req, 'Não foi possível revogar o consentimento', 500);
+        }
+        return jsonResponse(req, {
+          action,
+          consent_id: consent_id ?? null,
+          purpose: purpose ?? null,
+          status: 'revoked',
+          updated: (revoked || []).length,
+        });
       }
 
       case 'consent_grant': {
-        await supabaseAdmin.from('consent_records').upsert(
+        const { error } = await supabaseAdmin.from('consent_records').upsert(
           {
             user_id: targetId,
+            workspace_id: workspaceId,
             purpose: purpose || 'general',
+            consent_type: purpose || 'general',
             legal_basis: legal_basis || 'consent',
-            status: 'granted',
+            granted: true,
             granted_at: new Date().toISOString(),
+            revoked_at: null,
+            updated_at: new Date().toISOString(),
           },
           { onConflict: 'user_id,purpose' },
         );
+        if (error) {
+          console.error('[lgpd-manager] falha ao registrar consentimento:', error);
+          return errorResponse(req, 'Não foi possível registrar o consentimento', 500);
+        }
         return jsonResponse(req, { action, status: 'granted' });
       }
 
       case 'anonymize': {
-        // Anonymize user data by replacing PII with hashed values
-        return jsonResponse(req, { action, status: 'completed', message: 'Data anonymized' });
+        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(targetId));
+        const ref = Array.from(new Uint8Array(digest))
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('')
+          .slice(0, 16);
+        const anonymized: Record<string, number> = {
+          memories: 0,
+          sessions: 0,
+          deletion_requests: 0,
+        };
+
+        const { count: memCount, error: memError } = await supabaseAdmin
+          .from('agent_memories')
+          .update(
+            { content: '[anonimizado]', metadata: { anonymized: true, ref } },
+            { count: 'exact' },
+          )
+          .eq('user_id', targetId);
+        if (memError) {
+          console.error('[lgpd-manager] falha ao anonimizar memórias:', memError);
+          return errorResponse(req, 'Não foi possível anonimizar as memórias', 500);
+        }
+        anonymized.memories = memCount ?? 0;
+
+        const { count: sessCount, error: sessError } = await supabaseAdmin
+          .from('sessions')
+          .update({ metadata: { anonymized: true, ref } }, { count: 'exact' })
+          .eq('user_id', targetId);
+        if (sessError) {
+          console.error('[lgpd-manager] falha ao anonimizar sessões:', sessError);
+          return errorResponse(req, 'Não foi possível anonimizar as sessões', 500);
+        }
+        anonymized.sessions = sessCount ?? 0;
+
+        const { count: reqCount } = await supabaseAdmin
+          .from('data_deletion_requests')
+          .update({ reason: `[anonimizado:${ref}]` }, { count: 'exact' })
+          .eq('user_id', targetId);
+        anonymized.deletion_requests = reqCount ?? 0;
+
+        await supabaseAdmin.from('data_deletion_requests').insert({
+          user_id: targetId,
+          workspace_id: workspaceId,
+          scope: 'all',
+          reason: reason || 'LGPD anonymization',
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          items_deleted: anonymized.memories + anonymized.sessions,
+        });
+
+        return jsonResponse(req, {
+          action,
+          status: 'completed',
+          anonymized,
+          ref,
+        });
       }
 
       default:

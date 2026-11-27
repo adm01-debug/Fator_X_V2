@@ -36,20 +36,56 @@ export async function listDeletionRequests(): Promise<DeletionRequest[]> {
   return ((data as { requests?: DeletionRequest[] })?.requests ?? []) as DeletionRequest[];
 }
 
-export async function exportMyData() {
+export interface ExportPayload {
+  action: string;
+  user_id: string;
+  data: Record<string, unknown[]>;
+  counts: Partial<Record<'memories' | 'sessions' | 'traces' | 'evaluations', number>>;
+}
+
+export interface DeletionResult {
+  items_deleted: number;
+  deleted: Record<string, number>;
+  request_id: string | null;
+}
+
+export interface AnonymizeResult {
+  status: string;
+  ref: string;
+  anonymized: Record<string, number>;
+}
+
+export async function exportMyData(): Promise<ExportPayload> {
   const { data, error } = await supabase.functions.invoke('lgpd-manager', {
     body: { action: 'export_data' },
   });
   if (error) throw error;
-  return data;
+  const payload = data as ExportPayload;
+  return { ...payload, counts: payload?.counts ?? {} };
 }
 
-export async function requestDeletion(scope: string) {
+export async function requestDeletion(
+  scope: string,
+  reason?: string,
+): Promise<DeletionResult> {
   const { data, error } = await supabase.functions.invoke('lgpd-manager', {
-    body: { action: 'request_deletion', scope },
+    body: { action: 'delete_data', scope, reason },
   });
   if (error) throw error;
-  return data;
+  const result = data as DeletionResult;
+  return {
+    request_id: result?.request_id ?? null,
+    deleted: result?.deleted ?? {},
+    items_deleted: result?.items_deleted ?? 0,
+  };
+}
+
+export async function anonymizeMyData(reason?: string): Promise<AnonymizeResult> {
+  const { data, error } = await supabase.functions.invoke('lgpd-manager', {
+    body: { action: 'anonymize', scope: 'all', reason },
+  });
+  if (error) throw error;
+  return data as AnonymizeResult;
 }
 
 export async function manageConsent(purpose: string, grant: boolean) {

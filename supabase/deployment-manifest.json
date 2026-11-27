@@ -345,8 +345,8 @@
     },
     {
       "path": "supabase/functions/lgpd-manager/index.ts",
-      "bytes": 6123,
-      "sha256": "bdb3c8c3b3e92b9520aa23edebe5935e1db257db222ca8daa250b7376d2d652e"
+      "bytes": 11740,
+      "sha256": "25eed3e8ba98892c23ae1fc08b1ac5be68f885c2850b732d9c0a99c611ba984e"
     },
     {
       "path": "supabase/functions/llm-gateway/index.ts",
@@ -1541,7 +1541,7 @@
       "name": "lgpd-manager",
       "entrypoint": "supabase/functions/lgpd-manager/index.ts",
       "verify_jwt": true,
-      "source_sha256": "499a66f883a8adea4b2fc7ddeef130baec6e0a97c398b1b670d8afb5fa3bc395",
+      "source_sha256": "8b6fe8ebd7fd7678b93bc172fbf1d0311b3c2ae65aeae422768798664801d502",
       "source_files": [
         "supabase/functions/_shared/auth.ts",
         "supabase/functions/_shared/cors.ts",
@@ -2655,5 +2655,5 @@
       ]
     }
   ],
-  "manifest_sha256": "f620b927edeab14bd27e7094f45131cff735e8b7c06a11ac976d800c8fa1bea0"
+  "manifest_sha256": "be91d8a53361b0e5ebf2157bab3f9c0834010d31205cba9a013f430125e7db58"
 }

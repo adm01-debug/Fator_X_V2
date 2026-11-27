@@ -20,6 +20,7 @@ import {
   listDeletionRequests,
   exportMyData,
   requestDeletion,
+  anonymizeMyData,
   manageConsent,
 } from '@/services/lgpdService';
 
@@ -29,7 +30,9 @@ export default function LGPDCompliancePage() {
   const queryClient = useQueryClient();
   const [deleting, setDeleting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [anonymizing, setAnonymizing] = useState(false);
   const [pendingScope, setPendingScope] = useState<string | null>(null);
+  const [confirmAnonymize, setConfirmAnonymize] = useState(false);
 
   // Consent records
   const { data: consents = [] } = useQuery({
@@ -45,21 +48,42 @@ export default function LGPDCompliancePage() {
   const handleExportData = async () => {
     setExporting(true);
     try {
-      const data = await exportMyData();
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const payload = await exportMyData();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `meus-dados-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
+      const counts = payload.counts ?? {};
       toast.success(
-        `Dados exportados: ${data.traces} traces, ${data.sessions} sessões, ${data.memories} memórias`,
+        `Dados exportados: ${counts.traces ?? 0} traces, ${counts.sessions ?? 0} sessões, ${
+          counts.memories ?? 0
+        } memórias, ${counts.evaluations ?? 0} avaliações`,
       );
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro inesperado');
     } finally {
       setExporting(false);
+    }
+  };
+
+  const handleAnonymize = async () => {
+    setAnonymizing(true);
+    try {
+      const result = await anonymizeMyData();
+      toast.success(
+        `Dados anonimizados: ${result.anonymized.memories ?? 0} memórias, ${
+          result.anonymized.sessions ?? 0
+        } sessões (ref ${result.ref})`,
+      );
+      queryClient.invalidateQueries({ queryKey: ['lgpd_consents'] });
+      queryClient.invalidateQueries({ queryKey: ['lgpd_deletions'] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Erro inesperado');
+    } finally {
+      setAnonymizing(false);
     }
   };
 
@@ -122,6 +146,9 @@ export default function LGPDCompliancePage() {
           </TabsTrigger>
           <TabsTrigger value="deletion" className="gap-1.5">
             <Trash2 className="h-3.5 w-3.5" /> Exclusão
+          </TabsTrigger>
+          <TabsTrigger value="anonymize" className="gap-1.5">
+            <Shield className="h-3.5 w-3.5" /> Anonimizar
           </TabsTrigger>
           <TabsTrigger value="history" className="gap-1.5">
             <FileText className="h-3.5 w-3.5" /> Histórico
@@ -232,6 +259,32 @@ export default function LGPDCompliancePage() {
           </div>
         </TabsContent>
 
+        <TabsContent value="anonymize" className="space-y-4">
+          <div className="nexus-card border-destructive/20">
+            <h3 className="text-body-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" /> Anonimização de Dados
+            </h3>
+            <p className="text-meta text-muted-foreground mb-4">
+              Substitui o conteúdo das suas memórias e metadados de sessão por marcadores
+              anonimizados, preservando o histórico do workspace sem expor seus dados pessoais.
+              Conforme Art. 12 da LGPD.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => setConfirmAnonymize(true)}
+              disabled={anonymizing}
+              className="gap-2 text-meta"
+            >
+              {anonymizing ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Shield className="h-3.5 w-3.5" />
+              )}
+              Anonimizar meus dados
+            </Button>
+          </div>
+        </TabsContent>
+
         <TabsContent value="history" className="space-y-3">
           {deletions.length === 0 && consents.length === 0 ? (
             <div className="text-center py-12 text-body-sm text-muted-foreground">
@@ -322,6 +375,29 @@ export default function LGPDCompliancePage() {
               }}
             >
               Deletar permanentemente
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={confirmAnonymize} onOpenChange={setConfirmAnonymize}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar anonimização</AlertDialogTitle>
+            <AlertDialogDescription>
+              Suas memórias serão substituídas por marcadores anonimizados e os metadados das
+              sessões serão sobrescritos. Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setConfirmAnonymize(false);
+                handleAnonymize();
+              }}
+            >
+              Anonimizar permanentemente
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
