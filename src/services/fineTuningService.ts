@@ -95,6 +95,76 @@ export async function listTrainingJobs() {
   return invoke<{ jobs: JobStatusResult[] }>({ action: 'list_jobs' });
 }
 
+export interface HubModel {
+  id: string;
+  name: string;
+  private?: boolean;
+  downloads?: number;
+  updated?: string;
+  tags?: string[];
+  gateway_model_id: string;
+}
+
+export interface TracesDataset {
+  dataset_size: number;
+  format: string;
+  sample: Array<{ instruction: string; output: string; input: string }>;
+  dataset: Array<{ instruction: string; output: string; input: string }>;
+  agent_id: string;
+}
+
+export interface DpoDataset {
+  status: 'ready' | 'insufficient';
+  complete_pairs: number;
+  partial_pairs: number;
+  total_feedback_traces: number;
+  format: string;
+  note: string;
+  trl_command?: string;
+  dataset: Array<{ prompt: string; chosen: string; rejected: string }>;
+}
+
+export interface TrlConfig {
+  trl_version: string;
+  base_model: string;
+  method: string;
+  lora_rank: number;
+  peft_args: string;
+  configs: Record<string, { command: string; description: string }>;
+  pipeline: string[];
+  requirements: string;
+}
+
+export async function listHubModels(): Promise<{ hf_username?: string; models: HubModel[] }> {
+  const result = await invoke<{ hf_username?: string; models?: HubModel[] }>({
+    action: 'list_models',
+  });
+  return { hf_username: result?.hf_username, models: result?.models ?? [] };
+}
+
+export async function exportTraces(agentId: string, maxSamples = 500): Promise<TracesDataset> {
+  return invoke<TracesDataset>({
+    action: 'export_traces',
+    agent_id: agentId,
+    dataset_config: { max_samples: maxSamples },
+  });
+}
+
+export async function prepareDpoDataset(agentId: string, maxSamples = 500): Promise<DpoDataset> {
+  return invoke<DpoDataset>({
+    action: 'prepare_dpo_dataset',
+    agent_id: agentId,
+    dataset_config: { max_samples: maxSamples },
+  });
+}
+
+export async function generateTrlConfig(config: TrainingConfig): Promise<TrlConfig> {
+  return invoke<TrlConfig>({
+    action: 'generate_trl_config',
+    training_config: config,
+  });
+}
+
 // ═══ Histórico persistido (`finetune_jobs`) ═══
 //
 // A tabela nasceu na migration 20260404210000 com RLS por workspace e nunca foi
