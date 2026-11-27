@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fe144d3b0e0a61d163a2cf805481946791e12dbe",
+  "commit": "9e812c61d21162494ba8a6db0c5c910978a760c0",
   "branch": "main",
-  "data_commit": "2026-11-26T19:24:10-03:00",
+  "data_commit": "2026-11-26T20:45:10-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "9e812c6",
+    "data": "2026-11-26",
+    "assunto": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)"
+   },
+   {
+    "sha": "0b42f14",
+    "data": "2026-11-26",
+    "assunto": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)"
+   },
+   {
+    "sha": "0705b71",
+    "data": "2026-11-26",
+    "assunto": "feat(custos): tela de baseline do detector de anomalias (#176)"
+   },
    {
     "sha": "fe144d3",
     "data": "2026-11-26",
@@ -116,24 +131,9 @@
     "sha": "ef5746c",
     "data": "2026-11-24",
     "assunto": "fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)"
-   },
-   {
-    "sha": "d809480",
-    "data": "2026-11-24",
-    "assunto": "chore(deps-dev)(deps-dev): bump the dev-dependencies group with 5 updates (#152)"
-   },
-   {
-    "sha": "cbe4351",
-    "data": "2026-11-24",
-    "assunto": "chore(deps)(deps): bump @sentry/react (#151)"
-   },
-   {
-    "sha": "b1ace07",
-    "data": "2026-11-24",
-    "assunto": "chore(deps)(deps): bump @supabase/supabase-js (#149)"
    }
   ],
-  "arquivos_mudados_7d": 163,
+  "arquivos_mudados_7d": 158,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 79
+    "commits": 82
    },
    {
     "autor": "dependabot[bot]",

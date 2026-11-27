@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "fe144d3b0e0a61d163a2cf805481946791e12dbe",
+  "sha": "9e812c61d21162494ba8a6db0c5c910978a760c0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-26 22:28 UTC",
+  "generated_at": "2026-11-27 00:34 UTC",
   "files_total": 2035,
   "code_files": 1815,
   "code_lines": 353759
@@ -192276,10 +192276,31 @@
   }
  },
  "git": {
-  "sha": "fe144d3b0e0a61d163a2cf805481946791e12dbe",
+  "sha": "9e812c61d21162494ba8a6db0c5c910978a760c0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "9e812c6",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)",
+    "files": []
+   },
+   {
+    "sha": "0b42f14",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)",
+    "files": []
+   },
+   {
+    "sha": "0705b71",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat(custos): tela de baseline do detector de anomalias (#176)",
+    "files": []
+   },
    {
     "sha": "fe144d3",
     "date": "2026-11-26",
@@ -192578,47 +192599,9 @@
      "docs/qa/04-PLANO.md",
      "docs/qa/05-PROGRESSO.md"
     ]
-   },
-   {
-    "sha": "d912348",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix(ts): troca supabase.auth.getClaims inexistente por getUser em browser-session-cancel (#145)",
-    "files": [
-     "supabase/deployment-manifest.json",
-     "supabase/functions/browser-session-cancel/index.ts"
-    ]
-   },
-   {
-    "sha": "8554dc7",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat(maps): edge geo-code com geocodificacao Mapbox/Google (forward+reverse) (#144)",
-    "files": [
-     ".gitignore",
-     "docs/migration/MATRIZ_EDGE_TABELA.md",
-     "supabase/deployment-manifest.json",
-     "supabase/functions/_shared/edge-contract_test.ts",
-     "supabase/functions/geo-code/geo.test.ts",
-     "supabase/functions/geo-code/geo.ts",
-     "supabase/functions/geo-code/index.ts"
-    ]
-   },
-   {
-    "sha": "085a2e3",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore(deploy): aplica GOOGLE_MAPS_API_KEY e MAPBOX_ACCESS_TOKEN no deploy (#143)",
-    "files": [
-     ".github/workflows/edge-deploy.yml"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "supabase/deployment-manifest.json",
-    5
-   ],
    [
     "package-lock.json",
     5
@@ -192636,6 +192619,10 @@
     3
    ],
    [
+    "supabase/deployment-manifest.json",
+    3
+   ],
+   [
     "src/services/fineTuningService.ts",
     2
    ],
@@ -192645,14 +192632,6 @@
    ],
    [
     ".github/workflows/edge-prune.yml",
-    2
-   ],
-   [
-    ".github/workflows/edge-deploy.yml",
-    2
-   ],
-   [
-    "docs/migration/MATRIZ_EDGE_TABELA.md",
     2
    ],
    [
@@ -192693,6 +192672,14 @@
    ],
    [
     "src/test/security-service.test.ts",
+    1
+   ],
+   [
+    "src/test/fine-tuning-jobs.test.ts",
+    1
+   ],
+   [
+    "src/components/settings/HuggingFaceTab.tsx",
     1
    ]
   ]

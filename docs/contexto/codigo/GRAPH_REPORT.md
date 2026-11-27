@@ -1,4 +1,4 @@
-# Graph Report - Fator_X_V2  (2026-11-26)
+# Graph Report - Fator_X_V2  (2026-11-27)
 
 ## Corpus Check
 - 1970 files · ~1,537,499 words
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fe144d3b`
+- Built from commit: `9e812c61`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

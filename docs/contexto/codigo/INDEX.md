@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fe144d3b0e0a61d163a2cf805481946791e12dbe` (2026-11-26T19:24:10-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9e812c61d21162494ba8a6db0c5c910978a760c0` (2026-11-26T20:45:10-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -433,7 +433,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14702 nós · 38932 arestas · 944 comunidades · grafo do commit `fe144d3b`
+- 14702 nós · 38932 arestas · 944 comunidades · grafo do commit `9e812c61`
 - comunidades maiores: button.tsx (279), lucide-react (258), badge.tsx (234), react (211), App.tsx (169), logger.ts (152), ref_https (133), checkRateLimit (133), cn (131), templateSkillLinkService.ts (128), notesService.ts (126), VendorsPage.tsx (118)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -580,6 +580,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `9e812c6` fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)
+- 2026-11-26 `0b42f14` feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)
+- 2026-11-26 `0705b71` feat(custos): tela de baseline do detector de anomalias (#176)
 - 2026-11-26 `fe144d3` feat(custos): baseline do detector de anomalias ganha tela e recálculo (#174)
 - 2026-11-26 `aae4b7b` feat: expõe a trilha real de security_events no Audit Trail (#173)
 - 2026-11-26 `9e84381` feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)
@@ -592,9 +595,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `f2a4f3a` chore(vercel): deep link da SPA deixa de dar 404 (#164)
 - 2026-11-26 `897badb` test(forum): trava as escritas do forum publico (#162)
 - 2026-11-26 `ccf216d` fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)
-- 2026-11-26 `3c3acdb` feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)
-- 2026-11-26 `b2f4e91` feat(fine-tuning): metodo LoRA/QLoRA/Full FT e jobs reais na tela (#159)
-- 2026-11-26 `ed56e32` feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

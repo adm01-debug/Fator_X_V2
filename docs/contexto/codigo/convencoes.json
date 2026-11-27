@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)",
+   "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)",
+   "feat(custos): tela de baseline do detector de anomalias (#176)",
    "feat(custos): baseline do detector de anomalias ganha tela e recálculo (#174)",
-   "feat: expõe a trilha real de security_events no Audit Trail (#173)",
-   "feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)",
-   "feat(hf): configuração HuggingFace por workspace vira real (#171)",
-   "feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)"
+   "feat: expõe a trilha real de security_events no Audit Trail (#173)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
