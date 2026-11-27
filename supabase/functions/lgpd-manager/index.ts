@@ -191,7 +191,10 @@ serve(async (req) => {
           })
           .select('id')
           .maybeSingle();
-        if (error) return errorResponse(req, `Falha ao registrar solicitação: ${error.message}`, 500);
+        if (error) {
+          console.error('[lgpd-manager] falha ao registrar solicitação:', error);
+          return errorResponse(req, 'Não foi possível registrar a solicitação', 500);
+        }
         return jsonResponse(req, {
           action,
           request_id: (created as { id?: string } | null)?.id ?? null,
@@ -233,7 +236,10 @@ serve(async (req) => {
           .eq('user_id', targetId);
         revoke = consent_id ? revoke.eq('id', consent_id) : revoke.eq('purpose', purpose as string);
         const { data: revoked, error } = await revoke.select('id');
-        if (error) return errorResponse(req, `Falha ao revogar consentimento: ${error.message}`, 500);
+        if (error) {
+          console.error('[lgpd-manager] falha ao revogar consentimento:', error);
+          return errorResponse(req, 'Não foi possível revogar o consentimento', 500);
+        }
         return jsonResponse(req, {
           action,
           consent_id: consent_id ?? null,
@@ -258,7 +264,10 @@ serve(async (req) => {
           },
           { onConflict: 'user_id,purpose' },
         );
-        if (error) return errorResponse(req, `Falha ao registrar consentimento: ${error.message}`, 500);
+        if (error) {
+          console.error('[lgpd-manager] falha ao registrar consentimento:', error);
+          return errorResponse(req, 'Não foi possível registrar o consentimento', 500);
+        }
         return jsonResponse(req, { action, status: 'granted' });
       }
 
@@ -282,7 +291,8 @@ serve(async (req) => {
           )
           .eq('user_id', targetId);
         if (memError) {
-          return errorResponse(req, `Falha ao anonimizar memórias: ${memError.message}`, 500);
+          console.error('[lgpd-manager] falha ao anonimizar memórias:', memError);
+          return errorResponse(req, 'Não foi possível anonimizar as memórias', 500);
         }
         anonymized.memories = memCount ?? 0;
 
@@ -291,7 +301,8 @@ serve(async (req) => {
           .update({ metadata: { anonymized: true, ref } }, { count: 'exact' })
           .eq('user_id', targetId);
         if (sessError) {
-          return errorResponse(req, `Falha ao anonimizar sessões: ${sessError.message}`, 500);
+          console.error('[lgpd-manager] falha ao anonimizar sessões:', sessError);
+          return errorResponse(req, 'Não foi possível anonimizar as sessões', 500);
         }
         anonymized.sessions = sessCount ?? 0;
 
