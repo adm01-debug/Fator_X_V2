@@ -218,7 +218,7 @@ export default function SchemaDictionaryPage() {
                   />
                 </div>
                 <Select value={schema} onValueChange={setSchema}>
-                  <SelectTrigger className="w-[180px] text-meta">
+                  <SelectTrigger className="w-[180px] text-meta" aria-label="Filtrar por schema">
                     <SelectValue placeholder="Schema" />
                   </SelectTrigger>
                   <SelectContent>
@@ -231,7 +231,7 @@ export default function SchemaDictionaryPage() {
                   </SelectContent>
                 </Select>
                 <Select value={kind} onValueChange={(v) => setKind(v as SchemaObjectKind | "all")}>
-                  <SelectTrigger className="w-[160px] text-meta">
+                  <SelectTrigger className="w-[160px] text-meta" aria-label="Filtrar por tipo de objeto">
                     <SelectValue placeholder="Tipo" />
                   </SelectTrigger>
                   <SelectContent>
