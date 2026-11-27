@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 253,
+ "total": 254,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 238
+  "unit": 239
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 210
+   "arquivos": 211
   },
   {
    "padrao": "outro",
@@ -978,6 +978,15 @@
     "src/components/monitoring/GenAIProtocolPanel.tsx"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/test/geo-code-service.test.ts",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/services/geoCodeService.ts"
+   ],
+   "casos": 8
   },
   {
    "arquivo": "src/test/guardrails-ml-service.test.ts",
@@ -2351,7 +2360,7 @@
   {
    "arquivo": "supabase/functions/geo-code/geo.test.ts",
    "tipo": "unit",
-   "linhas": 129,
+   "linhas": 132,
    "testa": [
     "supabase/functions/geo-code/geo.ts"
    ],
@@ -2547,6 +2556,7 @@
   "src/services/executionHistoryService.ts": 3,
   "src/services/fineTuningService.ts": 2,
   "src/services/freezeWindowService.ts": 1,
+  "src/services/geoCodeService.ts": 1,
   "src/services/guardrailsMLService.ts": 1,
   "src/services/healthAlertsService.ts": 1,
   "src/services/hfConfigService.ts": 1,

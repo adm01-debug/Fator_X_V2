@@ -1,14 +1,14 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 293,
+ "total": 294,
  "por_camada": {
   "config": 10,
   "data": 5,
   "integrations": 5,
   "lib": 90,
   "python": 3,
-  "services": 168,
+  "services": 169,
   "stores": 12
  },
  "arquivos": [
@@ -725,7 +725,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 162,
+   "usado_por": 163,
    "usado_por_modulos": [
     "components/admin",
     "components/agent-builder",
@@ -6110,6 +6110,36 @@
     "pages"
    ],
    "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/geoCodeService.ts",
+   "camada": "services",
+   "exports": [
+    "GeoLookupResult",
+    "GeoPoint",
+    "geocodeAddress",
+    "isGeoCodeAvailable",
+    "parseCoordinates",
+    "reverseGeocode"
+   ],
+   "export_default": null,
+   "linhas": 82,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "geo-code"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {

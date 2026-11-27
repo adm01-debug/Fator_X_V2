@@ -9229,7 +9229,7 @@
     "IPEntry"
    ],
    "export_default": "GovernancePage",
-   "linhas": 697,
+   "linhas": 807,
    "dominio": "pages",
    "hooks_locais": [
     "useWorkspaceId"

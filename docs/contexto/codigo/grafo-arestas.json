@@ -5129,6 +5129,7 @@
    "src/integrations/supabase/client.ts",
    "src/services/accessControlService.ts",
    "src/services/freezeWindowService.ts",
+   "src/services/geoCodeService.ts",
    "src/types/dbRow.ts"
   ],
   "src/pages/GraphExecutionsPage.tsx": [
@@ -6404,6 +6405,9 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/services/gameDayService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/geoCodeService.ts": [
    "src/integrations/supabase/client.ts"
   ],
   "src/services/guardrailsMLService.ts": [

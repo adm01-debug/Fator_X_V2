@@ -1034,7 +1034,7 @@
    "nome": "geo-code",
    "entrada": "supabase/functions/geo-code/index.ts",
    "arquivos": 2,
-   "linhas": 328,
+   "linhas": 339,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -1056,10 +1056,12 @@
     "mod.ts",
     "retry.ts"
    ],
-   "chamada_pelo_front": [],
+   "chamada_pelo_front": [
+    "src/services/geoCodeService.ts"
+   ],
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
-   "orfa": true,
+   "orfa": false,
    "testes": 1
   },
   {

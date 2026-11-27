@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "26d3bba4e547ccbaf4692fc0de76129a4024a384",
+  "sha": "79b93e5a611cf3d9cb50eb308ceba76779a4292b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 02:57 UTC",
-  "files_total": 2043,
-  "code_files": 1823,
-  "code_lines": 366701
+  "generated_at": "2026-11-27 03:09 UTC",
+  "files_total": 2045,
+  "code_files": 1825,
+  "code_lines": 367007
  },
  "version": "1.3.2",
- "facts_hash": "56b757186e1a2a62",
+ "facts_hash": "3e91b9c3a7c61f64",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -247,7 +247,7 @@
   "package_manager": "bun",
   "languages": {
    ".tsx": 709,
-   ".ts": 706,
+   ".ts": 708,
    ".sql": 349,
    ".mjs": 47,
    ".js": 5,
@@ -54566,10 +54566,11 @@
      "workspaces"
     ],
     "invokes_transitive": [
+     "geo-code",
      "validate-access"
     ],
     "rpc_transitive": [],
-    "deps_count": 30
+    "deps_count": 31
    },
    {
     "path": "",
@@ -61264,7 +61265,7 @@
   {
    "module": "src/pages",
    "files": 142,
-   "lines": 51325,
+   "lines": 51435,
    "tables": [
     "agent_installed_skills",
     "agent_workflow_runs",
@@ -61458,8 +61459,8 @@
   },
   {
    "module": "src/services",
-   "files": 168,
-   "lines": 33874,
+   "files": 169,
+   "lines": 33956,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -61715,6 +61716,7 @@
     "src/services/fineTuningService.ts",
     "src/services/freezeWindowService.ts",
     "src/services/gameDayService.ts",
+    "src/services/geoCodeService.ts",
     "src/services/guardrailsMLService.ts",
     "src/services/healthAlertsService.ts",
     "src/services/healthService.ts",
@@ -61730,8 +61732,7 @@
     "src/services/lgpdGovernanceService.ts",
     "src/services/lgpdService.ts",
     "src/services/llmGatewayService.ts",
-    "src/services/marketplaceService.ts",
-    "src/services/memoryService.ts"
+    "src/services/marketplaceService.ts"
    ]
   },
   {
@@ -61793,8 +61794,8 @@
   },
   {
    "module": "src/test",
-   "files": 204,
-   "lines": 30606,
+   "files": 205,
+   "lines": 30706,
    "tables": [
     "tabela"
    ],
@@ -61909,6 +61910,7 @@
     "src/test/freeze-window-service.test.ts",
     "src/test/frontmatter.test.ts",
     "src/test/genai-protocol-panel.test.tsx",
+    "src/test/geo-code-service.test.ts",
     "src/test/guardrails-ml-service.test.ts",
     "src/test/harvest-checkpoint-bulk-purge.test.ts",
     "src/test/harvest-checkpoint-list.test.ts",
@@ -61924,8 +61926,7 @@
     "src/test/llm-gateway-providers.test.ts",
     "src/test/llm-gateway-service.test.ts",
     "src/test/local-graph-view.test.tsx",
-    "src/test/mcp-client.test.ts",
-    "src/test/memory-service.test.ts"
+    "src/test/mcp-client.test.ts"
    ]
   },
   {
@@ -61977,7 +61978,7 @@
   {
    "module": "supabase/functions",
    "files": 138,
-   "lines": 33378,
+   "lines": 33392,
    "tables": [
     "access_blocked_log",
     "agent_eval_datasets",
@@ -66455,6 +66456,9 @@
    ],
    "fixture-edge": [
     "scripts/ai-context/gerar.unit.mjs"
+   ],
+   "geo-code": [
+    "src/services/geoCodeService.ts"
    ],
    "ghost-edge": [
     "scripts/ai-context/gerar.unit.mjs"
@@ -72438,6 +72442,14 @@
    },
    {
     "file": "src/pages/GovernancePage.tsx",
+    "msg": "Informe um endereço, cidade ou "
+   },
+   {
+    "file": "src/pages/GovernancePage.tsx",
+    "msg": "Localizado "
+   },
+   {
+    "file": "src/pages/GovernancePage.tsx",
     "msg": "Nome, início e fim são obrigatórios"
    },
    {
@@ -74811,6 +74823,10 @@
    {
     "file": "src/pages/FineTuningPage.tsx",
     "text": "O treino já começou no Hub: falhar aqui não pode virar erro para o usuário."
+   },
+   {
+    "file": "src/pages/GovernancePage.tsx",
+    "text": "e um código errado faz a regra de geo-restrição nunca bloquear ninguém."
    },
    {
     "file": "src/pages/IPWhitelistPage.tsx",
@@ -103742,6 +103758,10 @@
     "line": "(b) => Date.now() - new Date(b.created_at).getTime() < 24 * 60 * 60 * 1000,"
    },
    {
+    "file": "src/pages/GovernancePage.tsx",
+    "line": "staleTime: 10 * 60 * 1000,"
+   },
+   {
     "file": "src/pages/ResetPasswordPage.tsx",
     "line": "setTimeout(() => navigate('/'), 2000);"
    },
@@ -109156,6 +109176,46 @@
    {
     "file": "src/test/genai-protocol-panel.test.tsx",
     "name": "copia os atributos em JSON para o coletor"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "geoCodeService"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "geocodeAddress envia action=geocode com o endereço"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "reverseGeocode envia action=reverse com latitude/longitude numéricos"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "sem envelope data rejeita com mensagem legível"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "erro HTTP traz a mensagem do corpo quando disponível"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "isGeoCodeAvailable lê ok do health"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "parseCoordinates"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "reconhece latitude, longitude com ou sem sinal"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "trata qualquer outro texto como endereço"
+   },
+   {
+    "file": "src/test/geo-code-service.test.ts",
+    "name": "recusa coordenadas fora do intervalo válido"
    },
    {
     "file": "src/test/guardrails-ml-service.test.ts",
@@ -117655,6 +117715,10 @@
    },
    {
     "file": "src/services/fineTuningService.ts",
+    "call": "invoke("
+   },
+   {
+    "file": "src/services/geoCodeService.ts",
     "call": "invoke("
    },
    {
@@ -167731,7 +167795,7 @@
   },
   "src/pages/GovernancePage.tsx": {
    "path": "src/pages/GovernancePage.tsx",
-   "lines": 697,
+   "lines": 807,
    "exports": [
     "type GeoCountry",
     "type IPEntry",
@@ -167754,6 +167818,8 @@
    "errors": [
     ";\nimport {\n  Dialog,\n  DialogContent,\n  DialogFooter,\n  DialogHeader,\n  DialogTitle,\n  DialogTrigger,\n} from ",
     "Código ISO 3166-1 alpha-2 (2 letras)",
+    "Informe um endereço, cidade ou ",
+    "Localizado ",
     "Nome, início e fim são obrigatórios",
     "Workspace ausente"
    ],
@@ -167767,8 +167833,12 @@
      "rules": "type=datetime-local"
     }
    ],
+   "rule_comments": [
+    "e um código errado faz a regra de geo-restrição nunca bloquear ninguém."
+   ],
    "temporal": [
-    "(b) => Date.now() - new Date(b.created_at).getTime() < 24 * 60 * 60 * 1000,"
+    "(b) => Date.now() - new Date(b.created_at).getTime() < 24 * 60 * 60 * 1000,",
+    "staleTime: 10 * 60 * 1000,"
    ]
   },
   "src/pages/GraphExecutionsPage.tsx": {
@@ -173855,6 +173925,24 @@
      "name": "GameDayEventType",
      "values": "fault_injected | detection | mitigation | resolution | note"
     }
+   ]
+  },
+  "src/services/geoCodeService.ts": {
+   "path": "src/services/geoCodeService.ts",
+   "lines": 82,
+   "exports": [
+    "interface GeoPoint",
+    "interface GeoLookupResult",
+    "function geocodeAddress",
+    "function reverseGeocode",
+    "function isGeoCodeAvailable",
+    "function parseCoordinates"
+   ],
+   "invokes": [
+    "geo-code"
+   ],
+   "side_effects": [
+    "invoke("
    ]
   },
   "src/services/guardrailsMLService.ts": {
@@ -181771,6 +181859,24 @@
     "copia os atributos em JSON para o coletor"
    ]
   },
+  "src/test/geo-code-service.test.ts": {
+   "path": "src/test/geo-code-service.test.ts",
+   "lines": 100,
+   "is_test": true,
+   "doc": "geoCodeService — contrato da edge `geo-code` (ações geocode/reverse/health).",
+   "tests": [
+    "geoCodeService",
+    "geocodeAddress envia action=geocode com o endereço",
+    "reverseGeocode envia action=reverse com latitude/longitude numéricos",
+    "sem envelope data rejeita com mensagem legível",
+    "erro HTTP traz a mensagem do corpo quando disponível",
+    "isGeoCodeAvailable lê ok do health",
+    "parseCoordinates",
+    "reconhece latitude, longitude com ou sem sinal",
+    "trata qualquer outro texto como endereço",
+    "recusa coordenadas fora do intervalo válido"
+   ]
+  },
   "src/test/guardrails-ml-service.test.ts": {
    "path": "src/test/guardrails-ml-service.test.ts",
    "lines": 48,
@@ -189140,7 +189246,7 @@
   },
   "supabase/functions/geo-code/geo.test.ts": {
    "path": "supabase/functions/geo-code/geo.test.ts",
-   "lines": 129,
+   "lines": 132,
    "is_test": true,
    "doc": "Unit tests para os providers de geocodificação (Mapbox/Google). Rode com: deno test --allow-env --allow-net supabase/functions/geo-code/geo.test.ts",
    "tests": [
@@ -189155,7 +189261,7 @@
   },
   "supabase/functions/geo-code/geo.ts": {
    "path": "supabase/functions/geo-code/geo.ts",
-   "lines": 182,
+   "lines": 193,
    "exports": [
     "type GeoResult",
     "function mapboxGeocode",
@@ -196500,10 +196606,24 @@
   }
  },
  "git": {
-  "sha": "26d3bba4e547ccbaf4692fc0de76129a4024a384",
+  "sha": "79b93e5a611cf3d9cb50eb308ceba76779a4292b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "79b93e5",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "feat(geo): descobre o pais por endereco ou coordenadas na governanca (#182)",
+    "files": [
+     "src/pages/GovernancePage.tsx",
+     "src/services/geoCodeService.ts",
+     "src/test/geo-code-service.test.ts",
+     "supabase/deployment-manifest.json",
+     "supabase/functions/geo-code/geo.test.ts",
+     "supabase/functions/geo-code/geo.ts"
+    ]
+   },
    {
     "sha": "26d3bba",
     "date": "2026-11-26",
@@ -196817,28 +196937,19 @@
     "files": [
      ".github/workflows/dependency-review.yml"
     ]
-   },
-   {
-    "sha": "7fc063a",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)",
-    "files": [
-     ".github/workflows/edge-prune.yml"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "supabase/deployment-manifest.json",
+    4
+   ],
    [
     "src/pages/FineTuningPage.tsx",
     4
    ],
    [
     "src/services/fineTuningService.ts",
-    3
-   ],
-   [
-    "supabase/deployment-manifest.json",
     3
    ],
    [
@@ -196862,8 +196973,24 @@
     2
    ],
    [
-    ".github/workflows/edge-prune.yml",
-    2
+    "src/pages/GovernancePage.tsx",
+    1
+   ],
+   [
+    "src/services/geoCodeService.ts",
+    1
+   ],
+   [
+    "src/test/geo-code-service.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/geo-code/geo.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/geo-code/geo.ts",
+    1
    ],
    [
     "src/components/security/GuardrailPolicies.tsx",
@@ -196891,22 +197018,6 @@
    ],
    [
     "supabase/migrations/20261126130000_forum_safe_views_is_published.sql",
-    1
-   ],
-   [
-    "scripts/db-drift-check.mjs",
-    1
-   ],
-   [
-    "supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql",
     1
    ]
   ]

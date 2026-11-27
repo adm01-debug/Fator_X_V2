@@ -3414,6 +3414,7 @@
    ],
    "rpcs": [],
    "edges": [
+    "geo-code",
     "validate-access"
    ],
    "canais_realtime": [],
@@ -3422,7 +3423,7 @@
     "admin",
     "alert"
    ],
-   "arquivos_puxados": 31
+   "arquivos_puxados": 32
   },
   {
    "protegida": true,

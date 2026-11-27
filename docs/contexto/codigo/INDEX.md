@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `26d3bba4e547ccbaf4692fc0de76129a4024a384` (2026-11-26T23:56:04-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `79b93e5a611cf3d9cb50eb308ceba76779a4292b` (2026-11-27T00:08:24-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1415), SQL (349), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
+- linguagens: TypeScript (1417), SQL (349), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2038 |
-| arquivos_codigo | 1473 |
-| linhas_codigo | 324256 |
+| arquivos_total | 2040 |
+| arquivos_codigo | 1475 |
+| linhas_codigo | 324562 |
 | rotas | 152 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 328 |
 | migrations | 346 |
 | cron_jobs | 37 |
-| testes | 253 |
+| testes | 254 |
 | workflows | 11 |
 | scripts | 45 |
 | docs_md | 134 |
@@ -57,8 +57,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - telas: src/pages (141)
 - componentes: src/components (519), src/pages (142), src/App.tsx (1)
 - hooks: src/hooks (44), src/components (9), src/services (9)
-- servicos_logica: src/services (168), src/lib (90), src/stores (12)
-- testes: co-localizado (*.test) (210), outro (23), e2e/ (9)
+- servicos_logica: src/services (169), src/lib (90), src/stores (12)
+- testes: co-localizado (*.test) (211), outro (23), e2e/ (9)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/ci (11), scripts/inventario (4), scripts/maintenance (4)
@@ -97,8 +97,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | lib | 0 | 0 | 45 | 87 | 63 | 126 |
 | lib/skills | 0 | 0 | 19 | 0 | 0 | 2 |
 | lib/validations | 0 | 0 | 12 | 0 | 0 | 0 |
-| pages | 115 | 152 | 142 | 97 | 75 | 158 |
-| services | 0 | 0 | 148 | 28 | 59 | 124 |
+| pages | 115 | 152 | 142 | 97 | 76 | 158 |
+| services | 0 | 0 | 149 | 28 | 60 | 124 |
 | services/presets | 0 | 0 | 5 | 0 | 0 | 0 |
 | services/types | 0 | 0 | 15 | 0 | 0 | 0 |
 | stores | 0 | 0 | 10 | 0 | 1 | 6 |
@@ -303,7 +303,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `dr-orchestrator` — tabelas: dr_drills, dr_snapshots; chamada por 1 arquivo(s) do front
 - `eval-engine-v2` — tabelas: eval_runs; chamada por 1 arquivo(s) do front
 - `eval-judge` — tabelas: agents, evaluation_runs, test_cases, workspace_members, workspace_secrets; chamada por 1 arquivo(s) do front
-- `geo-code` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `geo-code` — tabelas: -; chamada por 1 arquivo(s) do front
 - `global-search` — tabelas: agent_eval_datasets, agent_workflows, agents, automation_rules, documents, kb_articles, knowledge_bases; chamada por 1 arquivo(s) do front
 - `graph-execute` — tabelas: agent_graphs, agents, graph_executions; chamada por 1 arquivo(s) do front
 - `guardrails-engine` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
@@ -419,7 +419,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - rotas_sem_arquivo: 0
 - componentes_ambiguos: 0
 - menu_sem_destino: 7 — ex.: Coleções -> collections, Especialistas -> experts, Fatos -> facts
-- edges_orfas: 7 — ex.: bitrix24-api, bitrix24-oauth, geo-code
+- edges_orfas: 6 — ex.: bitrix24-api, bitrix24-oauth, guardrails-engine
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 4 — ex.: agent_traces_v2_2026_12, agent_traces_v2_2027_01, agent_usage
 - tabelas_usadas_sem_definicao: 0
@@ -433,14 +433,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 15443 nós · 39366 arestas · 1385 comunidades · grafo do commit `26d3bba4`
-- comunidades maiores: badge.tsx (350), button.tsx (227), logger.ts (220), react (208), mod.ts (201), SuperCerebroPage.tsx (146), App.tsx (128), whatsapp-webhook/index.ts (123), templateSkillLinkService.ts (120), Onda 1 — Segurança e risco de perda de dado (etapas 001–062) (115), cn (108), agent-workflow-runner/index.ts (104)
+- 15458 nós · 39402 arestas · 1380 comunidades · grafo do commit `79b93e5a`
+- comunidades maiores: lucide-react (292), App.tsx (250), ref_https (209), input.tsx (203), @tanstack/react-query (196), tabs.tsx (135), cn (131), fromTable (120), templateSkillLinkService.ts (116), VendorsPage.tsx (107), mod.ts (102), whatsapp-webhook/index.ts (101)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package-lock.json (26)
-- supabase/deployment-manifest.json (25)
+- supabase/deployment-manifest.json (26)
 - package.json (24)
 - .github/workflows/ci.yml (9)
 - docs/migration/MATRIZ_EDGE_TABELA.md (7)
@@ -580,6 +580,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-27 `79b93e5` feat(geo): descobre o pais por endereco ou coordenadas na governanca (#182)
 - 2026-11-26 `26d3bba` fix(guardrails): testador da UI chamava a edge sem action e nunca via os rails (#181)
 - 2026-11-26 `1e1eaf2` feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)
 - 2026-11-26 `91e02fc` fix(lgpd): conserta exclusão, consentimento e anonimização contra o schema real (#179)
@@ -594,7 +595,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `9e84381` feat(finetune): histórico dos treinos passa a ser gravado no workspace (#172)
 - 2026-11-26 `71009dd` feat(hf): configuração HuggingFace por workspace vira real (#171)
 - 2026-11-26 `a77f3ba` feat(lgpd): painel de governança (ROPA, DSAR, incidentes, retenção) (#170)
-- 2026-11-26 `51fc68b` feat(metricas): cobertura de embeddings dos chunks de documentos (#169)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

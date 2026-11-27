@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `26d3bba4e5` · branch `main` · 2026-11-27 02:57 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `79b93e5a61` · branch `main` · 2026-11-27 03:09 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3426,6 +3426,7 @@ _nenhum item encontrado_
 | `setTimeout(() => setCopied(null), 2000);` | `src/pages/DeploymentsPage.tsx` |
 | `scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16),` | `src/pages/GameDaysPage.tsx` |
 | `(b) => Date.now() - new Date(b.created_at).getTime() < 24 * 60 * 60 * 1000,` | `src/pages/GovernancePage.tsx` |
+| `staleTime: 10 * 60 * 1000,` | `src/pages/GovernancePage.tsx` |
 | `setTimeout(() => navigate('/'), 2000);` | `src/pages/ResetPasswordPage.tsx` |
 | `const to = new Date(from.getTime() + 60 * 60 * 1000);` | `src/pages/SLODashboard.tsx` |
 | `await new Promise((r) => setTimeout(r, 1400));` | `src/pages/VisionAgentsPage.tsx` |
@@ -4038,7 +4039,7 @@ _nenhum item encontrado_
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +539 linhas — lista completa em `context.json` | |
+| … +541 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4074,7 +4075,7 @@ _nenhum item encontrado_
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 | `workspace_admin` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 
-## K. Testes como especificação (3111 testes em 226 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3121 testes em 227 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4187,6 +4188,7 @@ _nenhum item encontrado_
 | `src/test/batch-processor.test.ts` | 10 | batchProcessorService — processBatch · processes a small array with default settings · processor receives the correct index for each item · captures errors in result.error without stopping (continue_all) … |
 | `src/test/connector-registry.test.ts` | 10 | connectorRegistryService — BUILTIN_CONNECTORS · has at least 5 built-in connectors · all connectors have required fields · connectors have unique slugs … |
 | `src/test/e2ee-service.test.ts` | 10 | e2eeService — encrypt/decrypt round-trip · cifra e decifra preservando o payload · cada cifragem produz IV/salt distintos · rejeita passphrase curta … |
+| `src/test/geo-code-service.test.ts` | 10 | geoCodeService · geocodeAddress envia action=geocode com o endereço · reverseGeocode envia action=reverse com latitude/longitude numéricos · sem envelope data rejeita com mensagem legível … |
 | `src/test/skill-departments-parity.test.ts` | 10 | paridade taxonomia frontend x espelho Deno · o espelho declara exatamente os mesmos departamentos · o espelho do classificador LLM lista os mesmos departamentos, na mesma ordem · todo departamento tem uma dica semântica no prompt do classificador … |
 | `src/test/use2fa.test.ts` | 10 | use2FA lê o status pela RPC get_my_2fa_status · usa a RPC como fonte e não consulta a tabela direto · sem linha na RPC, o usuário aparece como desativado · enable valida o TOTP antes de gravar … |
 | `supabase/functions/rag-embed-v2/index.test.ts` | 10 | dimensão canônica espelha as colunas vector(1536) · hashEmbed devolve exatamente a dimensão pedida · hashEmbed é determinístico e normalizado em L2 · hashEmbed nunca produz NaN/Infinity … |
@@ -4405,6 +4407,7 @@ _nenhum item encontrado_
 | `invoke(` | `src/services/evalEngineService.ts` |
 | `invoke(` | `src/services/evaluationsService.ts` |
 | `invoke(` | `src/services/fineTuningService.ts` |
+| `invoke(` | `src/services/geoCodeService.ts` |
 | `invoke(` | `src/services/guardrailsMLService.ts` |
 | `notify` | `src/services/healthAlertsService.ts` |
 | `invoke(` | `src/services/healthService.ts` |
@@ -4726,6 +4729,7 @@ _nenhum item encontrado_
 | Somente leitura: o criador vê seus próprios ciclos de payout, valores acumulados e status. | `src/pages/CreatorPayoutsPage.tsx` |
 | a uma falha do Hub. Job sem registro local apenas devolve null. | `src/pages/FineTuningPage.tsx` |
 | O treino já começou no Hub: falhar aqui não pode virar erro para o usuário. | `src/pages/FineTuningPage.tsx` |
+| e um código errado faz a regra de geo-restrição nunca bloquear ninguém. | `src/pages/GovernancePage.tsx` |
 | Very loose IPv6 fallback — Postgres CIDR type will do the final validation. | `src/pages/IPWhitelistPage.tsx` |
 | Regra de ouro FK/CASCADE */} | `src/pages/PartitioningDocsPage.tsx` |
 | unmount must not touch state. | `src/pages/SLODashboard.tsx` |
@@ -4785,5 +4789,4 @@ _nenhum item encontrado_
 | * Onde o próximo lote deve começar. */ | `src/services/skillHarvestService.ts` |
 | Falha de rede não pode derrubar a varredura: o local já guardou o avanço. | `src/services/skillHarvestService.ts` |
 | corre risco de estourar o limite de tempo da plataforma. | `src/services/skillHarvestService.ts` |
-| * Todas as tabelas têm RLS restrita; um usuário sem permissão recebe conjunto | `src/services/skillObservabilityService.ts` |
-| … +178 linhas — lista completa em `context.json` | |
+| … +179 linhas — lista completa em `context.json` | |

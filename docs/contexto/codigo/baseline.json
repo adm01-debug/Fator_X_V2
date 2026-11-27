@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "26d3bba4e547ccbaf4692fc0de76129a4024a384",
+  "commit": "79b93e5a611cf3d9cb50eb308ceba76779a4292b",
   "branch": "main",
-  "data_commit": "2026-11-26T23:56:04-03:00",
+  "data_commit": "2026-11-27T00:08:24-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "79b93e5",
+    "data": "2026-11-27",
+    "assunto": "feat(geo): descobre o pais por endereco ou coordenadas na governanca (#182)"
+   },
    {
     "sha": "26d3bba",
     "data": "2026-11-26",
@@ -126,18 +131,13 @@
     "sha": "ed56e32",
     "data": "2026-11-26",
     "assunto": "feat(fine-tuning): liga a tela ao hf-autotrain no lugar de jobs mockados (#158)"
-   },
-   {
-    "sha": "70dccb4",
-    "data": "2026-11-26",
-    "assunto": "fix(seguranca): 2FA passa a ler status pela RPC e usa CSPRNG nos codigos (#157)"
    }
   ],
-  "arquivos_mudados_7d": 146,
+  "arquivos_mudados_7d": 149,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
-    "mudancas": 25
+    "mudancas": 26
    },
    {
     "pasta": "package-lock.json",
@@ -168,6 +168,10 @@
     "mudancas": 6
    },
    {
+    "pasta": "supabase/functions/geo-code",
+    "mudancas": 5
+   },
+   {
     "pasta": ".github/workflows/contexto.yml",
     "mudancas": 4
    },
@@ -190,10 +194,6 @@
    {
     "pasta": "supabase/functions/agent-conversational-builder",
     "mudancas": 4
-   },
-   {
-    "pasta": ".github/workflows/automation-local.yml",
-    "mudancas": 3
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "supabase/deployment-manifest.json",
-    "mudancas": 25
+    "mudancas": 26
    },
    {
     "arquivo": "package.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 88
+    "commits": 89
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2038,
-  "arquivos_codigo": 1473,
-  "linhas_codigo": 324256,
+  "arquivos_total": 2040,
+  "arquivos_codigo": 1475,
+  "linhas_codigo": 324562,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 328,
   "migrations": 346,
   "cron_jobs": 37,
-  "testes": 253,
+  "testes": 254,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -504,23 +504,23 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 51325
+   "linhas": 51435
   },
   "src/security.test.ts": {
    "arquivos": 1,
    "linhas": 43
   },
   "src/services": {
-   "arquivos": 168,
-   "linhas": 33874
+   "arquivos": 169,
+   "linhas": 33956
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 204,
-   "linhas": 30606
+   "arquivos": 205,
+   "linhas": 30706
   },
   "src/tests": {
    "arquivos": 2,
@@ -532,7 +532,7 @@
   },
   "supabase/functions": {
    "arquivos": 138,
-   "linhas": 33378
+   "linhas": 33392
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -786,7 +786,6 @@
   "edges_orfas": [
    "bitrix24-api",
    "bitrix24-oauth",
-   "geo-code",
    "guardrails-engine",
    "oracle-research",
    "pg-net-smoke-test",

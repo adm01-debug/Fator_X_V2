@@ -16,12 +16,12 @@
    "src/services (9)"
   ],
   "servicos_logica": [
-   "src/services (168)",
+   "src/services (169)",
    "src/lib (90)",
    "src/stores (12)"
   ],
   "testes": [
-   "co-localizado (*.test) (210)",
+   "co-localizado (*.test) (211)",
    "outro (23)",
    "e2e/ (9)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(geo): descobre o pais por endereco ou coordenadas na governanca (#182)",
    "fix(guardrails): testador da UI chamava a edge sem action e nunca via os rails (#181)",
    "feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)",
    "fix(lgpd): conserta exclusão, consentimento e anonimização contra o schema real (#179)",
-   "fix(forum): tira rascunho das views safe do forum (#163)",
-   "fix(ci): guard de drift deixa de bloquear todo PR com migration nova (#165)"
+   "fix(forum): tira rascunho das views safe do forum (#163)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
