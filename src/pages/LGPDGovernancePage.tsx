@@ -10,6 +10,7 @@ import { AlertCircle, Loader2, Plus, ShieldAlert, Timer } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRBAC } from '@/hooks/useRBAC';
 import { getWorkspaceId } from '@/lib/agentService';
+import { ConsentPanel } from '@/components/lgpd/ConsentPanel';
 import {
   DSAR_DEADLINE_DAYS,
   createProcessingOperation,
@@ -319,6 +320,8 @@ export default function LGPDGovernancePage() {
               ))}
             </div>
           )}
+
+          <ConsentPanel workspaceId={workspaceId} />
         </TabsContent>
 
         <TabsContent value="register" className="space-y-4">
