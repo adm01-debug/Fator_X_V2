@@ -75,8 +75,9 @@ export default function SecretsRotationPage() {
 
   const handleRefreshStatus = async () => {
     try {
-      const r = await refreshSecretsStatus();
-      toast.success(`${r.marked_overdue} marcados como overdue, ${r.marked_pending} como pending`);
+      if (!workspaceId) return;
+      const r = await refreshSecretsStatus(workspaceId);
+      toast.success(`${r.marked_overdue} em atraso, ${r.marked_pending} a vencer em 7 dias`);
       if (workspaceId) load(workspaceId);
     } catch {
       toast.error("Falha ao atualizar status");

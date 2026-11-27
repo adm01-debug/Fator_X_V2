@@ -156,13 +156,26 @@ export async function listRotationEvents(secretId: string): Promise<SecretRotati
   return (data ?? []) as SecretRotationEvent[];
 }
 
-export async function refreshSecretsStatus(): Promise<{
+/**
+ * Recalcula o status de um workspace a partir de `next_rotation_due`.
+ *
+ * Não usa `refresh_secrets_status()`: aquela RPC varre `managed_secrets`
+ * de todos os tenants e por isso é restrita a `service_role`. A contagem
+ * por workspace vem da mesma fonte que a listagem já lê (RLS).
+ */
+export async function refreshSecretsStatus(workspaceId: string): Promise<{
   marked_overdue: number;
   marked_pending: number;
 }> {
-  const { data, error } = await supabase.rpc('refresh_secrets_status');
+  const { data, error } = await supabase.rpc('get_secrets_status_summary', {
+    p_workspace_id: workspaceId,
+  });
   if (error) throw error;
-  return data as unknown as { marked_overdue: number; marked_pending: number };
+  const summary = (data ?? {}) as { overdue?: number; pending?: number };
+  return {
+    marked_overdue: summary.overdue ?? 0,
+    marked_pending: summary.pending ?? 0,
+  };
 }
 
 export const SECRET_CATEGORY_LABELS: Record<SecretCategory, string> = {
