@@ -800,7 +800,7 @@
     "services",
     "stores"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -848,7 +848,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 15573,
+   "linhas": 15582,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -857,7 +857,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 20,
+   "usado_por": 21,
    "usado_por_modulos": [
     "components/agents",
     "hooks",
@@ -8288,6 +8288,7 @@
     "invokeGuardrailsCheck",
     "listApiKeys",
     "listGuardrailPolicies",
+    "logSecurityEvent",
     "resolveSecurityAlert",
     "revokeApiKey",
     "signOutOtherSessions",
@@ -8295,7 +8296,7 @@
     "toggleGuardrailPolicy"
    ],
    "export_default": null,
-   "linhas": 485,
+   "linhas": 534,
    "tabelas": [
     "api_keys",
     "guardrail_policies",
@@ -8303,7 +8304,9 @@
     "security_events",
     "workspace_members"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "registrar_evento_seguranca"
+   ],
    "edges": [],
    "env": [],
    "externos": [],

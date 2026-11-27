@@ -4,11 +4,11 @@
  "stack": {
   "linguagens": [
    "TypeScript (1426)",
-   "SQL (369)",
+   "SQL (370)",
    "Markdown (135)",
    "JavaScript (55)",
    "JSON (25)",
-   "YAML (20)",
+   "YAML (21)",
    "Shell (10)",
    "Python (5)"
   ],
@@ -388,6 +388,32 @@
    "secrets": [
     "SUPABASE_ACCESS_TOKEN",
     "SUPABASE_ANON_KEY"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/gen-types.yml",
+   "nome": "Gerar tipos do Supabase",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "gerar"
+   ],
+   "permissoes": [
+    "contents: write",
+    "pull-requests: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "DEPENDABOT_TOKEN",
+    "SUPABASE_ACCESS_TOKEN"
    ],
    "actions": [
     "actions/checkout",

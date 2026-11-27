@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "42ee11ae339cccfbabd41b74e9b3a52783f3cbe4",
+  "commit": "e8131bafbc42b32e5ddc3139ea4eec6feafc167c",
   "branch": "main",
-  "data_commit": "2026-11-27T09:50:25-03:00",
+  "data_commit": "2026-11-27T11:02:32-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "e8131ba",
+    "data": "2026-11-27",
+    "assunto": "feat(seguranca): liga a trilha de auditoria que estava morta (#219)"
+   },
    {
     "sha": "42ee11a",
     "data": "2026-11-27",
@@ -126,11 +131,6 @@
     "sha": "26d3bba",
     "data": "2026-11-26",
     "assunto": "fix(guardrails): testador da UI chamava a edge sem action e nunca via os rails (#181)"
-   },
-   {
-    "sha": "1e1eaf2",
-    "data": "2026-11-26",
-    "assunto": "feat(finetuning): expoe list_models, export_traces, prepare_dpo_dataset e generate_trl_config na tela (#180)"
    }
   ],
   "arquivos_mudados_7d": 192,
@@ -152,6 +152,10 @@
     "mudancas": 9
    },
    {
+    "pasta": "src/integrations/supabase",
+    "mudancas": 8
+   },
+   {
     "pasta": "supabase/functions/llm-gateway",
     "mudancas": 8
    },
@@ -161,10 +165,6 @@
    },
    {
     "pasta": "docs/migration/MATRIZ_EDGE_TABELA.md",
-    "mudancas": 7
-   },
-   {
-    "pasta": "src/integrations/supabase",
     "mudancas": 7
    },
    {
@@ -218,15 +218,15 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 7
+   },
+   {
     "arquivo": "supabase/functions/llm-gateway/index.ts",
     "mudancas": 7
    },
    {
     "arquivo": ".github/workflows/edge-deploy.yml",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 6
    },
    {
@@ -247,6 +247,10 @@
    },
    {
     "arquivo": "src/pages/FineTuningPage.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/services/securityService.ts",
     "mudancas": 4
    },
    {
@@ -292,16 +296,12 @@
    {
     "arquivo": ".github/workflows/automation-local.yml",
     "mudancas": 3
-   },
-   {
-    "arquivo": ".github/workflows/inventario-estado-semanal.yml",
-    "mudancas": 3
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 111
+    "commits": 112
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2074,
+  "arquivos_total": 2076,
   "arquivos_codigo": 1485,
-  "linhas_codigo": 326514,
+  "linhas_codigo": 326633,
   "rotas": 153,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -322,10 +322,10 @@
   "hooks": 76,
   "edge_functions": 88,
   "tabelas": 328,
-  "migrations": 366,
+  "migrations": 367,
   "cron_jobs": 40,
   "testes": 259,
-  "workflows": 14,
+  "workflows": 15,
   "scripts": 46,
   "docs_md": 135
  },
@@ -496,7 +496,7 @@
   },
   "src/integrations": {
    "arquivos": 5,
-   "linhas": 15847
+   "linhas": 15856
   },
   "src/lib": {
    "arquivos": 93,
@@ -516,7 +516,7 @@
   },
   "src/services": {
    "arquivos": 172,
-   "linhas": 34380
+   "linhas": 34429
   },
   "src/stores": {
    "arquivos": 12,
@@ -524,7 +524,7 @@
   },
   "src/test": {
    "arquivos": 210,
-   "linhas": 31198
+   "linhas": 31259
   },
   "src/tests": {
    "arquivos": 2,
@@ -570,7 +570,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 15573
+   "linhas": 15582
   },
   {
    "arquivo": "src/pages/SLODashboard.tsx",
@@ -675,7 +675,7 @@
   "ts_ignore": 0,
   "eslint_disable": 5,
   "todos": 16,
-  "arquivos_acima_500_linhas": 96
+  "arquivos_acima_500_linhas": 97
  },
  "todos": [
   {

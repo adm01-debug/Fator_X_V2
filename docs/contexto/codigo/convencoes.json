@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "feat(seguranca): liga a trilha de auditoria que estava morta (#219)",
    "fix: alimenta a tela de vulnerabilidades (token do Dependabot + fonte no CHECK) (#218)",
    "fix(vulnerabilidades): corrige a leitura dos alertas do Dependabot (#217)",
    "chore(deps): zera as 2 vulnerabilidades criticas do Dependabot (#216)",
-   "feat(vulnerabilidades): sincroniza alertas do Dependabot para a tela (#215)",
-   "fix(seguranca): revoga select de anon nas tabelas de config vazias (#214)"
+   "feat(vulnerabilidades): sincroniza alertas do Dependabot para a tela (#215)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

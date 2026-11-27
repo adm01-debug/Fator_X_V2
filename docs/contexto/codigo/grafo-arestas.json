@@ -6721,6 +6721,7 @@
   "src/services/securityService.ts": [
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/externalClient.ts",
+   "src/integrations/supabase/types.ts",
    "src/lib/logger.ts",
    "src/lib/supabaseExtended.ts",
    "src/services/llmGatewayService.ts"

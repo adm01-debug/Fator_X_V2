@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 366,
+ "migrations": 367,
  "seeds": [],
  "avisos": [
   "458 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -329,6 +329,7 @@
   "register_managed_secret",
   "register_risk",
   "register_vendor",
+  "registrar_evento_seguranca",
   "reset_embedding_dead_letter",
   "reset_workspace_budget",
   "review_risk",
@@ -39979,6 +39980,11 @@
   },
   {
    "nome": "register_vendor",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "registrar_evento_seguranca",
    "definida": true,
    "usada_em": 1
   },

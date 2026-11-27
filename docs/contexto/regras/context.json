@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "42ee11ae339cccfbabd41b74e9b3a52783f3cbe4",
+  "sha": "e8131bafbc42b32e5ddc3139ea4eec6feafc167c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 12:52 UTC",
-  "files_total": 2079,
-  "code_files": 1855,
-  "code_lines": 370551
+  "generated_at": "2026-11-27 14:03 UTC",
+  "files_total": 2081,
+  "code_files": 1856,
+  "code_lines": 370750
  },
  "version": "1.3.2",
- "facts_hash": "457c4f7ffdaad15c",
+ "facts_hash": "cc69a921a6325ca2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -219,6 +219,13 @@
     ]
    },
    {
+    "file": ".github/workflows/gen-types.yml",
+    "name": "Gerar tipos do Supabase",
+    "triggers": [
+     "workflow_dispatch"
+    ]
+   },
+   {
     "file": ".github/workflows/guards.yml",
     "name": "Guards",
     "triggers": [
@@ -271,7 +278,7 @@
   "languages": {
    ".ts": 714,
    ".tsx": 712,
-   ".sql": 369,
+   ".sql": 370,
    ".mjs": 48,
    ".js": 5,
    ".py": 5,
@@ -42345,6 +42352,27 @@
      "user_2fa"
     ]
    },
+   "registrar_evento_seguranca": {
+    "args": "p_event_type text, p_severity text DEFAULT 'info', p_workspace uuid DEFAULT NULL, p_details jsonb DEFAULT '{}'::jsonb",
+    "returns": "uuid",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_uid uuid := auth.uid(); v_id uuid; BEGIN IF v_uid IS NULL THEN RAISE EXCEPTION 'registrar_evento_seguranca exige usuario autenticado' USING ERRCODE = '28000'; END IF; IF p_event_type IS NULL OR length(btrim(p_event_type)) = 0 THEN RAISE EXCEPTION 'event_type obrigatorio' USING ERRCODE = '22023'; END IF; IF p_severity NOT IN ('info', 'low', 'medium', 'high', 'critical') THEN RAISE EXCEPTION 'severidade invalida: %', p_severity USING ERRCODE = '22023'; END IF; IF p_workspace IS NULL THEN SELECT wm.workspace_id INTO p_workspace FROM public.workspace_members wm WHERE wm.user_id = v_uid ORDER BY wm.created_at LIMIT 1; ELSE IF NOT EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE …",
+    "raises": [
+     "registrar_evento_seguranca exige usuario autenticado",
+     "event_type obrigatorio",
+     "severidade invalida: %",
+     "usuario nao pertence ao workspace informado"
+    ],
+    "tables": [
+     "p_workspace",
+     "security_events",
+     "v_id",
+     "workspace_members"
+    ]
+   },
    "Args": {
     "args": "",
     "returns": "?",
@@ -48463,6 +48491,7 @@
    "supabase/migrations/20261129015000_dicionario_esquema_anon.sql",
    "supabase/migrations/20261129016000_anon_sem_select_config_agente.sql",
    "supabase/migrations/20261129017000_sbom_fonte_dependabot.sql",
+   "supabase/migrations/20261129018000_registrar_evento_seguranca.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -53575,6 +53604,30 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "registrar_evento_seguranca",
+    "objkind": "function",
+    "roles": "public",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "registrar_evento_seguranca",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "registrar_evento_seguranca",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
    }
   ],
   "raises": [
@@ -54262,6 +54315,26 @@
     "function": "check_budget",
     "msg": "forbidden",
     "src": "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql"
+   },
+   {
+    "function": "registrar_evento_seguranca",
+    "msg": "registrar_evento_seguranca exige usuario autenticado",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "function": "registrar_evento_seguranca",
+    "msg": "event_type obrigatorio",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "function": "registrar_evento_seguranca",
+    "msg": "severidade invalida: %",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "function": "registrar_evento_seguranca",
+    "msg": "usuario nao pertence ao workspace informado",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
    }
   ],
   "seed": [],
@@ -54799,7 +54872,8 @@
      "get_pending_invites_for_email",
      "increment_skill_installs",
      "invite_workspace_member",
-     "is_user_locked_out"
+     "is_user_locked_out",
+     "registrar_evento_seguranca"
     ],
     "deps_count": 117
    },
@@ -55209,7 +55283,8 @@
     "rpc_transitive": [
      "get_masked_secrets",
      "get_my_2fa_status",
-     "is_user_locked_out"
+     "is_user_locked_out",
+     "registrar_evento_seguranca"
     ],
     "deps_count": 65
    },
@@ -55274,7 +55349,8 @@
     ],
     "rpc_transitive": [
      "get_masked_secrets",
-     "is_user_locked_out"
+     "is_user_locked_out",
+     "registrar_evento_seguranca"
     ],
     "deps_count": 35
    },
@@ -56027,7 +56103,8 @@
     "invokes_transitive": [],
     "rpc_transitive": [
      "get_masked_secrets",
-     "is_user_locked_out"
+     "is_user_locked_out",
+     "registrar_evento_seguranca"
     ],
     "deps_count": 25
    },
@@ -56291,7 +56368,8 @@
      "get_my_2fa_status",
      "get_rollback_rate_per_min",
      "get_wal_generation_rate",
-     "is_user_locked_out"
+     "is_user_locked_out",
+     "registrar_evento_seguranca"
     ],
     "deps_count": 59
    },
@@ -56316,7 +56394,8 @@
     "rpc_transitive": [
      "get_masked_secrets",
      "get_my_2fa_status",
-     "is_user_locked_out"
+     "is_user_locked_out",
+     "registrar_evento_seguranca"
     ],
     "deps_count": 50
    },
@@ -56603,7 +56682,8 @@
      "get_masked_secrets",
      "get_my_2fa_status",
      "increment_skill_installs",
-     "is_user_locked_out"
+     "is_user_locked_out",
+     "registrar_evento_seguranca"
     ],
     "deps_count": 59
    },
@@ -62015,7 +62095,7 @@
   {
    "module": "src/integrations",
    "files": 5,
-   "lines": 15847,
+   "lines": 15856,
    "tables": [],
    "exports": [
     "index.ts: lovable",
@@ -62411,7 +62491,7 @@
   {
    "module": "src/services",
    "files": 172,
-   "lines": 34380,
+   "lines": 34429,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -62746,7 +62826,7 @@
   {
    "module": "src/test",
    "files": 210,
-   "lines": 31198,
+   "lines": 31259,
    "tables": [
     "tabela"
    ],
@@ -63173,8 +63253,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 366,
-   "lines": 43726,
+   "files": 367,
+   "lines": 43806,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -67302,6 +67382,9 @@
    ],
    "register_vendor": [
     "src/services/vendorRiskService.ts"
+   ],
+   "registrar_evento_seguranca": [
+    "src/services/securityService.ts"
    ],
    "reset_workspace_budget": [
     "src/services/budgetService.ts"
@@ -76034,6 +76117,14 @@
    {
     "file": "src/services/replayForkService.ts",
     "text": "Each snapshot's previous_hash must match the prior snapshot's chain_hash."
+   },
+   {
+    "file": "src/services/securityService.ts",
+    "text": "* A tabela so aceita escrita por service_role, entao o front nao pode fazer"
+   },
+   {
+    "file": "src/services/securityService.ts",
+    "text": "operacao de negocio que a originou, mas tambem nunca fica silenciosa."
    },
    {
     "file": "src/services/securityService.ts",
@@ -113498,6 +113589,22 @@
    },
    {
     "file": "src/test/services.test.ts",
+    "name": "exports logSecurityEvent"
+   },
+   {
+    "file": "src/test/services.test.ts",
+    "name": "logSecurityEvent chama a RPC de auditoria com o autor implicito"
+   },
+   {
+    "file": "src/test/services.test.ts",
+    "name": "logSecurityEvent nunca lanca: falha de auditoria nao derruba a operacao"
+   },
+   {
+    "file": "src/test/services.test.ts",
+    "name": "logSecurityEvent usa info como severidade padrao"
+   },
+   {
+    "file": "src/test/services.test.ts",
     "name": "billingService"
    },
    {
@@ -130187,6 +130294,27 @@
      "user_2fa"
     ]
    },
+   "registrar_evento_seguranca": {
+    "args": "p_event_type text, p_severity text DEFAULT 'info', p_workspace uuid DEFAULT NULL, p_details jsonb DEFAULT '{}'::jsonb",
+    "returns": "uuid",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_uid uuid := auth.uid(); v_id uuid; BEGIN IF v_uid IS NULL THEN RAISE EXCEPTION 'registrar_evento_seguranca exige usuario autenticado' USING ERRCODE = '28000'; END IF; IF p_event_type IS NULL OR length(btrim(p_event_type)) = 0 THEN RAISE EXCEPTION 'event_type obrigatorio' USING ERRCODE = '22023'; END IF; IF p_severity NOT IN ('info', 'low', 'medium', 'high', 'critical') THEN RAISE EXCEPTION 'severidade invalida: %', p_severity USING ERRCODE = '22023'; END IF; IF p_workspace IS NULL THEN SELECT wm.workspace_id INTO p_workspace FROM public.workspace_members wm WHERE wm.user_id = v_uid ORDER BY wm.created_at LIMIT 1; ELSE IF NOT EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE …",
+    "raises": [
+     "registrar_evento_seguranca exige usuario autenticado",
+     "event_type obrigatorio",
+     "severidade invalida: %",
+     "usuario nao pertence ao workspace informado"
+    ],
+    "tables": [
+     "p_workspace",
+     "security_events",
+     "v_id",
+     "workspace_members"
+    ]
+   },
    "Args": {
     "args": "",
     "returns": "?",
@@ -131039,6 +131167,26 @@
     "function": "check_budget",
     "msg": "forbidden",
     "src": "supabase/migrations/20261129006000_check_budget_guarda_escopo.sql"
+   },
+   {
+    "function": "registrar_evento_seguranca",
+    "msg": "registrar_evento_seguranca exige usuario autenticado",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "function": "registrar_evento_seguranca",
+    "msg": "event_type obrigatorio",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "function": "registrar_evento_seguranca",
+    "msg": "severidade invalida: %",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "function": "registrar_evento_seguranca",
+    "msg": "usuario nao pertence ao workspace informado",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
    }
   ],
   "db_generated": [
@@ -140097,6 +140245,7 @@
    "supabase/migrations/20261129010000_custo_anomalias_escopo_chamador.sql",
    "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql",
    "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
+   "supabase/migrations/20261129018000_registrar_evento_seguranca.sql",
    "tests/load/llm-gateway.k6.js",
    "tests/rls/personas.test.ts",
    "tests/rls/setup.ts",
@@ -140254,6 +140403,7 @@
    "register_managed_secret",
    "register_risk",
    "register_vendor",
+   "registrar_evento_seguranca",
    "reset_embedding_dead_letter",
    "reset_workspace_budget",
    "review_risk",
@@ -145180,6 +145330,30 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261129011000_skills_e_secrets_refresh.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "registrar_evento_seguranca",
+    "objkind": "function",
+    "roles": "public",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "registrar_evento_seguranca",
+    "objkind": "function",
+    "roles": "anon",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "registrar_evento_seguranca",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
    }
   ],
   "guards": [
@@ -164271,7 +164445,7 @@
   },
   "src/integrations/supabase/types.ts": {
    "path": "src/integrations/supabase/types.ts",
-   "lines": 15573,
+   "lines": 15582,
    "exports": [
     "type Json",
     "type Database",
@@ -179265,9 +179439,10 @@
   },
   "src/services/securityService.ts": {
    "path": "src/services/securityService.ts",
-   "lines": 485,
+   "lines": 534,
    "exports": [
     "function listApiKeys",
+    "function logSecurityEvent",
     "function createApiKey",
     "function revokeApiKey",
     "interface SecurityEventRow",
@@ -179365,6 +179540,9 @@
      "id"
     ]
    },
+   "rpc": [
+    "registrar_evento_seguranca"
+   ],
    "errors": [
     "Not authenticated"
    ],
@@ -179417,6 +179595,8 @@
     }
    ],
    "rule_comments": [
+    "* A tabela so aceita escrita por service_role, entao o front nao pode fazer",
+    "operacao de negocio que a originou, mas tambem nunca fica silenciosa.",
     "A RLS libera a leitura apenas para admin do workspace, então lista vazia",
     "pode significar \"sem eventos\" ou \"sem permissão\": quem chama deve dizer qual."
    ],
@@ -185429,7 +185609,7 @@
   },
   "src/test/services.test.ts": {
    "path": "src/test/services.test.ts",
-   "lines": 165,
+   "lines": 226,
    "is_test": true,
    "tests": [
     "Service Layer",
@@ -185450,6 +185630,10 @@
     "exports createApiKey",
     "exports revokeApiKey",
     "exports getAuditLog",
+    "exports logSecurityEvent",
+    "logSecurityEvent chama a RPC de auditoria com o autor implicito",
+    "logSecurityEvent nunca lanca: falha de auditoria nao derruba a operacao",
+    "logSecurityEvent usa info como severidade padrao",
     "billingService",
     "exports getAgentUsage",
     "exports listBudgets",
@@ -198781,6 +198965,11 @@
    "path": "supabase/migrations/20261129017000_sbom_fonte_dependabot.sql",
    "lines": 16
   },
+  "supabase/migrations/20261129018000_registrar_evento_seguranca.sql": {
+   "path": "supabase/migrations/20261129018000_registrar_evento_seguranca.sql",
+   "lines": 80,
+   "uses_service_role": true
+  },
   "tests/e2e/security-audits.spec.ts": {
    "path": "tests/e2e/security-audits.spec.ts",
    "lines": 34,
@@ -198942,10 +199131,24 @@
   }
  },
  "git": {
-  "sha": "42ee11ae339cccfbabd41b74e9b3a52783f3cbe4",
+  "sha": "e8131bafbc42b32e5ddc3139ea4eec6feafc167c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "e8131ba",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "feat(seguranca): liga a trilha de auditoria que estava morta (#219)",
+    "files": [
+     ".github/workflows/gen-types.yml",
+     ".github/workflows/migrations-deploy.yml",
+     "src/integrations/supabase/types.ts",
+     "src/services/securityService.ts",
+     "src/test/services.test.ts",
+     "supabase/migrations/20261129018000_registrar_evento_seguranca.sql"
+    ]
+   },
    {
     "sha": "42ee11a",
     "date": "2026-11-27",
@@ -199270,23 +199473,24 @@
      "supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql",
      "supabase/migrations/20261127140000_rls_particoes_orfas.sql"
     ]
-   },
-   {
-    "sha": "9e812c6",
-    "date": "2026-11-26",
-    "author": "adm01-debug",
-    "subject": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)",
-    "files": []
    }
   ],
   "hot_files": [
    [
     "src/integrations/supabase/types.ts",
-    4
+    5
    ],
    [
     "supabase/deployment-manifest.json",
     4
+   ],
+   [
+    ".github/workflows/migrations-deploy.yml",
+    2
+   ],
+   [
+    "src/services/securityService.ts",
+    2
    ],
    [
     ".github/workflows/sync-vulnerabilities.yml",
@@ -199307,6 +199511,18 @@
    [
     ".prbody2.md",
     2
+   ],
+   [
+    ".github/workflows/gen-types.yml",
+    1
+   ],
+   [
+    "src/test/services.test.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261129018000_registrar_evento_seguranca.sql",
+    1
    ],
    [
     "supabase/migrations/20261129017000_sbom_fonte_dependabot.sql",
@@ -199338,26 +199554,6 @@
    ],
    [
     "src/pages/SchemaDictionaryPage.tsx",
-    1
-   ],
-   [
-    "src/services/schemaDictionaryService.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261129015000_dicionario_esquema_anon.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261129014000_agendar_refresh_grafo.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261129013000_anon_sem_execute_em_funcoes.sql",
-    1
-   ],
-   [
-    ".github/workflows/schema-probe.yml",
     1
    ]
   ]

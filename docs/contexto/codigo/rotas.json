@@ -66,7 +66,8 @@
    "rpcs": [
     "get_masked_secrets",
     "get_my_2fa_status",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "edges": [
     "cron-executor",
@@ -1493,7 +1494,8 @@
     "get_pending_invites_for_email",
     "increment_skill_installs",
     "invite_workspace_member",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "edges": [
     "audio-transcribe",
@@ -2796,7 +2798,8 @@
    "rpcs": [
     "get_masked_secrets",
     "get_my_2fa_status",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "edges": [
     "cron-executor",
@@ -3037,7 +3040,8 @@
    ],
    "rpcs": [
     "get_masked_secrets",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "edges": [
     "a2a-server",
@@ -5314,7 +5318,8 @@
    ],
    "rpcs": [
     "get_masked_secrets",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "edges": [
     "cerebro-query",
@@ -5874,7 +5879,8 @@
     "get_my_2fa_status",
     "get_rollback_rate_per_min",
     "get_wal_generation_rate",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "edges": [
     "validate-access"
@@ -6850,7 +6856,8 @@
    "rpcs": [
     "get_masked_secrets",
     "get_my_2fa_status",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "edges": [
     "bitrix24-webhook"
@@ -8013,7 +8020,8 @@
     "get_masked_secrets",
     "get_my_2fa_status",
     "increment_skill_installs",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "edges": [
     "bitrix24-webhook",

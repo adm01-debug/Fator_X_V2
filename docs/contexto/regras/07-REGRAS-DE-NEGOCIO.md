@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `42ee11ae33` · branch `main` · 2026-11-27 12:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e8131bafbc` · branch `main` · 2026-11-27 14:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -885,6 +885,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `get_workspace_members_full` | forbidden: workspace admin required | `supabase/migrations/20261129001000_consertar_membros_e_oncall.sql` |
 | `get_oncall_with_contacts` | forbidden: workspace admin required | `supabase/migrations/20261129001000_consertar_membros_e_oncall.sql` |
 | `check_budget` | forbidden | `supabase/migrations/20261129006000_check_budget_guarda_escopo.sql` |
+| `registrar_evento_seguranca` | registrar_evento_seguranca exige usuario autenticado | `supabase/migrations/20261129018000_registrar_evento_seguranca.sql` |
+| `registrar_evento_seguranca` | event_type obrigatorio | `supabase/migrations/20261129018000_registrar_evento_seguranca.sql` |
+| `registrar_evento_seguranca` | severidade invalida: % | `supabase/migrations/20261129018000_registrar_evento_seguranca.sql` |
+| `registrar_evento_seguranca` | usuario nao pertence ao workspace informado | `supabase/migrations/20261129018000_registrar_evento_seguranca.sql` |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -4093,7 +4097,7 @@ _nenhum item encontrado_
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 | `workspace_admin` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 
-## K. Testes como especificação (3141 testes em 232 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3145 testes em 232 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4114,13 +4118,13 @@ _nenhum item encontrado_
 | `src/test/retry-engine.test.ts` | 32 | retryEngineService — defaults and presets · DEFAULT_RETRY_POLICY has sensible defaults · RETRY_PRESETS contains named configurations · DEFAULT_CIRCUIT_CONFIG has thresholds … |
 | `src/test/skill-description-enrichment.test.ts` | 32 | fold · remove acentos, pontuação e caixa · é idempotente para qualquer entrada gerada · isDescriptionEmpty … |
 | `src/test/security-service.test.ts` | 31 | securityService · listApiKeys · nunca seleciona a coluna key_hash (vazamento de credencial) · propaga erro em vez de mascarar como lista vazia … |
+| `src/test/services.test.ts` | 30 | Service Layer · knowledgeService · exports listKnowledgeBases · exports deleteKnowledgeBase … |
 | `src/test/skill-demand-department-filter.test.ts` | 30 | normalizeDepartmentFilter · aceita a taxonomia canônica e os dois sentinelas · normaliza caixa e espaços sem perder o alvo · degrada entradas hostis para all em vez de lançar … |
 | `src/test/whatsapp-webhook.test.ts` | 30 | whatsappWebhookService — catálogo · exposes documented event types · exposes 4 supported providers · every provider has tokenEnv … |
 | `src/test/extended-services.test.ts` | 29 | Extended Service Layer Tests · llmGatewayService · exports invokeLLMGateway · exports invokeGuardrailsEngine … |
 | `src/test/skill-classification-efficacy.test.ts` | 28 | deriveVerdict · aprovar sobre departamento existente = erro do classificador · aprovar sobre vazio = preenchimento, não erro · rejeitar com departamento vigente = confirmação do rótulo automático … |
 | `src/test/normalize.test.ts` | 27 | normalizeCnpj · strips formatting from formatted CNPJ · returns digits-only CNPJ as-is · returns null for invalid length … |
 | `src/test/curation-highlight.test.ts` | 26 | highlightKey · casa exatamente com a chave usada pelo acumulador de pendentes · distingue duplas diferentes · beginHighlight … |
-| `src/test/services.test.ts` | 26 | Service Layer · knowledgeService · exports listKnowledgeBases · exports deleteKnowledgeBase … |
 | `src/test/skill-prompt-evidence-ledger.test.ts` | 26 | isValidChecksum · aceita apenas 8 dígitos hex minúsculos · parseEvidenceRows — robustez · descarta linhas sem checksum válido … |
 | `src/lib/validations/__tests__/promptContradictions.test.ts` | 25 | polarity contradictions · detects nunca vs sempre on the same topic (PT) · detects proibido vs obrigatório on the same topic · detects  … |
 | `src/test/bitrix24-webhook.test.ts` | 25 | bitrix24WebhookService — catálogo · exposes the documented event types · every event type has a label and description · não há ids duplicados (chave do upsert onConflict) … |
@@ -4803,6 +4807,8 @@ _nenhum item encontrado_
 | - Todo id listado aqui DEVE existir em `AGENT_TEMPLATES` (há teste guardando); | `src/services/quickTypeTemplateMap.ts` |
 | ═══ Permission Check (client-side) ═══ | `src/services/rbacService.ts` |
 | Each snapshot's previous_hash must match the prior snapshot's chain_hash. | `src/services/replayForkService.ts` |
+| * A tabela so aceita escrita por service_role, entao o front nao pode fazer | `src/services/securityService.ts` |
+| operacao de negocio que a originou, mas tambem nunca fica silenciosa. | `src/services/securityService.ts` |
 | A RLS libera a leitura apenas para admin do workspace, então lista vazia | `src/services/securityService.ts` |
 | pode significar "sem eventos" ou "sem permissão": quem chama deve dizer qual. | `src/services/securityService.ts` |
 | limite defensivo (URLs muito longas quebram em alguns browsers) | `src/services/shareService.ts` |
@@ -4814,6 +4820,4 @@ _nenhum item encontrado_
 | puro: o SQL cobre o caso dominante — `description = ''` — e o resto é regra | `src/services/skillEnrichmentService.ts` |
 | de negócio que muda mais rápido que schema e merece ser testável sem banco. | `src/services/skillEnrichmentService.ts` |
 | * Mesma regra do fallback de classificação, e pelo mesmo motivo: 402 (créditos) | `src/services/skillEnrichmentService.ts` |
-| * Onde o próximo lote deve começar. */ | `src/services/skillHarvestService.ts` |
-| Falha de rede não pode derrubar a varredura: o local já guardou o avanço. | `src/services/skillHarvestService.ts` |
-| … +182 linhas — lista completa em `context.json` | |
+| … +184 linhas — lista completa em `context.json` | |

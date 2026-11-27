@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `42ee11ae33` · branch `main` · 2026-11-27 12:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e8131bafbc` · branch `main` · 2026-11-27 14:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 197 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 198 arquivo(s)
 
 - `e2e/auth-flows.spec.ts`
 - `e2e/helpers/auth-fixtures.ts`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260726161137_21809199-94e6-4a51-ad42-1a224926b6db.sql`
 - `supabase/migrations/20260726195702_c67b4a61-2895-4b1f-a3ab-2b98291792e3.sql`
 - `supabase/migrations/20260726200653_b8a5612b-6c59-4e82-b726-a0be5aee81dc.sql`
-- … +47 (lista completa em `context.json`)
+- … +48 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -627,6 +627,7 @@
 - `register_managed_secret`
 - `register_risk`
 - `register_vendor`
+- `registrar_evento_seguranca`
 - `reset_embedding_dead_letter`
 - `reset_workspace_budget`
 - `review_risk`
@@ -729,7 +730,7 @@ Middleware matcher (Next.js): nenhum
 |---|---|---|---|
 | grant | anon, authenticated | select | `forum_threads_public`, `forum_posts_public`, `forum_threads_public`, `forum_posts_public` |
 | grant | anon, authenticated, service_role | execute | `check_rate_limit`, `is_user_locked_out`, `check_rate_limit` |
-| grant | authenticated | execute | `get_user_workspace_ids`, `get_slo_summary`, `get_workspace_members_full`, `get_oncall_with_contacts`, `get_my_2fa_status`, `get_pending_invites_for_email`, `invite_workspace_member`, `get_wal_generation_rate`, `get_cron_job_health`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_snapshot` … +28 |
+| grant | authenticated | execute | `get_user_workspace_ids`, `get_slo_summary`, `get_workspace_members_full`, `get_oncall_with_contacts`, `get_my_2fa_status`, `get_pending_invites_for_email`, `invite_workspace_member`, `get_wal_generation_rate`, `get_cron_job_health`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_snapshot` … +29 |
 | grant | authenticated | select | `audit_log_safe`, `audit_log_safe`, `workspace_members_safe`, `workspace_members_directory`, `workspace_members_safe`, `workspace_members_safe`, `workspace_members_safe`, `slo_metrics_hourly`, `slo_metrics_hourly`, `workspace_members_safe`, `workspace_members_safe`, `oncall_schedule_safe`, `workspace_members_safe`, `workspace_members_directory`, `oncall_schedule_safe` … +42 |
 | grant | authenticated | select, insert, update | `citation_telemetry`, `skill_reclassification_reviews` |
 | grant | authenticated | select, insert, update, delete | `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `slack_workspace_config`, `slack_channel_routes`, `slack_agent_notifications`, `slack_rag_sources`, `slack_bot_bindings`, `document_ingestions`, `collections`, `notebook_notes`, `knowledge_links`, `notebook_podcasts` … +19 |
@@ -751,7 +752,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC, anon, authenticated | execute | `prune_traces_retention`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `get_cron_job_health`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_wal_generation_rate`, `internal.test_partition_automation`, `detect_slow_queries_and_alert`, `internal.detect_slo_breach_and_alert`, `collections_fill_workspace`, `explain_query_plan`, `log_ingestion_event`, `snapshot_note_version` … +29 |
 | revoke | PUBLIC, authenticated | execute | `recompute_memory_tier`, `refresh_knowledge_graph_health` |
 | revoke | PUBLIC, authenticated, anon | execute | `internal.slack_cleanup_dedupe` |
-| revoke | anon | all | `get_slow_query_alerts_history`, `explain_query_plan`, `claim_due_cadence_enrollments`, `get_partition_health_snapshot`, `get_cron_job_health`, `get_wal_generation_rate`, `chat_threads`, `chat_messages` |
+| revoke | anon | all | `get_slow_query_alerts_history`, `explain_query_plan`, `claim_due_cadence_enrollments`, `get_partition_health_snapshot`, `get_cron_job_health`, `get_wal_generation_rate`, `chat_threads`, `chat_messages`, `registrar_evento_seguranca` |
 | revoke | anon | execute | `validate_oncall_workspace_consistency`, `public`, `log_audit_entry`, `is_user_locked_out`, `refresh_secrets_status` |
 | revoke | anon | insert, update, delete | `compliance_frameworks` |
 | revoke | anon | insert, update, delete, truncate | `rate_limit_entries` |
@@ -762,7 +763,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | authenticated | insert, update, delete | `compliance_frameworks` |
 | revoke | authenticated | update, delete | `audit_log` |
 | revoke | authenticated, anon | all | `traces`, `spans` |
-| revoke | public | all | `refresh_agent_daily_metrics`, `internal.capture_perf_snapshot`, `internal.set_perf_baseline`, `internal.detect_perf_regressions`, `internal.capture_perf_snapshot`, `internal.set_perf_baseline`, `internal.detect_perf_regressions` |
+| revoke | public | all | `refresh_agent_daily_metrics`, `internal.capture_perf_snapshot`, `internal.set_perf_baseline`, `internal.detect_perf_regressions`, `internal.capture_perf_snapshot`, `internal.set_perf_baseline`, `internal.detect_perf_regressions`, `registrar_evento_seguranca` |
 | revoke | public, anon | all | `get_cron_job_health` |
 | revoke | public, anon, authenticated | all | `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions`, `internal.ensure_monthly_partitions`, `internal.drop_old_partitions`, `internal.cleanup_orphan_sessions`, `internal.purge_telemetry`, `internal.check_bloat_and_alert`, `internal.dispatch_security_alert_to_slack`, `internal.prune_perf_snapshots`, `internal.prune_wal_snapshots`, `internal.sample_rollback_stats`, `internal.sample_wal_stats`, `internal.purge_telemetry`, `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions` … +5 |
 | revoke | public, anon, authenticated | execute | `create_partition_if_not_exists`, `cleanup_old_auth_attempts`, `increment_webhook_counter` |

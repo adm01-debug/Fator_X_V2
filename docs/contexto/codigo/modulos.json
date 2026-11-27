@@ -345,6 +345,7 @@
     "register_business_system",
     "register_risk",
     "register_vendor",
+    "registrar_evento_seguranca",
     "reset_workspace_budget",
     "review_risk",
     "rollback_change",
@@ -901,7 +902,8 @@
     "get_pending_invites_for_email",
     "increment_skill_installs",
     "invite_workspace_member",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "buckets": [],
    "canais_realtime": [
@@ -1276,6 +1278,7 @@
     "get_current_spend",
     "get_masked_secrets",
     "is_user_locked_out",
+    "registrar_evento_seguranca",
     "reset_workspace_budget"
    ],
    "buckets": [],
@@ -1534,7 +1537,8 @@
     "get_masked_secrets",
     "get_pending_invites_for_email",
     "invite_workspace_member",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "buckets": [],
    "canais_realtime": [],
@@ -1681,7 +1685,8 @@
    ],
    "rpcs": [
     "get_masked_secrets",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "buckets": [],
    "canais_realtime": [],
@@ -2156,6 +2161,7 @@
     "register_business_system",
     "register_risk",
     "register_vendor",
+    "registrar_evento_seguranca",
     "reset_workspace_budget",
     "review_risk",
     "rollback_change",
@@ -2935,7 +2941,8 @@
     "get_my_2fa_status",
     "get_rollback_rate_per_min",
     "get_wal_generation_rate",
-    "is_user_locked_out"
+    "is_user_locked_out",
+    "registrar_evento_seguranca"
    ],
    "buckets": [],
    "canais_realtime": [
@@ -4447,7 +4454,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 4,
    "testes": 0,
-   "linhas": 15808,
+   "linhas": 15817,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4855,6 +4862,7 @@
     "register_business_system",
     "register_risk",
     "register_vendor",
+    "registrar_evento_seguranca",
     "reset_workspace_budget",
     "review_risk",
     "rollback_change",
@@ -6091,6 +6099,7 @@
     "register_managed_secret",
     "register_risk",
     "register_vendor",
+    "registrar_evento_seguranca",
     "reset_workspace_budget",
     "review_risk",
     "rollback_change",
@@ -6294,7 +6303,7 @@
    "modulo": "services",
    "arquivos": 152,
    "testes": 0,
-   "linhas": 33135,
+   "linhas": 33184,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6605,6 +6614,7 @@
     "register_managed_secret",
     "register_risk",
     "register_vendor",
+    "registrar_evento_seguranca",
     "reset_workspace_budget",
     "review_risk",
     "rollback_change",
@@ -6885,6 +6895,7 @@
      "register_managed_secret",
      "register_risk",
      "register_vendor",
+     "registrar_evento_seguranca",
      "reset_workspace_budget",
      "review_risk",
      "rollback_change",
