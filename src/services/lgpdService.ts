@@ -73,7 +73,11 @@ export async function requestDeletion(
   });
   if (error) throw error;
   const result = data as DeletionResult;
-  return { deleted: {}, request_id: null, ...result, items_deleted: result?.items_deleted ?? 0 };
+  return {
+    request_id: result?.request_id ?? null,
+    deleted: result?.deleted ?? {},
+    items_deleted: result?.items_deleted ?? 0,
+  };
 }
 
 export async function anonymizeMyData(reason?: string): Promise<AnonymizeResult> {
