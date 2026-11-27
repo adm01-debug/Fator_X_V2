@@ -25,6 +25,14 @@
   },
   "registrations": [
     {
+      "id": "sync-dependabot",
+      "kind": "legacy",
+      "files": ["scripts/sync-dependabot-findings.mjs"],
+      "manual": ["node", "scripts/sync-dependabot-findings.mjs"],
+      "triggers": ["manual"],
+      "reason": "Executado pelo workflow agendado .github/workflows/sync-vulnerabilities.yml (cron diario) e por dispatch manual. Depende de SUPABASE_ACCESS_TOKEN e GH_TOKEN, que so existem no runner."
+    },
+    {
       "id": "core",
       "kind": "tool",
       "files": ["scripts/automation.mjs"],
