@@ -1,7 +1,7 @@
 # docs:
 #   gatilho: manual (workflow_dispatch) com confirmacao explicita.
-#   prova: o log do run mostra a lista de migrations pendentes (dry-run) e o resultado do db push.
-#   falha: job vermelho = nada foi aplicado (db push e transacional por migration); corrigir e re-disparar.
+#   prova: o log do run mostra as migrations pendentes (migration list) e o resultado do db push.
+#   falha: job vermelho = nada foi aplicado; corrigir e re-disparar.
 #   avisa: o resumo do run e a prova; usuario acompanha no GitHub Actions.
 
 name: Migrations Deploy
@@ -35,7 +35,7 @@ jobs:
     timeout-minutes: 20
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROJECT_REF: qdlnzopxrlsoljcrcmzv
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -57,14 +57,14 @@ jobs:
           fi
 
       - name: Link do projeto
-        run: npx --yes supabase@2 link --project-ref qdlnzopxrlsoljcrcmzv
+        run: npx --yes supabase@2 link --project-ref "$PROJECT_REF"
 
-      - name: Migrations pendentes (dry-run)
+      - name: Migrations pendentes
         run: npx --yes supabase@2 migration list
 
       - name: Aplicar
         if: ${{ inputs.dry_run == 'false' }}
-        run: npx --yes supabase@2 db push --yes
+        run: npx --yes supabase@2 db push --project-ref "$PROJECT_REF" --include-all --yes
 
       - name: Resumo
         run: |
@@ -73,4 +73,5 @@ jobs:
             echo "- dry_run: \`${{ inputs.dry_run }}\`"
             echo "- confirm: \`${{ inputs.confirm }}\`"
             echo "- commit: \`${{ github.sha }}\`"
+            echo "- projeto: \`$PROJECT_REF\`"
           } >> "$GITHUB_STEP_SUMMARY"
