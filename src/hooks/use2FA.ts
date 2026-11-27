@@ -90,23 +90,20 @@ export function use2FA() {
     [user?.email],
   );
 
+  // O hardening revogou INSERT/UPDATE de (secret, backup_codes) para
+  // `authenticated`; a gravação só passa pela RPC, que revalida o TOTP no banco.
   const enable = useCallback(
     async (secret: string, token: string) => {
       if (!user?.id) throw new Error('Not authenticated');
-      if (!verifyToken(secret, token)) throw new Error('Código inválido');
       const backupCodes = generateBackupCodes();
-      const verifiedAt = new Date().toISOString();
-      const { error } = await supabase.from('user_2fa').upsert(
-        {
-          user_id: user.id,
-          secret,
-          enabled: true,
-          backup_codes: backupCodes,
-          last_verified_at: verifiedAt,
-        },
-        { onConflict: 'user_id' },
-      );
+      const { data, error } = await supabase.rpc('enable_my_2fa', {
+        _secret: secret,
+        _token: token.replace(/\s/g, ''),
+        _backup_codes: backupCodes,
+      });
       if (error) throw new Error(error.message);
+      if (!data) throw new Error('Código inválido');
+      const verifiedAt = new Date().toISOString();
       setState((previous) => ({
         ...previous,
         enabled: true,
@@ -117,12 +114,12 @@ export function use2FA() {
       }));
       return backupCodes;
     },
-    [user?.id, verifyToken],
+    [user?.id],
   );
 
   const disable = useCallback(async () => {
     if (!user?.id) throw new Error('Not authenticated');
-    const { error } = await supabase.from('user_2fa').delete().eq('user_id', user.id);
+    const { error } = await supabase.rpc('disable_my_2fa');
     if (error) throw new Error(error.message);
     setState({ ...INACTIVE_STATE });
   }, [user?.id]);
