@@ -64,27 +64,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    // Check lockout first via our new service
-    const { isUserLockedOut } = await import('@/lib/supabaseExtended');
-    const locked = await isUserLockedOut(email);
-    if (locked) {
-      return {
-        error: new Error(
-          'Muitas tentativas falhas. Sua conta está temporariamente bloqueada por 15 minutos.',
-        ),
-      };
+    // Pré-JWT: roda como `anon`. A escrita em auth_attempts é feita pela RPC
+    // SECURITY DEFINER `record_auth_attempt` — a policy de INSERT da tabela
+    // exige user_id = auth.uid(), o que é impossível antes do login.
+    const { data: gate, error: gateError } = await supabase.rpc('check_auth_security', {
+      p_email: email,
+      p_ip_address: null,
+      p_action: 'login',
+    });
+    const decision = (gate ?? {}) as {
+      allowed?: boolean;
+      reason?: string;
+      requires_captcha?: boolean;
+    };
+    if (gateError) {
+      // Falha do guard não pode trancar o produto fora; segue o login.
+      logger.warn('check_auth_security indisponível', { error: gateError.message });
+    } else if (decision.allowed === false) {
+      await supabase.rpc('record_auth_attempt', {
+        p_email: email,
+        p_success: false,
+        p_ip_address: null,
+        p_requires_captcha: false,
+      });
+      const message =
+        decision.reason === 'permanent_lockout'
+          ? 'Conta bloqueada. Procure o administrador.'
+          : 'Muitas tentativas falhas. Sua conta está temporariamente bloqueada por 15 minutos.';
+      return { error: new Error(message) };
     }
 
     const { error, data } = await supabase.auth.signInWithPassword({ email, password });
 
-    // Log attempt (successful or failed) — best-effort; never block sign-in
-    await Promise.resolve(
-      supabase.from('auth_attempts').insert({
-        email,
-        success: !error,
-        ip_address: null,
-      }),
-    ).catch(() => undefined);
+    // Registra a tentativa (sucesso ou falha). Best-effort: nunca bloqueia o login.
+    const { error: recordError } = await supabase.rpc('record_auth_attempt', {
+      p_email: email,
+      p_success: !error,
+      p_ip_address: null,
+      p_requires_captcha: Boolean(decision.requires_captcha),
+    });
+    if (recordError) {
+      logger.warn('record_auth_attempt falhou', { error: recordError.message });
+    }
 
     if (error) return { error: error as Error | null };
 
