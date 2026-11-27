@@ -182,6 +182,7 @@ const navSections = [
       { title: 'Decaimento de Conhecimento', url: '/knowledge-decay', icon: Archive },
       { title: 'Jobs de Sistema', url: '/system-jobs', icon: ServerCog },
       { title: 'Playbook Particionamento', url: '/docs/partitioning', icon: BookOpen },
+      { title: 'Dicionario do Banco', url: '/schema-dictionary', icon: Database },
       { title: 'Eventos de Webhook', url: '/webhook-events', icon: Zap },
       { title: 'Governança', url: '/governance', icon: ShieldCheck },
       { title: 'Janelas de Congelamento', url: '/governance/freeze-windows', icon: Snowflake },

@@ -55,6 +55,7 @@ const EvaluationsPage = lazy(() => import('./pages/EvaluationsPage'));
 const AgentEvalsPage = lazy(() => import('./pages/AgentEvalsPage'));
 const KnowledgeDecayPage = lazy(() => import('./pages/KnowledgeDecayPage'));
 const SystemJobsPage = lazy(() => import('./pages/SystemJobsPage'));
+const SchemaDictionaryPage = lazy(() => import('./pages/SchemaDictionaryPage'));
 const WebhookEventsPage = lazy(() => import('./pages/WebhookEventsPage'));
 const GovernancePage = lazy(() => import('./pages/GovernancePage'));
 const BudgetsPage = lazy(() => import('./pages/BudgetsPage'));
@@ -612,6 +613,14 @@ const App = () => {
                       element={
                         <SafePage>
                           <SystemJobsPage />
+                        </SafePage>
+                      }
+                    />
+                    <Route
+                      path="/schema-dictionary"
+                      element={
+                        <SafePage>
+                          <SchemaDictionaryPage />
                         </SafePage>
                       }
                     />
