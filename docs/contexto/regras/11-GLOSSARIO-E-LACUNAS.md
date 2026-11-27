@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9e812c61d2` · branch `main` · 2026-11-27 00:34 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `710145b29b` · branch `main` · 2026-11-27 02:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -17,13 +17,14 @@
 | `agent_experiments` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `agent_graphs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `agent_installed_skills` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `agent_memories` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `agent_memories` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
 | `agent_memories_v2` | _(sem COMMENT ON TABLE — significado não documentado)_ | 20 colunas | migration |
 | `agent_permissions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `agent_routing_config` | Maps external event sources (bitrix24, slack, gmail, ...) and event types to agents that should handle them. | 8 colunas | migration |
+| `agent_routing_config` | Maps external event sources (bitrix24, slack, gmail, ...) and event types to agents that should handle them. | 9 colunas | migration |
 | `agent_skills` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `agent_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `agent_traces` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
+| `agent_traces_v2` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `agent_traces_v2_2026_04` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `agent_traces_v2_2026_05` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `agent_traces_v2_2026_06` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
@@ -41,19 +42,19 @@
 | `agent_traces_v2_2027_06` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `agent_traces_v2_2027_07` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `agent_usage` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `agent_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `agent_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `agent_workflow_runs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `agent_workflows` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `agents` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
 | `alert_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `api_keys` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `api_keys` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `asset_audits` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `assets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 28 colunas | migration |
 | `audit_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `audit_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
+| `audit_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `audit_log_safe` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | types.ts |
-| `audit_log_v2` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
+| `audit_log_v2` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `audit_log_v2_2026_04` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `audit_log_v2_2026_05` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | types.ts |
 | `audit_log_v2_2026_06` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
@@ -96,7 +97,7 @@
 | `compliance_reports` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
 | `connector_instances` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `connector_registry` | _(sem COMMENT ON TABLE — significado não documentado)_ | 22 colunas | migration |
-| `consent_records` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
+| `consent_records` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `cost_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `cost_baselines` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `creator_payouts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
@@ -113,15 +114,15 @@
 | `crm_icp_profiles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 18 colunas | migration |
 | `crm_pipelines` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `crm_stages` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `cron_schedule_executions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `cron_schedules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
+| `cron_schedule_executions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
+| `cron_schedules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 21 colunas | migration |
 | `data_breach_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 21 colunas | migration |
-| `data_deletion_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
+| `data_deletion_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `data_processing_register` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
 | `data_retention_policies` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `data_subject_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `dead_letter_queue` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `deploy_connections` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `deploy_connections` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `document_ingestion_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `document_ingestions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 18 colunas | migration |
 | `documents` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
@@ -135,7 +136,7 @@
 | `evaluation_runs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `execution_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 20 colunas | migration |
 | `finetune_jobs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
-| `forensic_snapshots` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | types.ts |
+| `forensic_snapshots` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `forum_posts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `forum_posts_public` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | types.ts |
 | `forum_posts_safe` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | types.ts |
@@ -144,8 +145,8 @@
 | `forum_threads_safe` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | types.ts |
 | `freeze_windows` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `game_day_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `game_day_scorecards` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `game_days` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
+| `game_day_scorecards` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `game_days` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `geo_allowed_countries` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `graph_executions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `guardrail_policies` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
@@ -183,16 +184,17 @@
 | `lgpd_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 22 colunas | migration |
 | `llm_cost_by_caller` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | types.ts |
 | `managed_secrets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
-| `mcp_servers` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `model_pricing` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
+| `mcp_servers` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | migration |
+| `mcp_tools` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
+| `model_pricing` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `notebook_canvases` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `notebook_note_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `notebook_note_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `notebook_notes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `notebook_podcasts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
-| `notification_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `notifications` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
-| `oncall_schedule` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
+| `notification_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `notifications` | _(sem COMMENT ON TABLE — significado não documentado)_ | 24 colunas | migration |
+| `oncall_schedule` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `oncall_schedule_emails` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
 | `oncall_schedule_safe` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | types.ts |
 | `openclaw_agent_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
@@ -212,7 +214,7 @@
 | `prompt_experiment_runs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `prompt_experiments` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
 | `prompt_versions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `queue_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
+| `queue_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 18 colunas | migration |
 | `rate_limit_entries` | Armazena timestamps de requests para rate limiting distribuído | 4 colunas | migration |
 | `rate_limit_logs` | Rate limit events for abuse detection. Auto-cleanup recommended after 30 days. | 11 colunas | migration |
 | `replay_forks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 20 colunas | migration |
@@ -226,7 +228,7 @@
 | `sbom_snapshots` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `secret_rotation_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `security_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `security_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
+| `security_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `session_traces` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `sessions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `skill_harvest_candidates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 31 colunas | migration |
@@ -267,7 +269,7 @@
 | `spans_2027_07` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | types.ts |
 | `synthetic_checks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `synthetic_results` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `task_queues` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `task_queues` | _(sem COMMENT ON TABLE — significado não documentado)_ | 18 colunas | migration |
 | `template_skill_links` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `test_cases` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `tool_integrations` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
@@ -305,9 +307,7 @@
 | `traces_2027_03` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `traces_2027_04` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `traces_2027_05` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
-| `traces_2027_06` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
-| `traces_2027_07` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
-| … +305 linhas — lista completa em `context.json` | | | |
+| … +307 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -395,12 +395,8 @@ _nenhum item encontrado_
 | coluna | coluna `knowledge_base_id` usada no código não existe no schema de `documents` |  |
 | coluna | coluna `summary` usada no código não existe no schema de `document_ingestions` |  |
 | coluna | coluna `title` usada no código não existe no schema de `document_ingestions` |  |
-| coluna | coluna `email` usada no código não existe no schema de `workspace_members` |  |
 | coluna | coluna `knowledge_base_id` usada no código não existe no schema de `chunks` |  |
-| coluna | coluna `agent_id` usada no código não existe no schema de `agent_memories` |  |
-| coluna | coluna `metadata` usada no código não existe no schema de `agent_memories` |  |
 | coluna | coluna `user_id` usada no código não existe no schema de `session_traces` |  |
-| coluna | coluna `agent_id` usada no código não existe no schema de `api_keys` |  |
 | coluna | coluna `avg_latency_ms` usada no código não existe no schema de `model_pricing` |  |
 | coluna | coluna `context_window` usada no código não existe no schema de `model_pricing` |  |
 | coluna | coluna `label` usada no código não existe no schema de `model_pricing` |  |
@@ -430,7 +426,6 @@ _nenhum item encontrado_
 | rls | `compliance_controls`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | rls | `compliance_controls`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | rls | `compliance_frameworks`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
-| rls | `forensic_snapshots`: acessada do front (2 arquivo(s)) sem RLS (não encontrado) | `src/pages/ForensicSnapshotsPage.tsx`<br>`src/pages/ReplayForkPage.tsx` |
 | rls | `forum_posts_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | rls | `forum_threads_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | rls | `oncall_schedule_safe`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/incidentService.ts` |
@@ -474,14 +469,14 @@ _nenhum item encontrado_
 | dinâmico | 17 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/datahub-query/index.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/dr-orchestrator/index.ts` |
 | segurança | função `is_user_locked_out` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260513175210_4dba7ebe-924a-4906-af1c-31e94145799f.sql` |
-| segurança | função `update_budget_on_usage` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260401200000_implement_all_features.sql` |
-| segurança | função `check_budget_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260401200000_implement_all_features.sql` |
+| segurança | função `update_budget_on_usage` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| segurança | função `check_budget_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | segurança | função `audit_trigger_fn` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260420000002_fix_audit_trigger_fn_v2.sql` |
 | segurança | função `user_has_permission` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260405000002_rbac_system.sql` |
 | segurança | função `auto_assign_admin_role` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260405000002_rbac_system.sql` |
-| segurança | função `increment_skill_installs` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260405200001_agent_evolution_and_skills.sql` |
-| segurança | função `create_partition_if_not_exists` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260513143630_cc1271a4-4da5-41f3-8c30-6527ccb75e84.sql` |
-| segurança | função `is_mfa_valid_for_role` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
+| segurança | função `increment_skill_installs` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| segurança | função `create_partition_if_not_exists` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| segurança | função `is_mfa_valid_for_role` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | webhook | edge function `skill-harvester` processa eventos de webhook sem sinal de idempotência (evento duplicado = efeito duplicado) | `supabase/functions/skill-harvester/index.ts` |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
@@ -586,6 +581,9 @@ _nenhum item encontrado_
 - `skill_harvest_runs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `skill_harvest_candidates.status` tem valores ['accepted', 'auto_rejected', 'pending', 'promoted', 'rejected'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
 - `skill_reclassification_reviews.status` tem valores ['aprovado', 'pendente', 'rejeitado'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `forensic_snapshots.step_index` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `forensic_snapshots.state_before` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `forensic_snapshots.state_after` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `audit_log_v2_2026_04.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `audit_log_v2_2026_06.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `audit_log_v2_2026_07.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
@@ -601,9 +599,6 @@ _nenhum item encontrado_
 - `audit_log_v2_2027_05.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `audit_log_v2_2027_06.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `audit_log_v2_2027_07.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `forensic_snapshots.state_after` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `forensic_snapshots.state_before` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `forensic_snapshots.step_index` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `spans_2026_04.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `spans_2026_05.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `spans_2026_06.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
@@ -652,7 +647,7 @@ _nenhum item encontrado_
 - `traces_2027_05.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `traces_2027_06.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `traces_2027_07.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 325/331 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `agents`, `agent_usage`, `prompt_versions`, `notifications`, `user_roles`, `auth_attempts`, `chunks`, `vector_indexes`, `workspaces`, `workspace_members`, `knowledge_bases`, `agent_templates` …
+- 327/333 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `agents`, `agent_usage`, `prompt_versions`, `notifications`, `user_roles`, `auth_attempts`, `chunks`, `vector_indexes`, `workspaces`, `workspace_members`, `knowledge_bases`, `agent_templates` …
 - Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.
 
 ## Regras manuais presentes

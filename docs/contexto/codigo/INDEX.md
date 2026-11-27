@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9e812c61d21162494ba8a6db0c5c910978a760c0` (2026-11-26T20:45:10-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `710145b29bfed2d0029ffb353e481ab4ccecf595` (2026-11-26T23:02:56-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1415), SQL (341), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
+- linguagens: TypeScript (1415), SQL (347), Markdown (134), JavaScript (54), JSON (25), YAML (17), Shell (10), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2030 |
+| arquivos_total | 2036 |
 | arquivos_codigo | 1473 |
 | linhas_codigo | 323500 |
 | rotas | 152 |
@@ -45,8 +45,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | componentes | 665 |
 | hooks | 76 |
 | edge_functions | 88 |
-| tabelas | 327 |
-| migrations | 338 |
+| tabelas | 328 |
+| migrations | 344 |
 | cron_jobs | 37 |
 | testes | 253 |
 | workflows | 11 |
@@ -421,9 +421,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - menu_sem_destino: 7 — ex.: Coleções -> collections, Especialistas -> experts, Fatos -> facts
 - edges_orfas: 7 — ex.: bitrix24-api, bitrix24-oauth, geo-code
 - edges_chamadas_sem_pasta: 0
-- tabelas_sem_rls: 9 — ex.: agent_traces_v2_2026_11, agent_traces_v2_2026_12, agent_traces_v2_2027_01
+- tabelas_sem_rls: 4 — ex.: agent_traces_v2_2026_12, agent_traces_v2_2027_01, agent_usage
 - tabelas_usadas_sem_definicao: 0
-- tabelas_com_drift_migration_vs_types: 43 — ex.: agent_installed_skills, agent_memories, agent_memories_v2
+- tabelas_com_drift_migration_vs_types: 47 — ex.: agent_installed_skills, agent_memories, agent_memories_v2
 - rpcs_sem_definicao: 1 — ex.: exec_sql
 - componentes_orfaos: 36 — ex.: src/components/agents/AgentCardGrid.tsx, src/components/agents/detail/SLOPanel.tsx, src/components/agents/wizard/WizardStepComponents.tsx
 - componentes_com_nome_duplicado: 18 — ex.: AddressCard, CommandPalette, CrossDbResults
@@ -433,8 +433,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 14702 nós · 38932 arestas · 944 comunidades · grafo do commit `9e812c61`
-- comunidades maiores: button.tsx (279), lucide-react (258), badge.tsx (234), react (211), App.tsx (169), logger.ts (152), ref_https (133), checkRateLimit (133), cn (131), templateSkillLinkService.ts (128), notesService.ts (126), VendorsPage.tsx (118)
+- 15413 nós · 39315 arestas · 1372 comunidades · grafo do commit `710145b2`
+- comunidades maiores: lucide-react (292), react (265), sonner (198), label.tsx (195), ref_https (178), App.tsx (133), BCPPage.tsx (129), requireEnv (127), routePrefetch.ts (123), cn (120), logger.ts (108), templateSkillLinkService.ts (107)
 - símbolos mais chamados: cn() (src/lib/utils.ts), fromTable() (src/lib/supabaseExtended.ts), getWorkspaceId() (src/lib/agentService.ts), useAuth() (src/contexts/AuthContext.tsx), q() (scripts/supabase_snapshot/snapshot.py), useAgentBuilderStore (src/stores/agentBuilderStore.ts), useCerebroStore (src/stores/cerebroStore.ts), useWorkspaceId() (src/hooks/use-data.ts), fetchWithTimeout() (supabase/functions/_shared/retry.ts), useCurrentWorkspace() (src/hooks/useCurrentWorkspace.ts), useToast() (src/hooks/use-toast.ts), .collect() (scripts/supabase_snapshot/test_snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -580,6 +580,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1] - 2026-09-05
 
 ## Últimos commits
+- 2026-11-26 `710145b` fix(db): alinha o banco oficial ao schema do repo (1193 colunas e 10 objetos ausentes) (#175)
 - 2026-11-26 `9e812c6` fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)
 - 2026-11-26 `0b42f14` feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)
 - 2026-11-26 `0705b71` feat(custos): tela de baseline do detector de anomalias (#176)
@@ -594,7 +595,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `74f4d20` feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#166)
 - 2026-11-26 `f2a4f3a` chore(vercel): deep link da SPA deixa de dar 404 (#164)
 - 2026-11-26 `897badb` test(forum): trava as escritas do forum publico (#162)
-- 2026-11-26 `ccf216d` fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -8,10 +8,10 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 338,
+ "migrations": 344,
  "seeds": [],
  "avisos": [
-  "45 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
+  "455 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
  "extensoes": [
   "pg_cron",
@@ -153,6 +153,7 @@
   ]
  },
  "views": [
+  "IF",
   "_audit_rls_automation",
   "_audit_security_definer",
   "agent_daily_metrics",
@@ -163,6 +164,7 @@
   "forum_threads_safe",
   "internal",
   "knowledge_graph_health",
+  "knowledge_graph_health_v",
   "llm_cost_by_caller",
   "oncall_schedule_safe",
   "skill_registry_safe",
@@ -175,6 +177,7 @@
   "workspace_members_safe"
  ],
  "funcoes": [
+  "_fase8_snapshot_as",
   "accept_workspace_invitation",
   "acknowledge_cost_alert",
   "acknowledge_vulnerability",
@@ -267,6 +270,7 @@
   "hash_api_key_bcrypt",
   "hybrid_memory_search",
   "hybrid_memory_search_notebook",
+  "hybrid_search",
   "increment_skill_installs",
   "increment_template_installs",
   "increment_version_column",
@@ -2627,6 +2631,13 @@
      "default": null,
      "ref": null
     },
+    "config_overrides": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "id": {
      "tipo": "uuid",
      "nn": false,
@@ -2718,9 +2729,7 @@
     "so_na_migration": [
      "workspace_id"
     ],
-    "so_no_types": [
-     "config_overrides"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 5,
    "usada_em_edges": [
@@ -2791,17 +2800,17 @@
      "ref": null
     },
     "importance": {
-     "tipo": "float",
+     "tipo": "numeric",
      "nn": false,
      "pk": false,
      "default": "0.5",
      "ref": null
     },
     "last_accessed_at": {
-     "tipo": "timestamp with time zone",
+     "tipo": "timestamptz",
      "nn": false,
      "pk": false,
-     "default": "now()",
+     "default": null,
      "ref": null
     },
     "memory_type": {
@@ -2851,11 +2860,11 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "auth"
     },
     "workspace_id": {
      "tipo": "uuid",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": null,
      "ref": "workspaces"
@@ -3801,8 +3810,8 @@
     },
     "id": {
      "tipo": "uuid",
-     "nn": true,
-     "pk": false,
+     "nn": false,
+     "pk": true,
      "default": "gen_random_uuid()",
      "ref": null
     },
@@ -3939,6 +3948,111 @@
    "sem_rls": false,
    "nao_usada": false
   },
+  "agent_traces_v2": {
+   "colunas": {
+    "agent_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "cost_usd": {
+     "tipo": "numeric",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamp with time zone",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "event": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "input": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "latency_ms": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "level": {
+     "tipo": "public",
+     "nn": false,
+     "pk": false,
+     "default": "'info'::public.trace_level",
+     "ref": null
+    },
+    "metadata": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "output": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "session_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "tokens_used": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "user_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": false,
+   "policies": [],
+   "indices": [],
+   "fks": [],
+   "criada_em": null,
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
   "agent_traces_v2_2026_04": {
    "colunas": {},
    "rls": false,
@@ -3970,21 +4084,8 @@
   "agent_traces_v2_2026_05": {
    "colunas": {},
    "rls": false,
-   "policies": [
-    {
-     "nome": "Admins only",
-     "comando": "all",
-     "para": "authenticated",
-     "tipo": "permissive"
-    }
-   ],
-   "indices": [
-    {
-     "nome": "idx_agent_traces_v2_2026_05_agent_created",
-     "colunas": "agent_id, created_at DESC",
-     "unico": false
-    }
-   ],
+   "policies": [],
+   "indices": [],
    "fks": [],
    "criada_em": null,
    "colunas_types": {
@@ -4154,7 +4255,7 @@
    "policies": [],
    "indices": [],
    "fks": [],
-   "criada_em": "20260722104416_e449829d-bc41-4967-bb97-6fdf0dcecaea.sql",
+   "criada_em": null,
    "colunas_types": {
     "agent_id": "string | null",
     "cost_usd": "number | null",
@@ -4173,7 +4274,7 @@
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
-   "sem_rls": true,
+   "sem_rls": false,
    "nao_usada": true
   },
   "agent_traces_v2_2026_12": {
@@ -5138,7 +5239,7 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": "workspaces"
+     "ref": null
     }
    },
    "rls": true,
@@ -5581,7 +5682,7 @@
     },
     "user_id": {
      "tipo": "uuid",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": null
@@ -6315,8 +6416,8 @@
      "ref": null
     },
     "created_at": {
-     "tipo": "timestamp with time zone",
-     "nn": true,
+     "tipo": "timestamptz",
+     "nn": false,
      "pk": false,
      "default": "now()",
      "ref": null
@@ -6330,15 +6431,15 @@
     },
     "entity_type": {
      "tipo": "text",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": null
     },
     "id": {
      "tipo": "uuid",
-     "nn": true,
-     "pk": false,
+     "nn": false,
+     "pk": true,
      "default": "gen_random_uuid()",
      "ref": null
     },
@@ -6353,6 +6454,48 @@
      "tipo": "jsonb",
      "nn": false,
      "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "new_value": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "old_value": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "prev_hash": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "resource_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "resource_type": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "user_email": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
      "default": null,
      "ref": null
     },
@@ -6361,14 +6504,14 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "auth"
     },
     "workspace_id": {
      "tipo": "uuid",
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "workspaces"
     }
    },
    "rls": true,
@@ -6415,7 +6558,10 @@
      "unico": false
     }
    ],
-   "fks": [],
+   "fks": [
+    "user_id->auth",
+    "workspace_id->workspaces"
+   ],
    "criada_em": "20260513143630_cc1271a4-4da5-41f3-8c30-6527ccb75e84.sql",
    "colunas_types": {
     "action": "string",
@@ -6429,7 +6575,13 @@
    },
    "drift": {
     "so_na_migration": [
-     "workspace_id"
+     "workspace_id",
+     "new_value",
+     "old_value",
+     "prev_hash",
+     "resource_id",
+     "resource_type",
+     "user_email"
     ],
     "so_no_types": []
    },
@@ -6477,6 +6629,20 @@
      "nn": false,
      "pk": false,
      "default": "now()",
+     "ref": null
+    },
+    "entity_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "entity_type": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
      "ref": null
     },
     "id": {
@@ -6596,7 +6762,10 @@
     "workspace_id": "string | null"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "entity_id",
+     "entity_type"
+    ],
     "so_no_types": []
    },
    "usada_no_front": 0,
@@ -6635,18 +6804,11 @@
   },
   "audit_log_v2_2026_05": {
    "colunas": {},
-   "rls": false,
-   "policies": [
-    {
-     "nome": "Service role only",
-     "comando": "all",
-     "para": "authenticated",
-     "tipo": "permissive"
-    }
-   ],
+   "rls": true,
+   "policies": [],
    "indices": [],
    "fks": [],
-   "criada_em": "20260513164800_397a768f-4a0d-4edc-8ff2-a9aa14a160e8.sql",
+   "criada_em": "20261127000000_recuperar_objetos_internos.sql",
    "colunas_types": {
     "action": "string",
     "created_at": "string",
@@ -6660,23 +6822,16 @@
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
-   "sem_rls": true,
+   "sem_rls": false,
    "nao_usada": true
   },
   "audit_log_v2_2026_06": {
    "colunas": {},
-   "rls": false,
-   "policies": [
-    {
-     "nome": "Admins only",
-     "comando": "all",
-     "para": "authenticated",
-     "tipo": "permissive"
-    }
-   ],
+   "rls": true,
+   "policies": [],
    "indices": [],
    "fks": [],
-   "criada_em": "20260513164800_397a768f-4a0d-4edc-8ff2-a9aa14a160e8.sql",
+   "criada_em": "20261127000000_recuperar_objetos_internos.sql",
    "colunas_types": {
     "action": "string",
     "created_at": "string",
@@ -6695,7 +6850,7 @@
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
-   "sem_rls": true,
+   "sem_rls": false,
    "nao_usada": true
   },
   "audit_log_v2_2026_07": {
@@ -9258,7 +9413,7 @@
     },
     "fault_type": {
      "tipo": "text",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": null
@@ -9293,7 +9448,7 @@
     },
     "target": {
      "tipo": "text",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": null
@@ -9387,7 +9542,7 @@
      "tipo": "text",
      "nn": true,
      "pk": false,
-     "default": "''",
+     "default": null,
      "ref": null
     },
     "created_at": {
@@ -9436,12 +9591,12 @@
      "tipo": "text",
      "nn": true,
      "pk": false,
-     "default": "'user'",
+     "default": null,
      "ref": null
     },
     "thread_id": {
      "tipo": "uuid",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": "chat_threads"
@@ -9786,7 +9941,7 @@
      "tipo": "jsonb",
      "nn": false,
      "pk": false,
-     "default": "'{}'::jsonb",
+     "default": "'{}'",
      "ref": null
     },
     "parent_chunk_id": {
@@ -10302,9 +10457,9 @@
    "colunas": {
     "color": {
      "tipo": "text",
-     "nn": true,
+     "nn": false,
      "pk": false,
-     "default": "'nexus-primary'",
+     "default": null,
      "ref": null
     },
     "created_at": {
@@ -10323,9 +10478,9 @@
     },
     "icon": {
      "tipo": "text",
-     "nn": true,
+     "nn": false,
      "pk": false,
-     "default": "'BookOpen'",
+     "default": null,
      "ref": null
     },
     "id": {
@@ -10337,9 +10492,9 @@
     },
     "is_archived": {
      "tipo": "boolean",
-     "nn": true,
+     "nn": false,
      "pk": false,
-     "default": "false",
+     "default": null,
      "ref": null
     },
     "knowledge_base_id": {
@@ -10353,12 +10508,12 @@
      "tipo": "jsonb",
      "nn": false,
      "pk": false,
-     "default": "'{}'::jsonb",
+     "default": "'{}'",
      "ref": null
     },
     "name": {
      "tipo": "text",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": null
@@ -12929,7 +13084,7 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": "crm_icp_profiles"
+     "ref": null
     },
     "icp_score": {
      "tipo": "numeric(5,2)",
@@ -13292,7 +13447,7 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": "crm_icp_profiles"
+     "ref": null
     },
     "id": {
      "tipo": "uuid",
@@ -15530,7 +15685,7 @@
      "tipo": "text",
      "nn": true,
      "pk": false,
-     "default": "''",
+     "default": null,
      "ref": null
     },
     "id": {
@@ -15544,7 +15699,7 @@
      "tipo": "text",
      "nn": true,
      "pk": false,
-     "default": "''",
+     "default": null,
      "ref": null
     },
     "pages": {
@@ -15739,7 +15894,7 @@
      "tipo": "jsonb",
      "nn": false,
      "pk": false,
-     "default": "'{}'::jsonb",
+     "default": "'{}'",
      "ref": null
     },
     "mime_type": {
@@ -15781,12 +15936,12 @@
      "tipo": "text",
      "nn": false,
      "pk": false,
-     "default": null,
+     "default": "'pending'",
      "ref": null
     },
     "title": {
      "tipo": "text",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": null
@@ -17212,12 +17367,138 @@
    "nao_usada": true
   },
   "forensic_snapshots": {
-   "colunas": {},
-   "rls": false,
-   "policies": [],
-   "indices": [],
-   "fks": [],
-   "criada_em": null,
+   "colunas": {
+    "agent_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "chain_hash": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "decision_rationale": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "decision_type": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'unknown'",
+     "ref": null
+    },
+    "execution_id": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "input_hash": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "metadata": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "output_hash": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "previous_hash": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "state_after": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "state_before": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "step_index": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "workspace_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "workspaces"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Members view own workspace forensic snapshots",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_forensic_snapshots_created",
+     "colunas": "created_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_forensic_snapshots_execution",
+     "colunas": "execution_id, step_index",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "workspace_id->workspaces"
+   ],
+   "criada_em": "20261126220000_align_prod_objetos_ausentes.sql",
    "colunas_types": {
     "agent_id": "string",
     "chain_hash": "string",
@@ -17233,6 +17514,12 @@
     "state_after": "Json",
     "state_before": "Json",
     "step_index": "number"
+   },
+   "drift": {
+    "so_na_migration": [
+     "workspace_id"
+    ],
+    "so_no_types": []
    },
    "usada_no_front": 2,
    "usada_em_edges": [],
@@ -18601,10 +18888,10 @@
     },
     "workspace_id": {
      "tipo": "uuid",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "workspaces"
     }
    },
    "rls": true,
@@ -21492,7 +21779,7 @@
      "tipo": "text",
      "nn": false,
      "pk": false,
-     "default": "'text-embedding-3-small'",
+     "default": "'text-embedding-3-large'",
      "ref": null
     },
     "id": {
@@ -21513,7 +21800,7 @@
      "tipo": "text",
      "nn": true,
      "pk": false,
-     "default": "'Untitled KB'",
+     "default": null,
      "ref": null
     },
     "status": {
@@ -21549,7 +21836,7 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "workspaces"
     }
    },
    "rls": true,
@@ -22831,7 +23118,7 @@
     },
     "name": {
      "tipo": "text",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": null
@@ -22841,7 +23128,7 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "mcp_servers"
     },
     "updated_at": {
      "tipo": "timestamptz",
@@ -22855,7 +23142,7 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "workspaces"
     }
    },
    "rls": true,
@@ -23474,9 +23761,9 @@
     },
     "is_daily": {
      "tipo": "boolean",
-     "nn": true,
+     "nn": false,
      "pk": false,
-     "default": "FALSE",
+     "default": null,
      "ref": null
     },
     "note_date": {
@@ -24321,6 +24608,13 @@
      "default": null,
      "ref": null
     },
+    "user_email": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "user_id": {
      "tipo": "uuid",
      "nn": true,
@@ -24382,7 +24676,9 @@
     "workspace_id": "string"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "user_email"
+    ],
     "so_no_types": []
    },
    "usada_no_front": 1,
@@ -24938,9 +25234,9 @@
     },
     "auto_reply": {
      "tipo": "boolean",
-     "nn": true,
+     "nn": false,
      "pk": false,
-     "default": "false",
+     "default": null,
      "ref": null
     },
     "created_at": {
@@ -27143,11 +27439,32 @@
      "default": null,
      "ref": null
     },
+    "change_summary": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "content": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "id": {
      "tipo": "uuid",
      "nn": false,
      "pk": true,
      "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "is_active": {
+     "tipo": "boolean",
+     "nn": false,
+     "pk": false,
+     "default": null,
      "ref": null
     }
    },
@@ -27207,10 +27524,7 @@
    "drift": {
     "so_na_migration": [],
     "so_no_types": [
-     "change_summary",
-     "content",
      "created_at",
-     "is_active",
      "user_id",
      "version"
     ]
@@ -30957,10 +31271,10 @@
      "ref": null
     },
     "version": {
-     "tipo": "integer",
+     "tipo": "text",
      "nn": false,
      "pk": false,
-     "default": "1",
+     "default": "'1.0.0'",
      "ref": null
     },
     "workspace_id": {
@@ -33735,7 +34049,7 @@
    "colunas": {
     "agent_id": {
      "tipo": "uuid",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": null,
      "ref": "agents"
@@ -33911,6 +34225,11 @@
    ],
    "indices": [
     {
+     "nome": "idx_trace_events_session",
+     "colunas": "session_trace_id, created_at DESC",
+     "unico": false
+    },
+    {
      "nome": "idx_trace_events_session_trace_id",
      "colunas": "session_trace_id",
      "unico": false
@@ -34082,18 +34401,11 @@
   },
   "trace_events_v2_2026_05": {
    "colunas": {},
-   "rls": false,
-   "policies": [
-    {
-     "nome": "Admins only",
-     "comando": "all",
-     "para": "authenticated",
-     "tipo": "permissive"
-    }
-   ],
+   "rls": true,
+   "policies": [],
    "indices": [],
    "fks": [],
-   "criada_em": "20260513164800_397a768f-4a0d-4edc-8ff2-a9aa14a160e8.sql",
+   "criada_em": "20261127000000_recuperar_objetos_internos.sql",
    "colunas_types": {
     "agent_id": "string | null",
     "created_at": "string",
@@ -34108,23 +34420,16 @@
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
-   "sem_rls": true,
+   "sem_rls": false,
    "nao_usada": true
   },
   "trace_events_v2_2026_06": {
    "colunas": {},
-   "rls": false,
-   "policies": [
-    {
-     "nome": "Admins only",
-     "comando": "all",
-     "para": "authenticated",
-     "tipo": "permissive"
-    }
-   ],
+   "rls": true,
+   "policies": [],
    "indices": [],
    "fks": [],
-   "criada_em": "20260513164800_397a768f-4a0d-4edc-8ff2-a9aa14a160e8.sql",
+   "criada_em": "20261127000000_recuperar_objetos_internos.sql",
    "colunas_types": {
     "agent_id": "string | null",
     "created_at": "string",
@@ -34139,7 +34444,7 @@
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
-   "sem_rls": true,
+   "sem_rls": false,
    "nao_usada": true
   },
   "trace_events_v2_2026_07": {
@@ -36817,6 +37122,13 @@
      "default": "ARRAY[]::TEXT[]",
      "ref": null
     },
+    "is_public": {
+     "tipo": "boolean",
+     "nn": false,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
     "last_triggered_at": {
      "tipo": "timestamptz",
      "nn": false,
@@ -36998,9 +37310,7 @@
      "workspace_id",
      "user_id"
     ],
-    "so_no_types": [
-     "is_public"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 0,
    "usada_em_edges": [
@@ -37667,13 +37977,13 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "auth"
     },
     "user_id": {
      "tipo": "uuid",
-     "nn": false,
+     "nn": true,
      "pk": false,
-     "default": null,
+     "default": "auth.uid()",
      "ref": null
     },
     "workflow_id": {
@@ -37688,7 +37998,7 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "workspaces"
     }
    },
    "rls": true,
@@ -38261,7 +38571,7 @@
      "nn": false,
      "pk": false,
      "default": null,
-     "ref": null
+     "ref": "auth"
     },
     "description": {
      "tipo": "text",
@@ -38659,6 +38969,13 @@
      "default": null,
      "ref": null
     },
+    "email": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "id": {
      "tipo": "uuid",
      "nn": false,
@@ -38689,7 +39006,7 @@
     },
     "user_id": {
      "tipo": "uuid",
-     "nn": true,
+     "nn": false,
      "pk": false,
      "default": null,
      "ref": "auth"
@@ -38780,7 +39097,9 @@
     "workspace_id": "string | null"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "email"
+    ],
     "so_no_types": []
    },
    "usada_no_front": 10,
@@ -38838,7 +39157,7 @@
     },
     "key_value": {
      "tipo": "text",
-     "nn": false,
+     "nn": true,
      "pk": false,
      "default": null,
      "ref": null

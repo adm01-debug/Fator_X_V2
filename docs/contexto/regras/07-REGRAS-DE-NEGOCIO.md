@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9e812c61d2` · branch `main` · 2026-11-27 00:34 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `710145b29b` · branch `main` · 2026-11-27 02:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -235,7 +235,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `workspace_budgets` | Admins can insert workspace budget | INSERT | public | permissive |  | `public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()` |
 | `workspace_budgets` | Admins can update workspace budget | UPDATE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` |  |
 | `workspace_budgets` | Admins can delete workspace budget | DELETE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` |  |
-| `budget_events` | Members can view budget events | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `game_days` | members can view game days | SELECT | authenticated | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `game_days` | admins can schedule game days | INSERT | authenticated | permissive |  | `public.is_workspace_admin(auth.uid(), workspace_id) AND facilitator_id = auth.uid()` |
 | `game_days` | facilitator or admin can update | UPDATE | authenticated | permissive | `facilitator_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id)` |  |
@@ -278,8 +277,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `managed_secrets` | Workspace admins can insert managed secrets | INSERT | public | permissive |  | `public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()` |
 | `managed_secrets` | Workspace admins can update managed secrets | UPDATE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` |  |
 | `managed_secrets` | Workspace admins can delete managed secrets | DELETE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` |  |
-| `secret_rotation_events` | Workspace members can view rotation events | SELECT | public | permissive | `secret_id IN ( SELECT id FROM public.managed_secrets WHERE workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) )` |  |
-| `secret_rotation_events` | Workspace admins can insert rotation events | INSERT | public | permissive |  | `rotated_by = auth.uid() AND secret_id IN ( SELECT id FROM public.managed_secrets WHERE public.is_workspace_admin(auth.uid(), workspace_id) )` |
 | `pentest_engagements` | Members view engagements | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `pentest_engagements` | Admins insert engagements | INSERT | public | permissive |  | `public.is_workspace_admin(auth.uid(), workspace_id)` |
 | `pentest_engagements` | Admins update engagements | UPDATE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` |  |
@@ -291,8 +288,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `risk_register` | Members view risks | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `risk_register` | Admins insert risks | INSERT | public | permissive |  | `public.is_workspace_admin(auth.uid(), workspace_id)` |
 | `risk_register` | Admins update risks | UPDATE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` |  |
-| `risk_review_events` | Members view reviews | SELECT | public | permissive | `risk_id IN (SELECT id FROM public.risk_register WHERE workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())))` |  |
-| `risk_review_events` | Admins insert reviews | INSERT | public | permissive |  | `risk_id IN (SELECT id FROM public.risk_register WHERE public.is_workspace_admin(auth.uid(), workspace_id))` |
 | `vendors` | vendors_select_members | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `vendors` | vendors_insert_admins | INSERT | public | permissive |  | `public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()` |
 | `vendors` | vendors_update_admins | UPDATE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` |  |
@@ -311,7 +306,12 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `change_requests` | Members view change requests | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
 | `change_requests` | Members create change requests | INSERT | public | permissive |  | `requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |
 | `change_requests` | Requester or admin updates change requests | UPDATE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id) OR (requested_by = auth.uid() AND workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())))` |  |
-| … +341 linhas — lista completa em `context.json` | | | | | | |
+| `change_requests` | Admin deletes change requests | DELETE | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` |  |
+| `change_approvals` | Members view approvals | SELECT | public | permissive | `EXISTS ( SELECT 1 FROM public.change_requests cr WHERE cr.id = change_id AND cr.workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) )` |  |
+| `change_approvals` | Admins insert approvals | INSERT | public | permissive |  | `approver_id = auth.uid() AND EXISTS ( SELECT 1 FROM public.change_requests cr WHERE cr.id = change_id AND public.is_workspace_admin(auth.uid(), cr.workspace_id) )` |
+| `freeze_windows` | Members view freeze windows | SELECT | public | permissive | `workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))` |  |
+| `freeze_windows` | Admins manage freeze windows | ALL | public | permissive | `public.is_workspace_admin(auth.uid(), workspace_id)` | `public.is_workspace_admin(auth.uid(), workspace_id)` |
+| … +342 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -328,7 +328,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `agent_usage` | `requests` | default 0 |
 | `agent_usage` | `created_at` | obrigatório |
 | `prompt_versions` | `id` | PK; default gen_random_uuid() |
-| `prompt_versions` | `content` | obrigatório |
 | `prompt_versions` | `created_at` | obrigatório |
 | `prompt_versions` | `user_id` | obrigatório |
 | `prompt_versions` | `version` | obrigatório |
@@ -343,6 +342,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `notifications` | `metadata` | default '{}'::jsonb |
 | `notifications` | `source_type` | default 'system' |
 | `notifications` | `created_at` | default now() |
+| `notifications` | `max_retries` | default 3 |
+| `notifications` | `retry_count` | default 0 |
 | `user_roles` | `id` | PK; default gen_random_uuid() |
 | `user_roles` | `user_id` | obrigatório |
 | `user_roles` | `role_key` | obrigatório |
@@ -446,9 +447,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `collections` | `created_at` | default now() |
 | `collections` | `updated_at` | default now() |
 | `collections` | `workspace_id` | FK → workspaces.id ON DELETE CASCADE |
-| `collections` | `color` | obrigatório |
-| `collections` | `icon` | obrigatório |
-| `collections` | `is_archived` | obrigatório |
 | `documents` | `id` | PK; default gen_random_uuid() |
 | `documents` | `collection_id` | FK → collections.id ON DELETE CASCADE |
 | `documents` | `title` | obrigatório |
@@ -490,6 +488,13 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `workflows` | `config` | default '{}' |
 | `workflows` | `created_at` | default now() |
 | `workflows` | `updated_at` | default now() |
+| `workflows` | `created_by` | FK → users.id ON DELETE SET NULL |
+| `workflows` | `edges` | default '[]' |
+| `workflows` | `is_template` | default false |
+| `workflows` | `metadata` | default '{}' |
+| `workflows` | `nodes` | default '[]' |
+| `workflows` | `run_count` | default 0 |
+| `workflows` | `version` | default 1 |
 | `workflow_steps` | `id` | PK; default gen_random_uuid() |
 | `workflow_steps` | `workflow_id` | FK → workflows.id ON DELETE CASCADE |
 | `workflow_steps` | `agent_id` | FK → agents.id ON DELETE SET NULL |
@@ -575,11 +580,19 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `agent_memories` | `relevance_score` | default 1 |
 | `agent_memories` | `created_at` | default now() |
 | `agent_memories` | `updated_at` | default now() |
+| `agent_memories` | `decay_rate` | default 0.01 |
+| `agent_memories` | `access_count` | default 0 |
+| `agent_memories` | `agent_id` | FK → agents.id ON DELETE CASCADE |
+| `agent_memories` | `importance` | default 0.5 |
+| `agent_memories` | `metadata` | default '{}' |
+| `agent_memories` | `tier` | default 'short_term' |
+| `agent_memories` | `user_id` | FK → users.id ON DELETE CASCADE |
 | `model_pricing` | `id` | PK; default gen_random_uuid() |
 | `model_pricing` | `model_pattern` | obrigatório |
 | `model_pricing` | `input_cost_per_1k` | default 0 |
 | `model_pricing` | `output_cost_per_1k` | default 0 |
 | `model_pricing` | `created_at` | default now() |
+| `model_pricing` | `updated_at` | default now() |
 | `workflow_runs` | `id` | PK; default gen_random_uuid() |
 | `workflow_runs` | `workflow_id` | obrigatório; FK → workflows.id ON DELETE CASCADE |
 | `workflow_runs` | `status` | default 'pending' |
@@ -587,6 +600,9 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `workflow_runs` | `current_step` | default 0 |
 | `workflow_runs` | `total_steps` | default 0 |
 | `workflow_runs` | `created_at` | default now() |
+| `workflow_runs` | `input` | default '{}' |
+| `workflow_runs` | `total_cost_usd` | default 0 |
+| `workflow_runs` | `total_tokens` | default 0 |
 | `workflow_step_runs` | `id` | PK; default gen_random_uuid() |
 | `workflow_step_runs` | `workflow_run_id` | FK → workflow_runs.id ON DELETE CASCADE |
 | `workflow_step_runs` | `workflow_step_id` | FK → workflow_steps.id ON DELETE SET NULL |
@@ -601,23 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `deploy_connections` | `agent_id` | obrigatório; FK → agents.id ON DELETE CASCADE |
 | `deploy_connections` | `workspace_id` | FK → workspaces.id ON DELETE CASCADE |
 | `deploy_connections` | `channel` | obrigatório |
-| `deploy_connections` | `status` | default 'inactive' |
-| `deploy_connections` | `config` | default '{}' |
-| `deploy_connections` | `message_count` | default 0 |
-| `deploy_connections` | `created_at` | default now() |
-| `deploy_connections` | `updated_at` | default now() |
-| `deploy_connections` | `(tabela)` | UNIQUE(agent_id, channel) |
-| `deploy_connections` | `(tabela)` | constraint deploy_connections_channel_check CHECK (channel IN ('api','whatsapp','web_chat','slack','email','bitrix24','telegram','discord','huggingface_space')) |
-| `alert_rules` | `id` | PK; default gen_random_uuid() |
-| `alert_rules` | `workspace_id` | FK → workspaces.id ON DELETE CASCADE |
-| `alert_rules` | `name` | obrigatório |
-| `alert_rules` | `metric` | obrigatório |
-| `alert_rules` | `operator` | obrigatório; CHECK operator IN ('>','<','>=','<=','==') |
-| `alert_rules` | `threshold` | obrigatório |
-| `alert_rules` | `severity` | default 'warning'; CHECK severity IN ('info','warning','critical') |
-| `alert_rules` | `cooldown_minutes` | default 60 |
-| `alert_rules` | `is_enabled` | default true |
-| … +2197 linhas — lista completa em `context.json` | | |
+| … +2269 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -659,14 +659,12 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_postmortems_updated_at | BEFORE UPDATE | `postmortems` | `update_updated_at_column` |  |
 | trg_pm_action_items_updated_at | BEFORE UPDATE | `postmortem_action_items` | `update_updated_at_column` |  |
 | trg_compliance_reports_updated | BEFORE UPDATE | `compliance_reports` | `update_updated_at_column` |  |
-| trg_secret_rotation_event | AFTER INSERT | `secret_rotation_events` | `handle_secret_rotation_event` |  |
 | trg_managed_secrets_updated_at | BEFORE UPDATE | `managed_secrets` | `update_updated_at_column` |  |
 | trg_pentest_finding_due_date | BEFORE INSERT OR UPDATE | `pentest_findings` | `set_pentest_finding_due_date` |  |
 | trg_pentest_finding_count | AFTER INSERT OR DELETE | `pentest_findings` | `update_engagement_finding_count` |  |
 | trg_pentest_engagement_updated | BEFORE UPDATE | `pentest_engagements` | `update_updated_at_column` |  |
 | trg_pentest_finding_updated | BEFORE UPDATE | `pentest_findings` | `update_updated_at_column` |  |
 | trg_risk_register_updated | BEFORE UPDATE | `risk_register` | `update_updated_at_column` |  |
-| trg_risk_review_event | AFTER INSERT | `risk_review_events` | `handle_risk_review_event` |  |
 | trg_vendors_updated_at | BEFORE UPDATE | `vendors` | `update_updated_at_column` |  |
 | trg_vendor_assessment | BEFORE INSERT | `vendor_assessments` | `handle_vendor_assessment` |  |
 | trg_business_systems_updated | BEFORE UPDATE | `business_systems` | `update_updated_at_column` |  |
@@ -678,7 +676,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_asset_audit | AFTER INSERT | `asset_audits` | `handle_asset_audit` |  |
 | trg_assets_updated_at | BEFORE UPDATE | `assets` | `update_updated_at_column` |  |
 | trg_touch_user_filter_preferences | BEFORE UPDATE | `user_filter_preferences` | `touch_user_filter_preferences` |  |
-| trg_restore_field_presets_updated_at | BEFORE UPDATE | `restore_field_presets` | `update_updated_at_column` |  |
 | trg_audit_log_partition | BEFORE INSERT | `audit_log` | `trg_auto_partition` |  |
 | trg_agent_traces_partition | BEFORE INSERT | `agent_traces` | `trg_auto_partition` |  |
 | increment_agent_graphs_version | BEFORE UPDATE | `agent_graphs` | `increment_version_column` |  |
@@ -741,131 +738,23 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_chat_threads_updated_at | BEFORE UPDATE | `chat_threads` | `update_updated_at_column` |  |
 | trg_touch_chat_thread | AFTER INSERT OR DELETE | `chat_messages` | `touch_chat_thread` |  |
 | game_days_updated_at | BEFORE UPDATE | `game_days` | `update_updated_at_column` |  |
+| trg_restore_field_presets_updated_at | BEFORE UPDATE | `restore_field_presets` | `update_updated_at_column` |  |
+| trg_risk_review_event | AFTER INSERT | `risk_review_events` | `handle_risk_review_event` |  |
+| trg_secret_rotation_event | AFTER INSERT | `secret_rotation_events` | `handle_secret_rotation_event` |  |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
 | Função | Mensagem | Origem |
 |---|---|---|
-| `purchase_skill` | auth required | `supabase/migrations/20260417003407_330346ce-b72c-4e9a-adb6-2adcc9b8b568.sql` |
-| `promote_experiment_winner` | invalid winner | `supabase/migrations/20260417004130_ee762e16-1bf5-48d0-9d18-1c49ad503d7d.sql` |
-| `promote_experiment_winner` | experiment not found | `supabase/migrations/20260417004130_ee762e16-1bf5-48d0-9d18-1c49ad503d7d.sql` |
-| `promote_experiment_winner` | forbidden | `supabase/migrations/20260417004130_ee762e16-1bf5-48d0-9d18-1c49ad503d7d.sql` |
-| `disable_all_chaos` | forbidden: workspace admin required | `supabase/migrations/20260417233026_dc3dfc7c-1b5d-4880-b111-d3000c55ff7f.sql` |
-| `get_synthetic_summary` | forbidden | `supabase/migrations/20260418004657_189a00bb-82e4-42da-b2e8-0779af06d4fb.sql` |
-| `acknowledge_cost_alert` | alert not found | `supabase/migrations/20260418011629_10215e66-8af6-43ef-8878-dfad3008e2ef.sql` |
-| `acknowledge_cost_alert` | forbidden: workspace admin required | `supabase/migrations/20260418011629_10215e66-8af6-43ef-8878-dfad3008e2ef.sql` |
-| `get_current_spend` | forbidden | `supabase/migrations/20260418102513_4d1ac25f-4111-4ff9-921c-33a1b4a8e0e2.sql` |
-| `reset_workspace_budget` | forbidden: workspace admin required | `supabase/migrations/20260418102513_4d1ac25f-4111-4ff9-921c-33a1b4a8e0e2.sql` |
-| `complete_dr_drill` | drill not found | `supabase/migrations/20260418121735_2fa94f72-43dd-4a19-ba73-c3b0ac4301e5.sql` |
-| `complete_dr_drill` | forbidden | `supabase/migrations/20260418121735_2fa94f72-43dd-4a19-ba73-c3b0ac4301e5.sql` |
-| `generate_postmortem_from_incident` | incident run not found | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
-| `generate_postmortem_from_incident` | forbidden | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
-| `generate_postmortem_from_gameday` | game day not found | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
-| `generate_postmortem_from_gameday` | forbidden | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
-| `publish_postmortem` | postmortem not found | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
-| `publish_postmortem` | forbidden | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
-| `publish_postmortem` | summary required (min 10 chars) | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
-| `publish_postmortem` | root cause required (min 10 chars) | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
-| `publish_postmortem` | at least 1 action item required | `supabase/migrations/20260418122307_29b4ef1a-a934-4d96-8c77-694968072357.sql` |
-| `generate_compliance_report` | Only admins can generate compliance reports | `supabase/migrations/20260418123453_fbfb5bbd-3026-4439-84c4-02d9d66ead8b.sql` |
-| `generate_compliance_report` | Framework % not found | `supabase/migrations/20260418123453_fbfb5bbd-3026-4439-84c4-02d9d66ead8b.sql` |
-| `publish_compliance_report` | Only admins can publish reports | `supabase/migrations/20260418123453_fbfb5bbd-3026-4439-84c4-02d9d66ead8b.sql` |
-| `create_sbom_snapshot` | forbidden: workspace admin required | `supabase/migrations/20260418125950_10d9c8a1-51e3-48ea-aa8b-c20f60835b0e.sql` |
-| `record_vulnerability` | snapshot not found | `supabase/migrations/20260418125950_10d9c8a1-51e3-48ea-aa8b-c20f60835b0e.sql` |
-| `acknowledge_vulnerability` | finding not found | `supabase/migrations/20260418125950_10d9c8a1-51e3-48ea-aa8b-c20f60835b0e.sql` |
-| `acknowledge_vulnerability` | forbidden | `supabase/migrations/20260418125950_10d9c8a1-51e3-48ea-aa8b-c20f60835b0e.sql` |
-| `mark_vulnerability_fixed` | finding not found | `supabase/migrations/20260418125950_10d9c8a1-51e3-48ea-aa8b-c20f60835b0e.sql` |
-| `mark_vulnerability_fixed` | forbidden | `supabase/migrations/20260418125950_10d9c8a1-51e3-48ea-aa8b-c20f60835b0e.sql` |
-| `register_managed_secret` | forbidden: workspace admin required | `supabase/migrations/20260418130622_50bc8bdd-4752-4321-b754-607b67617c40.sql` |
-| `record_secret_rotation` | secret not found | `supabase/migrations/20260418130622_50bc8bdd-4752-4321-b754-607b67617c40.sql` |
-| `record_secret_rotation` | forbidden: workspace admin required | `supabase/migrations/20260418130622_50bc8bdd-4752-4321-b754-607b67617c40.sql` |
-| `mark_secret_retired` | secret not found | `supabase/migrations/20260418130622_50bc8bdd-4752-4321-b754-607b67617c40.sql` |
-| `mark_secret_retired` | forbidden: workspace admin required | `supabase/migrations/20260418130622_50bc8bdd-4752-4321-b754-607b67617c40.sql` |
 | `get_secrets_status_summary` | forbidden | `supabase/migrations/20260418130622_50bc8bdd-4752-4321-b754-607b67617c40.sql` |
-| `create_pentest_engagement` | forbidden: workspace admin required | `supabase/migrations/20260418132552_7ea64f19-f06f-4331-ae2b-3bcfdda427e8.sql` |
-| `record_pentest_finding` | engagement not found | `supabase/migrations/20260418132552_7ea64f19-f06f-4331-ae2b-3bcfdda427e8.sql` |
-| `record_pentest_finding` | forbidden: workspace admin required | `supabase/migrations/20260418132552_7ea64f19-f06f-4331-ae2b-3bcfdda427e8.sql` |
-| `update_pentest_finding_status` | finding not found | `supabase/migrations/20260418132552_7ea64f19-f06f-4331-ae2b-3bcfdda427e8.sql` |
-| `update_pentest_finding_status` | forbidden: workspace admin required | `supabase/migrations/20260418132552_7ea64f19-f06f-4331-ae2b-3bcfdda427e8.sql` |
-| `get_pentest_summary` | forbidden | `supabase/migrations/20260418132552_7ea64f19-f06f-4331-ae2b-3bcfdda427e8.sql` |
-| `register_risk` | forbidden: workspace admin required | `supabase/migrations/20260418134141_767d2a2b-4edb-4e37-9a3e-59845e843de2.sql` |
-| `review_risk` | risk not found | `supabase/migrations/20260418134141_767d2a2b-4edb-4e37-9a3e-59845e843de2.sql` |
-| `review_risk` | forbidden: workspace admin required | `supabase/migrations/20260418134141_767d2a2b-4edb-4e37-9a3e-59845e843de2.sql` |
-| `review_risk` | residual score must be between 1 and 25 | `supabase/migrations/20260418134141_767d2a2b-4edb-4e37-9a3e-59845e843de2.sql` |
-| `close_risk` | risk not found | `supabase/migrations/20260418134141_767d2a2b-4edb-4e37-9a3e-59845e843de2.sql` |
-| `close_risk` | forbidden: workspace admin required | `supabase/migrations/20260418134141_767d2a2b-4edb-4e37-9a3e-59845e843de2.sql` |
-| `get_risk_summary` | forbidden | `supabase/migrations/20260418134141_767d2a2b-4edb-4e37-9a3e-59845e843de2.sql` |
-| `register_vendor` | forbidden: workspace admin required | `supabase/migrations/20260418140149_8c99b7b5-9e49-4a90-ac85-77c1f5136dbb.sql` |
-| `assess_vendor` | vendor not found | `supabase/migrations/20260418140149_8c99b7b5-9e49-4a90-ac85-77c1f5136dbb.sql` |
-| `assess_vendor` | forbidden: workspace admin required | `supabase/migrations/20260418140149_8c99b7b5-9e49-4a90-ac85-77c1f5136dbb.sql` |
-| `offboard_vendor` | vendor not found | `supabase/migrations/20260418140149_8c99b7b5-9e49-4a90-ac85-77c1f5136dbb.sql` |
-| `offboard_vendor` | forbidden: workspace admin required | `supabase/migrations/20260418140149_8c99b7b5-9e49-4a90-ac85-77c1f5136dbb.sql` |
-| `register_business_system` | forbidden: workspace admin required | `supabase/migrations/20260418142049_5591a5aa-c9f5-46a6-aceb-48695c6f648a.sql` |
-| `record_bcp_test` | system not found | `supabase/migrations/20260418142049_5591a5aa-c9f5-46a6-aceb-48695c6f648a.sql` |
-| `record_bcp_test` | forbidden: workspace admin required | `supabase/migrations/20260418142049_5591a5aa-c9f5-46a6-aceb-48695c6f648a.sql` |
 | `get_bcp_summary` | forbidden | `supabase/migrations/20260418142049_5591a5aa-c9f5-46a6-aceb-48695c6f648a.sql` |
-| `enforce_freeze_window` | Mudança agendada dentro de janela de freeze ativa: % | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `submit_change_request` | Acesso negado | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `decide_change` | Mudança não encontrada | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `decide_change` | Apenas admins podem decidir mudanças | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `execute_change` | Mudança não encontrada | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `execute_change` | Apenas admins executam mudanças | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `execute_change` | Mudança não está em estado executável (atual: %) | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `rollback_change` | Mudança não encontrada | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `rollback_change` | Apenas admins podem fazer rollback | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `rollback_change` | post_mortem_url é obrigatório para rollback | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
 | `get_change_summary` | Acesso negado | `supabase/migrations/20260418143754_22af56b9-e9e9-44ee-89c3-792d14d4af75.sql` |
-| `activate_ir_playbook` | playbook not found | `supabase/migrations/20260418144313_34245c62-9cfd-42b3-ad13-f8a1aa177335.sql` |
-| `activate_ir_playbook` | forbidden: workspace admin required | `supabase/migrations/20260418144313_34245c62-9cfd-42b3-ad13-f8a1aa177335.sql` |
 | `get_ir_summary` | forbidden | `supabase/migrations/20260418144313_34245c62-9cfd-42b3-ad13-f8a1aa177335.sql` |
-| `register_asset` | forbidden: workspace admin required | `supabase/migrations/20260418151333_f71cf0bb-06c1-4f23-820c-398fdd4b6ffc.sql` |
-| `audit_asset` | asset not found | `supabase/migrations/20260418151333_f71cf0bb-06c1-4f23-820c-398fdd4b6ffc.sql` |
-| `audit_asset` | forbidden: workspace admin required | `supabase/migrations/20260418151333_f71cf0bb-06c1-4f23-820c-398fdd4b6ffc.sql` |
-| `decommission_asset` | asset not found | `supabase/migrations/20260418151333_f71cf0bb-06c1-4f23-820c-398fdd4b6ffc.sql` |
-| `decommission_asset` | forbidden: workspace admin required | `supabase/migrations/20260418151333_f71cf0bb-06c1-4f23-820c-398fdd4b6ffc.sql` |
 | `get_asset_summary` | forbidden | `supabase/migrations/20260418151333_f71cf0bb-06c1-4f23-820c-398fdd4b6ffc.sql` |
-| `get_workspace_members_full` | forbidden: workspace admin required | `supabase/migrations/20260418162623_6eb54ed6-a251-4320-ade6-49183e9d45ad.sql` |
-| `get_oncall_with_contacts` | forbidden: workspace admin required | `supabase/migrations/20260418162623_6eb54ed6-a251-4320-ade6-49183e9d45ad.sql` |
-| `get_pending_invites_for_email` | forbidden: can only query own invites | `supabase/migrations/20260418174123_a78c29c9-123c-4a64-9855-64d956286345.sql` |
-| `invite_workspace_member` | forbidden: only admins can invite members | `supabase/migrations/20260418174123_a78c29c9-123c-4a64-9855-64d956286345.sql` |
 | `get_slo_summary` | authentication required | `supabase/migrations/20260423115924_e275fccc-e6d1-4eda-880a-630f67958f81.sql` |
-| `validate_oncall_workspace_consistency` | User % is not a member of workspace % | `supabase/migrations/20260711153020_4670c8df-86cc-4af0-9999-6042e6635a44.sql` |
-| `validate_oncall_workspace_consistency` | Creator % is not a member of workspace % | `supabase/migrations/20260711153020_4670c8df-86cc-4af0-9999-6042e6635a44.sql` |
 | `reset_embedding_dead_letter` | unauthorized | `supabase/migrations/20260721224950_8bf5f6f9-9202-46b4-a4ae-c37e89f80164.sql` |
 | `get_db_health_snapshot` | Admin only | `supabase/migrations/20260722125118_5ca7daa2-9a79-43cf-90e6-2fa8734fad1e.sql` |
-| `explain_query_plan` | forbidden: admin required | `supabase/migrations/20260722132911_a991de8e-58cb-41ae-88f4-5ae6df5e4d27.sql` |
-| `explain_query_plan` | only SELECT/WITH queries are allowed | `supabase/migrations/20260722132911_a991de8e-58cb-41ae-88f4-5ae6df5e4d27.sql` |
-| `explain_query_plan` | mutating keywords are not allowed | `supabase/migrations/20260722132911_a991de8e-58cb-41ae-88f4-5ae6df5e4d27.sql` |
-| `get_db_health_timeseries` | permission denied | `supabase/migrations/20260722145902_bffbbc2f-7da7-4f0e-b6a8-be6145c81fd8.sql` |
-| `smoke_test_wal_growth` | detector ausente | `supabase/migrations/20260722154138_2ef2284f-1a62-42ab-86d6-2a9568b047aa.sql` |
-| `smoke_test_connections_saturation` | detector ausente | `supabase/migrations/20260722154138_2ef2284f-1a62-42ab-86d6-2a9568b047aa.sql` |
-| `get_detector_slo_status` | admin only | `supabase/migrations/20260722154138_2ef2284f-1a62-42ab-86d6-2a9568b047aa.sql` |
-| `start_dr_drill` | drill not found | `supabase/migrations/20260724000007_sanitize_dr_drill.sql` |
-| `start_dr_drill` | forbidden: workspace admin required | `supabase/migrations/20260724000007_sanitize_dr_drill.sql` |
-| `start_dr_drill` | drill not in scheduled state (current: %) | `supabase/migrations/20260724000007_sanitize_dr_drill.sql` |
-| `record_dr_step` | Invalid step name: "%". Allowed: % | `supabase/migrations/20260724000007_sanitize_dr_drill.sql` |
-| `record_dr_step` | Invalid step status: "%" | `supabase/migrations/20260724000007_sanitize_dr_drill.sql` |
-| `make_audit_log_immutable` | audit_log is append-only: UPDATE and DELETE are prohibited | `supabase/migrations/20260724000009_audit_log_append_only.sql` |
-| `validate_audit_log_fields` | Invalid action: NULL byte detected | `supabase/migrations/20260724000009_audit_log_append_only.sql` |
-| `validate_audit_log_fields` | Invalid entity_type: NULL byte detected | `supabase/migrations/20260724000009_audit_log_append_only.sql` |
-| `validate_audit_log_fields` | Invalid entity_id: NULL byte detected | `supabase/migrations/20260724000009_audit_log_append_only.sql` |
-| `validate_audit_log_fields` | Invalid ip_address: NULL byte detected | `supabase/migrations/20260724000009_audit_log_append_only.sql` |
-| `rotate_cron_token` | Token de cron desconhecido: % | `supabase/migrations/20260726203759_8287fd33-e03c-435d-b1b6-f8a4d3de0a88.sql` |
-| `get_partition_health_snapshot` | unauthorized | `supabase/migrations/20260726204355_90a04af6-4543-45c9-91ec-0b63a63cb84b.sql` |
-| `get_cron_job_health` | access denied | `supabase/migrations/20260726205416_3215b858-4366-4e15-9634-11031376ad5c.sql` |
 | `get_wal_generation_rate` | access denied | `supabase/migrations/20260726205416_3215b858-4366-4e15-9634-11031376ad5c.sql` |
-| `purge_removed_template_skill_links` | janela de retenção inválida: % | `supabase/migrations/20260727222828_0e04ba87-95df-4fb1-a15f-c0f1884b826b.sql` |
-| `apply_skill_description` | Apenas administradores podem aplicar descricoes geradas. | `supabase/migrations/20260728135235_60736cf3-6ae5-4baf-8b18-c334aaacc6e2.sql` |
-| `apply_skill_description` | Confianca % abaixo do minimo % exigido. | `supabase/migrations/20260728135235_60736cf3-6ae5-4baf-8b18-c334aaacc6e2.sql` |
-| `apply_skill_description` | Descricao gerada fora do tamanho aceitavel (40-600 caracteres). | `supabase/migrations/20260728135235_60736cf3-6ae5-4baf-8b18-c334aaacc6e2.sql` |
-| `apply_skill_description` | Skill nao encontrada. | `supabase/migrations/20260728135235_60736cf3-6ae5-4baf-8b18-c334aaacc6e2.sql` |
-| `apply_skill_description` | Enriquecimento automatico so vale para skills importadas. | `supabase/migrations/20260728135235_60736cf3-6ae5-4baf-8b18-c334aaacc6e2.sql` |
-| `apply_skill_description` | A skill ja possui descricao — nada foi sobrescrito. | `supabase/migrations/20260728135235_60736cf3-6ae5-4baf-8b18-c334aaacc6e2.sql` |
-| `decide_skill_reclassification` | Autenticacao obrigatoria | `supabase/migrations/20260728174744_9e520a50-3058-41f4-8e9f-6171959bc730.sql` |
-| `decide_skill_reclassification` | Apenas administradores podem decidir reclassificacoes | `supabase/migrations/20260728174744_9e520a50-3058-41f4-8e9f-6171959bc730.sql` |
-| `decide_skill_reclassification` | Revisao nao encontrada | `supabase/migrations/20260728174744_9e520a50-3058-41f4-8e9f-6171959bc730.sql` |
-| `decide_skill_reclassification` | Revisao ja decidida (%). | `supabase/migrations/20260728174744_9e520a50-3058-41f4-8e9f-6171959bc730.sql` |
-| `decide_skill_reclassification` | Conflito: departamento atual (%) difere do analisado (%). | `supabase/migrations/20260728174744_9e520a50-3058-41f4-8e9f-6171959bc730.sql` |
 | `validate_table_names_for_drill` | allowed_tables list is empty — all tables rejected. | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
 | `validate_table_names_for_drill` | Table "%" is not in allowed drill target list | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
 | `validate_table_names_for_drill` | Invalid table name format: "%" | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
@@ -875,6 +764,117 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `start_game_day` | game day is not in scheduled state | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
 | `complete_game_day` | game day not found | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
 | `complete_game_day` | forbidden | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
+| `purchase_skill` | auth required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `promote_experiment_winner` | invalid winner | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `promote_experiment_winner` | experiment not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `promote_experiment_winner` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `disable_all_chaos` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_synthetic_summary` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `acknowledge_cost_alert` | alert not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `acknowledge_cost_alert` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_current_spend` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `reset_workspace_budget` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `complete_dr_drill` | drill not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `complete_dr_drill` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `generate_postmortem_from_incident` | incident run not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `generate_postmortem_from_incident` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `generate_postmortem_from_gameday` | game day not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `generate_postmortem_from_gameday` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `publish_postmortem` | postmortem not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `publish_postmortem` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `publish_postmortem` | summary required (min 10 chars) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `publish_postmortem` | root cause required (min 10 chars) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `publish_postmortem` | at least 1 action item required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `generate_compliance_report` | Only admins can generate compliance reports | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `generate_compliance_report` | Framework % not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `publish_compliance_report` | Only admins can publish reports | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `create_sbom_snapshot` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `record_vulnerability` | snapshot not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `acknowledge_vulnerability` | finding not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `acknowledge_vulnerability` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `mark_vulnerability_fixed` | finding not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `mark_vulnerability_fixed` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `register_managed_secret` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `record_secret_rotation` | secret not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `record_secret_rotation` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `mark_secret_retired` | secret not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `mark_secret_retired` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `create_pentest_engagement` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `record_pentest_finding` | engagement not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `record_pentest_finding` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `update_pentest_finding_status` | finding not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `update_pentest_finding_status` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_pentest_summary` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `register_risk` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `review_risk` | risk not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `review_risk` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `review_risk` | residual score must be between 1 and 25 | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `close_risk` | risk not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `close_risk` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_risk_summary` | forbidden | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `register_vendor` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `assess_vendor` | vendor not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `assess_vendor` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `offboard_vendor` | vendor not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `offboard_vendor` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `register_business_system` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `record_bcp_test` | system not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `record_bcp_test` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `enforce_freeze_window` | Mudança agendada dentro de janela de freeze ativa: % | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `submit_change_request` | Acesso negado | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `decide_change` | Mudança não encontrada | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `decide_change` | Apenas admins podem decidir mudanças | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `execute_change` | Mudança não encontrada | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `execute_change` | Apenas admins executam mudanças | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `execute_change` | Mudança não está em estado executável (atual: %) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `rollback_change` | Mudança não encontrada | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `rollback_change` | Apenas admins podem fazer rollback | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `rollback_change` | post_mortem_url é obrigatório para rollback | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `activate_ir_playbook` | playbook not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `activate_ir_playbook` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `register_asset` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `audit_asset` | asset not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `audit_asset` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `decommission_asset` | asset not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `decommission_asset` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_workspace_members_full` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_oncall_with_contacts` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_pending_invites_for_email` | forbidden: can only query own invites | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `invite_workspace_member` | forbidden: only admins can invite members | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `validate_oncall_workspace_consistency` | User % is not a member of workspace % | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `validate_oncall_workspace_consistency` | Creator % is not a member of workspace % | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `explain_query_plan` | forbidden: admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `explain_query_plan` | only SELECT/WITH queries are allowed | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `explain_query_plan` | mutating keywords are not allowed | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_detector_slo_status` | admin only | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `start_dr_drill` | drill not found | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `start_dr_drill` | forbidden: workspace admin required | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `start_dr_drill` | drill not in scheduled state (current: %) | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `record_dr_step` | Invalid step name: "%". Allowed: % | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `record_dr_step` | Invalid step status: "%" | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `make_audit_log_immutable` | audit_log is append-only: UPDATE and DELETE are prohibited | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `validate_audit_log_fields` | Invalid action: NULL byte detected | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `validate_audit_log_fields` | Invalid entity_type: NULL byte detected | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `validate_audit_log_fields` | Invalid entity_id: NULL byte detected | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `validate_audit_log_fields` | Invalid ip_address: NULL byte detected | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_partition_health_snapshot` | unauthorized | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `get_cron_job_health` | access denied | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `purge_removed_template_skill_links` | janela de retenção inválida: % | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `apply_skill_description` | Apenas administradores podem aplicar descricoes geradas. | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `apply_skill_description` | Confianca % abaixo do minimo % exigido. | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `apply_skill_description` | Descricao gerada fora do tamanho aceitavel (40-600 caracteres). | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `apply_skill_description` | Skill nao encontrada. | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `apply_skill_description` | Enriquecimento automatico so vale para skills importadas. | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `apply_skill_description` | A skill ja possui descricao — nada foi sobrescrito. | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `decide_skill_reclassification` | Autenticacao obrigatoria | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `decide_skill_reclassification` | Apenas administradores podem decidir reclassificacoes | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `decide_skill_reclassification` | Revisao nao encontrada | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `decide_skill_reclassification` | Revisao ja decidida (%). | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `decide_skill_reclassification` | Conflito: departamento atual (%) difere do analisado (%). | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `rotate_cron_token` | Token de cron desconhecido: % | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `smoke_test_connections_saturation` | detector ausente | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `smoke_test_wal_growth` | detector ausente | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `get_db_health_timeseries` | permission denied | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -981,6 +981,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `skill_harvest_runs` | `status` | **livre (sem enum/CHECK)** | `running` |
 | `skill_harvest_candidates` | `status` | `accepted`, `auto_rejected`, `pending`, `promoted`, `rejected` | `pending` |
 | `skill_reclassification_reviews` | `status` | `aprovado`, `pendente`, `rejeitado` | `pendente` |
+| `forensic_snapshots` | `step_index` | **livre (sem enum/CHECK)** | `0` |
+| `forensic_snapshots` | `state_before` | **livre (sem enum/CHECK)** |  |
+| `forensic_snapshots` | `state_after` | **livre (sem enum/CHECK)** |  |
 | `audit_log_v2_2026_04` | `status` | **livre (sem enum/CHECK)** |  |
 | `audit_log_v2_2026_06` | `status` | **livre (sem enum/CHECK)** |  |
 | `audit_log_v2_2026_07` | `status` | **livre (sem enum/CHECK)** |  |
@@ -996,9 +999,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `audit_log_v2_2027_05` | `status` | **livre (sem enum/CHECK)** |  |
 | `audit_log_v2_2027_06` | `status` | **livre (sem enum/CHECK)** |  |
 | `audit_log_v2_2027_07` | `status` | **livre (sem enum/CHECK)** |  |
-| `forensic_snapshots` | `state_after` | **livre (sem enum/CHECK)** |  |
-| `forensic_snapshots` | `state_before` | **livre (sem enum/CHECK)** |  |
-| `forensic_snapshots` | `step_index` | **livre (sem enum/CHECK)** |  |
 | `spans_2026_04` | `status` | **livre (sem enum/CHECK)** |  |
 | `spans_2026_05` | `status` | **livre (sem enum/CHECK)** |  |
 | `spans_2026_06` | `status` | **livre (sem enum/CHECK)** |  |
@@ -1288,7 +1288,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `cancelado` | compara | `src/lib/skills/queueFailureSummary.ts` |
 | `status` | `canceled` | escreve | `supabase/functions/notebook-podcast-generate/index.ts` |
 | `status` | `cancelled` | compara, escreve | `src/components/super-cerebro/DocumentUploadTab.tsx`<br>`src/services/batchProcessorService.ts`<br>`src/services/documentIngestionService.ts`<br>`src/services/notificationEngineService.ts`<br>`supabase/functions/browser-agent-run/index.ts`<br>… +2 |
-| `status` | `closed` | compara | `src/pages/RiskRegisterPage.tsx`<br>`supabase/migrations/20260418134141_767d2a2b-4edb-4e37-9a3e-59845e843de2.sql` |
+| `status` | `closed` | compara | `src/pages/RiskRegisterPage.tsx`<br>`supabase/migrations/20260418134141_767d2a2b-4edb-4e37-9a3e-59845e843de2.sql`<br>`supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | `status` | `completed` | compara, escreve, filtra | `src/components/agent-builder/modules/EvalsModule.tsx`<br>`src/components/agent-builder/modules/ExperimentsModule.tsx`<br>`src/components/agent-builder/modules/ObservabilityModule.tsx`<br>`src/components/agent-builder/modules/OrchestratorModule.tsx`<br>`src/components/knowledge/IngestionLogsPanel.tsx`<br>… +43 |
 | `status` | `compliant` | compara | `src/components/security/ComplianceFrameworks.tsx` |
 | `status` | `concluido` | compara | `src/services/skillEnrichmentService.ts`<br>`src/services/skillReclassificationService.ts` |
@@ -1348,7 +1348,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `only-b` | compara | `src/components/agents/traces/CompareTracesSheet.tsx` |
 | `status` | `open` | compara, escreve, filtra | `src/pages/KnowledgeManagementPage.tsx`<br>`src/pages/PentestFindingsPage.tsx`<br>`src/pages/PentestPage.tsx`<br>`src/pages/PostmortemEditorPage.tsx`<br>`src/pages/PostmortemsPage.tsx`<br>… +7 |
 | `status` | `others` | compara, escreve | `src/components/agents/wizard/quickSteps/PromptSectionUsage.tsx` |
-| `status` | `overdue` | compara | `src/services/secretsRotationService.ts`<br>`supabase/migrations/20260418130622_50bc8bdd-4752-4321-b754-607b67617c40.sql` |
+| `status` | `overdue` | compara | `src/services/secretsRotationService.ts`<br>`supabase/migrations/20260418130622_50bc8bdd-4752-4321-b754-607b67617c40.sql`<br>`supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 | `status` | `paid` | compara | `src/pages/CreatorPayoutsPage.tsx` |
 | `status` | `parsing` | escreve | `src/services/documentIngestionService.ts` |
 | `status` | `partial` | compara | `src/components/oracle/ResearchHistoryPanel.tsx`<br>`src/components/security/ComplianceFrameworks.tsx`<br>`src/services/batchProcessorService.ts` |
@@ -2354,8 +2354,8 @@ _nenhum item encontrado_
 | `forum_threads_public` | `SELECT id, help_center_id, title, body, category, author_name, is_pinned, is_locked, is_resolved, view_count, reply_count, upvotes, last_activity_at, created_at FROM public.forum_threads` |
 | `forum_posts_public` | `SELECT id, thread_id, parent_post_id, body, author_name, is_answer, upvotes, created_at, updated_at FROM public.forum_posts` |
 | `slo_metrics_hourly` | `SELECT date_trunc('hour', created_at) AS bucket_hour, user_id, agent_id, COUNT(*) AS total_traces, COUNT(*) FILTER (WHERE level = 'error') AS error_count, CASE WHEN COUNT(*) > 0 THEN ROUND((COUNT(*) FILTER (WHERE level <> 'error'))::numeric / COUNT(*) * 100, 2) ELSE 100 END AS success_rate, COALESCE …` |
-| `forum_threads_safe` | `SELECT id, help_center_id, author_id, CASE WHEN author_name ~* '@' THEN 'Membro' ELSE author_name END AS author_name, title, body, category, is_pinned, is_locked, is_resolved, view_count, reply_count, upvotes, last_activity_at, created_at FROM public.forum_threads` |
-| `forum_posts_safe` | `SELECT id, thread_id, author_id, CASE WHEN author_name ~* '@' THEN 'Membro' ELSE author_name END AS author_name, body, is_answer, upvotes, parent_post_id, created_at, updated_at FROM public.forum_posts` |
+| `forum_threads_safe` | `SELECT id, help_center_id, author_id, CASE WHEN author_name ~* '@' THEN 'Membro' ELSE author_name END AS author_name, title, body, category, is_pinned, is_locked, is_resolved, view_count, reply_count, upvotes, last_activity_at, created_at FROM public.forum_threads WHERE is_published` |
+| `forum_posts_safe` | `SELECT id, thread_id, author_id, CASE WHEN author_name ~* '@' THEN 'Membro' ELSE author_name END AS author_name, body, is_answer, upvotes, parent_post_id, created_at, updated_at FROM public.forum_posts WHERE is_published` |
 | `oncall_schedule_safe` | `SELECT os.id, os.workspace_id, os.user_id, os.user_name, os.starts_at, os.ends_at, os.escalation_order, os.notes, os.created_by, os.created_at, oce.user_email FROM public.oncall_schedule os LEFT JOIN public.oncall_schedule_emails oce ON oce.schedule_id = os.id AND (oce.user_id = auth.uid() OR public …` |
 | `workspace_members_public` | `SELECT id, workspace_id, user_id, role, name FROM public.workspace_members` |
 | `usage_records_cost_safe` | `SELECT ur.id, ur.workspace_id, ur.agent_id, ur.record_type, ur.tokens, ur.created_at, CASE WHEN public.is_workspace_admin(auth.uid(), ur.workspace_id) THEN ur.cost_usd ELSE NULL END AS cost_usd, CASE WHEN public.is_workspace_admin(auth.uid(), ur.workspace_id) THEN ur.metadata ELSE '{}'::jsonb END AS …` |
@@ -3570,6 +3570,45 @@ _nenhum item encontrado_
 | `SET is_blocked = true, blocked_until = (now() + interval '15 minutes')` | `supabase/migrations/20260805000001_security_bug_corrections.sql` |
 | `COUNT(*) FILTER (WHERE status != 'offboarded' AND dpa_signed AND dpa_expires_at BETWEEN now() AND now() + interval '30 days'),` | `supabase/migrations/20260905140000_security_hotfix_validation.sql` |
 | `VALUES (gd.workspace_id, 'Game Day: ' \|\| gd.title, v_target, v_fault, 0.5, 2000, now() + interval '2 hours', true, auth.uid())` | `supabase/migrations/20261121120000_finish_partial_work_entidades.sql` |
+| `WHERE created_at > (now() - interval '90 days')` | `supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql` |
+| `v_interval := CASE WHEN NEW.new_residual_score >= 15 THEN interval '30 days' ELSE interval '90 days' END;` | `supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql` |
+| `(max(start_at) + interval '1 month')::timestamptz AS latest_partition_end,` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `AND created_at > now() - interval '1 hour'` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `AND created_at > now() - interval '10 minutes';` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `AND created_at > now() - interval '24 hours'` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `AND dpr.next_review_due <= (now() + interval '7 days')` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `AND dsr.deadline_at <= (now() + interval '2 days')` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `AND expires_at < (now() - interval '1 day');` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `AND next_rotation_due BETWEEN now() AND now() + interval '7 days';` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `AND triggered_at >= now() - interval '1 hour'` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `CREATE OR REPLACE FUNCTION public.purge_stale_harvest_checkpoints(_max_age interval DEFAULT interval '24 hours')` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `DELETE FROM public.pg_net_smoke_runs WHERE run_at < now() - interval '30 days';` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `ELSE interval '365 days'` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `IF NOT EXISTS (SELECT 1 FROM public.budget_events WHERE workspace_id=r.workspace_id AND event_type='soft_warning' AND period='daily' AND triggered_at >= now() - …` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `IF NOT EXISTS (SELECT 1 FROM public.budget_events WHERE workspace_id=r.workspace_id AND event_type='soft_warning' AND period='monthly' AND triggered_at >= now() …` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `IF last_success IS NULL OR last_success < now() - interval '26 hours' THEN` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `WHEN 'critical' THEN interval '7 days'` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `WHEN 'critical' THEN interval '90 days'` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `WHEN 'high' THEN interval '180 days'` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `WHEN 'high' THEN interval '30 days'` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `WHEN 'low' THEN interval '180 days'` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
+| `ALTER TABLE IF EXISTS public.risk_register ADD COLUMN IF NOT EXISTS next_review_due TIMESTAMPTZ NOT NULL DEFAULT (now() + interval '90 days');` | `supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql` |
+| `CREATE MATERIALIZED VIEW public.knowledge_graph_health AS WITH ent AS ( SELECT workspace_id, id, entity_type, updated_at, properties FROM public.knowledge_entit …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.capture_db_health_sample() RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path = internal, public, pg_catalog AS …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.check_bloat_and_alert() RETURNS INTEGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = internal, public, pg_catalog AS …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.check_partition_health() RETURNS TABLE(parent_table text, missing_partition text, severity text) LANGUAGE plpgsql SECURITY D …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.cleanup_orphan_sessions() RETURNS TABLE(kind text, action text, affected int) LANGUAGE plpgsql SECURITY DEFINER SET search_p …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.detect_health_trend_and_alert() RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = internal, public, pg_temp …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.ensure_monthly_partitions(p_months_ahead integer DEFAULT 12) RETURNS TABLE(created_partition text) LANGUAGE plpgsql SECURITY …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.prune_db_health_samples() RETURNS void LANGUAGE sql SECURITY DEFINER SET search_path = internal, pg_catalog AS $$DELETE FROM …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.prune_perf_snapshots() RETURNS void LANGUAGE sql SECURITY DEFINER SET search_path = internal, pg_catalog AS $$DELETE FROM in …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.purge_telemetry() RETURNS TABLE(table_name text, deleted_rows integer) LANGUAGE plpgsql SECURITY DEFINER SET search_path TO …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.smoke_test_connections_saturation() RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = internal, public, pg_c …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.smoke_test_health_alerts() RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = internal, public, pg_temp AS $$ …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.smoke_test_wal_growth() RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = internal, public, pg_catalog AS $$ …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.test_partition_automation() RETURNS TABLE(test_name text, passed boolean, details text) LANGUAGE plpgsql SECURITY DEFINER SE …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE VIEW internal.write_amplification_report AS WITH latest_tbl AS ( SELECT DISTINCT ON (schemaname, relname) * FROM internal.table_activity_snaps …` | `supabase/migrations/20261127000000_recuperar_objetos_internos.sql` |
+| `CREATE OR REPLACE FUNCTION internal.ensure_monthly_partitions(p_months_ahead integer DEFAULT 12) RETURNS TABLE(created_partition text) LANGUAGE plpgsql SECURITY …` | `supabase/migrations/20261127130000_estabilizar_particoes_e_overloads.sql` |
 
 ### H.3 Limites de paginação
 
@@ -3993,7 +4032,7 @@ _nenhum item encontrado_
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +535 linhas — lista completa em `context.json` | |
+| … +536 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4027,6 +4066,7 @@ _nenhum item encontrado_
 | `user` | `supabase/functions/smolagent-runtime/index.ts` |
 | `user` | `supabase/functions/voice-synthesize/index.ts` |
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
+| `workspace_admin` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 
 ## K. Testes como especificação (3109 testes em 226 arquivos — nomes completos em `context.json`)
 
@@ -4428,6 +4468,13 @@ _nenhum item encontrado_
 | `notify_emails` | `supabase/migrations/20260418102513_4d1ac25f-4111-4ff9-921c-33a1b4a8e0e2.sql` |
 | `notify_on` | `supabase/migrations/20260722112903_e4950969-c93b-49eb-bec1-8637aa5b7e08.sql` |
 | `notify_anpd_on_breach` | `supabase/migrations/20260724000010_lgpd_required_tables.sql` |
+| `notify` | `supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql` |
+| `notify_emails` | `supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql` |
+| `notify_on` | `supabase/migrations/20261126220000_align_prod_objetos_ausentes.sql` |
+| `notify` | `supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql` |
+| `notify_anpd_on_breach` | `supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql` |
+| `notify_emails` | `supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql` |
+| `notify_on` | `supabase/migrations/20261126234500_objetos_raiz_tipos_e_colunas.sql` |
 
 ## N. Regras citadas em comentários do código
 
@@ -4733,4 +4780,4 @@ _nenhum item encontrado_
 | Falha de rede não pode derrubar a varredura: o local já guardou o avanço. | `src/services/skillHarvestService.ts` |
 | corre risco de estourar o limite de tempo da plataforma. | `src/services/skillHarvestService.ts` |
 | * Todas as tabelas têm RLS restrita; um usuário sem permissão recebe conjunto | `src/services/skillObservabilityService.ts` |
-| … +175 linhas — lista completa em `context.json` | |
+| … +178 linhas — lista completa em `context.json` | |

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9e812c61d21162494ba8a6db0c5c910978a760c0",
+  "commit": "710145b29bfed2d0029ffb353e481ab4ccecf595",
   "branch": "main",
-  "data_commit": "2026-11-26T20:45:10-03:00",
+  "data_commit": "2026-11-26T23:02:56-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "710145b",
+    "data": "2026-11-26",
+    "assunto": "fix(db): alinha o banco oficial ao schema do repo (1193 colunas e 10 objetos ausentes) (#175)"
+   },
    {
     "sha": "9e812c6",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "7fc063a",
     "data": "2026-11-24",
     "assunto": "infra(seguranca): workflow manual para remover Edge Functions orfas no projeto remoto (#155)"
-   },
-   {
-    "sha": "ef5746c",
-    "data": "2026-11-24",
-    "assunto": "fix(seguranca): remove a edge migrate-helper que expunha as credenciais do banco (#154)"
    }
   ],
-  "arquivos_mudados_7d": 158,
+  "arquivos_mudados_7d": 139,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 82
+    "commits": 83
    },
    {
     "autor": "dependabot[bot]",
@@ -310,7 +310,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2030,
+  "arquivos_total": 2036,
   "arquivos_codigo": 1473,
   "linhas_codigo": 323500,
   "rotas": 152,
@@ -321,8 +321,8 @@
   "componentes": 665,
   "hooks": 76,
   "edge_functions": 88,
-  "tabelas": 327,
-  "migrations": 338,
+  "tabelas": 328,
+  "migrations": 344,
   "cron_jobs": 37,
   "testes": 253,
   "workflows": 11,
@@ -794,15 +794,10 @@
   ],
   "edges_chamadas_sem_pasta": [],
   "tabelas_sem_rls": [
-   "agent_traces_v2_2026_11",
    "agent_traces_v2_2026_12",
    "agent_traces_v2_2027_01",
    "agent_usage",
-   "audit_log_v2_2026_05",
-   "audit_log_v2_2026_06",
-   "prompt_versions",
-   "trace_events_v2_2026_05",
-   "trace_events_v2_2026_06"
+   "prompt_versions"
   ],
   "tabelas_usadas_sem_definicao": [],
   "tabelas_com_drift_migration_vs_types": [
@@ -815,6 +810,7 @@
    "agent_versions",
    "api_keys",
    "audit_log",
+   "audit_log_v2",
    "auth_attempts",
    "chunks",
    "consent_records",
@@ -825,6 +821,7 @@
    "dr_drills",
    "entity_resolution_logs",
    "evaluation_runs",
+   "forensic_snapshots",
    "forum_posts",
    "forum_threads",
    "game_day_scorecards",
@@ -836,6 +833,7 @@
    "model_pricing",
    "notification_templates",
    "notifications",
+   "oncall_schedule",
    "permissions",
    "prompt_versions",
    "queue_items",
@@ -848,6 +846,7 @@
    "webhook_events",
    "workflow_runs",
    "workflows",
+   "workspace_members",
    "workspaces"
   ],
   "rpcs_sem_definicao": [

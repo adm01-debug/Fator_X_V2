@@ -4,7 +4,7 @@
  "stack": {
   "linguagens": [
    "TypeScript (1415)",
-   "SQL (341)",
+   "SQL (347)",
    "Markdown (134)",
    "JavaScript (54)",
    "JSON (25)",
@@ -1744,15 +1744,10 @@
   ],
   "menu_com_papeis": [],
   "tabelas_sem_rls": [
-   "agent_traces_v2_2026_11",
    "agent_traces_v2_2026_12",
    "agent_traces_v2_2027_01",
    "agent_usage",
-   "audit_log_v2_2026_05",
-   "audit_log_v2_2026_06",
-   "prompt_versions",
-   "trace_events_v2_2026_05",
-   "trace_events_v2_2026_06"
+   "prompt_versions"
   ]
  },
  "feature_flags": {

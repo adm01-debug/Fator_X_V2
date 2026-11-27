@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9e812c61d2` · branch `main` · 2026-11-27 00:34 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `710145b29b` · branch `main` · 2026-11-27 02:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -33,6 +33,7 @@
 | `agent_skills` | enabled | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() ) OR current_setting('request.jwt.cla | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin', 'membe | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin', 'membe | public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() AND role IN ('owner', 'admin') ) OR c |
 | `agent_templates` | enabled | authenticated: is_public = true OR created_by = auth.uid() | authenticated: created_by = auth.uid() | — | — |
 | `agent_traces` | enabled | public: auth.uid() = user_id | — | — | — |
+| `agent_traces_v2` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `agent_traces_v2_2026_04` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `agent_traces_v2_2026_05` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `agent_traces_v2_2026_06` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
@@ -64,8 +65,8 @@
 | `audit_log_safe` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `audit_log_v2` | enabled | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) |
 | `audit_log_v2_2026_04` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
-| `audit_log_v2_2026_05` | não encontrado | authenticated: false | authenticated: false | authenticated: false | authenticated: false |
-| `audit_log_v2_2026_06` | não encontrado | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) |
+| `audit_log_v2_2026_05` | enabled | authenticated: false | authenticated: false | authenticated: false | authenticated: false |
+| `audit_log_v2_2026_06` | enabled | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) |
 | `audit_log_v2_2026_07` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `audit_log_v2_2026_08` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `audit_log_v2_2026_09` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
@@ -144,7 +145,7 @@
 | `evaluation_runs` | enabled | authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) | authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) | authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) | authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) |
 | `execution_history` | enabled | public: auth.uid() IS NOT NULL | public: auth.uid() IS NOT NULL | public: auth.uid() IS NOT NULL | public: auth.uid() IS NOT NULL |
 | `finetune_jobs` | enabled | public: workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()) | public: workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid()) | public: user_id = auth.uid() | — |
-| `forensic_snapshots` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
+| `forensic_snapshots` | enabled | authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) | — | — | — |
 | `forum_posts` | enabled | public: ( thread_id IN ( SELECT ft.id FROM public.forum_threads ft JOIN public.help_centers hc ON ft.help_center_id = hc.id WHERE ft.is_publ | public: ( thread_id IN ( SELECT ft.id FROM public.forum_threads ft JOIN public.help_centers hc ON ft.help_center_id = hc.id JOIN public.work | public: author_id = auth.uid() OR current_setting('request.jwt.claim.role', true) = 'service_role' | public: author_id = auth.uid() OR current_setting('request.jwt.claim.role', true) = 'service_role' |
 | `forum_posts_public` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `forum_posts_safe` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
@@ -193,6 +194,7 @@
 | `llm_cost_by_caller` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `managed_secrets` | enabled | public: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid()))<br>authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) OR owner_id = auth.uid() | public: public.is_workspace_admin(auth.uid(), workspace_id) AND created_by = auth.uid()<br>authenticated: workspace_id IN (SELECT public.get_user_workspace_ids(auth.uid())) | public: public.is_workspace_admin(auth.uid(), workspace_id)<br>authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id) | public: public.is_workspace_admin(auth.uid(), workspace_id)<br>authenticated: owner_id = auth.uid() OR public.is_workspace_admin(auth.uid(), workspace_id) |
 | `mcp_servers` | enabled | authenticated: workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid())<br>public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() )<br>public: auth.role() = 'service_role'<br>authenticated: owner_id = (SELECT auth.uid()) | authenticated: workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid())<br>public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() )<br>public: auth.role() = 'service_role'<br>authenticated: owner_id = (SELECT auth.uid()) | authenticated: workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid())<br>public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() )<br>public: auth.role() = 'service_role'<br>authenticated: owner_id = (SELECT auth.uid()) | authenticated: workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid())<br>public: workspace_id IN ( SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid() )<br>public: auth.role() = 'service_role'<br>authenticated: owner_id = (SELECT auth.uid()) |
+| `mcp_tools` | enabled | authenticated: workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid()) | authenticated: workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid()) | authenticated: workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid()) | authenticated: workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid()) |
 | `model_pricing` | enabled | authenticated: true<br>authenticated: true | — | — | — |
 | `notebook_canvases` | enabled | authenticated: EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = notebook_canvases.workspace_id AND wm.user_id = au | authenticated: created_by = auth.uid() AND EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = notebook_canvases.work | authenticated: EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = notebook_canvases.workspace_id AND wm.user_id = au | authenticated: created_by = auth.uid() |
 | `notebook_note_templates` | enabled | authenticated: workspace_id IN (SELECT wm.workspace_id FROM public.workspace_members wm WHERE wm.user_id = auth.uid()) | authenticated: workspace_id IN (SELECT wm.workspace_id FROM public.workspace_members wm WHERE wm.user_id = auth.uid()) | authenticated: workspace_id IN (SELECT wm.workspace_id FROM public.workspace_members wm WHERE wm.user_id = auth.uid()) | authenticated: workspace_id IN (SELECT wm.workspace_id FROM public.workspace_members wm WHERE wm.user_id = auth.uid()) AND is_builtin = FALS |
@@ -253,7 +255,7 @@
 | `slack_dispatch_dlq` | enabled | authenticated: workspace_id IN (SELECT workspace_id FROM public.workspace_members WHERE user_id = auth.uid())<br>service_role: true | service_role: true | service_role: true | service_role: true |
 | `slack_dispatch_health` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `slack_dlq_stats` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
-| `slack_event_dedupe` | enabled | authenticated: EXISTS ( SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role_key IN ('admin', 'owner') )<br>service_role: true | service_role: true | service_role: true | service_role: true |
+| `slack_event_dedupe` | enabled | service_role: true<br>authenticated: EXISTS ( SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role_key IN ('admin', 'owner') ) | service_role: true | service_role: true | service_role: true |
 | `slack_rag_sources` | enabled | authenticated: public.is_workspace_admin(workspace_id)<br>service_role: true | authenticated: public.is_workspace_admin(workspace_id)<br>service_role: true | authenticated: public.is_workspace_admin(workspace_id)<br>service_role: true | authenticated: public.is_workspace_admin(workspace_id)<br>service_role: true |
 | `slack_user_cache` | enabled | authenticated: EXISTS ( SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role_key IN ('admin', 'owner') )<br>service_role: true | service_role: true | service_role: true | service_role: true |
 | `slack_workspace_config` | enabled | authenticated: public.is_workspace_admin(auth.uid(), workspace_id)<br>authenticated: EXISTS ( SELECT 1 FROM public.workspace_members wm WHERE wm.workspace_id = slack_workspace_config.workspace_id AND wm.user_id | authenticated: public.is_workspace_admin(auth.uid(), workspace_id) | authenticated: public.is_workspace_admin(auth.uid(), workspace_id) | authenticated: public.is_workspace_admin(auth.uid(), workspace_id) |
@@ -284,8 +286,8 @@
 | `trace_events` | enabled | authenticated: session_trace_id IN ( SELECT st.id FROM session_traces st JOIN sessions s ON st.session_id = s.id WHERE s.user_id = auth.uid( | authenticated: session_trace_id IN ( SELECT st.id FROM session_traces st JOIN sessions s ON st.session_id = s.id WHERE s.user_id = auth.uid( | authenticated: false | authenticated: false |
 | `trace_events_v2` | enabled | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) | authenticated: public.is_workspace_admin((SELECT auth.uid()), workspace_id) |
 | `trace_events_v2_2026_04` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
-| `trace_events_v2_2026_05` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
-| `trace_events_v2_2026_06` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
+| `trace_events_v2_2026_05` | enabled | — | — | — | — |
+| `trace_events_v2_2026_06` | enabled | — | — | — | — |
 | `trace_events_v2_2026_07` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `trace_events_v2_2026_08` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `trace_events_v2_2026_09` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
@@ -314,13 +316,11 @@
 | `traces_2027_03` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `traces_2027_04` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `traces_2027_05` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
-| `traces_2027_06` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
-| `traces_2027_07` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
-| … +31 linhas — lista completa em `context.json` | | | | | |
+| … +33 linhas — lista completa em `context.json` | | | | | |
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 178 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 183 arquivo(s)
 
 - `e2e/auth-flows.spec.ts`
 - `e2e/helpers/auth-fixtures.ts`
@@ -472,10 +472,11 @@
 - `supabase/migrations/20260726161137_21809199-94e6-4a51-ad42-1a224926b6db.sql`
 - `supabase/migrations/20260726195702_c67b4a61-2895-4b1f-a3ab-2b98291792e3.sql`
 - `supabase/migrations/20260726200653_b8a5612b-6c59-4e82-b726-a0be5aee81dc.sql`
-- … +28 (lista completa em `context.json`)
+- … +33 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
+- `_fase8_snapshot_as`
 - `accept_workspace_invitation`
 - `acknowledge_cost_alert`
 - `acknowledge_vulnerability`
@@ -723,26 +724,26 @@ Middleware matcher (Next.js): nenhum
 |---|---|---|---|
 | grant | anon, authenticated | select | `forum_threads_public`, `forum_posts_public`, `forum_threads_public`, `forum_posts_public` |
 | grant | anon, authenticated, service_role | execute | `check_rate_limit`, `is_user_locked_out`, `check_rate_limit` |
-| grant | authenticated | execute | `get_user_workspace_ids`, `get_slo_summary`, `get_workspace_members_full`, `get_oncall_with_contacts`, `get_my_2fa_status`, `get_pending_invites_for_email`, `invite_workspace_member`, `get_wal_generation_rate`, `get_cron_job_health`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_snapshot` … +10 |
-| grant | authenticated | select | `audit_log_safe`, `audit_log_safe`, `workspace_members_safe`, `workspace_members_directory`, `workspace_members_safe`, `workspace_members_safe`, `workspace_members_safe`, `slo_metrics_hourly`, `slo_metrics_hourly`, `workspace_members_safe`, `workspace_members_safe`, `oncall_schedule_safe`, `workspace_members_safe`, `workspace_members_directory`, `oncall_schedule_safe` … +27 |
+| grant | authenticated | execute | `get_user_workspace_ids`, `get_slo_summary`, `get_workspace_members_full`, `get_oncall_with_contacts`, `get_my_2fa_status`, `get_pending_invites_for_email`, `invite_workspace_member`, `get_wal_generation_rate`, `get_cron_job_health`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_snapshot` … +23 |
+| grant | authenticated | select | `audit_log_safe`, `audit_log_safe`, `workspace_members_safe`, `workspace_members_directory`, `workspace_members_safe`, `workspace_members_safe`, `workspace_members_safe`, `slo_metrics_hourly`, `slo_metrics_hourly`, `workspace_members_safe`, `workspace_members_safe`, `oncall_schedule_safe`, `workspace_members_safe`, `workspace_members_directory`, `oncall_schedule_safe` … +39 |
 | grant | authenticated | select, insert, update | `citation_telemetry`, `skill_reclassification_reviews` |
 | grant | authenticated | select, insert, update, delete | `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `slack_workspace_config`, `slack_channel_routes`, `slack_agent_notifications`, `slack_rag_sources`, `slack_bot_bindings`, `document_ingestions`, `collections`, `notebook_notes`, `knowledge_links`, `notebook_podcasts` … +19 |
-| grant | authenticated, anon | select | `forum_threads_safe`, `forum_posts_safe` |
-| grant | authenticated, service_role | execute | `is_user_locked_out`, `is_mfa_valid_for_role`, `increment_webhook_counter`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_slo_summary`, `get_slo_summary`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `hybrid_memory_search`, `is_workspace_admin`, `touch_memory`, `get_slow_query_alerts_history` … +15 |
-| grant | authenticated, service_role | select | `agent_daily_metrics`, `agent_daily_metrics` |
-| grant | postgres | execute | `_fase8_snapshot_as` |
+| grant | authenticated, anon | select | `forum_threads_safe`, `forum_posts_safe`, `forum_threads_public`, `forum_posts_public`, `forum_threads_safe`, `forum_posts_safe` |
+| grant | authenticated, service_role | execute | `is_user_locked_out`, `is_mfa_valid_for_role`, `increment_webhook_counter`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_slo_summary`, `get_slo_summary`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `hybrid_memory_search`, `is_workspace_admin`, `touch_memory`, `get_slow_query_alerts_history` … +20 |
+| grant | authenticated, service_role | select | `agent_daily_metrics`, `agent_daily_metrics`, `agent_daily_metrics` |
+| grant | postgres | execute | `_fase8_snapshot_as`, `_fase8_snapshot_as` |
 | grant | postgres, service_role | execute | `handle_new_user` |
-| grant | service_role | all | `retention_job_runs`, `pg_net_smoke_runs`, `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `openclaw_events`, `openclaw_agent_templates`, `slack_workspace_config`, `slack_channel_routes`, `slack_event_dedupe`, `slack_user_cache`, `slack_agent_notifications`, `slack_rag_sources` … +52 |
-| grant | service_role | execute | `cleanup_rate_limit_entries`, `increment_webhook_counter`, `prune_traces_retention`, `prune_traces_retention`, `run_prune_traces_retention_monitored`, `check_retention_job_health`, `pg_net_schema`, `pg_net_smoke_post`, `pg_net_smoke_response`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `refresh_agent_daily_metrics`, `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions` … +52 |
-| grant | service_role | select | `agent_daily_metrics`, `internal.agent_daily_metrics`, `llm_cost_by_caller`, `knowledge_graph_health` |
+| grant | service_role | all | `retention_job_runs`, `pg_net_smoke_runs`, `user_research_configs`, `mcp_servers`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `openclaw_events`, `openclaw_agent_templates`, `slack_workspace_config`, `slack_channel_routes`, `slack_event_dedupe`, `slack_user_cache`, `slack_agent_notifications`, `slack_rag_sources` … +59 |
+| grant | service_role | execute | `cleanup_rate_limit_entries`, `increment_webhook_counter`, `prune_traces_retention`, `prune_traces_retention`, `run_prune_traces_retention_monitored`, `check_retention_job_health`, `pg_net_schema`, `pg_net_smoke_post`, `pg_net_smoke_response`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `refresh_agent_daily_metrics`, `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions` … +85 |
+| grant | service_role | select | `agent_daily_metrics`, `internal.agent_daily_metrics`, `llm_cost_by_caller`, `knowledge_graph_health`, `internal.agent_daily_metrics`, `llm_cost_by_caller`, `slack_dispatch_health`, `knowledge_graph_health` |
 | grant | service_role | update, delete | `audit_log` |
 | grant | supabase_admin | execute | `public` |
-| revoke | PUBLIC | all | `prune_traces_retention`, `pg_net_schema`, `pg_net_smoke_post`, `pg_net_smoke_response`, `internal.check_partition_health`, `get_db_rollback_rate`, `knowledge_graph_health`, `hybrid_memory_search`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `claim_due_cadence_enrollments`, `internal.cron_tokens`, `decide_skill_reclassification`, `apply_skill_description` … +1 |
-| revoke | PUBLIC | execute | `get_user_workspace_ids`, `is_user_locked_out`, `is_mfa_valid_for_role`, `validate_oncall_workspace_consistency`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `get_user_workspace_ids`, `is_workspace_admin` |
+| revoke | PUBLIC | all | `prune_traces_retention`, `pg_net_schema`, `pg_net_smoke_post`, `pg_net_smoke_response`, `internal.check_partition_health`, `get_db_rollback_rate`, `knowledge_graph_health`, `hybrid_memory_search`, `get_embedding_coverage`, `get_embedding_coverage`, `reset_embedding_dead_letter`, `claim_due_cadence_enrollments`, `internal.cron_tokens`, `decide_skill_reclassification`, `apply_skill_description` … +4 |
+| revoke | PUBLIC | execute | `get_user_workspace_ids`, `is_user_locked_out`, `is_mfa_valid_for_role`, `validate_oncall_workspace_consistency`, `memory_relevance`, `touch_memory`, `get_knowledge_graph_health`, `hybrid_memory_search`, `get_user_workspace_ids`, `is_workspace_admin`, `get_knowledge_graph_health` |
 | revoke | PUBLIC, anon | all | `get_slo_summary`, `get_slo_summary`, `get_db_health_snapshot`, `get_db_health_snapshot`, `get_db_health_timeseries`, `get_detector_slo_status`, `get_partition_health_snapshot`, `match_documents`, `get_chunk_embedding_coverage` |
 | revoke | PUBLIC, anon | execute | `get_db_health_snapshot`, `get_slow_query_alerts_history`, `get_db_health_snapshot`, `get_vendor_summary`, `get_asset_summary`, `get_bcp_summary`, `get_change_summary`, `get_ir_summary`, `get_secrets_status_summary`, `get_user_workspace_ids`, `is_workspace_admin`, `is_workspace_admin` |
-| revoke | PUBLIC, anon, authenticated | all | `run_prune_traces_retention_monitored`, `check_retention_job_health`, `internal.check_partition_health`, `trg_openclaw_whatsapp_autoreply`, `knowledge_graph_health`, `internal.cleanup_slack_ephemeral`, `_fase8_snapshot_as`, `internal.db_health_samples`, `internal.capture_db_health_sample`, `internal.prune_db_health_samples`, `internal.detect_health_trend_and_alert`, `internal.smoke_test_health_alerts`, `internal.smoke_test_wal_growth`, `internal.smoke_test_connections_saturation`, `internal.detector_slo_state` … +6 |
-| revoke | PUBLIC, anon, authenticated | execute | `prune_traces_retention`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `get_cron_job_health`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_wal_generation_rate`, `internal.test_partition_automation`, `detect_slow_queries_and_alert`, `internal.detect_slo_breach_and_alert`, `collections_fill_workspace`, `explain_query_plan`, `log_ingestion_event`, `snapshot_note_version` … +15 |
+| revoke | PUBLIC, anon, authenticated | all | `run_prune_traces_retention_monitored`, `check_retention_job_health`, `internal.check_partition_health`, `trg_openclaw_whatsapp_autoreply`, `knowledge_graph_health`, `internal.cleanup_slack_ephemeral`, `_fase8_snapshot_as`, `internal.db_health_samples`, `internal.capture_db_health_sample`, `internal.prune_db_health_samples`, `internal.detect_health_trend_and_alert`, `internal.smoke_test_health_alerts`, `internal.smoke_test_wal_growth`, `internal.smoke_test_connections_saturation`, `internal.detector_slo_state` … +18 |
+| revoke | PUBLIC, anon, authenticated | execute | `prune_traces_retention`, `pg_net_smoke_post`, `pg_net_smoke_response`, `run_pg_net_smoke_test`, `get_cron_job_health`, `get_db_rollback_rate`, `get_rollback_rate_per_min`, `get_wal_generation_rate`, `internal.test_partition_automation`, `detect_slow_queries_and_alert`, `internal.detect_slo_breach_and_alert`, `collections_fill_workspace`, `explain_query_plan`, `log_ingestion_event`, `snapshot_note_version` … +18 |
 | revoke | PUBLIC, authenticated | execute | `recompute_memory_tier`, `refresh_knowledge_graph_health` |
 | revoke | PUBLIC, authenticated, anon | execute | `internal.slack_cleanup_dedupe` |
 | revoke | anon | all | `get_slow_query_alerts_history`, `explain_query_plan`, `claim_due_cadence_enrollments`, `get_partition_health_snapshot`, `get_cron_job_health`, `get_wal_generation_rate`, `chat_threads`, `chat_messages` |
@@ -756,9 +757,9 @@ Middleware matcher (Next.js): nenhum
 | revoke | authenticated | insert, update, delete | `compliance_frameworks` |
 | revoke | authenticated | update, delete | `audit_log` |
 | revoke | authenticated, anon | all | `traces`, `spans` |
-| revoke | public | all | `refresh_agent_daily_metrics`, `internal.capture_perf_snapshot`, `internal.set_perf_baseline`, `internal.detect_perf_regressions` |
+| revoke | public | all | `refresh_agent_daily_metrics`, `internal.capture_perf_snapshot`, `internal.set_perf_baseline`, `internal.detect_perf_regressions`, `internal.capture_perf_snapshot`, `internal.set_perf_baseline`, `internal.detect_perf_regressions` |
 | revoke | public, anon | all | `get_cron_job_health` |
-| revoke | public, anon, authenticated | all | `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions`, `internal.ensure_monthly_partitions`, `internal.drop_old_partitions`, `internal.cleanup_orphan_sessions`, `internal.purge_telemetry`, `internal.check_bloat_and_alert`, `internal.dispatch_security_alert_to_slack`, `internal.prune_perf_snapshots`, `internal.prune_wal_snapshots`, `internal.sample_rollback_stats`, `internal.sample_wal_stats`, `internal.purge_telemetry` |
+| revoke | public, anon, authenticated | all | `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions`, `internal.ensure_monthly_partitions`, `internal.drop_old_partitions`, `internal.cleanup_orphan_sessions`, `internal.purge_telemetry`, `internal.check_bloat_and_alert`, `internal.dispatch_security_alert_to_slack`, `internal.prune_perf_snapshots`, `internal.prune_wal_snapshots`, `internal.sample_rollback_stats`, `internal.sample_wal_stats`, `internal.purge_telemetry`, `refresh_agent_daily_metrics`, `internal.ensure_monthly_partitions` … +5 |
 | revoke | public, anon, authenticated | execute | `create_partition_if_not_exists`, `cleanup_old_auth_attempts`, `increment_webhook_counter` |
 
 ## Riscos de acesso detectados
@@ -771,7 +772,6 @@ Middleware matcher (Next.js): nenhum
 | `compliance_controls` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | `compliance_controls` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
 | `compliance_frameworks` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/pages/ComplianceFrameworksPage.tsx` |
-| `forensic_snapshots` | acessada do front (2 arquivo(s)) sem RLS (não encontrado) | `src/pages/ForensicSnapshotsPage.tsx`<br>`src/pages/ReplayForkPage.tsx` |
 | `forum_posts_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | `forum_threads_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/knowledgeManagementService.ts` |
 | `oncall_schedule_safe` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/services/incidentService.ts` |
@@ -781,8 +781,8 @@ Middleware matcher (Next.js): nenhum
 
 ## Multi-tenancy
 
-- Chave de tenant: **`workspace_id`** presente em 156 tabela(s): `agents`, `notifications`, `user_roles`, `workspace_members`, `knowledge_bases`, `evaluation_runs`, `workspace_secrets`, `collections`, `tool_integrations`, `workflows`, `evaluation_datasets`, `environments`, `guardrail_policies`, `alerts`, `usage_records`, `budgets`, `agent_memories`, `deploy_connections`, `alert_rules`, `finetune_jobs`, `hf_config`, `api_keys`, `security_events`, `cron_schedules`, `notification_templates`, `task_queues`, `agent_routing_config`, `bitrix24_webhook_events`, `whatsapp_webhook_events`, `ip_whitelist`, `geo_allowed_countries`, `access_blocked_log`, `help_centers`, `automation_rules`, `automation_logs`, `agent_experiments`, `agent_eval_datasets`, `agent_eval_runs`, `agent_workflows`, `replay_forks`, `code_executions`, `prompt_experiments`, `voice_sessions`, `browser_sessions`, `agent_graphs`, `graph_executions`, `chaos_experiments`, `synthetic_checks`, `cost_baselines`, `cost_alerts`, `workspace_budgets`, `budget_events`, `game_days`, `incident_playbooks`, `incident_runs`, `oncall_schedule`, `dr_drills`, `postmortems`, `compliance_reports`, `sbom_snapshots`, `vulnerability_findings`, `managed_secrets`, `pentest_engagements`, `pentest_findings`, `risk_register`, `vendors`, `business_systems`, `change_requests`, `freeze_windows`, `ir_playbooks`, `ir_tabletop_exercises`, `assets`, `workspace_member_emails`, `oncall_schedule_emails`, `knowledge_entities`, `audit_log_v2`, `trace_events_v2`, `audit_events`, `security_alerts`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `openclaw_events`, `slack_workspace_config`, `slack_channel_routes`, `slack_agent_notifications`, `slack_rag_sources`, `slack_bot_bindings`, `slack_dispatch_dlq`, `citation_telemetry`, `notebook_notes`, `knowledge_links`, `notebook_podcasts`, `notebook_canvases`, `notebook_note_templates`, `notebook_note_versions`, `data_subject_requests`, `data_processing_register`, `personal_data_inventory`, `data_breach_log`, `lgpd_settings`, `data_retention_policies`, `crm_companies`, `crm_contacts`, `crm_pipelines`, `crm_stages`, `crm_deals`, `crm_activities`, `crm_icp_profiles`, `crm_cadences`, `crm_cadence_steps`, `crm_cadence_enrollments`, `crm_cadence_runs`, `eval_runs`, `chat_threads`, `audit_log_v2_2026_04`, `audit_log_v2_2026_06`, `audit_log_v2_2026_07`, `audit_log_v2_2026_08`, `audit_log_v2_2026_09`, `audit_log_v2_2026_10`, `audit_log_v2_2026_11`, `audit_log_v2_2026_12`, `audit_log_v2_2027_01`, `audit_log_v2_2027_02`, `audit_log_v2_2027_03`, `audit_log_v2_2027_04`, `audit_log_v2_2027_05`, `audit_log_v2_2027_06`, `audit_log_v2_2027_07`, `trace_events_v2_2026_04`, `trace_events_v2_2026_05`, `trace_events_v2_2026_06`, `trace_events_v2_2026_07`, `trace_events_v2_2026_08`, `trace_events_v2_2026_09`, `trace_events_v2_2026_10`, `trace_events_v2_2026_11`, `trace_events_v2_2026_12`, `trace_events_v2_2027_01`, `trace_events_v2_2027_02`, `trace_events_v2_2027_03`, `trace_events_v2_2027_04`, `trace_events_v2_2027_05`, `trace_events_v2_2027_06`, `trace_events_v2_2027_07`, `audit_log_safe`, `knowledge_graph_health`, `llm_cost_by_caller`, `oncall_schedule_safe`, `slack_dispatch_health`, `slack_dlq_stats`, `usage_records_cost_safe`, `workspace_members_directory`, `workspace_members_public`, `workspace_members_safe`
-- Cobertura: 47% das tabelas. Abaixo de 60% — isolamento provavelmente por usuário (auth.uid()) ou misto; não flagado por tabela.
+- Chave de tenant: **`workspace_id`** presente em 165 tabela(s): `agents`, `notifications`, `user_roles`, `workspace_members`, `knowledge_bases`, `evaluation_runs`, `workspace_secrets`, `collections`, `tool_integrations`, `workflows`, `evaluation_datasets`, `environments`, `guardrail_policies`, `alerts`, `usage_records`, `budgets`, `agent_memories`, `deploy_connections`, `alert_rules`, `consent_records`, `data_deletion_requests`, `finetune_jobs`, `hf_config`, `api_keys`, `security_events`, `mcp_servers`, `workflow_executions`, `cron_schedules`, `webhook_endpoints`, `webhook_events`, `notification_templates`, `task_queues`, `agent_routing_config`, `bitrix24_webhook_events`, `whatsapp_webhook_events`, `ip_whitelist`, `geo_allowed_countries`, `access_blocked_log`, `help_centers`, `automation_rules`, `automation_logs`, `agent_experiments`, `agent_eval_datasets`, `agent_eval_runs`, `agent_workflows`, `replay_forks`, `code_executions`, `prompt_experiments`, `voice_sessions`, `browser_sessions`, `agent_graphs`, `graph_executions`, `chaos_experiments`, `synthetic_checks`, `cost_baselines`, `cost_alerts`, `workspace_budgets`, `budget_events`, `game_days`, `incident_playbooks`, `incident_runs`, `oncall_schedule`, `dr_drills`, `postmortems`, `compliance_reports`, `sbom_snapshots`, `vulnerability_findings`, `managed_secrets`, `pentest_engagements`, `pentest_findings`, `risk_register`, `vendors`, `business_systems`, `change_requests`, `freeze_windows`, `ir_playbooks`, `ir_tabletop_exercises`, `assets`, `workspace_member_emails`, `oncall_schedule_emails`, `knowledge_entities`, `audit_log`, `audit_log_v2`, `trace_events_v2`, `audit_events`, `security_alerts`, `openclaw_deployments`, `openclaw_whatsapp_instances`, `openclaw_whatsapp_messages`, `openclaw_events`, `slack_workspace_config`, `slack_channel_routes`, `slack_agent_notifications`, `slack_rag_sources`, `slack_bot_bindings`, `slack_dispatch_dlq`, `citation_telemetry`, `notebook_notes`, `knowledge_links`, `notebook_podcasts`, `notebook_canvases`, `notebook_note_templates`, `notebook_note_versions`, `data_subject_requests`, `data_processing_register`, `personal_data_inventory`, `data_breach_log`, `lgpd_settings`, `data_retention_policies`, `crm_companies`, `crm_contacts`, `crm_pipelines`, `crm_stages`, `crm_deals`, `crm_activities`, `crm_icp_profiles`, `crm_cadences`, `crm_cadence_steps`, `crm_cadence_enrollments`, `crm_cadence_runs`, `eval_runs`, `chat_threads`, `forensic_snapshots`, `mcp_tools`, `audit_log_v2_2026_04`, `audit_log_v2_2026_06`, `audit_log_v2_2026_07`, `audit_log_v2_2026_08`, `audit_log_v2_2026_09`, `audit_log_v2_2026_10`, `audit_log_v2_2026_11`, `audit_log_v2_2026_12`, `audit_log_v2_2027_01`, `audit_log_v2_2027_02`, `audit_log_v2_2027_03`, `audit_log_v2_2027_04`, `audit_log_v2_2027_05`, `audit_log_v2_2027_06`, `audit_log_v2_2027_07`, `trace_events_v2_2026_04`, `trace_events_v2_2026_05`, `trace_events_v2_2026_06`, `trace_events_v2_2026_07`, `trace_events_v2_2026_08`, `trace_events_v2_2026_09`, `trace_events_v2_2026_10`, `trace_events_v2_2026_11`, `trace_events_v2_2026_12`, `trace_events_v2_2027_01`, `trace_events_v2_2027_02`, `trace_events_v2_2027_03`, `trace_events_v2_2027_04`, `trace_events_v2_2027_05`, `trace_events_v2_2027_06`, `trace_events_v2_2027_07`, `audit_log_safe`, `knowledge_graph_health`, `llm_cost_by_caller`, `oncall_schedule_safe`, `slack_dispatch_health`, `slack_dlq_stats`, `usage_records_cost_safe`, `workspace_members_directory`, `workspace_members_public`, `workspace_members_safe`
+- Cobertura: 50% das tabelas. Abaixo de 60% — isolamento provavelmente por usuário (auth.uid()) ou misto; não flagado por tabela.
 
 ## Soft delete (registros 'apagados' continuam na tabela — filtre!)
 
@@ -793,6 +793,8 @@ Middleware matcher (Next.js): nenhum
 | `budgets` | `is_active` |
 | `api_keys` | `is_active` |
 | `roles` | `is_active` |
+| `mcp_servers` | `is_active` |
+| `notification_templates` | `is_active` |
 | `automation_templates` | `is_active` |
 | `ip_whitelist` | `is_active` |
 | `automation_rules` | `is_active` |
@@ -808,6 +810,7 @@ Middleware matcher (Next.js): nenhum
 | `crm_cadences` | `is_active` |
 | `crm_cadences` | `deleted_at` |
 | `template_skill_links` | `deleted_at` |
+| `mcp_tools` | `is_active` |
 
 ## Auditoria (colunas de rastreio)
 
@@ -831,7 +834,7 @@ Middleware matcher (Next.js): nenhum
 | `documents` | `created_at`, `updated_at` |
 | `tool_integrations` | `created_at`, `updated_at` |
 | `tool_policies` | `created_at` |
-| `workflows` | `created_at`, `updated_at` |
+| `workflows` | `created_at`, `created_by`, `updated_at` |
 | `workflow_steps` | `created_at` |
 | `evaluation_datasets` | `created_at`, `updated_at` |
 | `test_cases` | `created_at` |
@@ -843,7 +846,7 @@ Middleware matcher (Next.js): nenhum
 | `usage_records` | `created_at` |
 | `budgets` | `created_at`, `updated_at` |
 | `agent_memories` | `created_at`, `updated_at` |
-| `model_pricing` | `created_at` |
+| `model_pricing` | `created_at`, `updated_at` |
 | `workflow_runs` | `created_at` |
 | `deploy_connections` | `created_at`, `updated_at` |
 | `alert_rules` | `created_at` |
@@ -853,21 +856,21 @@ Middleware matcher (Next.js): nenhum
 | `finetune_jobs` | `created_at`, `updated_at` |
 | `hf_config` | `created_at`, `updated_at` |
 | `rate_limit_logs` | `created_at` |
-| `api_keys` | `created_at`, `updated_at` |
+| `api_keys` | `created_at`, `created_by`, `updated_at` |
 | `security_events` | `created_at` |
 | `roles` | `created_at`, `updated_at` |
 | `permissions` | `created_at` |
 | `role_permissions` | `created_at` |
 | `agent_permissions` | `created_at` |
-| `mcp_servers` | `created_at`, `updated_at` |
+| `mcp_servers` | `created_at`, `created_by`, `updated_at` |
 | `agent_skills` | `created_at`, `updated_at` |
 | `skill_registry` | `created_at`, `created_by`, `updated_at` |
 | `workflow_executions` | `created_at` |
 | `workflow_checkpoints` | `created_at` |
 | `workflow_handoffs` | `created_at` |
-| `cron_schedules` | `created_at`, `updated_at` |
+| `cron_schedules` | `created_at`, `created_by`, `updated_at` |
 | `cron_schedule_executions` | `created_at` |
-| `webhook_endpoints` | `created_at`, `updated_at` |
+| `webhook_endpoints` | `created_at`, `created_by`, `updated_at` |
 | `webhook_events` | `created_at` |
 | `dead_letter_queue` | `created_at` |
 | `credential_vault` | `created_at`, `created_by`, `updated_at` |
@@ -1016,6 +1019,9 @@ Middleware matcher (Next.js): nenhum
 | `chat_messages` | `created_at` |
 | `skill_reclassification_reviews` | `created_at`, `updated_at` |
 | `skill_harvest_checkpoints` | `created_at`, `updated_at` |
+| `forensic_snapshots` | `created_at` |
+| `agent_traces_v2` | `created_at` |
+| `mcp_tools` | `created_at`, `updated_at` |
 | `agent_traces_v2_2026_04` | `created_at` |
 | `agent_traces_v2_2026_05` | `created_at` |
 | `agent_traces_v2_2026_06` | `created_at` |
@@ -1048,7 +1054,6 @@ Middleware matcher (Next.js): nenhum
 | `audit_log_v2_2027_05` | `created_at` |
 | `audit_log_v2_2027_06` | `created_at` |
 | `audit_log_v2_2027_07` | `created_at` |
-| `forensic_snapshots` | `created_at` |
 | `spans_2026_04` | `created_at` |
 | `spans_2026_05` | `created_at` |
 | `spans_2026_06` | `created_at` |
@@ -1112,8 +1117,10 @@ Middleware matcher (Next.js): nenhum
 |---|---|
 | `auth_attempts` | `email` |
 | `auth_attempts` | `ip_address` |
+| `workspace_members` | `email` |
 | `consent_records` | `ip_address` |
 | `rate_limit_logs` | `ip_address` |
+| `security_events` | `ip_address` |
 | `credential_audit_logs` | `ip_address` |
 | `ip_whitelist` | `ip_address` |
 | `access_blocked_log` | `ip_address` |
@@ -1160,6 +1167,8 @@ Middleware matcher (Next.js): nenhum
 | `session_traces` | `cost_usd` | `NUMERIC` |
 | `usage_records` | `cost_usd` | `NUMERIC` |
 | `workflow_runs` | `total_steps` | `INTEGER` |
+| `workflow_runs` | `total_cost_usd` | `NUMERIC` |
+| `workflow_runs` | `total_tokens` | `INTEGER` |
 | `workflow_step_runs` | `cost_usd` | `NUMERIC` |
 | `workflow_executions` | `total_cost_usd` | `NUMERIC(10,` |
 | `workflow_executions` | `total_tokens` | `INTEGER` |
@@ -1192,6 +1201,7 @@ Middleware matcher (Next.js): nenhum
 | `internal.query_perf_snapshots` | `total_exec_ms` | `NUMERIC` |
 | `crm_deals` | `amount` | `NUMERIC(14,2)` |
 | `skill_harvest_checkpoints` | `total_files` | `INTEGER` |
+| `agent_traces_v2` | `cost_usd` | `NUMERIC` |
 | `agent_traces_v2_2026_04` | `cost_usd` | `number` |
 | `agent_traces_v2_2026_05` | `cost_usd` | `number` |
 | `agent_traces_v2_2026_06` | `cost_usd` | `number` |

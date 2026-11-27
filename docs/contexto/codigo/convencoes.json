@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "conventional commits (observado)",
   "exemplos": [
+   "fix(db): alinha o banco oficial ao schema do repo (1193 colunas e 10 objetos ausentes) (#175)",
    "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#178)",
    "feat(riscos): página de riscos passa a usar as RPCs e expõe a trilha de revisão (#177)",
    "feat(custos): tela de baseline do detector de anomalias (#176)",
-   "feat(custos): baseline do detector de anomalias ganha tela e recálculo (#174)",
-   "feat: expõe a trilha real de security_events no Audit Trail (#173)"
+   "feat(custos): baseline do detector de anomalias ganha tela e recálculo (#174)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
