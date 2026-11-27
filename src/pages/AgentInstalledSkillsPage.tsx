@@ -17,9 +17,20 @@ import {
   Star,
   CheckCircle2,
   Settings2,
+  Sparkles,
+  TrendingUp,
+  Loader2,
+  RefreshCw,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import {
+  getSkillbook,
+  reflectAndEvolve,
+  pruneWeakSkills,
+  type AgentSkill,
+  type EvolutionReport,
+} from "@/services/agentEvolutionService";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,6 +68,12 @@ type Skill = {
   install_count: number;
   rating: number;
   is_verified: boolean;
+};
+
+type SkillbookState = {
+  skills: AgentSkill[];
+  report: EvolutionReport | null;
+  error: string | null;
 };
 
 type Installed = {
@@ -116,6 +133,56 @@ export default function AgentInstalledSkillsPage() {
       if (error) throw error;
       return (data ?? []) as Skill[];
     },
+  });
+
+  const skillbook = useQuery<SkillbookState>({
+    queryKey: ["agent_skillbook", agentId],
+    enabled: !!agentId,
+    queryFn: async () => {
+      try {
+        const skills = await getSkillbook(agentId);
+        return { skills, report: null, error: null };
+      } catch (e) {
+        return {
+          skills: [],
+          report: null,
+          error: e instanceof Error ? e.message : "Falha ao carregar o skillbook",
+        };
+      }
+    },
+  });
+
+  const evolve = useMutation({
+    mutationFn: async () => {
+      if (!agentId) throw new Error("Selecione um agente");
+      const report = await reflectAndEvolve(agentId);
+      return report;
+    },
+    onSuccess: (report) => {
+      toast.success(
+        report.skills_discovered.length > 0
+          ? `${report.skills_discovered.length} skill(s) nova(s) aprendida(s)`
+          : "Nenhum padrão novo encontrado na janela",
+      );
+      qc.invalidateQueries({ queryKey: ["agent_skillbook"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const prune = useMutation({
+    mutationFn: async () => {
+      if (!agentId) throw new Error("Selecione um agente");
+      return pruneWeakSkills(agentId);
+    },
+    onSuccess: (removed) => {
+      toast.success(
+        removed > 0
+          ? `${removed} skill(s) fraca(s) removida(s)`
+          : "Nenhuma skill abaixo do limite de confiança",
+      );
+      qc.invalidateQueries({ queryKey: ["agent_skillbook"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const installedIds = useMemo(
@@ -314,6 +381,98 @@ export default function AgentInstalledSkillsPage() {
                 </div>
               </div>
             ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {agentId && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-5 text-primary" />
+              <CardTitle>Skills aprendidas ({skillbook.data?.skills.length ?? 0})</CardTitle>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => prune.mutate()}
+                disabled={prune.isPending || (skillbook.data?.skills.length ?? 0) === 0}
+              >
+                {prune.isPending ? (
+                  <Loader2 className="size-4 mr-2 animate-spin" />
+                ) : (
+                  <Trash2 className="size-4 mr-2" />
+                )}
+                Expurgar fracas
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => evolve.mutate()}
+                disabled={evolve.isPending}
+              >
+                {evolve.isPending ? (
+                  <Loader2 className="size-4 mr-2 animate-spin" />
+                ) : (
+                  <RefreshCw className="size-4 mr-2" />
+                )}
+                Aprender agora
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {skillbook.isLoading && <Skeleton className="h-24 w-full" />}
+            {skillbook.data?.error && (
+              <Alert variant="destructive">
+                <AlertTitle>Não foi possível ler o skillbook</AlertTitle>
+                <AlertDescription>{skillbook.data.error}</AlertDescription>
+              </Alert>
+            )}
+            {!skillbook.isLoading &&
+              !skillbook.data?.error &&
+              (skillbook.data?.skills.length ?? 0) === 0 && (
+                <Alert>
+                  <TrendingUp className="size-4" />
+                  <AlertTitle>Nenhuma skill aprendida ainda</AlertTitle>
+                  <AlertDescription>
+                    O agente aprende padrões a partir das próprias execuções. Use
+                    &quot;Aprender agora&quot; depois que ele acumular traces.
+                  </AlertDescription>
+                </Alert>
+              )}
+            {skillbook.data?.skills.map((skill) => {
+              const total = skill.success_count + skill.failure_count;
+              const taxa = total > 0 ? (skill.success_count / total) * 100 : null;
+              return (
+                <div
+                  key={skill.id}
+                  className="flex flex-col sm:flex-row sm:items-start gap-3 p-4 rounded-lg border bg-card/40"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold">{skill.skill_name}</span>
+                      <Badge
+                        variant={skill.confidence >= 0.6 ? "default" : "secondary"}
+                        className="text-meta"
+                      >
+                        confiança {(skill.confidence * 100).toFixed(0)}%
+                      </Badge>
+                      {taxa !== null && (
+                        <Badge variant="outline" className="text-meta">
+                          {skill.success_count}/{total} acertos
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-body-sm text-muted-foreground mt-1">
+                      {skill.description || "Sem descrição"}
+                    </p>
+                    <p className="text-meta text-muted-foreground mt-1 font-mono line-clamp-2">
+                      {skill.pattern}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </CardContent>
         </Card>
       )}
