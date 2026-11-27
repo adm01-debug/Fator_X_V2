@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `98dda830c2` · branch `main` · 2026-11-27 07:17 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `046466fbdf` · branch `main` · 2026-11-27 07:34 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4039,7 +4039,7 @@ _nenhum item encontrado_
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +543 linhas — lista completa em `context.json` | |
+| … +544 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4075,7 +4075,7 @@ _nenhum item encontrado_
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 | `workspace_admin` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 
-## K. Testes como especificação (3134 testes em 230 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3141 testes em 232 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4287,6 +4287,7 @@ _nenhum item encontrado_
 | `src/test/agent-evolution.test.ts` | 4 | Agent Self-Evolution · builds skillbook prompt from skills · returns empty for no skills · reflects on traces |
 | `src/test/cost-anomaly-service.test.ts` | 4 | costAnomalyService.listBaselines · ordena pelas mais recentes e aplica o teto informado · filtra por escopo apenas quando informado · lança em erro — o painel precisa distinguir falha de baseline ausente |
 | `src/test/error-boundary.test.tsx` | 4 | ErrorBoundary · renders children when there is no error · renders error UI when a child throws · renders custom fallback when provided |
+| `src/test/knowledge-embedding-health-service.test.ts` | 4 | getEmbeddingHealth · resolve documento do workspace antes de contar chunks · devolve zero sem tocar em chunks quando o workspace nao tem base · para antes de collections quando nao ha knowledge_base |
 | `src/test/metrics-embedding-coverage.test.tsx` | 4 | EmbeddingCoverageCard · mostra a cobertura dos chunks de documentos junto da cobertura de memórias · não derruba o card quando a cobertura de chunks falha · não mostra a seção de chunks quando o workspace não tem chunks |
 | `src/test/nlp-pipeline-service.test.ts` | 4 | nlpPipelineService · analyzeText returns NLP result · analyzeText throws on error · analyzeWhatsAppMessage returns structured result |
 | `src/test/openclaw-whatsapp-setup.test.tsx` | 4 | OpenclawWhatsappSetup · renderiza o formulário inicial com badge de estado idle · exibe o QR Code retornado pelo serviço após pareamento · exibe erro quando o pareamento falha |
@@ -4300,6 +4301,7 @@ _nenhum item encontrado_
 | `src/components/security/SecurityMonitoringPanel.test.tsx` | 3 | SecurityMonitoringPanel · should render the monitoring central header · should show the loading state initially |
 | `src/test/agent-installed-skills-page.test.tsx` | 3 | AgentInstalledSkillsPage — skills aprendidas · mostra o skillbook do agente escolhido, com confiança e taxa de acerto · mostra o erro do skillbook em vez de tela vazia |
 | `src/test/edge-symbol-guard.test.ts` | 3 | Edge Functions — símbolos compartilhados · varre um conjunto representativo de arquivos · não usa helper compartilhado sem import nem definição local |
+| `src/test/knowledge-embeddings-health.test.tsx` | 3 | Embedding health tab · mostra os tres contadores de chunks sem vetor · lista o chunk travado escopado ao workspace e devolve para a fila |
 | `src/test/mcp-client.test.ts` | 3 | MCP Client · can import NexusMCPClient · creates client instance |
 | `src/test/otel-genai.test.ts` | 3 | OTel GenAI Semantic Conventions · creates attributes with correct keys · estimates cost for known models |
 | `src/test/rich-editor.test.tsx` | 3 | contrato do editor com as extensões TipTap instaladas · renderiza JSON existente e acompanha atualização controlada · preserva comandos de formatação, listas e histórico no mesmo núcleo |

@@ -3556,6 +3556,9 @@
    ],
    "hooks_locais": [],
    "tabelas": [
+    "chunks",
+    "collections",
+    "documents",
     "forum_posts",
     "forum_posts_safe",
     "forum_threads",
@@ -3564,7 +3567,8 @@
     "kb_article_versions",
     "kb_articles",
     "kb_query_gaps",
-    "kb_translations"
+    "kb_translations",
+    "knowledge_bases"
    ],
    "rpcs": [],
    "edges": [
@@ -3597,6 +3601,9 @@
    ],
    "hooks_locais": [],
    "tabelas": [
+    "chunks",
+    "collections",
+    "documents",
     "forum_posts",
     "forum_posts_safe",
     "forum_threads",
@@ -3605,7 +3612,8 @@
     "kb_article_versions",
     "kb_articles",
     "kb_query_gaps",
-    "kb_translations"
+    "kb_translations",
+    "knowledge_bases"
    ],
    "rpcs": [],
    "edges": [
@@ -3645,6 +3653,9 @@
    ],
    "tabelas": [
     "auth_attempts",
+    "chunks",
+    "collections",
+    "documents",
     "forum_posts",
     "forum_posts_safe",
     "forum_threads",
@@ -3654,6 +3665,7 @@
     "kb_articles",
     "kb_query_gaps",
     "kb_translations",
+    "knowledge_bases",
     "user_roles"
    ],
    "rpcs": [
@@ -3697,6 +3709,9 @@
    ],
    "tabelas": [
     "auth_attempts",
+    "chunks",
+    "collections",
+    "documents",
     "forum_posts",
     "forum_posts_safe",
     "forum_threads",
@@ -3706,6 +3721,7 @@
     "kb_articles",
     "kb_query_gaps",
     "kb_translations",
+    "knowledge_bases",
     "user_roles"
    ],
    "rpcs": [
@@ -3951,6 +3967,9 @@
    ],
    "hooks_locais": [],
    "tabelas": [
+    "chunks",
+    "collections",
+    "documents",
     "forum_posts",
     "forum_posts_safe",
     "forum_threads",
@@ -3959,7 +3978,8 @@
     "kb_article_versions",
     "kb_articles",
     "kb_query_gaps",
-    "kb_translations"
+    "kb_translations",
+    "knowledge_bases"
    ],
    "rpcs": [],
    "edges": [

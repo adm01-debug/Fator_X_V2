@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "98dda830c276c273616b15d58aa8ea31a2ba15a0",
+  "commit": "046466fbdfe79e002c8a3bfc60c9b26a170d6280",
   "branch": "main",
-  "data_commit": "2026-11-27T04:16:39-03:00",
+  "data_commit": "2026-11-27T04:34:09-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "046466f",
+    "data": "2026-11-27",
+    "assunto": "feat(conhecimento): aba de saúde dos embeddings com reprocessamento de chunks travados (#205)"
+   },
    {
     "sha": "98dda83",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "c3e765c",
     "data": "2026-11-26",
     "assunto": "fix(time): tela de time volta a mostrar o e-mail dos membros (#168)"
-   },
-   {
-    "sha": "9e06f43",
-    "data": "2026-11-26",
-    "assunto": "fix(custos): faturamento lê a view de custo seguro em vez da tabela crua (#167)"
    }
   ],
-  "arquivos_mudados_7d": 158,
+  "arquivos_mudados_7d": 161,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -169,7 +169,7 @@
    },
    {
     "pasta": "src/integrations/supabase",
-    "mudancas": 5
+    "mudancas": 6
    },
    {
     "pasta": "supabase/functions/geo-code",
@@ -226,15 +226,15 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 5
+   },
+   {
     "arquivo": ".github/workflows/contexto.yml",
     "mudancas": 4
    },
    {
     "arquivo": ".github/workflows/guards.yml",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 4
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 96
+    "commits": 97
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2045,
-  "arquivos_codigo": 1480,
-  "linhas_codigo": 325381,
+  "arquivos_total": 2047,
+  "arquivos_codigo": 1482,
+  "linhas_codigo": 325793,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 328,
   "migrations": 346,
   "cron_jobs": 37,
-  "testes": 257,
+  "testes": 259,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -492,7 +492,7 @@
   },
   "src/integrations": {
    "arquivos": 5,
-   "linhas": 15764
+   "linhas": 15773
   },
   "src/lib": {
    "arquivos": 93,
@@ -504,7 +504,7 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 51638
+   "linhas": 51793
   },
   "src/security.test.ts": {
    "arquivos": 1,
@@ -512,15 +512,15 @@
   },
   "src/services": {
    "arquivos": 171,
-   "linhas": 34121
+   "linhas": 34221
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 208,
-   "linhas": 31050
+   "arquivos": 210,
+   "linhas": 31198
   },
   "src/tests": {
    "arquivos": 2,
@@ -566,7 +566,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 15490
+   "linhas": 15499
   },
   {
    "arquivo": "src/pages/SLODashboard.tsx",

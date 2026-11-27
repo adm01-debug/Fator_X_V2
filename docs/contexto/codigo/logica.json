@@ -848,7 +848,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 15490,
+   "linhas": 15499,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -6534,6 +6534,7 @@
    "arquivo": "src/services/knowledgeManagementService.ts",
    "camada": "services",
    "exports": [
+    "EmbeddingHealth",
     "ForumPostRow",
     "ForumThreadRow",
     "analyzeQueryGaps",
@@ -6545,11 +6546,13 @@
     "deleteHelpCenter",
     "getArticle",
     "getArticleVersion",
+    "getEmbeddingHealth",
     "getHelpCenterBySlug",
     "getPublicArticleBySlug",
     "getThread",
     "listArticleVersions",
     "listArticles",
+    "listDeadLetterChunks",
     "listHelpCenters",
     "listPosts",
     "listPublicArticles",
@@ -6559,14 +6562,18 @@
     "markAsAnswer",
     "markTranslationReviewed",
     "rateArticle",
+    "retryDeadLetterChunk",
     "translateArticle",
     "updateArticle",
     "updateGapStatus",
     "updateHelpCenter"
    ],
    "export_default": null,
-   "linhas": 360,
+   "linhas": 460,
    "tabelas": [
+    "chunks",
+    "collections",
+    "documents",
     "forum_posts",
     "forum_posts_safe",
     "forum_threads",
@@ -6575,7 +6582,8 @@
     "kb_article_versions",
     "kb_articles",
     "kb_query_gaps",
-    "kb_translations"
+    "kb_translations",
+    "knowledge_bases"
    ],
    "rpcs": [],
    "edges": [
@@ -6591,7 +6599,7 @@
    "usado_por_modulos": [
     "pages"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 3,
    "orfao": false
   },
   {

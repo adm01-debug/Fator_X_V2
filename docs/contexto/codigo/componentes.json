@@ -9355,7 +9355,7 @@
     "KnowledgeManagementPage"
    ],
    "export_default": "KnowledgeManagementPage",
-   "linhas": 600,
+   "linhas": 755,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],

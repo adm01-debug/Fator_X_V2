@@ -10062,6 +10062,9 @@
     "content": "string",
     "created_at": "string | null",
     "document_id": "string | null",
+    "embed_attempts": "number",
+    "embed_last_attempt_at": "string | null",
+    "embed_last_error": "string | null",
     "embedded_at": "string | null",
     "embedding": "string | null",
     "embedding_model": "string | null",
@@ -10081,14 +10084,11 @@
      "context_prefix",
      "parent_chunk_id",
      "chunk_level",
-     "bm25_tsvector",
-     "embed_attempts",
-     "embed_last_error",
-     "embed_last_attempt_at"
+     "bm25_tsvector"
     ],
     "so_no_types": []
    },
-   "usada_no_front": 5,
+   "usada_no_front": 6,
    "usada_em_edges": [
     "cerebro-brain",
     "cerebro-query",
@@ -10601,7 +10601,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 4,
+   "usada_no_front": 5,
    "usada_em_edges": [
     "cerebro-query",
     "doc-parse",
@@ -16018,7 +16018,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 11,
+   "usada_no_front": 12,
    "usada_em_edges": [
     "cerebro-brain",
     "doc-parse",
@@ -21890,7 +21890,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 3,
+   "usada_no_front": 4,
    "usada_em_edges": [
     "cerebro-brain",
     "cerebro-query",
