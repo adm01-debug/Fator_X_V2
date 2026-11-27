@@ -14452,7 +14452,6 @@ export type Database = {
           workspace_id: string
         }[]
       }
-      cleanup_old_auth_attempts: { Args: never; Returns: undefined }
       close_risk: {
         Args: { p_notes?: string; p_risk_id: string }
         Returns: undefined
