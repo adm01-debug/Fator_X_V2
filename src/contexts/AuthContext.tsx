@@ -96,11 +96,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('user_id', data.user.id)
         .maybeSingle();
 
+      // Espelha `is_mfa_valid_for_role()`: o segundo fator do produto é o TOTP
+      // em `user_2fa`, não o AAL2 do Supabase Auth.
       if (roleData?.role_key === 'workspace_admin') {
         const { data: mfaData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-        if (mfaData?.currentLevel !== 'aal2') {
-          // This is a prompt/flag for the UI to redirect to MFA setup or verification
-          logger.warn('MFA AAL2 required for admin user', { userId: data.user.id });
+        const { data: status } = await supabase.rpc('get_my_2fa_status');
+        const has2fa = Boolean(status?.[0]?.enabled);
+        if (!has2fa && mfaData?.currentLevel !== 'aal2') {
+          logger.warn('Admin sem segundo fator ativo', { userId: data.user.id });
         }
       }
     }

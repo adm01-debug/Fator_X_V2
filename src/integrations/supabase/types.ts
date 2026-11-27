@@ -14717,6 +14717,18 @@ export type Database = {
           last_verified_at: string
         }[]
       }
+      enable_my_2fa: {
+        Args: { _secret: string; _token: string; _backup_codes: string[] }
+        Returns: boolean
+      }
+      disable_my_2fa: {
+        Args: never
+        Returns: undefined
+      }
+      verify_my_2fa: {
+        Args: { _token: string }
+        Returns: boolean
+      }
       get_oncall_with_contacts: {
         Args: { _workspace_id: string }
         Returns: {
