@@ -54,9 +54,17 @@ export default function AgentAlertsPage() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [editorInitial, setEditorInitial] = useState<AlertRule | null>(null);
 
-  // Load rules from local persistence
+  // Cache local pinta a lista na hora; o banco confirma em seguida.
   useEffect(() => {
-    setRules(alertRulesService.list(workspaceId, agentId));
+    let cancelled = false;
+    setRules(alertRulesService.peek(workspaceId, agentId));
+    alertRulesService
+      .list(workspaceId, agentId)
+      .then((rows) => { if (!cancelled) setRules(rows); })
+      .catch((err: unknown) => {
+        if (!cancelled) toast.error('Não foi possível carregar as regras', { description: String(err) });
+      });
+    return () => { cancelled = true; };
   }, [agentId, workspaceId]);
 
   // Pick a default selection when rules change
@@ -94,31 +102,47 @@ export default function AgentAlertsPage() {
     return { total: rules.length, active, warnings, criticals };
   }, [rules, triggeredIds]);
 
-  const handleSave = (rule: AlertRule) => {
-    const saved = alertRulesService.upsert(workspaceId, agentId, rule);
-    setRules(alertRulesService.list(workspaceId, agentId));
-    setSelectedId(saved.id);
-    toast.success(editorInitial ? 'Regra atualizada' : 'Regra criada');
+  const handleSave = async (rule: AlertRule) => {
+    try {
+      const saved = await alertRulesService.upsert(workspaceId, agentId, rule);
+      setRules(await alertRulesService.list(workspaceId, agentId));
+      setSelectedId(saved.id);
+      toast.success(editorInitial ? 'Regra atualizada' : 'Regra criada');
+    } catch (err) {
+      toast.error('Não foi possível salvar a regra', { description: String(err) });
+    }
   };
 
-  const handleDelete = (rule: AlertRule) => {
-    alertRulesService.remove(workspaceId, agentId, rule.id);
-    setRules(alertRulesService.list(workspaceId, agentId));
-    toast.success('Regra removida');
+  const handleDelete = async (rule: AlertRule) => {
+    try {
+      await alertRulesService.remove(workspaceId, agentId, rule.id);
+      setRules(await alertRulesService.list(workspaceId, agentId));
+      toast.success('Regra removida');
+    } catch (err) {
+      toast.error('Não foi possível remover a regra', { description: String(err) });
+    }
   };
 
-  const handleToggle = (rule: AlertRule, enabled: boolean) => {
-    alertRulesService.toggle(workspaceId, agentId, rule.id, enabled);
-    setRules(alertRulesService.list(workspaceId, agentId));
+  const handleToggle = async (rule: AlertRule, enabled: boolean) => {
+    try {
+      await alertRulesService.toggle(workspaceId, agentId, rule.id, enabled);
+      setRules(await alertRulesService.list(workspaceId, agentId));
+    } catch (err) {
+      toast.error('Não foi possível alterar a regra', { description: String(err) });
+    }
   };
 
-  const handleApplyTemplate = (idx: number) => {
+  const handleApplyTemplate = async (idx: number) => {
     const tpl = ALERT_RULE_TEMPLATES[idx];
     const rule = makeRuleFromTemplate(tpl, agentId, workspaceId);
-    alertRulesService.upsert(workspaceId, agentId, rule);
-    setRules(alertRulesService.list(workspaceId, agentId));
-    setSelectedId(rule.id);
-    toast.success(`Template aplicado: ${tpl.name}`);
+    try {
+      await alertRulesService.upsert(workspaceId, agentId, rule);
+      setRules(await alertRulesService.list(workspaceId, agentId));
+      setSelectedId(rule.id);
+      toast.success(`Template aplicado: ${tpl.name}`);
+    } catch (err) {
+      toast.error('Não foi possível aplicar o template', { description: String(err) });
+    }
   };
 
   const openCreate = () => {

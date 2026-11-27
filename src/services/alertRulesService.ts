@@ -1,7 +1,13 @@
 /**
- * alertRulesService — persistência client-side de regras de alerta por agente.
- * Funções puras de avaliação e simulação sobre traces mockados.
+ * alertRulesService — persistência de regras de alerta por agente.
+ *
+ * Fonte da verdade: public.alert_rules (RLS por workspace). O localStorage
+ * continua como cache de leitura para render imediato e para modo offline;
+ * toda escrita vai para o banco e so depois atualiza o cache.
+ *
+ * Funcoes puras de avaliacao e simulacao sobre traces ficam em @/lib/alertMetrics.
  */
+import { supabase } from '@/integrations/supabase/client';
 import type { AgentTraceRow } from '@/services/agentTracesService';
 import {
   computeMetric, compare, formatMetricValue, METRIC_CATALOG,
@@ -55,12 +61,13 @@ export interface RuleSimulation {
 }
 
 const STORAGE_PREFIX = 'nexus.alert_rules';
+const TABLE = 'alert_rules';
 
 function storageKey(workspaceId: string | null, agentId: string): string {
   return `${STORAGE_PREFIX}.${workspaceId ?? 'local'}.${agentId}`;
 }
 
-function readAll(workspaceId: string | null, agentId: string): AlertRule[] {
+function readCache(workspaceId: string | null, agentId: string): AlertRule[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = window.localStorage.getItem(storageKey(workspaceId, agentId));
@@ -72,37 +79,110 @@ function readAll(workspaceId: string | null, agentId: string): AlertRule[] {
   }
 }
 
-function writeAll(workspaceId: string | null, agentId: string, rules: AlertRule[]): void {
+function writeCache(workspaceId: string | null, agentId: string, rules: AlertRule[]): void {
   if (typeof window === 'undefined') return;
-  window.localStorage.setItem(storageKey(workspaceId, agentId), JSON.stringify(rules));
+  try {
+    window.localStorage.setItem(storageKey(workspaceId, agentId), JSON.stringify(rules));
+  } catch {
+    // cota cheia / modo privado: o banco ja tem a verdade
+  }
+}
+
+function toRow(rule: AlertRule, workspaceId: string | null) {
+  return {
+    id: rule.id,
+    agent_id: rule.agent_id,
+    workspace_id: workspaceId,
+    name: rule.name,
+    description: rule.description ?? null,
+    metric: rule.metric,
+    aggregation: rule.aggregation,
+    operator: rule.operator,
+    threshold: rule.threshold,
+    window_minutes: rule.window_minutes,
+    severity: rule.severity,
+    channels: rule.channels,
+    is_enabled: rule.is_enabled,
+  };
+}
+
+function fromRow(row: Record<string, unknown>): AlertRule {
+  return {
+    id: String(row.id),
+    agent_id: String(row.agent_id ?? ''),
+    workspace_id: (row.workspace_id as string | null) ?? null,
+    name: String(row.name ?? ''),
+    description: (row.description as string | undefined) ?? undefined,
+    metric: row.metric as AlertMetric,
+    aggregation: (row.aggregation as AlertAggregation) ?? 'avg',
+    operator: row.operator as AlertOperator,
+    threshold: Number(row.threshold ?? 0),
+    window_minutes: Number(row.window_minutes ?? 60) as AlertWindowMin,
+    severity: (row.severity as AlertSeverity) ?? 'warning',
+    channels: (row.channels as AlertChannel[] | null) ?? ['toast'],
+    is_enabled: Boolean(row.is_enabled),
+    created_at: String(row.created_at ?? new Date().toISOString()),
+    updated_at: String(row.updated_at ?? row.created_at ?? new Date().toISOString()),
+  };
 }
 
 export const alertRulesService = {
-  list(workspaceId: string | null, agentId: string): AlertRule[] {
-    return readAll(workspaceId, agentId);
+  /** Cache sincrono — pinta a tela antes da resposta do banco. */
+  peek(workspaceId: string | null, agentId: string): AlertRule[] {
+    return readCache(workspaceId, agentId);
   },
 
-  upsert(workspaceId: string | null, agentId: string, rule: AlertRule): AlertRule {
-    const all = readAll(workspaceId, agentId);
-    const idx = all.findIndex((r) => r.id === rule.id);
-    const next = { ...rule, updated_at: new Date().toISOString() };
-    if (idx >= 0) all[idx] = next;
-    else all.unshift(next);
-    writeAll(workspaceId, agentId, all);
-    return next;
+  async list(workspaceId: string | null, agentId: string): Promise<AlertRule[]> {
+    const { data, error } = await supabase
+      .from(TABLE)
+      .select('*')
+      .eq('agent_id', agentId)
+      .order('created_at', { ascending: false });
+    if (error) {
+      // Sem rede ou RLS negando: serve o cache em vez de esconder as regras.
+      return readCache(workspaceId, agentId);
+    }
+    const rules = (data ?? []).map((r) => fromRow(r as Record<string, unknown>));
+    writeCache(workspaceId, agentId, rules);
+    return rules;
   },
 
-  remove(workspaceId: string | null, agentId: string, id: string): void {
-    writeAll(workspaceId, agentId, readAll(workspaceId, agentId).filter((r) => r.id !== id));
+  async upsert(workspaceId: string | null, agentId: string, rule: AlertRule): Promise<AlertRule> {
+    const { data, error } = await supabase
+      .from(TABLE)
+      .upsert(toRow(rule, workspaceId), { onConflict: 'id' })
+      .select()
+      .single();
+    if (error) throw error;
+    const saved = data ? fromRow(data as Record<string, unknown>) : rule;
+    const cached = readCache(workspaceId, agentId).filter((r) => r.id !== saved.id);
+    writeCache(workspaceId, agentId, [saved, ...cached]);
+    return saved;
   },
 
-  toggle(workspaceId: string | null, agentId: string, id: string, enabled: boolean): void {
-    const all = readAll(workspaceId, agentId);
-    const r = all.find((x) => x.id === id);
-    if (!r) return;
-    r.is_enabled = enabled;
-    r.updated_at = new Date().toISOString();
-    writeAll(workspaceId, agentId, all);
+  async remove(workspaceId: string | null, agentId: string, id: string): Promise<void> {
+    const { error } = await supabase.from(TABLE).delete().eq('id', id);
+    if (error) throw error;
+    writeCache(workspaceId, agentId, readCache(workspaceId, agentId).filter((r) => r.id !== id));
+  },
+
+  async toggle(
+    workspaceId: string | null,
+    agentId: string,
+    id: string,
+    enabled: boolean,
+  ): Promise<void> {
+    const { error } = await supabase
+      .from(TABLE)
+      .update({ is_enabled: enabled })
+      .eq('id', id);
+    if (error) throw error;
+    const cache = readCache(workspaceId, agentId);
+    const r = cache.find((x) => x.id === id);
+    if (r) {
+      r.is_enabled = enabled;
+      writeCache(workspaceId, agentId, cache);
+    }
   },
 };
 
