@@ -26,3 +26,9 @@ verify_jwt = false
 
 [functions.webhook-receiver]
 verify_jwt = false
+
+# Chamada do gatilho notify_slack_on_agent_run() via pg_net: autentica por
+# segredo compartilhado (x-slack-notify-secret), nao por JWT. Sem isso o
+# gateway devolve 401 e a notificacao de agente nunca chega ao Slack.
+[functions.slack-agent-notify]
+verify_jwt = false
