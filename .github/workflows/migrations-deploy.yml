@@ -66,6 +66,16 @@ jobs:
         if: ${{ inputs.dry_run == 'false' }}
         run: npx --yes supabase@2 db push --project-ref "$PROJECT_REF" --include-all --yes
 
+      # dry_run=true e simulacao. Sem este aviso o job terminava verde e dava
+      # a impressao de que a migration tinha sido aplicada -- foi assim que
+      # uma migration ficou pendente com o run "success".
+      - name: Aviso de simulacao
+        if: ${{ inputs.dry_run != 'false' }}
+        run: |
+          echo "::warning::dry_run=true: NADA foi escrito no banco. Re-dispare com dry_run=false e confirm=APLICAR."
+          echo "### Simulacao" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Nada foi aplicado.** dry_run=true." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Resumo
         run: |
           {

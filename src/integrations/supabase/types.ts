@@ -14433,6 +14433,15 @@ export type Database = {
       }
     }
     Functions: {
+      registrar_evento_seguranca: {
+        Args: {
+          p_event_type: string
+          p_severity?: string
+          p_workspace?: string | null
+          p_details?: Json
+        }
+        Returns: string
+      }
       accept_workspace_invitation: {
         Args: { p_member_id: string }
         Returns: undefined
