@@ -48,6 +48,9 @@ import {
   toggleGuardrailPolicy,
   deleteGuardrailPolicy,
   testGuardrails,
+  getGuardrailsEngineConfig,
+  type GuardrailMode,
+  type GuardrailsCheckResult,
 } from '@/services/securityService';
 
 const typeLabels: Record<string, string> = {
@@ -238,10 +241,32 @@ export function GuardrailPolicies() {
 }
 
 // ═══ Guardrail Tester — calls guardrails-engine edge function ═══
+const railActionBadge: Record<string, string> = {
+  block: 'bg-destructive/15 text-destructive border-destructive/40',
+  warn: 'bg-warning/15 text-warning border-warning/40',
+  modify: 'bg-primary/15 text-primary border-primary/40',
+  allow: 'bg-success/15 text-success border-success/40',
+};
+
+const modeLabels: Record<GuardrailMode, string> = {
+  check_input: 'Entrada',
+  check_output: 'Saída',
+  check_full: 'Completo',
+};
+
 function GuardrailTester() {
   const [testInput, setTestInput] = useState('');
+  const [mode, setMode] = useState<GuardrailMode>('check_full');
   const [testing, setTesting] = useState(false);
-  const [result, setResult] = useState<Record<string, unknown> | null>(null);
+  const [result, setResult] = useState<GuardrailsCheckResult | null>(null);
+
+  // `get_config` era uma action sem consumidor: a UI chutava os rails disponíveis.
+  const { data: engineConfig } = useQuery({
+    queryKey: ['guardrails-engine-config'],
+    queryFn: getGuardrailsEngineConfig,
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
 
   const handleTest = async () => {
     if (!testInput.trim()) {
@@ -251,8 +276,8 @@ function GuardrailTester() {
     setTesting(true);
     setResult(null);
     try {
-      const data = await testGuardrails(testInput.trim());
-      setResult(data as Record<string, unknown>);
+      const data = await testGuardrails(testInput.trim(), mode);
+      setResult(data);
       toast.success('Verificação concluída!');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Erro ao testar guardrails');
@@ -274,28 +299,69 @@ function GuardrailTester() {
           rows={2}
           className="bg-secondary/50 text-meta"
         />
-        <Button size="sm" onClick={handleTest} disabled={testing} className="gap-1.5">
-          {testing ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          ) : (
-            <FlaskConical className="h-3.5 w-3.5" />
-          )}
-          Testar
-        </Button>
-      </div>
-      {result && (
-        <div className="mt-3 p-3 rounded-lg bg-secondary/30 border border-border/30">
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant={result.passed ? 'default' : 'destructive'} className="text-meta">
-              {result.passed ? '✅ Aprovado' : '❌ Bloqueado'}
-            </Badge>
-            {result.score != null && (
-              <span className="text-meta text-muted-foreground">Score: {String(result.score)}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <Select value={mode} onValueChange={(v) => setMode(v as GuardrailMode)}>
+            <SelectTrigger className="h-8 w-[150px] text-meta" aria-label="Camada a verificar">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {(Object.keys(modeLabels) as GuardrailMode[]).map((m) => (
+                <SelectItem key={m} value={m} className="text-meta">
+                  {modeLabels[m]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button size="sm" onClick={handleTest} disabled={testing} className="gap-1.5">
+            {testing ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <FlaskConical className="h-3.5 w-3.5" />
             )}
+            Testar
+          </Button>
+        </div>
+        {engineConfig && (
+          <p className="text-meta text-muted-foreground">
+            {engineConfig.rails.length} rails · {engineConfig.layers.length} camadas ({engineConfig.layers.join(' → ')}) ·
+            níveis: {engineConfig.levels.join(', ')}
+          </p>
+        )}
+      </div>
+
+      {result && (
+        <div className="mt-3 p-3 rounded-lg bg-secondary/30 border border-border/30 space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className={`text-meta border ${railActionBadge[result.action] ?? ''}`}>
+              {result.action === 'block'
+                ? 'Bloqueado'
+                : result.action === 'warn'
+                  ? 'Atenção'
+                  : 'Aprovado'}
+            </Badge>
+            <span className="text-meta text-muted-foreground">
+              {result.passed} aprovado(s) · {result.warnings} aviso(s) · {result.blocked} bloqueio(s)
+            </span>
           </div>
-          <pre className="text-meta text-muted-foreground overflow-auto max-h-[150px]">
-            {JSON.stringify(result, null, 2)}
-          </pre>
+          <div className="space-y-1.5">
+            {result.results.map((r) => (
+              <div key={r.rail} className="p-2 rounded bg-background/60 space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-meta font-semibold">{r.rail}</span>
+                  <Badge variant="outline" className="text-meta">
+                    {r.layer}
+                  </Badge>
+                  <Badge className={`text-meta border ${railActionBadge[r.action] ?? ''}`}>
+                    {r.action}
+                  </Badge>
+                  <span className="text-meta text-muted-foreground ml-auto">
+                    {Math.round(r.confidence * 100)}%
+                  </span>
+                </div>
+                <div className="text-meta text-muted-foreground">{r.reason}</div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
