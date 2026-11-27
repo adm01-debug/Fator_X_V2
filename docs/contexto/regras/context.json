@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a3a3a9bc42adf57bf7ab250abf545fc48174dd3a",
+  "sha": "4631eb4e3080c841ba3359c9585b18a4ca144fb7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
-  "generated_at": "2026-11-27 04:14 UTC",
-  "files_total": 2046,
-  "code_files": 1826,
-  "code_lines": 367085
+  "generated_at": "2026-11-27 06:33 UTC",
+  "files_total": 2049,
+  "code_files": 1827,
+  "code_lines": 367238
  },
  "version": "1.3.2",
- "facts_hash": "28dfb6f8b422d10e",
+ "facts_hash": "8be7ab3ce6bf9a61",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -246,7 +246,7 @@
   ],
   "package_manager": "bun",
   "languages": {
-   ".ts": 709,
+   ".ts": 710,
    ".tsx": 709,
    ".sql": 349,
    ".mjs": 47,
@@ -61462,7 +61462,7 @@
   {
    "module": "src/services",
    "files": 170,
-   "lines": 33985,
+   "lines": 34040,
    "tables": [
     "access_blocked_log",
     "agent_daily_metrics",
@@ -61796,8 +61796,8 @@
   },
   {
    "module": "src/test",
-   "files": 205,
-   "lines": 30706,
+   "files": 206,
+   "lines": 30804,
    "tables": [
     "tabela"
    ],
@@ -61850,6 +61850,7 @@
    ],
    "file_list": [
     "src/test/accessibility.test.tsx",
+    "src/test/agent-card-service.test.ts",
     "src/test/agent-evolution.test.ts",
     "src/test/agent-handoff.test.ts",
     "src/test/agent-routing.test.ts",
@@ -61927,8 +61928,7 @@
     "src/test/lgpd-governance.test.ts",
     "src/test/llm-gateway-providers.test.ts",
     "src/test/llm-gateway-service.test.ts",
-    "src/test/local-graph-view.test.tsx",
-    "src/test/mcp-client.test.ts"
+    "src/test/local-graph-view.test.tsx"
    ]
   },
   {
@@ -72876,6 +72876,10 @@
    {
     "file": "src/services/agentCardService.ts",
     "msg": "Failed to save agent card: ${error.message}"
+   },
+   {
+    "file": "src/services/agentCardService.ts",
+    "msg": "Failed to save agent card: ${readError.message}"
    },
    {
     "file": "src/services/agentGraphService.ts",
@@ -96809,6 +96813,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/services/agentCardService.ts",
+    "field": "status",
+    "value": "active",
+    "kind": "filtra"
+   },
+   {
     "file": "src/services/agentHandoffService.ts",
     "field": "status",
     "value": "pending",
@@ -102976,7 +102986,7 @@
     "file": "src/services/agentCardService.ts",
     "name": "generateAndSaveAgentCard",
     "params": "agentId: string, options?: Parameters<typeof generateAgentCard>[1],",
-    "body": "const { data, error } = await fromTable('agent_configs') .select('*') .eq('id' as never, agentId) .single(); if (error) throw new Error(`Agent not found: ${error.message}`); const agent = data as unknown as AgentConfig; const card = generateAgentCard(agent, options); await saveAgentCard(agentId, card); return card;"
+    "body": "const { data, error } = await fromTable('agents') .select('id, name, mission, model, status, config, created_at, updated_at') .eq('id', agentId) .single(); if (error) throw new Error(`Agent not found: ${error.message}`); const agent = rowToConfig(data as AgentRow); const card = generateAgentCard(agent, options); await saveAgentCard(agentId, card); return card;"
    },
    {
     "file": "src/services/agentCardService.ts",
@@ -105501,6 +105511,22 @@
    {
     "file": "src/test/accessibility.test.tsx",
     "name": "has accessible status role"
+   },
+   {
+    "file": "src/test/agent-card-service.test.ts",
+    "name": "agentCardService"
+   },
+   {
+    "file": "src/test/agent-card-service.test.ts",
+    "name": "lê de agents, nunca da tabela fantasma"
+   },
+   {
+    "file": "src/test/agent-card-service.test.ts",
+    "name": "deriva skills de config.tools — sem isso o card não passa em validateAgentCard"
+   },
+   {
+    "file": "src/test/agent-card-service.test.ts",
+    "name": "lista agentes ativos a partir de agents"
    },
    {
     "file": "src/test/agent-evolution.test.ts",
@@ -132781,6 +132807,7 @@
       "escreve:supabase/functions/cerebro-brain/index.ts",
       "escreve:supabase/functions/llm-gateway/index.ts",
       "escreve:supabase/functions/voice-session/index.ts",
+      "filtra:src/services/agentCardService.ts",
       "filtra:src/services/crmCadenceService.ts",
       "filtra:supabase/functions/crm-cadence-runner/index.ts",
       "filtra:supabase/functions/cron-executor/index.ts",
@@ -170039,7 +170066,7 @@
   },
   "src/services/agentCardService.ts": {
    "path": "src/services/agentCardService.ts",
-   "lines": 345,
+   "lines": 400,
    "exports": [
     "interface AgentSkill",
     "interface AgentProvider",
@@ -170059,7 +170086,15 @@
     "Agent not found: ${error.message}",
     "Failed to fetch agent card: ${error.message}",
     "Failed to list agents: ${error.message}",
-    "Failed to save agent card: ${error.message}"
+    "Failed to save agent card: ${error.message}",
+    "Failed to save agent card: ${readError.message}"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "active",
+     "kind": "filtra"
+    }
    ],
    "doc": "Nexus Agents Studio — Agent Card Service (A2A Discovery) Generates A2A-compliant Agent Cards following the official spec: https://a2a-protocol.org/latest/specification/ Agent Cards are JSON documents published at /.well-known/agent-card.json that describe an agent's identity, capabilities, skills, a …",
    "calc_fns": [
@@ -170076,7 +170111,7 @@
     {
      "name": "generateAndSaveAgentCard",
      "params": "agentId: string, options?: Parameters<typeof generateAgentCard>[1],",
-     "body": "const { data, error } = await fromTable('agent_configs') .select('*') .eq('id' as never, agentId) .single(); if (error) throw new Error(`Agent not found: ${error.message}`); const agent = data as unknown as AgentConfig; const card = generateAgentCard(agent, options); await saveAgentCard(agentId, card); return card;"
+     "body": "const { data, error } = await fromTable('agents') .select('id, name, mission, model, status, config, created_at, updated_at') .eq('id', agentId) .single(); if (error) throw new Error(`Agent not found: ${error.message}`); const agent = rowToConfig(data as AgentRow); const card = generateAgentCard(agent, options); await saveAgentCard(agentId, card); return card;"
     },
     {
      "name": "validateAgentCard",
@@ -180366,6 +180401,17 @@
     "renders with visible label",
     "PageLoading",
     "has accessible status role"
+   ]
+  },
+  "src/test/agent-card-service.test.ts": {
+   "path": "src/test/agent-card-service.test.ts",
+   "lines": 98,
+   "is_test": true,
+   "tests": [
+    "agentCardService",
+    "lê de agents, nunca da tabela fantasma",
+    "deriva skills de config.tools — sem isso o card não passa em validateAgentCard",
+    "lista agentes ativos a partir de agents"
    ]
   },
   "src/test/agent-evolution.test.ts": {
@@ -196642,10 +196688,22 @@
   }
  },
  "git": {
-  "sha": "a3a3a9bc42adf57bf7ab250abf545fc48174dd3a",
+  "sha": "4631eb4e3080c841ba3359c9585b18a4ca144fb7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "commits": [
+   {
+    "sha": "4631eb4",
+    "date": "2026-11-27",
+    "author": "adm01-debug",
+    "subject": "fix(a2a): agent card lê a tabela agents, não a inexistente agent_configs (#199)",
+    "files": [
+     ".prbody.md",
+     ".prbody2.md",
+     "src/services/agentCardService.ts",
+     "src/test/agent-card-service.test.ts"
+    ]
+   },
    {
     "sha": "a3a3a9b",
     "date": "2026-11-27",
@@ -196962,16 +197020,6 @@
     "files": [
      ".github/workflows/edge-prune.yml"
     ]
-   },
-   {
-    "sha": "bb13d20",
-    "date": "2026-11-24",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev)(deps-dev): bump @vitejs/plugin-react-swc (#153)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -197002,6 +197050,22 @@
    [
     "src/test/forum-safe-views.test.ts",
     2
+   ],
+   [
+    ".prbody.md",
+    1
+   ],
+   [
+    ".prbody2.md",
+    1
+   ],
+   [
+    "src/services/agentCardService.ts",
+    1
+   ],
+   [
+    "src/test/agent-card-service.test.ts",
+    1
    ],
    [
     "src/pages/SystemJobsPage.tsx",
@@ -197037,22 +197101,6 @@
    ],
    [
     "supabase/functions/geo-code/geo.ts",
-    1
-   ],
-   [
-    "src/components/security/GuardrailPolicies.tsx",
-    1
-   ],
-   [
-    "docs/migration/MATRIZ_EDGE_TABELA.md",
-    1
-   ],
-   [
-    "src/pages/LGPDCompliancePage.tsx",
-    1
-   ],
-   [
-    "src/services/lgpdService.ts",
     1
    ]
   ]

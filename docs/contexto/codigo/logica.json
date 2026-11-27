@@ -3895,7 +3895,7 @@
     "validateAgentCard"
    ],
    "export_default": null,
-   "linhas": 345,
+   "linhas": 400,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -3909,7 +3909,7 @@
     "components/agents",
     "services"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {

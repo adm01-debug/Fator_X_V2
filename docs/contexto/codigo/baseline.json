@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a3a3a9bc42adf57bf7ab250abf545fc48174dd3a",
+  "commit": "4631eb4e3080c841ba3359c9585b18a4ca144fb7",
   "branch": "main",
-  "data_commit": "2026-11-27T01:14:03-03:00",
+  "data_commit": "2026-11-27T03:32:50-03:00",
   "remote": "https://github.com/adm01-debug/Fator_X_V2",
   "ultimos_commits": [
+   {
+    "sha": "4631eb4",
+    "data": "2026-11-27",
+    "assunto": "fix(a2a): agent card lê a tabela agents, não a inexistente agent_configs (#199)"
+   },
    {
     "sha": "a3a3a9b",
     "data": "2026-11-27",
@@ -126,14 +131,9 @@
     "sha": "ccf216d",
     "data": "2026-11-26",
     "assunto": "fix(forum): le o forum publico pelas views seguras em vez das tabelas cruas (#161)"
-   },
-   {
-    "sha": "3c3acdb",
-    "data": "2026-11-26",
-    "assunto": "feat(monitoramento): expoe atributos GenAI/OpenTelemetry e o protocolo AG-UI na tela (#160)"
    }
   ],
-  "arquivos_mudados_7d": 151,
+  "arquivos_mudados_7d": 152,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "supabase/deployment-manifest.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 91
+    "commits": 92
    },
    {
     "autor": "dependabot[bot]",
@@ -310,9 +310,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2041,
-  "arquivos_codigo": 1476,
-  "linhas_codigo": 324640,
+  "arquivos_total": 2042,
+  "arquivos_codigo": 1477,
+  "linhas_codigo": 324793,
   "rotas": 152,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,7 +324,7 @@
   "tabelas": 328,
   "migrations": 346,
   "cron_jobs": 37,
-  "testes": 254,
+  "testes": 255,
   "workflows": 11,
   "scripts": 45,
   "docs_md": 134
@@ -512,15 +512,15 @@
   },
   "src/services": {
    "arquivos": 170,
-   "linhas": 33985
+   "linhas": 34040
   },
   "src/stores": {
    "arquivos": 12,
    "linhas": 1782
   },
   "src/test": {
-   "arquivos": 205,
-   "linhas": 30706
+   "arquivos": 206,
+   "linhas": 30804
   },
   "src/tests": {
    "arquivos": 2,

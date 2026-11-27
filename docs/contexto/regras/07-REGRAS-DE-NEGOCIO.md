@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a3a3a9bc42` · branch `main` · 2026-11-27 04:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4631eb4e30` · branch `main` · 2026-11-27 06:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1271,7 +1271,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `accepted_risk` | compara | `src/services/pentestService.ts` |
 | `status` | `acknowledged` | compara | `src/pages/VulnerabilitiesPage.tsx` |
 | `status` | `acting` | escreve | `supabase/functions/smolagent-runtime/index.ts` |
-| `status` | `active` | compara, escreve, filtra | `src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agents/traces/AgentContextPanel.tsx`<br>`src/components/automation/CredentialVaultPanel.tsx`<br>`src/components/automation/WebhookManagerPanel.tsx`<br>`src/components/crm/CadencesPanel.tsx`<br>… +30 |
+| `status` | `active` | compara, escreve, filtra | `src/components/agent-builder/modules/DeployModule.tsx`<br>`src/components/agents/traces/AgentContextPanel.tsx`<br>`src/components/automation/CredentialVaultPanel.tsx`<br>`src/components/automation/WebhookManagerPanel.tsx`<br>`src/components/crm/CadencesPanel.tsx`<br>… +31 |
 | `status` | `added` | compara | `src/components/agents/versioning/GuardrailsDiffPanel.tsx`<br>`src/components/agents/versioning/VersionComparePanel.tsx` |
 | `status` | `aguardando_retry` | compara | `src/components/skills/SkillReclassifyDialog.tsx` |
 | `status` | `all` | compara | `src/services/crmService.ts`<br>`src/services/skillHarvestService.ts` |
@@ -2672,7 +2672,7 @@ _nenhum item encontrado_
   ```
 - **generateAndSaveAgentCard(agentId: string, options?: Parameters<typeof generateAgentCard>[1],)** — `src/services/agentCardService.ts`
   ```
-  const { data, error } = await fromTable('agent_configs') .select('*') .eq('id' as never, agentId) .single(); if (error) throw new Error(`Agent not found: ${error.message}`); const agent = data as unknown as AgentConfig; const card = generateAgentCard(agent, options); await saveAgentCard(agentId, card); return card;
+  const { data, error } = await fromTable('agents') .select('id, name, mission, model, status, config, created_at, updated_at') .eq('id', agentId) .single(); if (error) throw new Error(`Agent not found: ${error.message}`); const agent = rowToConfig(data as AgentRow); const card = generateAgentCard(agent, options); await saveAgentCard(agentId, card); return card;
   ```
 - **validateAgentCard(card: Partial<AgentCard>)** — `src/services/agentCardService.ts`
   ```
@@ -4039,7 +4039,7 @@ _nenhum item encontrado_
 | Não foi possível carregar a fila de revisão. | `src/components/skills/SkillReclassificationReviewPanel.tsx` |
 | ${failures.length} não puderam ser enfileiradas. | `src/components/skills/SkillReclassifyDialog.tsx` |
 | ${resultado.failures.length} não puderam ser aplicadas — veja o detalhe. | `src/components/skills/SkillReclassifyDialog.tsx` |
-| … +542 linhas — lista completa em `context.json` | |
+| … +543 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4075,7 +4075,7 @@ _nenhum item encontrado_
 | `workspace_admin` | `supabase/migrations/20260513164014_8d090b02-bd48-4bc8-91ec-3cbc52254c3a.sql` |
 | `workspace_admin` | `supabase/migrations/20261126230000_recuperar_funcoes_e_triggers.sql` |
 
-## K. Testes como especificação (3121 testes em 227 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (3125 testes em 228 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4282,6 +4282,7 @@ _nenhum item encontrado_
 | `src/test/workflow-nodes.test.ts` | 5 | Workflow Node Types · has 18 node types (12 original + 6 automation) · all node types have defaults · categories cover all nodes … |
 | `tests/e2e/security-audits.spec.ts` | 5 | Security & Stability Audit · should load the dashboard for an authenticated user · should protect administrative pages from unauthorized access · should verify security monitoring panel presence on security page … |
 | `src/components/slack/__tests__/SlackOnboardingWizard.test.tsx` | 4 | SlackOnboardingWizard · renderiza passo 1 por padrão · avança e volta entre passos · dispara verifyConnection no passo 3 |
+| `src/test/agent-card-service.test.ts` | 4 | agentCardService · lê de agents, nunca da tabela fantasma · deriva skills de config.tools — sem isso o card não passa em validateAgentCard · lista agentes ativos a partir de agents |
 | `src/test/agent-evolution.test.ts` | 4 | Agent Self-Evolution · builds skillbook prompt from skills · returns empty for no skills · reflects on traces |
 | `src/test/cost-anomaly-service.test.ts` | 4 | costAnomalyService.listBaselines · ordena pelas mais recentes e aplica o teto informado · filtra por escopo apenas quando informado · lança em erro — o painel precisa distinguir falha de baseline ausente |
 | `src/test/error-boundary.test.tsx` | 4 | ErrorBoundary · renders children when there is no error · renders error UI when a child throws · renders custom fallback when provided |

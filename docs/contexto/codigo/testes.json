@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 254,
+ "total": 255,
  "por_tipo": {
   "contrato": 3,
   "e2e": 10,
   "pytest": 2,
-  "unit": 239
+  "unit": 240
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 211
+   "arquivos": 212
   },
   {
    "padrao": "outro",
@@ -394,6 +394,15 @@
     "src/components/shared/PageLoading.tsx"
    ],
    "casos": 6
+  },
+  {
+   "arquivo": "src/test/agent-card-service.test.ts",
+   "tipo": "unit",
+   "linhas": 98,
+   "testa": [
+    "src/services/agentCardService.ts"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/test/agent-evolution.test.ts",
@@ -2527,7 +2536,7 @@
   "src/pages/FineTuningPage.tsx": 1,
   "src/pages/OpenclawDeployPage.tsx": 1,
   "src/pages/RiskRegisterPage.tsx": 1,
-  "src/services/agentCardService.ts": 1,
+  "src/services/agentCardService.ts": 2,
   "src/services/agentEvolutionService.ts": 2,
   "src/services/agentHandoffService.ts": 2,
   "src/services/agentRoutingService.ts": 1,

@@ -6268,7 +6268,7 @@
    "modulo": "services",
    "arquivos": 150,
    "testes": 0,
-   "linhas": 32740,
+   "linhas": 32795,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7152,7 +7152,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 205,
+   "testes": 206,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
