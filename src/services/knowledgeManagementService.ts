@@ -357,3 +357,103 @@ export async function markAsAnswer(postId: string, threadId: string) {
   await supabase.from('forum_posts').update({ is_answer: true }).eq('id', postId);
   await supabase.from('forum_threads').update({ is_resolved: true }).eq('id', threadId);
 }
+
+// ============ Saúde de embeddings dos chunks ============
+// `rag-embed-backfill` reprocessa chunk 'pending'/'failed' até 5 tentativas e
+// então o marca como dead-letter. Sem esta leitura, chunk morto é invisível:
+// o documento fica no banco mas nunca é achado pela busca.
+
+export interface EmbeddingHealth {
+  pending: number;
+  failed_retryable: number;
+  dead_letter: number;
+}
+
+// Escopo por workspace: chunk -> document -> collection -> knowledge_base.
+// Sem isso o card contaria chunks de outras organiza??es (a RLS filtra o
+// resultado, mas o universo do admin precisa ser declarado explicitamente).
+async function workspaceDocumentIds(workspaceId: string): Promise<string[]> {
+  const { data: kbs, error: kbErr } = await supabase
+    .from('knowledge_bases')
+    .select('id')
+    .eq('workspace_id', workspaceId);
+  if (kbErr) throw kbErr;
+  const kbIds = (kbs ?? []).map((k: { id: string }) => k.id);
+  if (kbIds.length === 0) return [];
+
+  const { data: cols, error: colErr } = await supabase
+    .from('collections')
+    .select('id')
+    .in('knowledge_base_id', kbIds);
+  if (colErr) throw colErr;
+  const colIds = (cols ?? []).map((c: { id: string }) => c.id);
+  if (colIds.length === 0) return [];
+
+  const { data: docs, error: docErr } = await supabase
+    .from('documents')
+    .select('id')
+    .in('collection_id', colIds);
+  if (docErr) throw docErr;
+  return (docs ?? []).map((d: { id: string }) => d.id);
+}
+
+export async function getEmbeddingHealth(workspaceId: string): Promise<EmbeddingHealth> {
+  const docIds = await workspaceDocumentIds(workspaceId);
+  if (docIds.length === 0) {
+    return { pending: 0, failed_retryable: 0, dead_letter: 0 };
+  }
+
+  const [pending, failedRetryable, deadLetter] = await Promise.all([
+    supabase
+      .from('chunks')
+      .select('id', { count: 'exact', head: true })
+      .in('document_id', docIds)
+      .is('embedding', null)
+      .eq('embedding_status', 'pending'),
+    supabase
+      .from('chunks')
+      .select('id', { count: 'exact', head: true })
+      .in('document_id', docIds)
+      .is('embedding', null)
+      .eq('embedding_status', 'failed')
+      .lt('embed_attempts', 5),
+    supabase
+      .from('chunks')
+      .select('id', { count: 'exact', head: true })
+      .in('document_id', docIds)
+      .is('embedding', null)
+      .gte('embed_attempts', 5),
+  ]);
+
+  for (const r of [pending, failedRetryable, deadLetter]) if (r.error) throw r.error;
+
+  return {
+    pending: pending.count ?? 0,
+    failed_retryable: failedRetryable.count ?? 0,
+    dead_letter: deadLetter.count ?? 0,
+  };
+}
+
+export async function listDeadLetterChunks(workspaceId: string, limit = 20) {
+  const docIds = await workspaceDocumentIds(workspaceId);
+  if (docIds.length === 0) return [];
+  const { data, error } = await supabase
+    .from('chunks')
+    .select('id, document_id, chunk_index, embed_attempts, embed_last_error, embed_last_attempt_at, content')
+    .in('document_id', docIds)
+    .is('embedding', null)
+    .gte('embed_attempts', 5)
+    .order('embed_last_attempt_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data ?? [];
+}
+
+/** Devolve o chunk ao retry do backfill: zera o contador e volta o status. */
+export async function retryDeadLetterChunk(chunkId: string) {
+  const { error } = await supabase
+    .from('chunks')
+    .update({ embed_attempts: 0, embed_last_error: null, embedding_status: 'pending' } as never)
+    .eq('id', chunkId);
+  if (error) throw error;
+}

@@ -3643,6 +3643,9 @@ export type Database = {
           content: string
           created_at: string | null
           document_id: string | null
+          embed_attempts: number
+          embed_last_attempt_at: string | null
+          embed_last_error: string | null
           embedded_at: string | null
           embedding: string | null
           embedding_model: string | null
@@ -3660,6 +3663,9 @@ export type Database = {
           content: string
           created_at?: string | null
           document_id?: string | null
+          embed_attempts?: number
+          embed_last_attempt_at?: string | null
+          embed_last_error?: string | null
           embedded_at?: string | null
           embedding?: string | null
           embedding_model?: string | null
@@ -3677,6 +3683,9 @@ export type Database = {
           content?: string
           created_at?: string | null
           document_id?: string | null
+          embed_attempts?: number
+          embed_last_attempt_at?: string | null
+          embed_last_error?: string | null
           embedded_at?: string | null
           embedding?: string | null
           embedding_model?: string | null

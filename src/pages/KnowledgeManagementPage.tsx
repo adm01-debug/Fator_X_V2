@@ -24,7 +24,18 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Globe, AlertCircle, Plus, ExternalLink, Eye, ThumbsUp } from 'lucide-react';
+import {
+  FileText,
+  Globe,
+  AlertCircle,
+  Plus,
+  ExternalLink,
+  Eye,
+  ThumbsUp,
+  Activity,
+  RefreshCw,
+  Loader2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import {
   listHelpCenters,
@@ -36,6 +47,9 @@ import {
   listQueryGaps,
   analyzeQueryGaps,
   updateGapStatus,
+  getEmbeddingHealth,
+  listDeadLetterChunks,
+  retryDeadLetterChunk,
 } from '@/services/knowledgeManagementService';
 import { listKnowledgeBases } from '@/services/knowledgeService';
 import { getCurrentUserWorkspace } from '@/services/workspaceContextService';
@@ -72,6 +86,39 @@ export default function KnowledgeManagementPage() {
     queryFn: () => (selectedKb ? listQueryGaps(selectedKb) : Promise.resolve([])),
     enabled: !!selectedKb,
   });
+
+  const workspaceId = workspace?.id;
+  const {
+    data: embHealth,
+    error: embHealthError,
+    isLoading: embHealthLoading,
+  } = useQuery({
+    queryKey: ['kb_embed_health', workspaceId],
+    queryFn: () => getEmbeddingHealth(workspaceId as string),
+    enabled: !!workspaceId,
+    refetchInterval: 60_000,
+  });
+
+  const { data: deadLetter = [] } = useQuery({
+    queryKey: ['kb_embed_dead_letter', workspaceId],
+    queryFn: () => listDeadLetterChunks(workspaceId as string, 20),
+    enabled: !!workspaceId && (embHealth?.dead_letter ?? 0) > 0,
+  });
+
+  const [retryingId, setRetryingId] = useState<string | null>(null);
+  const retryChunk = async (id: string) => {
+    setRetryingId(id);
+    try {
+      await retryDeadLetterChunk(id);
+      toast.success('Chunk devolvido à fila de embeddings');
+      await qc.invalidateQueries({ queryKey: ['kb_embed_health'] });
+      await qc.invalidateQueries({ queryKey: ['kb_embed_dead_letter'] });
+    } catch (e) {
+      toast.error(`Falha ao reprocessar: ${(e as Error).message}`);
+    } finally {
+      setRetryingId(null);
+    }
+  };
 
   return (
     <div className="p-6 sm:p-8 lg:p-10 space-y-6 max-w-[1400px] mx-auto animate-page-enter">
@@ -112,6 +159,15 @@ export default function KnowledgeManagementPage() {
             <Badge variant="secondary" className="ml-2">
               {gaps.filter((g: DbRow) => g.status === 'open').length}
             </Badge>
+          </TabsTrigger>
+          <TabsTrigger value="embeddings">
+            <Activity className="h-4 w-4 mr-2" />
+            Embeddings{' '}
+            {(embHealth?.dead_letter ?? 0) > 0 && (
+              <Badge variant="destructive" className="ml-2">
+                {embHealth?.dead_letter}
+              </Badge>
+            )}
           </TabsTrigger>
         </TabsList>
 
@@ -372,6 +428,105 @@ export default function KnowledgeManagementPage() {
                       Dispensar
                     </Button>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="embeddings" className="space-y-4 mt-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-title-sm font-semibold">Saúde dos embeddings</h3>
+              <p className="text-body-sm text-muted-foreground">
+                Chunks sem vetor nunca são achados pela busca. O backfill tenta 5 vezes e
+                então para — aqui você devolve os travados à fila.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                qc.invalidateQueries({ queryKey: ['kb_embed_health'] });
+                qc.invalidateQueries({ queryKey: ['kb_embed_dead_letter'] });
+              }}
+              disabled={embHealthLoading}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${embHealthLoading ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
+          </div>
+
+          {embHealthError ? (
+            <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Não foi possível ler a saúde dos embeddings</p>
+                <p className="text-body-sm text-muted-foreground">
+                  {(embHealthError as Error).message}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="rounded-lg border p-4">
+                <p className="text-body-sm text-muted-foreground">Na fila</p>
+                <p className="text-title-md font-semibold">
+                  {embHealthLoading ? '?' : (embHealth?.pending ?? 0)}
+                </p>
+                <p className="text-caption text-muted-foreground">aguardando o próximo backfill</p>
+              </div>
+              <div className="rounded-lg border p-4">
+                <p className="text-body-sm text-muted-foreground">Falharam, ainda com retry</p>
+                <p className="text-title-md font-semibold">
+                  {embHealthLoading ? '?' : (embHealth?.failed_retryable ?? 0)}
+                </p>
+                <p className="text-caption text-muted-foreground">menos de 5 tentativas</p>
+              </div>
+              <div className="rounded-lg border border-destructive/40 p-4">
+                <p className="text-body-sm text-muted-foreground">Travados (dead-letter)</p>
+                <p className="text-title-md font-semibold text-destructive">
+                  {embHealthLoading ? '?' : (embHealth?.dead_letter ?? 0)}
+                </p>
+                <p className="text-caption text-muted-foreground">5 tentativas ou mais — pararam</p>
+              </div>
+            </div>
+          )}
+
+          {deadLetter.length === 0 ? (
+            <p className="text-body-sm text-muted-foreground rounded-lg border p-6 text-center">
+              Nenhum chunk travado. A busca está com todos os trechos indexados.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {deadLetter.map((c: DbRow) => (
+                <div
+                  key={c.id}
+                  className="rounded-lg border p-3 flex items-start justify-between gap-4"
+                >
+                  <div className="min-w-0">
+                    <p className="text-body-sm line-clamp-2">
+                      {String(c.content ?? '').slice(0, 220) || '(sem conte?do)'}
+                    </p>
+                    <p className="text-caption text-muted-foreground">
+                      documento {String(c.document_id ?? '—')} · chunk #{String(c.chunk_index ?? '—')} ·{' '}
+                      {String(c.embed_attempts)} tentativas
+                      {c.embed_last_error ? ` · ${String(c.embed_last_error)}` : ''}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => retryChunk(String(c.id))}
+                    disabled={retryingId === String(c.id)}
+                  >
+                    {retryingId === String(c.id) ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                    )}
+                    Reprocessar
+                  </Button>
                 </div>
               ))}
             </div>
